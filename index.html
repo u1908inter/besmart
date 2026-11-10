@@ -1988,9 +1988,11 @@ async function importFromUrl(raw){
   if(r.bad){urlMsg(L(`${r.bad}は他サイトからの読み込みを許可していないため、URLでは追加できません。スマホでファイルをダウンロードして「追加」から選んでください。`,`${r.bad} does not allow loading from other sites. Download the file on your phone and pick it with “Add”.`),true);return;}
   $('#urlGo').disabled=true;urlAbort=new AbortController();
   urlMsg(L('接続中…','Connecting…'));
-  let res;
+  let res;const insecure=r.url.protocol==='http:'&&location.protocol==='https:';
+  if(insecure)r.url.protocol='https:';
   try{res=await fetch(r.url.href,{signal:urlAbort.signal,mode:'cors',credentials:'omit',redirect:'follow'});}
   catch(e){$('#urlGo').disabled=false;if(e.name==='AbortError')return;
+    if(insecure){urlMsg(L('http:// の配布元は、ブラウザの仕組み上BeSmartから読み込めません（https:// でも接続できませんでした）。URLを直接開いてファイルをダウンロードし、「追加」から選んでください。','Files on http:// sites cannot be loaded by BeSmart (https:// did not work either). Open the URL to download the file, then pick it with “Add”.'),true);return;}
     urlMsg(L('読み込めませんでした。この配布元が他サイトからの読み込みを許可していないか、URLが間違っている可能性があります。スマホでダウンロードして「追加」から選んでください。','Could not load it. The host may block loading from other sites, or the URL may be wrong. Download the file and pick it with “Add”.'),true);return;}
   if(!res.ok){$('#urlGo').disabled=false;urlMsg(L(`読み込めませんでした（HTTP ${res.status}）。URLを確認してください。`,`Could not load it (HTTP ${res.status}). Check the URL.`),true);return;}
   const total=+res.headers.get('content-length')||0;const parts=[];let got=0;
