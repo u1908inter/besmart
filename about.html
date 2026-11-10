@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeSmart — スマホで遊べるBMSプレイヤー</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#140B01}
+a{color:#FFD466}a:hover{color:#FFFFFF}
+h2{font-family:'DotGothic16',monospace;font-weight:400;font-size:28px;line-height:1.3;margin:0 0 6px;color:#FFB000;text-shadow:0 0 8px rgba(255,176,0,.45)}
+h3{font-family:'DotGothic16',monospace;font-weight:400;font-size:19px;margin:28px 0 8px;color:#FFD466}
+p{margin:0 0 12px}
+ul{margin:0 0 12px;padding-left:1.3em}
+li{margin:3px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{border:1px solid #6E4800;padding:7px 10px;text-align:left;vertical-align:top}
+th{font-family:'DotGothic16',monospace;font-weight:400;color:#FFD466;background:#2A1804}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
+.tw{overflow-x:auto;margin:8px 0 14px}
+</style>
+
+</head>
+<body>
+
+<div style="background: radial-gradient(ellipse at 50% 0%, #2A1804 0%, #140B01 60%); color: #F2E3C2; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh">
+<div style="max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; display: flex; flex-direction: column; gap: 56px">
+
+  <header style="display: flex; flex-direction: column; gap: 20px">
+    <div style="border: 2px solid #FFB000; padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 10px">
+      <div style="font-family: 'DotGothic16', monospace; font-size: clamp(48px, 11vw, 96px); line-height: 1; color: #FFB000; text-shadow: 0 0 14px rgba(255,176,0,0.55)">BeSmart</div>
+      <div style="font-family: 'DotGothic16', monospace; font-size: 20px; color: #FFD466">スマホで遊べるBMSプレイヤー</div>
+    </div>
+    <p style="font-size: 18px; max-width: 46em; margin: 0">BMS／bmson 形式の譜面を、スマートフォンのブラウザでそのまま遊べるリズムゲームです。インストールは不要。手持ちの曲の書庫（ZIP・RAR・LZH・7z）を選ぶだけで、曲一覧に並びます。曲・スコア・設定はすべてお使いの端末の中にだけ保存され、外部には送信されません。</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px">
+      <a href="./" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 26px; background: #FFB000; color: #140B01; font-family: 'DotGothic16', monospace; font-size: 20px; text-decoration: none">BeSmart で遊ぶ</a>
+      <a href="#howto" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border: 2px solid #FFB000; color: #FFB000; font-family: 'DotGothic16', monospace; font-size: 17px; text-decoration: none">はじめ方を見る</a>
+    </div>
+    <nav aria-label="ページ内の目次" style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; border-top: 2px dashed #6E4800; padding-top: 14px">
+      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#play">遊び方の幅</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a>
+    </nav>
+  </header>
+
+  <section id="howto">
+    <h2>はじめ方</h2>
+    <p>曲を入れて、選んで、タップするだけです。</p>
+    <ol style="margin: 0; padding-left: 1.4em">
+      <li><b>曲を追加する</b>　曲一覧の「追加」から、BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて選びます。iPhoneでは「ファイル」アプリに保存した書庫をそのまま選べます。</li>
+      <li><b>曲を選ぶ</b>　曲をタップすると詳細が開きます。プレビュー曲が流れ、ノーツ密度のグラフと自己ベストが表示されます。</li>
+      <li><b>プレイする</b>　ノーツが赤い（設定によっては光る）判定ラインに重なったら、そのレーンをタップします。一番端のレーンは「皿」（スクラッチ）です。</li>
+    </ol>
+    <p style="margin-top: 12px">初めての方は、タイトル画面の「先に遊び方を練習する」から、単押し・レーンの位置・皿・同時押し・ロングノートを順番に練習できる専用譜面を遊べます。曲がなくても、内蔵のデモ曲ですぐに遊べます。</p>
+  </section>
+
+  <section id="formats">
+    <h2>読み込める形式</h2>
+    <h3>譜面ファイル</h3>
+    <ul>
+      <li><code>.bms</code> <code>.bme</code> <code>.bml</code> <code>.pms</code> <code>.bmson</code></li>
+      <li>bmson は 1.0 と旧形式（0.21）に対応。1つの音声ファイルを切り分けて鳴らす方式（スライス・継続フラグ）にも対応します。</li>
+      <li>文字コードは UTF-8 と Shift_JIS を自動判別します。</li>
+    </ul>
+    <h3>書庫（圧縮ファイル）</h3>
+    <div class="tw"><table>
+      <thead><tr><th>形式</th><th>対応内容</th><th>非対応</th></tr></thead>
+      <tbody>
+        <tr><td>ZIP</td><td>無圧縮・Deflate。Shift_JIS／UTF-8 のファイル名</td><td>ZIP64、暗号化</td></tr>
+        <tr><td>RAR</td><td>RAR4・RAR5（公式の展開プログラムを内蔵）。日本語ファイル名</td><td>分割書庫（part1, part2…）、パスワード付き</td></tr>
+        <tr><td>LZH</td><td>-lh0- -lh4- -lh5- -lh6- -lh7- -lz4-、ヘッダレベル0〜3、Shift_JIS のファイル名</td><td>-lh1- など初期の方式</td></tr>
+        <tr><td>7z</td><td>LZMA／LZMA2 など一般的な形式</td><td>パスワード付き</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>URLから追加</b>：配布元のダウンロードURLを貼るだけで読み込めます（GitHubのリポジトリ内のファイル、Dropboxの共有リンクなど、他サイトからの読み込みを許可している配布元のみ。Googleドライブ・MEGA・OneDriveなどは、端末にダウンロードしてから「追加」で選んでください）。<code>?url=</code> を付けたリンク（例：<code>https://u1908inter.github.io/besmart/?url=配布URL</code>）を開くと、そのURLが入力された状態で始まります。</li>
+      <li><b>書庫の中の書庫</b>（ZIPの中のRAR、さらにその中のLZH など）は、最下層まで自動で展開します（8階層まで）。</li>
+      <li>1つの書庫に複数の曲・複数の難易度が入っていてもすべて登録します。同じ譜面は重複して登録しません。</li>
+      <li>壊れた書庫が混ざっていても、読めるものだけを登録します。</li>
+    </ul>
+    <h3>音声と画像</h3>
+    <ul>
+      <li>音声：WAV（8/16/24/32bit PCM・浮動小数点）、OGG Vorbis、MP3 など端末が再生できる形式。OGG を再生できない古い端末でも、内蔵の展開処理で再生します。</li>
+      <li>画像（BGA・ジャケット）：BMP、PNG、JPG など。</li>
+      <li>譜面に書かれた拡張子と実際のファイルが違う場合（<code>kick.wav</code> と書かれていて実際は <code>KICK.ogg</code> など）も、大文字小文字や拡張子の違いを吸収して探します。</li>
+      <li>動画のBGA（mpg・avi・wmv など）は表示しません。</li>
+    </ul>
+  </section>
+
+  <section id="modes">
+    <h2>鍵盤モード</h2>
+    <div class="tw"><table>
+      <thead><tr><th>モード</th><th>レーン</th><th>判定方法</th></tr></thead>
+      <tbody>
+        <tr><td>5鍵</td><td>皿＋5鍵</td><td>7鍵用の6・7番目のレーンに音符がない譜面</td></tr>
+        <tr><td>7鍵</td><td>皿＋7鍵</td><td>一般的な BMS／BME</td></tr>
+        <tr><td>9ボタン</td><td>9ボタン（皿なし）</td><td><code>.pms</code> の譜面</td></tr>
+        <tr><td>10鍵（DP）</td><td>皿＋5鍵 ×2</td><td>2P側のレーンに音符がある5鍵譜面</td></tr>
+        <tr><td>14鍵（DP）</td><td>皿＋7鍵 ×2</td><td>2P側のレーンに音符がある7鍵譜面</td></tr>
+        <tr><td>5ボタン</td><td>5ボタン</td><td>bmson（popn-5k）</td></tr>
+        <tr><td>24鍵</td><td>24鍵（ピアノ配列）</td><td>bmson（keyboard-24k）</td></tr>
+      </tbody>
+    </table></div>
+    <p>10鍵・14鍵・24鍵はレーンが細くなるため、スマホを横向きにして遊ぶのがおすすめです。</p>
+  </section>
+
+  <section id="chart">
+    <h2>譜面の仕様</h2>
+    <p>主要なBMSプレイヤーで使われている命令を幅広くサポートしています。</p>
+    <div class="tw"><table>
+      <thead><tr><th>機能</th><th>対応する命令・チャンネル</th></tr></thead>
+      <tbody>
+        <tr><td>BPM変化</td><td><code>#BPM</code>、チャンネル03（16進）、チャンネル08＋<code>#BPMxx</code>／<code>#EXBPMxx</code></td></tr>
+        <tr><td>一時停止</td><td>チャンネル09＋<code>#STOPxx</code>（1/192小節単位）</td></tr>
+        <tr><td>スクロール速度変化</td><td>チャンネルSC＋<code>#SCROLLxx</code>、bmson の scroll_events</td></tr>
+        <tr><td>小節の長さ</td><td>チャンネル02</td></tr>
+        <tr><td>ロングノート</td><td>チャンネル51〜69（<code>#LNTYPE 1</code>）、<code>#LNOBJ</code>、bmson の長さ指定</td></tr>
+        <tr><td>ロングノートの種類</td><td><code>#LNMODE</code>（1：終点判定なし／2：離し判定あり／3：押し続け必須）</td></tr>
+        <tr><td>地雷ノーツ</td><td>チャンネルD1〜E9（ダメージ量は値の1/2%）、bmson の mine_channels</td></tr>
+        <tr><td>不可視ノーツ</td><td>チャンネル31〜49。空打ち時のキー音の選択に使います</td></tr>
+        <tr><td>ランダム分岐</td><td><code>#RANDOM</code> <code>#SETRANDOM</code> <code>#IF</code> <code>#ELSEIF</code> <code>#ELSE</code> <code>#ENDIF</code> <code>#ENDRANDOM</code></td></tr>
+        <tr><td>スイッチ分岐</td><td><code>#SWITCH</code> <code>#SETSWITCH</code> <code>#CASE</code> <code>#SKIP</code> <code>#DEF</code> <code>#ENDSW</code></td></tr>
+        <tr><td>判定の厳しさ</td><td><code>#RANK</code>（0〜4）、<code>#DEFEXRANK</code>、bmson の judge_rank</td></tr>
+        <tr><td>ゲージの増え方</td><td><code>#TOTAL</code>、bmson の total（%）</td></tr>
+        <tr><td>音量</td><td><code>#VOLWAV</code></td></tr>
+        <tr><td>BGA</td><td>チャンネル04（背景）、06（ミス時）、07（レイヤー）、<code>#BMP00</code>（ミス時の既定画像）</td></tr>
+        <tr><td>曲情報</td><td><code>#TITLE</code> <code>#SUBTITLE</code> <code>#ARTIST</code> <code>#SUBARTIST</code> <code>#GENRE</code> <code>#PLAYLEVEL</code> <code>#DIFFICULTY</code></td></tr>
+        <tr><td>画像・プレビュー</td><td><code>#STAGEFILE</code> <code>#BANNER</code> <code>#BACKBMP</code> <code>#PREVIEW</code></td></tr>
+      </tbody>
+    </table></div>
+    <p><code>#DIFFICULTY</code> がない譜面は、タイトルやサブタイトルに含まれる語から難易度（入門／標準／上級／最上級／発狂）を推定します。</p>
+  </section>
+
+  <section id="judge">
+    <h2>判定</h2>
+    <p>判定は「音の時計」と「タッチした瞬間」で計算します。画面の描画速度（fps）が下がっても、判定の精度は変わりません。</p>
+    <h3>判定の幅（ずれの許容範囲・±ミリ秒）</h3>
+    <div class="tw"><table>
+      <thead><tr><th>#RANK</th><th>PERFECT</th><th>GREAT</th><th>GOOD</th><th>BAD</th></tr></thead>
+      <tbody>
+        <tr><td>0：VERY HARD</td><td class="n">8</td><td class="n">24</td><td class="n">40</td><td class="n">100</td></tr>
+        <tr><td>1：HARD</td><td class="n">15</td><td class="n">30</td><td class="n">60</td><td class="n">150</td></tr>
+        <tr><td>2：NORMAL（既定）</td><td class="n">18</td><td class="n">40</td><td class="n">100</td><td class="n">200</td></tr>
+        <tr><td>3：EASY</td><td class="n">21</td><td class="n">60</td><td class="n">120</td><td class="n">220</td></tr>
+        <tr><td>4：VERY EASY</td><td class="n">26</td><td class="n">75</td><td class="n">150</td><td class="n">260</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><code>#DEFEXRANK</code> がある場合は、NORMAL の幅をその割合（100 = NORMAL）で広げ・狭めします。</li>
+      <li>BADの幅を過ぎても押さなかったノーツは MISS になります。</li>
+      <li>ノーツより早すぎる空打ち（BADの幅より前、さらに150ミリ秒以内）は「空打ち」として数えます。コンボは切れませんが、ゲージは減ります。</li>
+      <li>PERFECT 以外の判定では、早かったか（FAST）遅かったか（SLOW）を表示し、回数も記録します。ずれをミリ秒で表示することもできます。</li>
+      <li>アシストの「判定幅拡大」を使うと、すべての幅が1.5倍になります。</li>
+    </ul>
+    <h3>ロングノート</h3>
+    <div class="tw"><table>
+      <thead><tr><th>種類</th><th>動き</th><th>ノーツ数</th></tr></thead>
+      <tbody>
+        <tr><td>終点判定なし</td><td>始点を判定し、終点まで押し続ければ成功。途中で離すと MISS</td><td>1</td></tr>
+        <tr><td>離し判定あり</td><td>始点と、離したタイミングの両方を判定。押し続けたまま終点を過ぎると BAD</td><td>2</td></tr>
+        <tr><td>押し続け必須</td><td>離し判定ありと同じ。途中で離している間はゲージが減り続け、押し直すと復帰できる</td><td>2</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="gauge">
+    <h2>ゲージ</h2>
+    <p>回復量の基準は「TOTAL ÷ ノーツ数」です。譜面に <code>#TOTAL</code> がない場合は「160 ＋（ノーツ数 ＋ min(max(ノーツ数−400, 0), 200)）× 0.16」で自動計算します。</p>
+    <div class="tw"><table>
+      <thead><tr><th>ゲージ</th><th>開始</th><th>クリア条件</th><th>PERFECT・GREAT</th><th>GOOD</th><th>BAD</th><th>MISS</th><th>空打ち</th></tr></thead>
+      <tbody>
+        <tr><td>ASSIST</td><td class="n">20%</td><td>終了時60%以上</td><td>基準×1.2</td><td>基準×0.6</td><td class="n">−1.6</td><td class="n">−2.4</td><td class="n">−1.6</td></tr>
+        <tr><td>EASY</td><td class="n">20%</td><td>終了時80%以上</td><td>基準×1.2</td><td>基準×0.6</td><td class="n">−3.2</td><td class="n">−4.8</td><td class="n">−1.6</td></tr>
+        <tr><td>NORMAL</td><td class="n">20%</td><td>終了時80%以上</td><td>基準×1.0</td><td>基準×0.5</td><td class="n">−4</td><td class="n">−6</td><td class="n">−2</td></tr>
+        <tr><td>HARD</td><td class="n">100%</td><td>0%にならない</td><td class="n">+0.16</td><td class="n">±0</td><td class="n">−5</td><td class="n">−9</td><td class="n">−5</td></tr>
+        <tr><td>EXTRA HARD</td><td class="n">100%</td><td>0%にならない</td><td class="n">+0.16</td><td class="n">±0</td><td class="n">−10</td><td class="n">−18</td><td class="n">−10</td></tr>
+        <tr><td>SUDDEN DEATH</td><td class="n">100%</td><td>BAD・MISSを出さない</td><td class="n">+0.16</td><td class="n">±0</td><td>即終了</td><td>即終了</td><td class="n">−10</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>ASSIST・EASY・NORMAL は2%未満にはならず、最後まで遊べます。HARD 以上は0%になった時点で終了します。</li>
+      <li>HARD はゲージが30%未満のとき、減る量が0.6倍になります。</li>
+      <li>地雷はゲージを直接減らします（全ゲージ共通）。</li>
+      <li><b>ゲージ自動降格</b>をオンにすると、選んだゲージで落ちても下のゲージに切り替えて続行し、最も良かったクリアを記録します（全ゲージを裏で同時に計算しています）。</li>
+    </ul>
+  </section>
+
+  <section id="score">
+    <h2>スコアとクリアランプ</h2>
+    <ul>
+      <li><b>SCORE</b> ＝ PERFECT×2 ＋ GREAT。最大はノーツ数×2です。</li>
+      <li><b>MISS COUNT</b> ＝ BAD ＋ MISS ＋ 空打ち。</li>
+      <li><b>ランク</b>は SCORE の割合で決まります：AAA 8/9以上、AA 7/9以上、A 6/9以上、B 5/9以上、C 4/9以上、D 3/9以上、E 2/9以上、それ未満が F。</li>
+    </ul>
+    <h3>クリアランプ（下ほど上位）</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ランプ</th><th>条件</th></tr></thead>
+      <tbody>
+        <tr><td>NO PLAY</td><td>未プレイ</td></tr>
+        <tr><td>FAILED</td><td>クリア条件を満たさなかった</td></tr>
+        <tr><td>ASSIST CLEAR</td><td>ASSIST ゲージでクリア、またはアシストを使ってクリア</td></tr>
+        <tr><td>EASY CLEAR</td><td>EASY ゲージでクリア</td></tr>
+        <tr><td>CLEAR</td><td>NORMAL ゲージでクリア</td></tr>
+        <tr><td>HARD CLEAR</td><td>HARD ゲージでクリア</td></tr>
+        <tr><td>EXTRA HARD</td><td>EXTRA HARD または SUDDEN DEATH でクリア</td></tr>
+        <tr><td>FULL COMBO</td><td>BAD・MISS なし（空打ちは可）</td></tr>
+        <tr><td>PERFECT</td><td>フルコンボかつ GOOD なし</td></tr>
+        <tr><td>MAX</td><td>すべて PERFECT</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="options">
+    <h2>オプション</h2>
+    <h3>配置（1P側と2P側を別々に設定可）</h3>
+    <div class="tw"><table>
+      <thead><tr><th>名前</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>OFF</td><td>譜面どおり</td></tr>
+        <tr><td>鏡像</td><td>鍵盤を左右反転</td></tr>
+        <tr><td>ランダム</td><td>鍵盤のレーンを曲ごとに並べ替え</td></tr>
+        <tr><td>回転ランダム</td><td>鍵盤のレーンを回転（ずらす）。半々の確率で反転も</td></tr>
+        <tr><td>ノーツ毎ランダム</td><td>1つ1つのノーツを空いているレーンへランダムに配置（ロングノートの重なりは避ける）</td></tr>
+        <tr><td>縦連回避ランダム</td><td>ノーツ毎ランダムのうち、同じレーンに0.12秒以内で続く配置をできるだけ避ける</td></tr>
+        <tr><td>皿に寄せる</td><td>皿が空いているとき、鍵盤のノーツを皿へ移す（皿の連打は0.1秒以上空ける）</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>左右入替</b>：DP譜面の1P側と2P側を入れ替えます。</li>
+      <li><b>ロングノート</b>：譜面の指定に従う／終点判定なし／離し判定あり／押し続け必須 から選べます。</li>
+      <li><b>アシスト</b>：オートスクラッチ（皿を自動で処理）、ロングノートを通常ノーツに、判定幅拡大（1.5倍）。使うとクリアランプは最大で ASSIST CLEAR になります。</li>
+    </ul>
+    <h3>スピードとレーンカバー</h3>
+    <ul>
+      <li><b>スピード</b>：0.5〜10.0（0.25刻み）。</li>
+      <li><b>スピード基準BPM</b>：OFF（BPMに比例）／最も長いBPM／開始BPM／最大BPM／最小BPM。基準を決めると、曲のBPMに関係なく同じ見え方になります。</li>
+      <li><b>表示時間を固定</b>：ノーツが見えている時間（150〜2000ミリ秒）を指定し、スピードを自動計算します。カバーを動かしても見える時間は変わりません。</li>
+      <li><b>上カバー</b>（0〜80%）・<b>下カバー</b>（0〜60%）・<b>判定ライン位置</b>（0〜50%）。</li>
+      <li>プレイ中に画面上部を上下にドラッグすると、上カバー（オン時）またはスピードをその場で調整できます。</li>
+      <li>画面にはいまのBPM、スピード、ノーツの表示時間（ミリ秒）を常に表示します。</li>
+    </ul>
+    <h3>その他のプレイ設定</h3>
+    <ul>
+      <li><b>キー音の鳴らし方</b>：押した瞬間に鳴らす／譜面どおり自動で鳴らす（Bluetooth など遅延の大きい環境向け）。</li>
+      <li><b>ペースメーカー</b>：自己ベスト／MAX／AAA／AA／A を目標に、いまのスコアとの差を表示。</li>
+      <li><b>フルコンボ演出</b>：オン／オフ。</li>
+      <li><b>音量</b>：全体・キー音・BGM を別々に調整（キー音とBGMは150%まで）。</li>
+    </ul>
+  </section>
+
+  <section id="display">
+    <h2>表示</h2>
+    <div class="tw"><table>
+      <thead><tr><th>設定</th><th>選べる内容</th></tr></thead>
+      <tbody>
+        <tr><td>プレイ画面のデザイン</td><td>デフォルト（アンバーのドット文字）／ポップ（白と青の鍵盤・ピンクの判定ライン・太い文字）／ネオン（黒地に青緑とピンク）</td></tr>
+        <tr><td>文字の色</td><td>アンバー／グリーン／ホワイト（画面全体に反映）</td></tr>
+        <tr><td>レーンの立体表示</td><td>奥行きのある3D表示に切り替え</td></tr>
+        <tr><td>レーンの位置</td><td>横画面で左／中央／右</td></tr>
+        <tr><td>レーン幅・ノーツの太さ</td><td>レーン幅 50〜100%、ノーツ ×0.5〜×2.5</td></tr>
+        <tr><td>皿の位置</td><td>左（1P）／右（2P）</td></tr>
+        <tr><td>BGA</td><td>表示／非表示。横画面ではレーンの横に、縦画面では背景に表示。ミス時のBGAとレイヤーBGAにも対応</td></tr>
+        <tr><td>判定の表示</td><td>ずれ（ミリ秒）の表示、判定カウント（PERFECT〜MISS と FAST/SLOW）の表示</td></tr>
+        <tr><td>フレームレート</td><td>自動（画面の最大）／120fps／60fps／30fps。FPS表示も可能</td></tr>
+        <tr><td>言語</td><td>自動／日本語／English</td></tr>
+      </tbody>
+    </table></div>
+    <p>ヒット時にはボム（光の輪）が出て、MISS時はミス用のBGAに切り替わります。</p>
+  </section>
+
+  <section id="play">
+    <h2>遊び方の幅</h2>
+    <h3>練習モード</h3>
+    <p>開始する小節と再生速度（0.5〜1.5倍）を選んで、苦手な場所だけを繰り返し練習できます。練習中はゲージで落ちることがなく、スコアも記録しません。</p>
+    <h3>譜面ビューア</h3>
+    <p>譜面を自動再生で眺められます。再生・一時停止、シークバー、5秒戻し・送り、0.5〜2倍速の切り替えができ、小節番号・BPM・コンボを表示します。</p>
+    <h3>オートプレイ</h3>
+    <p>すべてのノーツを自動で処理するお手本再生です。記録は残りません。</p>
+    <h3>コースモード</h3>
+    <p>好きな曲を好きな順番に並べてコースを作れます。ゲージは次の曲に引き継がれ、途中で落ちるとそこで終了。曲の合間に次の曲名と現在のゲージを表示し、最後にコース全体の SCORE・MISS COUNT・クリアランプを記録します。</p>
+    <h3>同じ配置でもう一度</h3>
+    <p>ランダム系の配置で良い並びが出たときに、同じ並びのまま遊び直せます（ポーズ画面・リザルトから）。</p>
+    <h3>チュートリアルとデモ曲</h3>
+    <p>操作を順番に練習できるチュートリアル譜面と、コードで作ったオリジナルのデモ曲を内蔵しています。</p>
+  </section>
+
+  <section id="records">
+    <h2>記録と共有</h2>
+    <ul>
+      <li>譜面ごとにクリアランプ・最高SCORE・最少MISS COUNT・最大コンボ・プレイ回数を記録します。記録は譜面の中身で識別するので、書庫を入れ直しても引き継がれます。</li>
+      <li>自己ベストを更新したプレイは<b>リプレイ</b>として保存し、あとから再生できます。直前のプレイもリザルト画面から再生できます（ランダムの並びやタイミング設定も含めて再現）。</li>
+      <li>リザルトには、ゲージの推移とタイミングの分布（平均・中央値・ばらつき）をグラフで表示します。</li>
+      <li><b>結果の共有</b>：ジャケット・クリアランプ・ランク・スコア・判定内訳・グラフ入りの画像（1200×675）を作成し、共有メニュー・画像のコピー・テキストのコピー・Xへの投稿から共有できます。</li>
+      <li>共有用のハッシュタグは <code>#BeSmartBMS</code> です。</li>
+      <li><b>曲一覧</b>：検索、並べ替え（曲名・レベル・ランプ・スコア・追加日・アーティスト）、鍵盤モードでの絞り込み、お気に入り（★）での絞り込み。</li>
+      <li><b>曲の詳細</b>：ジャケット、難易度、BPM（変化する曲は最小〜最大と主なBPM）、ノーツ数（ロングノート・地雷の数）、判定の厳しさ、TOTAL、曲の長さ、ノーツ密度のグラフ、プレビュー曲。</li>
+    </ul>
+  </section>
+
+  <section id="input">
+    <h2>操作</h2>
+    <h3>タッチ</h3>
+    <ul>
+      <li>複数の指での同時押しと、押したまま指を滑らせる操作に対応しています。</li>
+      <li><b>境目の同時押し</b>：レーンの境目付近を押すと、1本の指で両隣のレーンを同時に押せます。反応する幅は0〜45%で調整でき、初期値は10%です。</li>
+    </ul>
+    <h3>キーボード（7鍵の初期設定）</h3>
+    <div class="tw"><table>
+      <thead><tr><th>操作</th><th>キー</th></tr></thead>
+      <tbody>
+        <tr><td>皿</td><td>A または 左Shift</td></tr>
+        <tr><td>鍵盤 1〜7</td><td>S　D　F　Space　J　K　L</td></tr>
+        <tr><td>スピード</td><td>↑ ↓</td></tr>
+        <tr><td>上カバー</td><td>← →</td></tr>
+        <tr><td>ポーズ</td><td>Esc または Enter</td></tr>
+      </tbody>
+    </table></div>
+    <p>5鍵・9ボタン・10鍵・14鍵・5ボタン・24鍵にもそれぞれ初期配置があり、設定の「キーとゲームパッド」で自由に割り当て直せます（1つのレーンに複数のキーも可）。</p>
+    <h3>ゲームパッド</h3>
+    <p>ボタンと軸の両方を割り当てられます。皿はターンテーブル型コントローラの軸を回す操作にも対応しています。</p>
+  </section>
+
+  <section id="latency">
+    <h2>音の遅延とタイミング調整</h2>
+    <ul>
+      <li><b>判定タイミング</b>（−400〜+400ミリ秒）と<b>表示タイミング</b>（−300〜+300ミリ秒）を別々に調整できます。</li>
+      <li><b>音のズレを測る</b>：一定間隔の音に合わせてタップすると、聞こえる遅れを測って判定タイミングを設定します。</li>
+      <li><b>見た目のズレを測る</b>：音なしで、ノーツが判定ラインに重なる瞬間をタップして、表示タイミングを設定します。</li>
+      <li><b>出力先ごとの設定</b>：判定タイミングはスピーカー・有線イヤホン・Bluetoothイヤホンごとに別々に保存されます。Bluetoothは出力遅延の大きさ（60ミリ秒以上）で自動的に判定し、つないだり外したりすると設定が切り替わります。まだ調整していない出力先は、検出した遅延を初期値にします。スピーカーと有線イヤホンはブラウザから区別できないため、最後に選んだ方を使います。</li>
+      <li>出力遅延の検出は、iPhone は iOS 18.4 以降、Android は Chrome 102 以降で使えます。</li>
+      <li>切り替えはプレイしていないときだけ行うので、プレイ中に判定がずれることはありません。</li>
+    </ul>
+  </section>
+
+  <section id="env">
+    <h2>動作環境</h2>
+    <ul>
+      <li>iPhone・iPad の Safari、Android の Chrome、パソコンの最新ブラウザ。</li>
+      <li>ZIP の展開には iOS 16.4 以降、または最新の Chrome が必要です。</li>
+      <li>ProMotion（120Hz）対応の iPhone／iPad で120fpsにするには、Safari でページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてください。アプリ内のブラウザ表示では60fpsまでになる場合があります。</li>
+      <li>iPhone ではマナーモード中に音が出ないことがあります。</li>
+      <li>設定の「データ」から、スコア記録の一括消去と、保存した曲の一括削除ができます。曲の詳細画面からは書庫ごとに削除できます。</li>
+      <li>曲は端末のブラウザ内（IndexedDB）に保存されます。ブラウザのサイトデータを消すと、曲と記録も消えます。保存できないブラウザでは、ページを閉じるまでの一時的な保存になります。</li>
+    </ul>
+  </section>
+
+  <section id="privacy">
+    <h2>プライバシー・権利について</h2>
+    <ul>
+      <li>曲・スコア・リプレイ・設定は、お使いの端末の中だけに保存されます。外部への送信やアップロードは一切行わず、アクセス解析も使っていません。「URLから追加」を使ったときだけ、入力した配布元からファイルをダウンロードします。フォントや展開プログラムもすべてアプリに同梱しています。</li>
+      <li>BeSmart には、コードで作ったオリジナルのデモ曲とチュートリアル以外の楽曲は含まれていません。読み込む曲は、利用する権利のあるものだけにし、各楽曲の配布条件に従ってください。</li>
+      <li>BeSmart は個人による非商用のプレイヤーで、特定のゲーム会社や他のBMSプレイヤーとは関係がありません。</li>
+      <li>使用しているソフトウェア（UnRAR、libarchive、ogg-vorbis デコーダ、DotGothic16、Dela Gothic One など）のライセンスは、アプリの「設定」→「このアプリについて・ライセンス」に掲載しています。</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>よくある質問</h2>
+    <h3>曲はどこで手に入りますか？</h3>
+    <p>BMSは作者や配布イベントから公開されている曲を、それぞれの配布ページから入手してください。BeSmart から曲を配布することはありません。</p>
+    <h3>RARが開けません</h3>
+    <p>分割された書庫（part1, part2…）とパスワード付きの書庫には対応していません。1つの書庫にまとめ直すか、展開してからZIPに圧縮し直してください。</p>
+    <h3>音がずれて聞こえます</h3>
+    <p>設定の「音のズレを測る」を試してください。Bluetoothイヤホンでは「キー音の鳴らし方」を「譜面どおり自動で鳴らす」にすると、押したときの音の遅れが気にならなくなります。</p>
+    <h3>曲が一部鳴りません</h3>
+    <p>読み込みの最後に「読めなかった音声」の件数が表示されます。ファイルが書庫に入っていない、または端末が再生できない形式の可能性があります。</p>
+    <h3>機種変更したら記録は移せますか？</h3>
+    <p>記録は端末のブラウザ内にだけ保存されるため、別の端末には引き継がれません。</p>
+  </section>
+
+  <footer style="border-top: 2px dashed #6E4800; padding-top: 18px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00">
+    <span>BeSmart　スマホで遊べるBMSプレイヤー</span>
+    <a href="./">BeSmart で遊ぶ</a>
+  </footer>
+
+</div>
+</div>
+
+</body>
+</html>
