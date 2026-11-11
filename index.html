@@ -139,7 +139,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.2215)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.2215)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1112.0839)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0839)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -739,7 +739,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.2215)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.2215)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1112.0839)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0839)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -757,6 +757,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <label style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-start;text-align:left;margin:8px 0 12px"><input type="checkbox" id="impSet" style="width:auto;margin-top:6px"><span data-en="Also import settings (speed, judge offset, etc.). Audio delay can differ between devices, so re-measuring is recommended.">設定も読み込む（スピードや判定のズレなど）。音の遅延は端末ごとに違うので、移したあとで測り直すのがおすすめです。</span></label>
   <button class="pri" id="impGo" data-en="Import">読み込む</button>
   <button id="impCancel" data-en="Cancel">やめる</button>
+</div></div>
+<div id="rateDlg" class="overlay" style="z-index:12"><div class="box card">
+  <h2 data-en="Playback speed is changed">再生速度が変わっています</h2>
+  <p id="rateMsg" style="line-height:1.7"></p>
+  <button class="pri" id="rateReset" data-en="Reset to ×1.00 and start">×1.00 に戻して始める</button>
+  <button id="rateKeep"></button>
+  <button id="rateCancel" data-en="Cancel">やめる</button>
 </div></div>
 <div id="urlDlg" class="overlay" style="z-index:11"><div class="box card">
   <h2 data-en="Add from URL">URLから追加</h2>
@@ -2039,8 +2046,8 @@ async function openDetail(c){
   $('#detail').onclick=e=>{if(e.target.id==='detail')close();};
   $('#dFav').onclick=()=>{if(FAV.has(c.hash))FAV.delete(c.hash);else FAV.add(c.hash);saveFav();const f=FAV.has(c.hash);$('#dFav').textContent=f?'★':'☆';$('#dFav').style.color=f?'#fd3':'#889';renderLibrary();};
   {const box=$('#dOpts');['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
-  $('#dPlay').onclick=()=>{close();startPlay(c,{});};
-  $('#dAuto').onclick=()=>{close();startPlay(c,{auto:true});};
+  $('#dPlay').onclick=()=>{close();rateGuard(()=>startPlay(c,{}));};
+  $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
   if(rep)$('#dRep').onclick=()=>{close();startPlay(c,{replay:rep});};
   $('#dPrac').onclick=()=>{close();startPlay(c,{practice:{measure:+pM.value,rate:+pR.value}});};
@@ -2484,11 +2491,23 @@ confirmBtn($('#ceDel'),()=>L('このコースを削除','Delete this course'),()
 $('#courseBtn').onclick=()=>{show('#lib',false);show('#course',true,'block');show('#courseEdit',false);show('#courseView',true,'block');renderCourses();};
 $('#courseBack').onclick=()=>{show('#course',false);show('#lib',true,'block');};
 $('#courseNew').onclick=()=>editCourse(null);
+/* warn when starting at a playback speed other than x1.00 */
+function rateGuard(go){
+  const r=+S.playRate||1;if(Math.abs(r-1)<1e-6){go();return;}
+  const rs='×'+r.toFixed(2);
+  $('#rateMsg').innerHTML=L(`再生速度が <b style="color:var(--hi)">${rs}</b> になっています。<br>×1.00 以外では、スコアとクリアランプは記録されません。`,`Playback speed is set to <b style="color:var(--hi)">${rs}</b>.<br>Scores and clear lamps are not recorded unless it is ×1.00.`);
+  $('#rateKeep').textContent=L(`${rs} のまま始める`,`Start at ${rs}`);
+  show('#rateDlg',true);
+  const done=f=>{show('#rateDlg',false);$('#rateReset').onclick=$('#rateKeep').onclick=$('#rateCancel').onclick=null;if(f)f();};
+  $('#rateReset').onclick=()=>done(()=>{S.playRate=1;saveS();toast(L('再生速度を ×1.00 に戻しました','Playback speed reset to ×1.00'));go();});
+  $('#rateKeep').onclick=()=>done(go);
+  $('#rateCancel').onclick=()=>done(null);
+}
 function startCourse(co){
   const charts=co.items.map(findChart);
   if(charts.some(c=>!c)){toast(L('見つからない曲があるため開始できません','Some songs are missing; cannot start'));return;}
   CS={co,charts,idx:0,carry:null,results:[],agg:{PG:0,GR:0,GD:0,BD:0,PR:0,KP:0},maxCombo:0,combo:0,N:0,failed:false,seedBase:(Math.random()*4294967296)>>>0};
-  show('#course',false);startPlay(charts[0],{course:CS});
+  show('#course',false);rateGuard(()=>startPlay(charts[0],{course:CS}));
 }
 
 /* ======================= PLAY SETUP ======================= */
