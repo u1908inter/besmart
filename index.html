@@ -171,6 +171,10 @@ canvas{display:block;touch-action:none}
   </div></details>
   <details class="card"><summary data-en="Data">データ</summary><div class="in">
     <div class="hlp" id="storeInfo"></div>
+    <div class="hlp" data-en="Save your scores, clear lamps, replays, favourites, courses and settings to one file, and move them to another phone or browser. Songs themselves are not included: add the same song archives on the new device and the records reconnect.">スコア・クリアランプ・リプレイ・お気に入り・コース・設定を1つのファイルに書き出して、別の端末やブラウザに移せます。曲そのものは含まれません。移した先で同じ曲の書庫を「追加」すると、記録がつながります。</div>
+    <button id="expBtn" data-en="Export data">データを書き出す（エクスポート）</button>
+    <label class="btn" for="impIn" data-en="Import data">データを読み込む（インポート）</label>
+    <input type="file" id="impIn" accept=".json,application/json" style="display:none">
     <button class="danger" id="wipeRec" data-en="Erase all score records">スコア記録をすべて消去</button>
     <button class="danger" id="wipeLib" data-en="Delete all stored songs">保存した曲をすべて削除</button>
   </div></details>
@@ -724,6 +728,15 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   </div>
 </div>
 
+<div id="impDlg" class="overlay" style="z-index:11"><div class="box card">
+  <h2 data-en="Import data">データを読み込む</h2>
+  <div id="impSum" class="hlp" style="white-space:pre-line"></div>
+  <label style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-start;text-align:left;margin:8px 0"><input type="radio" name="impMode" value="merge" checked style="width:auto;margin-top:6px"><span data-en="Merge (keep the better record for each song)">統合する（曲ごとに良い方の記録を残す）</span></label>
+  <label style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-start;text-align:left;margin:8px 0"><input type="radio" name="impMode" value="replace" style="width:auto;margin-top:6px"><span data-en="Replace (current records are deleted)">置き換える（今の記録は消えます）</span></label>
+  <label style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-start;text-align:left;margin:8px 0 12px"><input type="checkbox" id="impSet" style="width:auto;margin-top:6px"><span data-en="Also import settings (speed, judge offset, etc.). Audio delay can differ between devices, so re-measuring is recommended.">設定も読み込む（スピードや判定のズレなど）。音の遅延は端末ごとに違うので、移したあとで測り直すのがおすすめです。</span></label>
+  <button class="pri" id="impGo" data-en="Import">読み込む</button>
+  <button id="impCancel" data-en="Cancel">やめる</button>
+</div></div>
 <div id="urlDlg" class="overlay" style="z-index:11"><div class="box card">
   <h2 data-en="Add from URL">URLから追加</h2>
   <input id="urlIn" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…" style="width:100%;margin:4px 0 8px">
@@ -1785,6 +1798,53 @@ $('#setBtn').onclick=async()=>{buildSettings();show('#lib',false);show('#setting
   $('#storeInfo').textContent=(await DB.isMem())?L('このブラウザでは曲の保存ができません（閉じると消えます）。','This browser cannot store songs (they are lost when closed).'):L(`保存中の譜面：${CHARTS.length}`,`Stored charts: ${CHARTS.length}`);
   try{const e=await navigator.storage.estimate();$('#storeInfo').textContent+=L(` ／ 使用量 約${Math.round(e.usage/1048576)}MB`,` / about ${Math.round(e.usage/1048576)}MB used`);}catch(e){}};
 $('#setBack').onclick=()=>{show('#settings',false);show('#lib',true,'block');renderLibrary();};
+/* ---------- data export / import ---------- */
+async function exportData(){
+  let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],courses:COURSES,settings:S,replays};
+  const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+  const d=new Date(),p=n=>String(n).padStart(2,'0');
+  const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  toast(L(`書き出しました：${name}（記録 ${Object.keys(REC).length}件・リプレイ ${replays.length}件）`,`Exported ${name} (${Object.keys(REC).length} records, ${replays.length} replays)`));
+}
+function mergeRecOne(a,b){
+  if(!a)return b;if(!b)return a;
+  const o={...(b.ex>a.ex?b:a)};
+  for(const k of ['lamp','ex','combo','plays'])if(a[k]!=null||b[k]!=null)o[k]=Math.max(a[k]||0,b[k]||0);
+  const bps=[a.bp,b.bp].filter(v=>v!=null);o.bp=bps.length?Math.min(...bps):null;
+  return o;
+}
+let impData=null;
+$('#expBtn').onclick=()=>exportData().catch(e=>toast(L('書き出しに失敗しました','Export failed')+': '+e.message));
+$('#impIn').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  let d;try{d=JSON.parse(await f.text());}catch(err){toast(L('このファイルは読み込めません（BeSmartのデータではありません）','This file cannot be read (not BeSmart data)'));return;}
+  if(!d||d.app!=='BeSmart'||d.kind!=='backup'||typeof d.rec!=='object'){toast(L('BeSmartのデータファイルではありません','Not a BeSmart data file'));return;}
+  impData=d;
+  const n=Object.keys(d.rec||{}).filter(k=>!k.startsWith('course:')).length;
+  $('#impSum').textContent=L(`書き出した日時：${new Date(d.date).toLocaleString()}\n曲の記録 ${n}件・リプレイ ${(d.replays||[]).length}件・お気に入り ${(d.fav||[]).length}件・コース ${(d.courses||[]).length}件`,
+    `Exported: ${new Date(d.date).toLocaleString()}\n${n} song records, ${(d.replays||[]).length} replays, ${(d.fav||[]).length} favourites, ${(d.courses||[]).length} courses`);
+  $('#impSet').checked=false;$$('input[name=impMode]')[0].checked=true;show('#impDlg',true);
+};
+$('#impCancel').onclick=()=>{impData=null;show('#impDlg',false);};
+$('#impGo').onclick=async()=>{
+  const d=impData;if(!d)return;const replace=$$('input[name=impMode]')[1].checked;
+  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
+  else{
+    for(const k in d.rec)REC[k]=mergeRecOne(REC[k],d.rec[k]);
+    (d.fav||[]).forEach(x=>FAV.add(x));
+    const ids=new Set(COURSES.map(c=>c.id));(d.courses||[]).forEach(c=>{if(c&&!ids.has(c.id))COURSES.push(c);});
+  }
+  let nr=0;
+  for(const r of (d.replays||[])){if(!r||!r.hash)continue;
+    try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
+  if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
+  saveRec();saveFav();saveCourses();impData=null;show('#impDlg',false);
+  toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
+  buildSettings();if(typeof applyPhosphor==='function')applyPhosphor();
+};
 function confirmBtn(el,first,again,act){el.onclick=async()=>{if(el.dataset.c){el.dataset.c='';el.textContent=first();await act();}else{el.dataset.c=1;el.textContent=again();}};}
 confirmBtn($('#wipeRec'),()=>L('スコア記録をすべて消去','Erase all score records'),()=>L('もう一度押すと消去します','Tap again to erase'),async()=>{REC={};saveRec();DB.clear('replays').catch(()=>{});toast(L('記録を消去しました','Records erased'));});
 confirmBtn($('#wipeLib'),()=>L('保存した曲をすべて削除','Delete all stored songs'),()=>L('もう一度押すと削除します','Tap again to delete'),async()=>{await DB.clear('charts');await DB.clear('archives');archCache.clear();await refreshLibrary();toast(L('曲を削除しました','Songs deleted'));});
