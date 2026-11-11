@@ -149,12 +149,12 @@ canvas{display:block;touch-action:none}
     <label class="btn pri" for="fileIn" data-en="Add songs">曲を追加</label>
     <button id="tutBtn" data-en="Learn the controls">遊び方を練習する</button>
     <button id="urlBtn" data-en="Add from a download URL">URLから追加</button>
-    <button id="demoBtn" data-en="Play the built-in demo">内蔵のデモ曲で遊ぶ</button>
+    <button id="demoBtn" data-en="Test play (do-re-mi scale)">テストプレイ（ドレミの音階）</button>
     <label class="btn" for="dirIn" id="dirLbl" data-en="Add a folder (PC)">フォルダから追加（PC）</label>
   </div>
   <div id="libFoot" style="display:none">
     <button id="urlBtn2" data-en="Add from a download URL">URLから追加</button>
-    <div class="btns"><button id="demoBtn2" data-en="Demo song">デモ曲</button><button id="tutBtn2" data-en="How to play">遊び方</button></div>
+    <div class="btns"><button id="demoBtn2" data-en="Test play">テストプレイ</button><button id="tutBtn2" data-en="How to play">遊び方</button></div>
   </div>
 </div></div>
 
@@ -182,7 +182,7 @@ canvas{display:block;touch-action:none}
   <details class="card"><summary data-en="About &amp; licenses">このアプリについて・ライセンス</summary><div class="in help">
     <div data-en="<p><b>BeSmart</b> is an independent, non-commercial web player for the community-made BMS / bmson chart formats. It is not affiliated with, endorsed by, or connected to any game company or any other BMS player. Product and company names mentioned belong to their respective owners.</p><p><b>Content:</b> this app contains no songs except an original demo and tutorial generated in code. Only load files you have the right to use, and follow each song's distribution terms.</p><p><b>Privacy:</b> songs, scores, replays and settings are stored only in this browser on this device (IndexedDB / localStorage). Nothing is uploaded or sent anywhere, and there is no tracking or analytics.</p><p><b>No warranty:</b> provided as-is. Stored data may be lost if the browser clears site data.</p>">
     <p><b>BeSmart</b> は、コミュニティで作られた BMS／bmson 形式の譜面を遊ぶための、個人による非商用のWebプレイヤーです。特定のゲーム会社や他のBMSプレイヤーとは一切関係がなく、承認・提携も受けていません。記載の製品名・会社名は各社の商標です。</p>
-    <p><b>コンテンツ：</b>コードで生成したオリジナルのデモ曲とチュートリアル以外、楽曲は含まれていません。読み込むファイルは利用する権利のあるものだけにし、各楽曲の配布条件に従ってください。</p>
+    <p><b>コンテンツ：</b>コードで生成したオリジナルのテストプレイ曲とチュートリアル以外、楽曲は含まれていません。読み込むファイルは利用する権利のあるものだけにし、各楽曲の配布条件に従ってください。</p>
     <p><a href="./about.html" target="_blank" rel="noopener" style="color:var(--hi)">機能と仕様の詳しい説明（紹介ページ）</a></p>
     <p><b>プライバシー：</b>曲・スコア・リプレイ・設定は、この端末のブラウザ内（IndexedDB／localStorage）にだけ保存されます。外部への送信やアップロードは一切行わず、アクセス解析も使っていません。「URLから追加」を使ったときだけ、入力した配布元からファイルをダウンロードします（その配布元には通常のダウンロードと同じ通信が届きます）。</p>
     <p><b>免責：</b>現状のまま提供します。ブラウザのサイトデータ消去などで保存内容が失われる場合があります。</p></div>
@@ -1909,50 +1909,23 @@ function buildDemo(){
   penta.forEach((f,i)=>B[LID(i)]=lead(f));
   const roots=[130.81,110.0,87.31,98.0];
   roots.forEach((f,i)=>B['B'+i]=bass(f));
-  // chart text
-  let seed=7;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
-  const lines=['#TITLE DEMO — Pentatonic Rush','#ARTIST BMS Player','#GENRE DEMO','#BPM 148','#PLAYLEVEL 4','#TOTAL 220'];
-  const fmtM=m=>String(m).padStart(3,'0');
-  const row=(m,ch,slots)=>lines.push(`#${fmtM(m)}${ch}:${slots.join('')}`);
-  row(0,'01',['03','03','03','03']);
-  const chords=[[0,2,4,5,7,9],[4,0,2,5,9,7],[5,0,3,8,5,0],[3,1,4,6,8,3]];
-  let pitch=4;
-  const CH=['11','12','13','14','15','18','19'];
-  for(let m=1;m<=24;m++){
-    const sec=m<=4?0:m<=12?1:m<=20?2:3;
-    const ci=(m-1)%4;
-    row(m,'01',['01','00','00','00','01','00','00','00']);
-    row(m,'01',['00','00','02','00','00','00','02','00']);
-    row(m,'01',Array(8).fill('03'));
-    row(m,'01',['B'+ci,'00','B'+ci,'00','B'+ci,'00','B'+ci,'00']);
-    const lanes={};CH.forEach(c=>lanes[c]=Array(8).fill('00'));
-    const sc=Array(8).fill('00');
-    for(let s=0;s<8;s++){
-      let place=false;
-      if(sec===0)place=s%2===0;
-      else if(sec===1)place=s%2===0||rnd()<.45;
-      else if(sec===2)place=s%2===0||rnd()<.7;
-      else place=s%2===0||rnd()<.85;
-      if(!place)continue;
-      if(s===0&&rnd()<.5)pitch=chords[ci][Math.floor(rnd()*6)];
-      else pitch=Math.max(0,Math.min(9,pitch+[-2,-1,-1,1,1,2][Math.floor(rnd()*6)]));
-      const lane=Math.min(6,Math.floor(pitch*7/10));
-      lanes[CH[lane]][s]=LID(pitch);
-      if(sec>=2&&s%4===0&&rnd()<(sec===3?.6:.3)){
-        const p2=pitch>=5?pitch-4:pitch+4;const l2=Math.min(6,Math.floor(p2*7/10));
-        if(l2!==lane)lanes[CH[l2]][s]=LID(p2);
-      }
-    }
-    if(sec>=1&&(m%2===1))sc[0]='04';
-    if(sec===3&&m%2===0)sc[4]='04';
-    CH.forEach(c=>{if(lanes[c].some(x=>x!=='00'))row(m,c,lanes[c]);});
-    if(sc.some(x=>x!=='00'))row(m,'16',sc);
-  }
-  row(25,'01',['01']);row(25,'01',['L5']);row(25,'01',['B0']);
+  // test-play chart: ド レ ミ ファ ソ ラ シ ド → ド シ ラ ソ ファ ミ レ ド, one note per beat, a staircase across scratch + 7 keys
+  const piano=f=>mk(1.6,t=>{const a=Math.min(1,t/.003);let v=0;const hs=[[1,1,2.2],[2,.42,3.2],[3,.2,4.5],[4,.11,6],[5,.06,8],[6,.035,10]];
+    for(const [h,amp,d] of hs)v+=amp*Math.sin(2*Math.PI*f*h*(1+.0004*h*h)*t)*Math.exp(-d*t);return v*a*.28;});
+  const scale=[261.63,293.66,329.63,349.23,392.0,440.0,493.88,523.25];
+  scale.forEach((f,i)=>B['P'+(i+1)]=piano(f));
+  B['K1']=mk(.08,t=>Math.sin(2*Math.PI*1800*t)*Math.exp(-60*t)*.35);
+  B['K2']=mk(.08,t=>Math.sin(2*Math.PI*1200*t)*Math.exp(-60*t)*.25);
+  const lines=['#TITLE テストプレイ — ドレミファソラシド','#ARTIST BeSmart','#GENRE TEST','#BPM 120','#PLAYLEVEL 1','#TOTAL 200','#RANK 3'];
+  const row=(m,ch,a)=>lines.push(`#${String(m).padStart(3,'0')}${ch}:${a.join('')}`);
+  row(0,'01',['K1','K2','K2','K2']);
+  const LANE=['16','11','12','13','14','15','18','19']; // ド=皿, レ..ド=1..7鍵
+  const seq=[0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0];
+  seq.forEach((p,k)=>{const m=1+(k>>2),beat=k&3;const a=['00','00','00','00'];a[beat]='P'+(p+1);row(m,LANE[p],a);});
   return {text:lines.join('\n'),buffers:B};
 }
 
-const DEMO_META={demo:true,title:'DEMO — Pentatonic Rush',subtitle:'',artist:'BeSmart',genre:'DEMO',level:'4',difficulty:2,mode:'7k',bpm:148,minB:148,maxB:148,mainB:148,archName:'Built-in demo'};
+const DEMO_META={demo:true,title:'テストプレイ — ドレミファソラシド',subtitle:'',artist:'BeSmart',genre:'TEST',level:'1',difficulty:1,mode:'7k',bpm:120,minB:120,maxB:120,mainB:120,archName:'Built-in test play'};
 function openDemo(){
   ensureAudio();
   const D=buildDemo();const b=compileBase(D.text,'bme',mulberry32(1));
