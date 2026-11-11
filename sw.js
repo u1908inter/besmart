@@ -1,10 +1,11 @@
 /* BeSmart service worker: offline cache + Android share target */
-const CACHE = 'besmart-v2';
+const CACHE = 'besmart-v3';
 const SHELL = ['./', './index.html', './unrar.js', './unrar.wasm', './la/libarchive.js', './la/worker-bundle.js', './la/libarchive.wasm',
   './vendor/ogg-vorbis-decoder.min.js', './songs/BeSmartPV.zip', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache: 'reload' bypasses the browser HTTP cache so a new version is really fetched
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('besmart-v') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -32,7 +33,7 @@ self.addEventListener('fetch', e => {
   if (url.pathname.includes('/media/')) return; // the promo video is not cached
   // pages: network first, fall back to cache (so updates arrive quickly)
   if (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
-    e.respondWith(fetch(req).then(r => { const cp = r.clone(); if (r.ok) caches.open(CACHE).then(c => c.put(req, cp)); return r; })
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(r => { const cp = r.clone(); if (r.ok) caches.open(CACHE).then(c => c.put(req, cp)); return r; })
       .catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || caches.match('./index.html'))));
     return;
   }

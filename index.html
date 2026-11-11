@@ -138,7 +138,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0">スマホで遊べるBMSプレイヤー　VER 1.0</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1946)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -737,7 +737,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0">スマホで遊べるBMSプレイヤー　VER 1.0</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1946)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3033,7 +3033,7 @@ function viewerSeek(t){
   G.bgmIdx=idx(c.bgm,b=>b.time>=t);G.autoIdx=idx(c.notes,n=>n.time>=t);
   stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;
   G.combo=combo;G.counts.PG=combo;G.judged=combo;
-  G.T0=t;G.clock0=actx.currentTime+0.05;
+  G.T0=t+G.ofs/1000;G.clock0=actx.currentTime+0.05;
 }
 function viewerPause(p){
   if(!G||!G.viewer)return;
@@ -3097,7 +3097,7 @@ cv.addEventListener('pointermove',e=>{
     // finger down = chart moves down = later notes come into view
     const b=vDrag.b0+(ipj(e.clientY)-vDrag.y0)/ppb();
     const t=Math.max(0,Math.min(G.chart.endTime+1,beatToTime(G.chart.segs,b)));
-    viewerSeek(t);G.clock0=actx.currentTime;G.T0=t;return;
+    viewerSeek(t);G.clock0=actx.currentTime;G.T0=t+G.ofs/1000;return;
   }
   if(ctrlPtr&&ctrlPtr.id===e.pointerId){
     const dy=e.clientY-ctrlPtr.y;if(Math.abs(dy)<4)return;ctrlPtr.y=e.clientY;
