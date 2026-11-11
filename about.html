@@ -44,7 +44,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <figcaption style="font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00; margin-top: 6px">紹介動画（55秒）</figcaption>
     </figure>
     <nav aria-label="ページ内の目次" style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; border-top: 2px dashed #6E4800; padding-top: 14px">
-      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#phone">スマホ向け機能</a><a href="#play">遊び方の幅</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a>
+      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#phone">スマホ向け機能</a><a href="#play">遊び方の幅</a><a href="#tables">難易度表</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a>
     </nav>
   </header>
 
@@ -65,13 +65,13 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <ul>
       <li><code>.bms</code> <code>.bme</code> <code>.bml</code> <code>.pms</code> <code>.bmson</code></li>
       <li>bmson は 1.0 と旧形式（0.21）に対応。1つの音声ファイルを切り分けて鳴らす方式（スライス・継続フラグ）にも対応します。</li>
-      <li>文字コードは UTF-8 と Shift_JIS を自動判別します。</li>
+      <li>文字コードは UTF-8・Shift_JIS・EUC-KR（韓国語）を自動判別します。書庫の中の韓国語のファイル名も読めます。</li>
     </ul>
     <h3>書庫（圧縮ファイル）</h3>
     <div class="tw"><table>
       <thead><tr><th>形式</th><th>対応内容</th><th>非対応</th></tr></thead>
       <tbody>
-        <tr><td>ZIP</td><td>無圧縮・Deflate。Shift_JIS／UTF-8 のファイル名</td><td>ZIP64、暗号化</td></tr>
+        <tr><td>ZIP</td><td>無圧縮・Deflate。Shift_JIS／EUC-KR／UTF-8 のファイル名</td><td>ZIP64、暗号化</td></tr>
         <tr><td>RAR</td><td>RAR4・RAR5（公式の展開プログラムを内蔵）。日本語ファイル名</td><td>分割書庫（part1, part2…）、パスワード付き</td></tr>
         <tr><td>LZH</td><td>-lh0- -lh4- -lh5- -lh6- -lh7- -lz4-、ヘッダレベル0〜3、Shift_JIS のファイル名</td><td>-lh1- など初期の方式</td></tr>
         <tr><td>7z</td><td>LZMA／LZMA2 など一般的な形式</td><td>パスワード付き</td></tr>
@@ -89,7 +89,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <li>音声：WAV（8/16/24/32bit PCM・浮動小数点）、OGG Vorbis、MP3 など端末が再生できる形式。OGG を再生できない古い端末でも、内蔵の展開処理で再生します。</li>
       <li>画像（BGA・ジャケット）：BMP、PNG、JPG など。</li>
       <li>譜面に書かれた拡張子と実際のファイルが違う場合（<code>kick.wav</code> と書かれていて実際は <code>KICK.ogg</code> など）も、大文字小文字や拡張子の違いを吸収して探します。</li>
-      <li>動画のBGA（mpg・avi・wmv など）は表示しません。</li>
+      <li>動画のBGAは mp4・webm を再生します（曲の時間に合わせて同期し、一時停止や再生速度にも追従）。mpg・wmv などブラウザで再生できない形式は表示しませんが、同じ名前の mp4／webm が入っていればそちらを使います。</li>
     </ul>
   </section>
 
@@ -306,6 +306,10 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
 
   <section id="play">
     <h2>遊び方の幅</h2>
+    <h3>再生速度</h3>
+    <p>通常のプレイでも、曲全体の速さを ×0.50〜×2.00 で変えられます（音の高さも変わります）。×1.00以外のプレイはスコア・ランプを記録しません。</p>
+    <h3>RANDOMの並びを指定</h3>
+    <p>配置に「RANDOM（並びを指定）」を選び、鍵盤の並びを数字で入力すると（例：7654321＝MIRROR）、その並びで練習できます。RANDOMなどで遊んだあとのリザルトにはその回の並びが表示され、「この並びを指定に使う」でそのまま練習用に設定できます。</p>
     <h3>練習モード</h3>
     <p>開始する小節と再生速度（0.5〜1.5倍）を選んで、苦手な場所だけを繰り返し練習できます。練習中はゲージで落ちることがなく、スコアも記録しません。</p>
     <h3>譜面ビューア</h3>
@@ -318,6 +322,17 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <p>ランダム系の配置で良い並びが出たときに、同じ並びのまま遊び直せます（ポーズ画面・リザルトから）。</p>
     <h3>チュートリアルとテストプレイ</h3>
     <p>操作を順番に練習できるチュートリアル譜面と、ドレミファソラシド→ドシラソファミレドを弾くだけのテストプレイ曲を内蔵しています。</p>
+  </section>
+
+  <section id="tables">
+    <h2>難易度表</h2>
+    <p>設定の「難易度表」に表のURL（表のページ、または header.json）を入力すると、表の譜面と手持ちの曲を照合して、曲一覧に表ごと・レベルごとのフォルダを作ります。照合は譜面ファイルの MD5／SHA-256 で行うので、他のBMSプレイヤーと同じ基準です。</p>
+    <ul>
+      <li>レベルごとに「所持 3 / 40」のように持っている数を表示します。</li>
+      <li>持っていない譜面も一覧に出せ（「未所持も表示」）、表に載っている配布ページや差分のリンクを開けます。リンクが書庫ファイルそのものなら、「URLから追加」でそのまま取り込めます。</li>
+      <li>表の「更新」で最新の内容に、「削除」で一覧から外せます。おまかせ選曲は、表を選んでいるときはその表の所持曲から選びます。</li>
+      <li>多くの表は他サイトからの読み込みを許可していないため、URLで追加できないことがあります。その場合は、表の header.json とデータのJSONを端末に保存して「ファイルから読み込む」を使ってください。</li>
+    </ul>
   </section>
 
   <section id="records">

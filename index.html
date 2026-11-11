@@ -47,7 +47,7 @@ button:active,.btn:active,.ib:active{background:var(--hi);color:var(--bg);text-s
 button:disabled{opacity:.35}
 input[type=file]{display:none}
 .bar{display:flex;gap:6px;margin-bottom:6px}
-.bar input,.bar select,select,textarea,#urlIn{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
+.bar input,.bar select,select,textarea,#urlIn,#tblUrl,#setBody input[type=text]{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
 select option{background:var(--bg);color:var(--ink)}
 input::placeholder,textarea::placeholder{color:var(--dim)}
 .bar select{flex:0 0 auto}
@@ -70,6 +70,7 @@ input::placeholder,textarea::placeholder{color:var(--dim)}
 .lv{display:inline-block;color:var(--bg);background:var(--ink);padding:0 6px;font-size:12px;margin-right:6px;text-shadow:none}
 .empty{font-size:15px;line-height:1.8;padding:14px 0}
 .empty p{margin:0 0 12px}
+.tblh{margin:14px 0 4px;padding:4px 8px;border-bottom:1px dashed var(--faint);color:var(--hi);font-size:15px}.song.miss{opacity:.62}.song.miss .ml{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.song.miss .ib{font-size:12px;padding:2px 8px;text-decoration:none}
 .guide{margin:22px 0 0;padding:14px 14px 4px;border:1px dashed var(--dim,#6E4800);text-align:left}.guide h3{margin:0 0 8px;font-size:17px;font-weight:400}.guide ol{margin:0;padding-left:1.3em}.guide li{margin:0 0 10px}.gchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.gchip{display:inline-block;border:1px solid currentColor;padding:2px 10px;font-size:14px;color:inherit;text-decoration:none;line-height:1.7}.gchip:active{opacity:.6}
 .hlp{font-size:12px;color:var(--dim);margin:-2px 0 8px;line-height:1.6}
 .card{background:transparent;border:2px solid var(--ink);border-radius:0;padding:14px;margin-bottom:14px}
@@ -151,6 +152,10 @@ canvas{display:block;touch-action:none}
     <select id="sort"><option value="title" data-en="Title">曲名</option><option value="level" data-en="Level">レベル</option><option value="lamp" data-en="Clear">ランプ</option><option value="score" data-en="Score">スコア</option><option value="added" data-en="Added">追加日</option><option value="artist" data-en="Artist">アーティスト</option></select>
   </div>
   <div id="count" class="hlp"></div>
+  <div class="bar" id="tblBar" style="display:none">
+    <select id="tblSel"></select>
+    <label style="display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:13px"><input type="checkbox" id="tblMiss" style="width:auto"><span data-en="Missing">未所持も表示</span></label>
+  </div>
   <div class="bar" id="rndBar" style="display:none">
     <select id="rndF"><option value="all" data-en="Any chart">全譜面から</option><option value="notclear" data-en="Not cleared">未クリアから</option><option value="noteasy" data-en="Below EASY CLEAR">EASY未満から</option><option value="failed" data-en="Not played / FAILED">未プレイ・FAILEDから</option></select>
     <button id="rndBtn" class="ib" data-en="Random pick">おまかせ選曲</button>
@@ -771,13 +776,29 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 <div id="toast"></div>
 <script>
 'use strict';
-function decodeText(ab){
-  const u=new Uint8Array(ab);
-  try{ return new TextDecoder('utf-8',{fatal:true}).decode(u); }catch(e){}
-  try{ return new TextDecoder('shift_jis').decode(u); }catch(e){}
-  return new TextDecoder().decode(u);
+/* Text decoding for charts and archive file names: UTF-8, else Shift_JIS or EUC-KR (CP949) by content */
+const _TD={};
+function _td(n){if(!(n in _TD)){try{_TD[n]=new TextDecoder(n);}catch(e){_TD[n]=null;}}return _TD[n];}
+function legacyCodec(u8){
+  const sj=_td('shift_jis'),ek=_td('euc-kr');
+  if(!ek||!sj)return sj?'shift_jis':'utf-8';
+  let hi=0;for(let i=0;i<u8.length;i++)if(u8[i]>=0x80)hi++;
+  if(hi<4)return 'shift_jis';
+  const a=sj.decode(u8),b=ek.decode(u8);
+  let sjHalf=0,sjJa=0,sjBad=0,ekHan=0,ekBad=0,ekHanja=0;
+  for(const ch of a){const c=ch.codePointAt(0);if(c>=0xFF61&&c<=0xFF9F)sjHalf++;else if((c>=0x3040&&c<=0x30FF)||(c>=0x4E00&&c<=0x9FFF))sjJa++;else if(c===0xFFFD)sjBad++;}
+  for(const ch of b){const c=ch.codePointAt(0);if(c>=0xAC00&&c<=0xD7A3)ekHan++;else if(c>=0x4E00&&c<=0x9FFF)ekHanja++;else if(c===0xFFFD)ekBad++;}
+  // Korean text read as Shift_JIS turns into half-width katakana; real Japanese has kana/kanji instead.
+  if(ekBad===0&&ekHan>=2&&sjHalf>sjJa&&ekHan>=ekHanja)return 'euc-kr';
+  if(sjBad>0&&ekBad===0&&ekHan>=2)return 'euc-kr';
+  return 'shift_jis';
 }
-
+function decodeText(ab){
+  const u=ab instanceof Uint8Array?ab:new Uint8Array(ab);
+  try{ return new TextDecoder('utf-8',{fatal:true}).decode(u); }catch(e){}
+  const d=_td(legacyCodec(u));
+  return d?d.decode(u):new TextDecoder().decode(u);
+}
 
 /* ======================= BMS PARSER ======================= */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
@@ -1008,8 +1029,15 @@ function makePlay(base,o){
     else if(a==='srandom'||a==='hrandom'||a==='allscr'||a==='spiral')perNote.push({side:si,mode:a});
     else if(a==='randomex'&&s.scr!=null){const pool=[s.scr,...ks],sh2=pool.slice();for(let i=sh2.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh2[i],sh2[j]]=[sh2[j],sh2[i]];}s.map={};pool.forEach((k,i)=>s.map[k]=sh2[i]);return;}
     else if(a==='randomex'){for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}}
+    else if(a==='custom'){
+      const pat=String(o.arrPat||'').replace(/[^0-9]/g,'');const d=[...pat].map(c=>+c);
+      const ok=d.length===n&&d.every(x=>x>=1&&x<=n)&&new Set(d).size===n;
+      if(ok){sh=new Array(n);d.forEach((orig,pos)=>{sh[orig-1]=ks[pos];});}
+      else{for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}}
+    }
     // compose with flip: lane L(original) -> perm[L] (flipped) -> then random within destination side
     s.map={};ks.forEach((k,i)=>s.map[k]=sh[i]);
+    if(['mirror','random','rrandom','custom','randomex'].includes(a)&&n<=9)s.pat=ks.map((_,pos)=>sh.indexOf(ks[pos])+1).join('');
   });
   const remap=l=>{
     const f=perm[l];
@@ -1057,7 +1085,7 @@ function makePlay(base,o){
   notes.forEach(n=>laneNotes[n.lane].push(n));
   mines.sort((a,b)=>a.time-b.time).forEach(m=>laneMines[m.lane].push(m));
   inv.sort((a,b)=>a.time-b.time).forEach(x=>laneInv[x.lane].push(x));
-  return Object.assign({},base,{notes,mines,laneNotes,laneMines,laneInv});
+  return Object.assign({},base,{notes,mines,laneNotes,laneMines,laneInv,arrPat:sides.map(s=>s.pat||null)});
 }
 
 function judgeWindows(rank,defex,expand){
@@ -1148,12 +1176,20 @@ async function readZip(file){
   if(eocd<0)throw new Error(file.name+' はZIPとして読めませんでした');
   const cnt=dv.getUint16(eocd+10,true);let p=dv.getUint32(eocd+16,true);
   const u8=new TextDecoder('utf-8');let sj;try{sj=new TextDecoder('shift_jis');}catch(e){sj=u8;}
+  { // pick Shift_JIS or EUC-KR for non-UTF-8 names by looking at all of them together
+    const parts=[];let q=p;
+    for(let n=0;n<cnt;n++){if(dv.getUint32(q,true)!==0x02014b50)break;const fl=dv.getUint16(q+8,true),nl=dv.getUint16(q+28,true),el=dv.getUint16(q+30,true),cl=dv.getUint16(q+32,true);
+      if(!(fl&0x800)){let utf=true;try{new TextDecoder('utf-8',{fatal:true}).decode(buf.subarray(q+46,q+46+nl));}catch(e){utf=false;}if(!utf)parts.push(buf.subarray(q+46,q+46+nl),new Uint8Array([10]));}
+      q+=46+nl+el+cl;}
+    if(parts.length){const all=new Uint8Array(parts.reduce((a,x)=>a+x.length,0));let o=0;for(const x of parts){all.set(x,o);o+=x.length;}
+      if(legacyCodec(all)==='euc-kr'){try{sj=new TextDecoder('euc-kr');}catch(e){}}}
+  }
   const out=[];
   for(let n=0;n<cnt;n++){
     if(dv.getUint32(p,true)!==0x02014b50)break;
     const flag=dv.getUint16(p+8,true),method=dv.getUint16(p+10,true);
     const csize=dv.getUint32(p+20,true),nlen=dv.getUint16(p+28,true),elen=dv.getUint16(p+30,true),clen=dv.getUint16(p+32,true),loff=dv.getUint32(p+42,true);
-    const name=((flag&0x800)?u8:sj).decode(buf.subarray(p+46,p+46+nlen));
+    const nb=buf.subarray(p+46,p+46+nlen);let name;if(flag&0x800)name=u8.decode(nb);else{try{name=new TextDecoder('utf-8',{fatal:true}).decode(nb);}catch(e){name=sj.decode(nb);}}
     p+=46+nlen+elen+clen;
     if(name.endsWith('/')||name.endsWith('\\'))continue;
     if(/(^|\/)__MACOSX\//.test(name))continue;
@@ -1384,7 +1420,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',reduce:'off',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1419,7 +1455,7 @@ function applyI18n(){
 }
 let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem('bmsp2-fav')||'[]'));}catch(e){}
 const saveFav=()=>{try{localStorage.setItem('bmsp2-fav',JSON.stringify([...FAV]));}catch(e){}};
-const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH'],['spiral','SPIRAL'],['randomex','RANDOM-EX']];
+const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH'],['spiral','SPIRAL'],['randomex','RANDOM-EX'],['custom',L('RANDOM（並びを指定）','RANDOM (set pattern)')]];
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
   {k:'side',t:L('スクラッチ（皿）の位置','Scratch (turntable) side'),sel:[['L',L('左','Left')],['R',L('右','Right')]],h:L('5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます。','Puts the scratch lane at the left or right edge in single-side modes such as 5K and 7K.')},
@@ -1428,10 +1464,12 @@ function SCHEMA(){return [
   {k:'gas',t:L('ゲージ自動降格（GAS）','Gauge auto shift (GAS)'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
   {k:'gasMin',t:L('自動降格の下限','GAS lowest gauge'),sel:[['aeasy','ASSIST EASY'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EX HARD']],h:L('自動降格でここまで下がったら、それより下には下がりません。','GAS will not shift below this gauge.')},
   {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS(),h:L('MIRROR＝左右反転／RANDOM＝鍵盤を並べ替え／R-RANDOM＝鍵盤を回転／S-RANDOM＝ノーツ毎にランダム／H-RANDOM＝縦連を避けたS-RANDOM／ALL-SCRATCH＝空いているときノーツを皿へ／SPIRAL＝回転が小節ごとにずれていく／RANDOM-EX＝皿も含めて並べ替え','MIRROR flips the keys / RANDOM shuffles keys / R-RANDOM rotates keys / S-RANDOM randomizes each note / H-RANDOM is S-RANDOM avoiding jacks / ALL-SCRATCH moves notes to the scratch when free / SPIRAL rotation shifts every bar / RANDOM-EX shuffles including the scratch')},
+  {k:'arrPat',t:L('並びの指定','Pattern'),txt:'1234567',h:L('「RANDOM（並びを指定）」のときの鍵盤の並びを、左から順に元の鍵盤の番号で入力します（例：7654321＝MIRROR）。RANDOMで遊んだあとのリザルトに、その回の並びが表示されます。','For “RANDOM (set pattern)”: the original key numbers from left to right (e.g. 7654321 = MIRROR). The result screen shows the pattern each RANDOM play used.')},
   {k:'arr2',t:L('配置（2P側・DP）','Arrangement (2P side)'),sel:ARR_OPTS()},
   {k:'flip',t:L('FLIP（DPの左右入替）','FLIP (swap DP sides)'),b:1},
   {k:'lnmode',t:L('ロングノート','Long notes'),sel:[['chart',L('譜面の指定に従う','Chart default')],['ln',L('終点判定なし','No release judge')],['cn',L('離す判定あり','Release judged')],['hcn',L('押し続け必須','Must keep holding')]]},
   {k:'reduce',t:L('鍵盤を減らす','Fewer keys'),sel:[['off','OFF'],['5k',L('7鍵→5鍵','7K → 5K')],['4k',L('4鍵にする（7鍵・5鍵）','4 keys (from 7K/5K)')]],h:L('7鍵・5鍵の譜面を少ない鍵盤に変換して遊びます。置けないノーツは音だけ鳴ります。変換したプレイはスコア・ランプを記録しません。','Converts 7K/5K charts to fewer keys. Notes that cannot be placed only play their sound. Converted plays are not recorded.')},
+  {k:'playRate',t:L('再生速度','Playback speed'),r:[0.5,2,0.05],f:v=>'×'+v.toFixed(2),h:L('曲全体の速さを変えます（音の高さも変わります）。×1.00以外のプレイはスコア・ランプを記録しません。','Changes the speed of the whole song (pitch changes too). Plays at a speed other than ×1.00 are not recorded.')},
  ]},
  {sec:L('アシスト','Assist'),items:[
   {k:'autoScr',t:L('オートスクラッチ','Auto scratch'),b:1},{k:'legacy',t:L('ロングノートを通常ノーツに','Long notes as normal notes'),b:1},{k:'expand',t:L('判定幅拡大','Wider timing window'),b:1},
@@ -1467,6 +1505,7 @@ function SCHEMA(){return [
   {k:'laneW',t:L('レーン幅','Lane width'),r:[0.5,1,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'edge',t:L('境目の同時押し','Edge double-press'),r:[0,45,5],f:v=>v?v+'%':'OFF',h:L('レーンの境目付近を押すと1本の指で両隣を同時押し。','Pressing near a lane boundary presses both neighbours with one finger.')},
  ]},
+ {sec:L('難易度表','Difficulty tables'),items:[{hint:'<div id="tblBox"></div>'}]},
  {sec:L('スマホ向け','Phone'),items:[
   {k:'rub',t:L('スクラッチをこすって操作','Rub the scratch'),b:1,h:L('スクラッチのレーンを上下にこすると、こするたびに打鍵になります。タップでも操作できます。','Rubbing the scratch lane up and down counts as a hit each stroke. Tapping still works.')},
   {k:'tapAdj',t:L('タップ位置の補正','Tap position correction'),b:1,h:L('ノーツを叩いた位置を覚えて、レーンの境目をあなたの押し方に合わせて少しずつずらします（最大でレーン幅の3割）。','Learns where you hit notes and gradually shifts lane borders to match (up to 30% of a lane).')},
@@ -1488,7 +1527,7 @@ function SCHEMA(){return [
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
-function buildSettings(){setTimeout(()=>{try{renderPwaBox();}catch(e){}},0);
+function buildSettings(){setTimeout(()=>{try{renderPwaBox();renderTblBox();}catch(e){}},0);
   const body=$('#setBody');body.innerHTML='';
   for(const sec of SCHEMA()){
     const d=document.createElement('details');d.className='card';if(sec.open)d.open=true;
@@ -1501,6 +1540,8 @@ function buildSettings(){setTimeout(()=>{try{renderPwaBox();}catch(e){}},0);
         const s=row.querySelector('select');s.value=S[it.k];s.onchange=()=>{S[it.k]=s.value;saveS();if(it.k==='lang'){applyI18n();buildSettings();renderLibrary();}if(it.k==='phosphor'){applyPhosphor();}};}
       else if(it.b){row.innerHTML=`<span>${it.t}</span><label class="sw"><input type="checkbox"><i></i></label>`;
         const c=row.querySelector('input');c.checked=!!S[it.k];c.onchange=()=>{S[it.k]=c.checked;saveS();};}
+      else if(it.txt){row.innerHTML=`<span>${it.t}</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="${it.txt}" style="width:9em">`;
+        const c=row.querySelector('input');c.value=S[it.k]||'';c.oninput=()=>{S[it.k]=c.value.replace(/[^0-9]/g,'');saveS();};}
       else if(it.r){row.innerHTML=`<span>${it.t}</span><input type="range" min="${it.r[0]}" max="${it.r[1]}" step="${it.r[2]}"><output></output>`;
         const r=row.querySelector('input'),o=row.querySelector('output');r.value=S[it.k];
         const up=()=>{S[it.k]=+r.value;o.textContent=it.f(S[it.k]);saveS();applyVol();if(it.k==='ofs')storeOfs();};r.oninput=up;o.textContent=it.f(S[it.k]);row._sync=()=>{r.value=S[it.k];o.textContent=it.f(S[it.k]);};}
@@ -1514,13 +1555,13 @@ function syncSettings(){$$('#setBody .row').forEach(r=>r._sync&&r._sync());}
 
 /* ---------- storage (IndexedDB with memory fallback) ---------- */
 const DB=(()=>{
-  const mem={archives:new Map(),charts:new Map(),replays:new Map()},KP={archives:'id',charts:'key',replays:'hash'};
+  const mem={archives:new Map(),charts:new Map(),replays:new Map(),tables:new Map()},KP={archives:'id',charts:'key',replays:'hash',tables:'url'};
   let dbp=null,useMem=false;
   function open(){
     if(dbp)return dbp;
     dbp=new Promise(res=>{
       try{
-        const r=indexedDB.open('bmsplayer',1);
+        const r=indexedDB.open('bmsplayer',2);
         r.onupgradeneeded=()=>{const d=r.result;for(const s in KP)if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:KP[s]});};
         r.onsuccess=()=>res(r.result);r.onerror=()=>{useMem=true;res(null);};r.onblocked=()=>{useMem=true;res(null);};
       }catch(e){useMem=true;res(null);}
@@ -1679,6 +1720,129 @@ async function refreshLibrary(){
   try{CHARTS=await DB.all('charts')||[];}catch(e){CHARTS=[];}
   renderLibrary();
 }
+function songRow(c,lvLabel){
+  const r=REC[c.hash]||{},d=document.createElement('div');d.className='song';
+  const rate=r.ex?r.ex/(2*c.notesN):0;
+  const bpm=c.minB!==c.maxB?`${Math.round(c.minB)}-${Math.round(c.maxB)}`:Math.round(c.bpm);
+  d.style.borderLeftColor=r.lamp?LAMPC[r.lamp]:'transparent';d.tabIndex=0;
+  d.innerHTML=`<div class="lvb"><b>${esc(String(lvLabel||c.level||'?').slice(0,5))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
+    <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
+    <div class="m"><span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
+    <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}</div>`;
+  d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
+  d.onclick=()=>openDetail(c);
+  return d;
+}
+/* ---------- difficulty tables ---------- */
+let TABLES=[];
+async function loadTables(){try{TABLES=(await DB.all('tables'))||[];}catch(e){TABLES=[];}renderTblSel();}
+function tblLevels(T){
+  const lv=[...new Set(T.data.map(e=>String(e.level)))];
+  if(Array.isArray(T.levelOrder)&&T.levelOrder.length){const o=T.levelOrder.map(String);lv.sort((a,b)=>(o.indexOf(a)<0?1e9:o.indexOf(a))-(o.indexOf(b)<0?1e9:o.indexOf(b))||a.localeCompare(b,'ja',{numeric:true}));}
+  else lv.sort((a,b)=>a.localeCompare(b,'ja',{numeric:true}));
+  return lv;
+}
+const ARCH_RE=/\.(zip|rar|7z|lzh|lha)(\?|#|$)/i;
+function renderTable(T,list,frag){
+  const byMd5=new Map(),bySha=new Map();
+  for(const c of list){if(c.md5)byMd5.set(c.md5.toLowerCase(),c);if(c.sha256)bySha.set(c.sha256.toLowerCase(),c);}
+  const owned=[],levels=tblLevels(T);let have=0;
+  for(const lv of levels){
+    const es=T.data.filter(e=>String(e.level)===lv);
+    const rows=[];let n=0;
+    for(const e of es){
+      const c=(e.sha256&&bySha.get(String(e.sha256).toLowerCase()))||(e.md5&&byMd5.get(String(e.md5).toLowerCase()));
+      if(c){n++;owned.push(c);rows.push(songRow(c,T.symbol+lv));}
+      else if(S.tblMissing&&!($('#q').value.trim())){
+        const d=document.createElement('div');d.className='song miss';
+        const links=[];
+        if(e.url)links.push(ARCH_RE.test(e.url)?`<button class="ib" data-u="${esc(e.url)}">${L('URLから追加','Add from URL')}</button>`:`<a class="ib" href="${esc(e.url)}" target="_blank" rel="noopener">${L('配布ページ','Download page')}</a>`);
+        if(e.url_diff)links.push(ARCH_RE.test(e.url_diff)?`<button class="ib" data-u="${esc(e.url_diff)}">${L('差分をURLから追加','Add chart from URL')}</button>`:`<a class="ib" href="${esc(e.url_diff)}" target="_blank" rel="noopener">${L('差分','Chart')}</a>`);
+        d.innerHTML=`<div class="lvb"><b>${esc((T.symbol+lv).slice(0,5))}</b><small>${L('未所持','missing')}</small></div>
+          <div class="b"><div class="t">${esc(e.title||'')}</div><div class="m"><span>${esc(e.artist||'')}</span>${e.comment?`<span>${esc(String(e.comment).slice(0,40))}</span>`:''}</div>
+          <div class="ml">${links.join('')}</div></div>`;
+        d.querySelectorAll('button[data-u]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openUrlDlg(b.dataset.u);});
+        rows.push(d);
+      }
+    }
+    have+=n;
+    if(!rows.length)continue;
+    const h=document.createElement('div');h.className='tblh';h.textContent=`${T.symbol}${lv}　${L('所持','have')} ${n} / ${es.length}`;
+    frag.appendChild(h);rows.forEach(r=>frag.appendChild(r));
+  }
+  LIBLIST=owned;
+  $('#count').textContent=L(`${T.name}：所持 ${have} / ${T.data.length} 譜面`,`${T.name}: ${have} / ${T.data.length} charts owned`);
+  if(!T.data.length)frag.appendChild(Object.assign(document.createElement('div'),{className:'hlp',textContent:L('この表には譜面がありません','This table is empty')}));
+}
+function renderTblSel(){
+  const sel=$('#tblSel');if(!sel)return;
+  sel.innerHTML=`<option value="">${L('すべての曲','All songs')}</option>`+TABLES.map(t=>`<option value="${esc(t.url)}">${esc(t.name)}</option>`).join('');
+  if(S.table&&!TABLES.some(t=>t.url===S.table))S.table='';
+  sel.value=S.table||'';show('#tblBar',!!TABLES.length,'flex');$('#tblMiss').checked=!!S.tblMissing;
+}
+function stripBom(t){return t.replace(/^﻿/,'');}
+async function fetchText(u){
+  let r;try{r=await fetch(u,{mode:'cors',credentials:'omit'});}catch(e){throw new Error(L(`${new URL(u).hostname} から読み込めませんでした（他サイトからの読み込みを許可していないか、接続できません）`,`Could not load from ${new URL(u).hostname} (cross-site loading not allowed, or unreachable)`));}
+  if(!r.ok)throw new Error(`HTTP ${r.status}: ${u}`);
+  return stripBom(await r.text());
+}
+function normTable(url,header,data){
+  if(!Array.isArray(data))throw new Error(L('表のデータの形式が正しくありません','Unexpected table data format'));
+  return {url,name:String(header.name||url),symbol:String(header.symbol||''),levelOrder:header.level_order||null,updated:Date.now(),
+    data:data.filter(e=>e&&(e.md5||e.sha256)).map(e=>({md5:e.md5||'',sha256:e.sha256||'',level:String(e.level??'?'),title:e.title||'',artist:e.artist||'',url:e.url||'',url_diff:e.url_diff||'',comment:e.comment||''}))};
+}
+async function addTableUrl(raw){
+  let u=String(raw).trim();if(location.protocol==='https:'&&/^http:\/\//i.test(u))u=u.replace(/^http:/i,'https:');
+  const base=new URL(u);let text=await fetchText(base.href),header,hUrl=base;
+  if(/^\s*\{/.test(text))header=JSON.parse(text);
+  else{const m=text.match(/<meta[^>]+name\s*=\s*["']bmstable["'][^>]*>/i);const c=m&&m[0].match(/content\s*=\s*["']([^"']+)["']/i);
+    if(!c)throw new Error(L('このページは難易度表ではないようです（bmstable の指定がありません）','This page is not a difficulty table (no bmstable meta)'));
+    hUrl=new URL(c[1],base);header=JSON.parse(await fetchText(hUrl.href));}
+  if(!header.data_url)throw new Error(L('表のヘッダーに data_url がありません','The table header has no data_url'));
+  const data=JSON.parse(await fetchText(new URL(header.data_url,hUrl).href));
+  const T=normTable(base.href,header,data);await DB.put('tables',T);return T;
+}
+async function addTableFiles(files){
+  let header=null,data=null,name='';
+  for(const f of files){const j=JSON.parse(stripBom(await f.text()));if(Array.isArray(j)){data=j;name=name||f.name.replace(/\.json$/i,'');}else if(j&&typeof j==='object'){header=j;}}
+  if(!data)throw new Error(L('表のデータ（譜面の一覧のJSON）が見つかりません','No table data (chart list JSON) found'));
+  const T=normTable('file:'+(header&&header.name||name)+':'+Date.now(),header||{name},data);await DB.put('tables',T);return T;
+}
+async function backfillHashes(force){
+  const need=CHARTS.filter(c=>force||!c.md5);if(!need.length)return 0;
+  const byA=new Map();need.forEach(c=>{if(!byA.has(c.archiveId))byA.set(c.archiveId,[]);byA.get(c.archiveId).push(c);});
+  let done=0;
+  for(const [aid,cs] of byA){
+    try{const arch=await DB.get('archives',aid);if(!arch)continue;const ix=makeIndex(await listArchive(arch));
+      for(const c of cs){const f=ix.files.find(x=>x.n===c.path);if(!f)continue;const raw=await f.get();const u=raw instanceof Uint8Array?raw:new Uint8Array(raw);
+        c.md5=md5hex(u);c.sha256=await sha256hex(u);await DB.put('charts',c);done++;
+        toast(L(`譜面を照合中… ${done} / ${need.length}`,`Matching charts… ${done} / ${need.length}`),0);}}catch(e){console.error(e);}
+  }
+  return done;
+}
+function renderTblBox(){
+  const b=document.getElementById('tblBox');if(!b)return;
+  b.innerHTML=`<b>${L('難易度表','Difficulty tables')}</b><br>${L('難易度表のURL（表のページ、または header.json）を入力して追加します。表の譜面と手持ちの曲を照合して、曲一覧に表ごとのレベル別フォルダを作ります。','Enter a difficulty table URL (its page or header.json). Your charts are matched against it and shown by level in the song list.')}
+    <div style="display:flex;gap:6px;margin:6px 0"><input id="tblUrl" type="url" inputmode="url" placeholder="https://…" style="flex:1;min-width:0"><button class="ib" id="tblAdd">${L('追加','Add')}</button></div>
+    <label class="btn" for="tblFile" style="margin:0 0 6px">${L('ファイルから読み込む（header.json と データのJSON）','Load from files (header.json and data JSON)')}</label><input type="file" id="tblFile" accept=".json,application/json" multiple style="display:none">
+    <div id="tblList">${TABLES.map(t=>`<div class="row" style="gap:6px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(t.name)} <small>(${t.data.length})</small></span>${t.url.startsWith('file:')?'':`<button class="ib" data-up="${esc(t.url)}">${L('更新','Update')}</button>`}<button class="ib" data-del="${esc(t.url)}">${L('削除','Delete')}</button></div>`).join('')||`<div class="hlp">${L('まだ表はありません','No tables yet')}</div>`}</div>
+    <button class="ib" id="tblRehash" style="margin-top:6px">${L('手持ちの譜面を照合し直す','Re-match my charts')}</button>
+    <div class="hlp">${L('多くの表は他サイトからの読み込みを許可していないため、URLでは追加できないことがあります。その場合は、表の header.json とデータのJSONを端末に保存して「ファイルから読み込む」を使ってください。','Many tables block cross-site loading. If adding by URL fails, save the header.json and data JSON and use “Load from files”.')}</div>`;
+  const busy=async(fn)=>{try{await fn();}catch(e){toast(e.message,4500);}};
+  $('#tblAdd').onclick=()=>busy(async()=>{const v=$('#tblUrl').value.trim();if(!v)return;toast(L('表を読み込み中…','Loading table…'),0);const T=await addTableUrl(v);await afterTableAdd(T);});
+  $('#tblFile').onchange=e=>busy(async()=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;const T=await addTableFiles(fs);await afterTableAdd(T);});
+  b.querySelectorAll('[data-up]').forEach(x=>x.onclick=()=>busy(async()=>{toast(L('表を更新中…','Updating table…'),0);const T=await addTableUrl(x.dataset.up);await afterTableAdd(T,true);}));
+  b.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>busy(async()=>{await DB.del('tables',x.dataset.del);if(S.table===x.dataset.del){S.table='';saveS();}await loadTables();renderTblBox();toast(L('表を削除しました','Table deleted'));}));
+  $('#tblRehash').onclick=()=>busy(async()=>{const n=await backfillHashes(true);toast(L(`${n}譜面を照合しました`,`Matched ${n} charts`));});
+}
+async function afterTableAdd(T,upd){
+  const n=await backfillHashes(false);
+  await loadTables();renderTblBox();
+  const byM=new Set(CHARTS.map(c=>(c.md5||'').toLowerCase())),byS=new Set(CHARTS.map(c=>(c.sha256||'').toLowerCase()));
+  const have=T.data.filter(e=>(e.md5&&byM.has(e.md5.toLowerCase()))||(e.sha256&&byS.has(e.sha256.toLowerCase()))).length;
+  S.table=T.url;saveS();renderTblSel();
+  toast(L(`${upd?'更新':'追加'}しました：${T.name}（${T.data.length}譜面、うち所持 ${have}）`,`${upd?'Updated':'Added'} ${T.name} (${T.data.length} charts, ${have} owned)`),4000);
+}
 function renderLibrary(){
   const q=$('#q').value.trim().toLowerCase(),fm=S.fmode,so=S.sort;
   let list=CHARTS.filter(c=>(fm==='all'||(fm==='fav'?FAV.has(c.hash):c.mode===fm))&&(!q||(c.title+' '+(c.subtitle||'')+' '+(c.artist||'')+' '+(c.genre||'')).toLowerCase().includes(q)));
@@ -1694,19 +1858,9 @@ function renderLibrary(){
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   show('#empty',!CHARTS.length,'block');show('#libFoot',!!CHARTS.length,'block');
   const frag=document.createDocumentFragment();
-  for(const c of list){
-    const r=rec(c),d=document.createElement('div');d.className='song';
-    const rate=r.ex?r.ex/(2*c.notesN):0;
-    const bpm=c.minB!==c.maxB?`${Math.round(c.minB)}-${Math.round(c.maxB)}`:Math.round(c.bpm);
-    d.style.borderLeftColor=r.lamp?LAMPC[r.lamp]:'transparent';d.tabIndex=0;
-    d.innerHTML=`<div class="lvb"><b>${esc(String(c.level||'?').slice(0,3))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
-      <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
-      <div class="m"><span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
-      <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}</div>`;
-    d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
-    d.onclick=()=>openDetail(c);
-    frag.appendChild(d);
-  }
+  const T=S.table&&TABLES.find(t=>t.url===S.table);
+  if(T){renderTable(T,list,frag);box.appendChild(frag);return;}
+  for(const c of list)frag.appendChild(songRow(c));
   box.appendChild(frag);
 }
 $('#q').oninput=renderLibrary;
@@ -1717,6 +1871,9 @@ $('#rndBtn').onclick=()=>{
   if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return;}
   openDetail(pool[Math.floor(Math.random()*pool.length)]);
 };
+$('#tblSel').onchange=e=>{S.table=e.target.value;saveS();renderLibrary();};
+$('#tblMiss').onchange=e=>{S.tblMissing=e.target.checked;saveS();renderLibrary();};
+loadTables().then(()=>{if(S.table)renderLibrary();});
 $('#fmode').value=S.fmode;$('#sort').value=S.sort;
 $('#fmode').onchange=e=>{S.fmode=e.target.value;saveS();renderLibrary();};
 $('#sort').onchange=e=>{S.sort=e.target.value;saveS();renderLibrary();};
@@ -1755,7 +1912,8 @@ async function importFiles(list){
     const metas=[],thumbs=new Map();
     for(const f of bms){
       try{
-        const text=decodeText(await f.get());const ext=f.n.split('.').pop();
+        const raw=await f.get();const rawU=raw instanceof Uint8Array?raw:new Uint8Array(raw);
+        const text=decodeText(rawU);const ext=f.n.split('.').pop();
         const b=compileBase(text,ext,mulberry32(1));
         if(have.has(b.hash)){skipped++;continue;}
         have.add(b.hash);
@@ -1766,7 +1924,7 @@ async function importFiles(list){
         metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,
           level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
           total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
-          preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name});
+          preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
       }catch(e){console.warn(e);}
     }
     if(!metas.length)continue;
@@ -2295,7 +2453,7 @@ function startCourse(co){
 const bufCache=new Map(),imgCache=new Map();
 function setLoad(t,r){$('#loadTxt').textContent=t;$('#loadBar').style.width=Math.round(r*100)+'%';}
 let lastPlay=null,lastMode=null,lastMeta=null;
-function snapOpts(){return {arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas,gasMin:S.gasMin,judgeAlg:S.judgeAlg,reduce:S.reduce};}
+function snapOpts(){return {arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas,gasMin:S.gasMin,judgeAlg:S.judgeAlg,reduce:S.reduce,arrPat:S.arrPat,playRate:S.playRate};}
 async function startPlay(meta,mode){
   ensureAudio();lastMeta=meta;lastMode=mode;lastPlay=()=>startPlay(meta,Object.assign({},mode,{seed:undefined}));
   if(!mode.replay)autoProfile();
@@ -2333,7 +2491,14 @@ async function startPlay(meta,mode){
       if(bufCache.size>3000)bufCache.clear();
       if(S.bga==='on'){
         const bids=new Set([...base.bga,...base.poor,...base.layer].map(b=>b.id));bids.add('00');
-        for(const id of bids){const nm=base.P.bmp[id];if(!nm)continue;const f=ix.resolve(meta.dir,nm);if(!f||/\.(mpg|mpeg|avi|wmv|mp4|webm|m1v|m2v)$/i.test(f.n))continue;
+        for(const id of bids){const nm=base.P.bmp[id];if(!nm)continue;let f=ix.resolve(meta.dir,nm);if(!f)continue;
+          if(/\.(mpg|mpeg|avi|wmv|mp4|webm|m4v|mov|m1v|m2v|ogv)$/i.test(f.n)){
+            // video BGA: browsers play mp4/webm; for mpg/wmv etc. use a same-named mp4/webm if the song includes one
+            if(!/\.(mp4|webm|m4v|mov|ogv)$/i.test(f.n)){const stem=nm.replace(/\.[^.]+$/,'');f=ix.resolve(meta.dir,stem+'.mp4')||ix.resolve(meta.dir,stem+'.webm')||ix.resolve(meta.dir,stem+'.m4v');if(!f)continue;}
+            const vkey='v|'+meta.archiveId+'|'+f.n;
+            if(!imgCache.has(vkey))imgCache.set(vkey,f.get().then(ab=>loadVideo(new Blob([ab],{type:/webm$/i.test(f.n)?'video/webm':'video/mp4'}))).catch(()=>null));
+            const v=await imgCache.get(vkey);if(v)images[id]=v;continue;
+          }
           const key=meta.archiveId+'|'+f.n;
           if(!imgCache.has(key))imgCache.set(key,f.get().then(ab=>new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=URL.createObjectURL(new Blob([ab]));})).catch(()=>null));
           const im=await imgCache.get(key);if(im)images[id]=im;}
@@ -2421,7 +2586,7 @@ addEventListener('resize',()=>{if(G)layout();});
 function startGame(chart,buffers,images,o){
   cancelAnimationFrame(raf);
   const lnmode=o.opts.lnmode==='chart'?(chart.lnmode===2?'cn':chart.lnmode===3?'hcn':'ln'):o.opts.lnmode;
-  let startT=null,rate=1;
+  let startT=null,rate=(!o.practice&&!o.tutorial&&o.opts.playRate&&o.opts.playRate!==1)?o.opts.playRate:1;
   if(o.practice){
     const m=chart.measures[Math.min(o.practice.measure,chart.measures.length-1)];startT=m?m.time:0;rate=o.practice.rate||1;
     chart.notes.forEach(n=>{if(n.time<startT-0.001)n.state=2;});
@@ -2445,7 +2610,7 @@ function startGame(chart,buffers,images,o){
     pressed:Array(chart.M.lanes).fill(false),beam:Array(chart.M.lanes).fill(-9),bombs:[],judge:null,fs:{f:0,s:0},dts:[],glog:[],
     rafT:[],drawT:[],lastDraw:0,bgmIdx:0,autoIdx:0,bgaIdx:0,layerIdx:0,poorIdx:0,curBga:null,curLayer:null,curPoor:null,poorUntil:0,
     rec:[],repIdx:0,ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
-    record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced,reduced:!!o.reduced,celebrate:null};
+    record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null};
   if(startT!=null){G.bgmIdx=chart.bgm.findIndex(b=>b.time>=startT-0.001);if(G.bgmIdx<0)G.bgmIdx=chart.bgm.length;
     G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;}
   hold.clear();ptr.clear();ctrlPtr=null;
@@ -2568,7 +2733,7 @@ function update(){
   while(G.bgmIdx<c.bgm.length&&c.bgm[G.bgmIdx].time<ahead){const e=c.bgm[G.bgmIdx++];playSound(e.id,toCtx(e.time),'bgm');}
   while(G.autoIdx<c.notes.length&&c.notes[G.autoIdx].time<ahead){const e=c.notes[G.autoIdx++];if((G.ksAuto||G.autoLanes.has(e.lane))&&e.state!==2)playSound(e.id,toCtx(e.time),'key');}
   const dtime=t+S.vofs/1000;
-  while(G.bgaIdx<c.bga.length&&c.bga[G.bgaIdx].time<=dtime){G.curBga=G.images[c.bga[G.bgaIdx].id]||G.curBga;G.bgaIdx++;}
+  while(G.bgaIdx<c.bga.length&&c.bga[G.bgaIdx].time<=dtime){const ev=c.bga[G.bgaIdx],im=G.images[ev.id];if(im){if(G.curVid&&G.curVid.v!==im){try{G.curVid.v.pause();}catch(e){}G.curVid=null;}G.curBga=im;if(im._isVideo)G.curVid={v:im,te:ev.time};}G.bgaIdx++;}
   while(G.layerIdx<c.layer.length&&c.layer[G.layerIdx].time<=dtime){G.curLayer=G.images[c.layer[G.layerIdx].id]||null;G.layerIdx++;}
   while(G.poorIdx<c.poor.length&&c.poor[G.poorIdx].time<=dtime){G.curPoor=G.images[c.poor[G.poorIdx].id]||null;G.poorIdx++;}
   if(G.replay){const ev=G.replay.events;while(G.repIdx<ev.length&&ev[G.repIdx][0]<=t){const [et,l,d]=ev[G.repIdx++];if(d)press(l,'rep',et);else release(l,'rep',et);}}
@@ -2619,9 +2784,9 @@ function effHS(){if(!S.fhs)return S.hs;return Math.max(0.25,(1-coverFrac())*4000
 function ppb(){const f=G.ppbFix;return effHS()*L_.len*0.1*(f?150/f:1);}
 function greenNum(t){const b=timeToBeat(G.chart.segs,t),s=Math.abs(curScroll(G.chart.sc,b))||1;return Math.round((1-coverFrac())*L_.len/(ppb()*curBpmAt(G.chart.segs,t)/60*s)*1000);}
 function trunc(s,maxW){let o=s;while(o.length>1&&g.measureText(o).width>maxW)o=o.slice(0,-1);return o===s?s:o+'…';}
-function drawImg(im,x,y,w,h,alpha){g.globalAlpha=alpha;
-  if(S.bgaFit==='full'){g.drawImage(im,x,y,w,h);}
-  else{let s=Math.min(w/im.width,h/im.height);if(S.bgaFit==='int'){s=s>=1?Math.floor(s):s;g.imageSmoothingEnabled=false;}g.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);g.imageSmoothingEnabled=true;}
+function drawImg(im,x,y,w,h,alpha){if(im._isVideo){if(im.readyState<2)return;im={_v:im,width:im.videoWidth||16,height:im.videoHeight||9};}const src=im._v||im;g.globalAlpha=alpha;
+  if(S.bgaFit==='full'){g.drawImage(src,x,y,w,h);}
+  else{let s=Math.min(w/im.width,h/im.height);if(S.bgaFit==='int'){s=s>=1?Math.floor(s):s;g.imageSmoothingEnabled=false;}g.drawImage(src,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);g.imageSmoothingEnabled=true;}
   g.globalAlpha=1;}
 // perspective helpers (3D lane view)
 let P3=null;
@@ -2724,7 +2889,7 @@ function draw(){
   const top=safeTop+6,hx=areaX+8,hw=areaW-16;
   g.textAlign='left';g.textBaseline='top';
   g.font='13px '+GF();g.fillStyle=PP.dim;
-  const tag=(G.reduced?`[${G.chart.mode.toUpperCase()}${L('変換','')}] `:'')+(G.viewer?'[VIEWER] ':G.replay?'[REPLAY] ':G.auto?'[AUTO] ':G.tut?'[TUTORIAL] ':G.practice?`[${L('練習','PRACTICE')} ×${G.rate.toFixed(2)}] `:G.course?`[${G.course.co.name} ${G.course.idx+1}/${G.course.charts.length}] `:'');
+  const tag=(G.rate!==1&&!G.practice&&!G.viewer?`[×${G.rate.toFixed(2)}] `:'')+(G.reduced?`[${G.chart.mode.toUpperCase()}${L('変換','')}] `:'')+(G.viewer?'[VIEWER] ':G.replay?'[REPLAY] ':G.auto?'[AUTO] ':G.tut?'[TUTORIAL] ':G.practice?`[${L('練習','PRACTICE')} ×${G.rate.toFixed(2)}] `:G.course?`[${G.course.co.name} ${G.course.idx+1}/${G.course.charts.length}] `:'');
   g.fillText(trunc(tag+c.title,hw-56),hx,top);
   if(G.viewer){
     const mi=Math.max(0,c.measures.findIndex(m=>m.time>t)-1);
@@ -2830,6 +2995,7 @@ function loop(ts){
   ts=ts||performance.now();
   pollPads(padHandler);
   if(!G.paused&&!G.ended)update();
+  if(G&&G.curVid)syncVideo();
   const live=!G.ended||(G.celebrate&&performance.now()-G.celebrate.t<1850);
   if(G&&live){
     const tgt=S.eco?30:S.fps==='auto'?0:+S.fps;
@@ -2853,7 +3019,7 @@ function viewerSeek(t){
   G.laneIdx.fill(0);G.mineIdx.fill(0);G.drawIdx=0;
   const idx=(arr,f)=>{const i=arr.findIndex(f);return i<0?arr.length:i;};
   G.bgmIdx=idx(c.bgm,b=>b.time>=t);G.autoIdx=idx(c.notes,n=>n.time>=t);
-  G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;
+  stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;
   G.combo=combo;G.counts.PG=combo;G.judged=combo;
   G.T0=t;G.clock0=actx.currentTime+0.05;
 }
@@ -2975,7 +3141,7 @@ $$('#pause [data-q]').forEach(b=>b.onclick=()=>{
 $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
-function stopAll(){if(!G)return;for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}}
+function stopAll(){if(!G)return;stopVideos();for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}}
 function toLib(){wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
 function retry(same){const seed=G?G.seed:undefined;stopAll();show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
@@ -2993,6 +3159,40 @@ async function wakeOn(){if(!S.wake||!('wakeLock' in navigator))return;try{if(!wa
 function wakeOff(){try{if(wakeLk)wakeLk.release();}catch(e){}wakeLk=null;}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G&&!G.ended)wakeOn();});
 function vib(p){if(S.vib==='off'||!navigator.vibrate)return;try{navigator.vibrate(p);}catch(e){}}
+function patLine(){
+  const p=(G.chart.arrPat||[]).filter(Boolean);if(!p.length||!G.opts||G.opts.arr==='off')return '';
+  return `<div class="hlp" style="text-align:center">${L('配置','Pattern')} ${p.map(esc).join(' / ')} <button class="ib" id="patUse" data-p="${esc(p[0])}" style="margin-left:6px">${L('この並びを指定に使う','Use this pattern')}</button></div>`;
+}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#patUse');if(!b)return;S.arrPat=b.dataset.p;S.arr='custom';saveS();toast(L(`配置を「RANDOM（並びを指定）${S.arrPat}」にしました`,`Arrangement set to RANDOM pattern ${S.arrPat}`));});
+/* ---------- hashes (difficulty tables use MD5 / SHA-256 of the chart file) ---------- */
+function md5hex(u8){
+  const K=new Int32Array(64),Sx=[7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21];for(let i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)|0;
+  const n=u8.length,len=((n+8>>>6)+1)*16,W=new Int32Array(len);
+  for(let i=0;i<n;i++)W[i>>2]|=u8[i]<<((i%4)*8);W[n>>2]|=0x80<<((n%4)*8);W[len-2]=n*8;W[len-1]=Math.floor(n/536870912);
+  let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+  for(let i=0;i<len;i+=16){let A=a,B=b,C=c,D=d;
+    for(let j=0;j<64;j++){let f,g;if(j<16){f=(B&C)|(~B&D);g=j;}else if(j<32){f=(D&B)|(~D&C);g=(5*j+1)%16;}else if(j<48){f=B^C^D;g=(3*j+5)%16;}else{f=C^(B|~D);g=(7*j)%16;}
+      const t=D;D=C;C=B;const x=(A+f+K[j]+W[i+g])|0,sh=Sx[(j>>4)*4+(j%4)];B=(B+((x<<sh)|(x>>>(32-sh))))|0;A=t;}
+    a=(a+A)|0;b=(b+B)|0;c=(c+C)|0;d=(d+D)|0;}
+  return [a,b,c,d].map(v=>{let h='';for(let k=0;k<4;k++)h+=((v>>>(k*8))&255).toString(16).padStart(2,'0');return h;}).join('');
+}
+async function sha256hex(u8){try{const h=await crypto.subtle.digest('SHA-256',u8);return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return '';}}
+/* ---------- video BGA ---------- */
+function loadVideo(blob){return new Promise(res=>{
+  const v=document.createElement('video');v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='auto';v.loop=false;
+  let done=false;const fin=x=>{if(done)return;done=true;res(x);};
+  v.onloadeddata=()=>fin(v);v.onerror=()=>fin(null);setTimeout(()=>fin(v.readyState>=2?v:null),10000);
+  v._isVideo=true;v.src=URL.createObjectURL(blob);try{v.load();}catch(e){}
+});}
+function syncVideo(){
+  const cv=G.curVid;if(!cv)return;const v=cv.v;
+  const exp=songTime()-cv.te;
+  if(G.paused||G.ended||exp<0||(v.duration&&exp>=v.duration)){if(!v.paused)v.pause();if(exp>=0&&v.duration&&exp<v.duration&&Math.abs(v.currentTime-exp)>0.05&&G.paused){try{v.currentTime=exp;}catch(e){}}return;}
+  if(v.playbackRate!==G.rate)v.playbackRate=G.rate;
+  if(Math.abs(v.currentTime-exp)>0.25){try{v.currentTime=exp;}catch(e){}}
+  if(v.paused){const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});}
+}
+function stopVideos(){if(G&&G.curVid){try{G.curVid.v.pause();}catch(e){}}if(G)G.curVid=null;}
 function computeLamp(agg){
   const c=agg||G.counts;
   const cleared=t=>{const s=G.gauges[t];return GT[t].surv?!s.dead:s.v>=GT[t].border;};
@@ -3052,6 +3252,7 @@ function showResult(R){
   $('#resultBox').innerHTML=`<div class="hlp" style="text-align:center">${esc(G.chart.title)} ${esc(G.chart.subtitle||'')} ${tag}</div>
     <div class="res-clear" style="color:${LAMPC[R.lamp]}">${G.failed?'FAILED':LAMPS[R.lamp]}${N('lamp')}</div>
     <div class="rank" data-t="${rankOf(R.rate)}">${rankOf(R.rate)}</div>
+    ${patLine()}
     <div class="grid2" style="margin:12px 0">
       <span class="k">SCORE${N('ex')}</span><span>${R.ex} / ${R.max}（${(R.rate*100).toFixed(2)}%）</span>
       <span class="k">MISS COUNT${N('bp')}</span><span>${R.bp}</span>
@@ -3124,7 +3325,7 @@ function snapResult(R){
     glog:G.glog.slice(),endT:Math.max(1,c.endTime),t0:G.practice?G.T0:0,dts:G.dts.slice(),lim:G.W.BD*1000,
     thumb:G.meta&&G.meta.thumb||null,opts:G.opts,date:new Date(),news:R.news,tag:G.replay?'REPLAY':G.auto?'AUTO':G.practice?'PRACTICE':''};
 }
-const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'R-RANDOM',srandom:'S-RANDOM',hrandom:'H-RANDOM',allscr:'ALL-SCRATCH',spiral:'SPIRAL',randomex:'RANDOM-EX'};
+const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'R-RANDOM',srandom:'S-RANDOM',hrandom:'H-RANDOM',allscr:'ALL-SCRATCH',spiral:'SPIRAL',randomex:'RANDOM-EX',custom:'RANDOM'};
 function shareText(D){
   const lamp=D.failed?'FAILED':LAMPS[D.lamp];
   return `${D.title}${D.subtitle&&!D.course?' '+D.subtitle:''}${D.course?' [COURSE]':''} ${lamp} ${D.rank} ${(D.rate*100).toFixed(2)}% BP${D.bp} #BeSmartBMS`.replace(/\s+/g,' ').trim();
