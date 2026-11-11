@@ -2801,6 +2801,8 @@ function drawImg(im,x,y,w,h,alpha){if(im._isVideo){if(im.readyState<2)return;im=
 // perspective helpers (3D lane view)
 let P3=null;
 function setupPersp(){if(!S.persp||S.eco){P3=null;return;}const k=0.4,jy=L_.judgeY;P3={k,jy,hor:-k*jy/(1-k),D:k/(1-k),cx:L_.areaX+L_.areaW/2};}
+// inverse of pj: screen y -> lane-linear y (used to follow the finger in the paused viewer)
+function ipj(Y){if(!P3||Y>=P3.jy)return Y;const s=Math.max(0.03,(Y-P3.hor)/(P3.jy-P3.hor));return P3.jy-(P3.D/s-P3.D)*L_.len;}
 function pj(y){if(!P3||y>=P3.jy)return [y,1];const z=(P3.jy-y)/L_.len,s=P3.D/(P3.D+Math.max(-0.5,z));return [P3.hor+(P3.jy-P3.hor)*s,s];}
 function quad(x,y,w,h){
   if(!P3){g.fillRect(x,y,w,h);return;}
@@ -3083,7 +3085,7 @@ const msgHS=()=>S.fhs?L(`表示時間 ${S.green}ms`,`Visible ${S.green}ms`):L(`�
 cv.addEventListener('pointerdown',e=>{
   e.preventDefault();if(!G)return;
   try{cv.setPointerCapture(e.pointerId);}catch(_){}
-  if(G.viewer&&G.paused){if(!vDrag)vDrag={id:e.pointerId,y0:e.clientY,b0:timeToBeat(G.chart.segs,songTime())};return;}
+  if(G.viewer&&G.paused){if(!vDrag)vDrag={id:e.pointerId,y0:ipj(e.clientY),b0:timeToBeat(G.chart.segs,songTime())};return;}
   if(ctrlZone(e.clientY)&&!ctrlPtr){ctrlPtr={id:e.pointerId,y:e.clientY};return;}
   const ls=lanesAt(e.clientX);ptr.set(e.pointerId,ls);G.lastHit=null;ls.forEach(l=>grab(l,'t'+e.pointerId));
   if(S.tapAdj&&G.record&&G.lastHit&&ls.length===1&&ls[0]===G.lastHit.lane)learnTap(G.lastHit.lane,e.clientX);
@@ -3093,7 +3095,7 @@ cv.addEventListener('pointermove',e=>{
   if(!G)return;
   if(vDrag&&vDrag.id===e.pointerId){
     // finger down = chart moves down = later notes come into view
-    const b=vDrag.b0+(e.clientY-vDrag.y0)/ppb();
+    const b=vDrag.b0+(ipj(e.clientY)-vDrag.y0)/ppb();
     const t=Math.max(0,Math.min(G.chart.endTime+1,beatToTime(G.chart.segs,b)));
     viewerSeek(t);G.clock0=actx.currentTime;G.T0=t;return;
   }
