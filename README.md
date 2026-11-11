@@ -53,6 +53,7 @@ BeSmart にはコードで作ったオリジナルのテストプレイ曲とチ
 | `vendor/ogg-vorbis-decoder.min.js` | OGG の再生（端末が対応していない場合） |
 | `media/` | 紹介動画とそのサムネイル |
 | `songs/BeSmartPV.zip` | 最初から入っている曲「BeSmart PV Song」（初回起動時に自動で追加） |
+| `songs/PQ2_*.zip` | 最初から入っている曲「ピコーン・クエスト2」BGMより 草原・砂漠・ボス戦 1（AI生成楽曲・非商用利用に限り可） |
 | `manifest.webmanifest` / `sw.js` / `icons/` | ホーム画面への追加、オフライン動作、Androidの共有メニューからの取り込み |
 | `licenses/` | 同梱ソフトウェアとフォントのライセンス |
 

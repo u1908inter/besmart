@@ -139,7 +139,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1959)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.2109)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -739,7 +739,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1959)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.2109)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1964,7 +1964,7 @@ async function importFiles(list,io){io=io||{};
   }
   await refreshLibrary();
   if(added&&!io.builtin)track('import','曲を追加');
-  if(io.silent){if(added)toast(L('最初から入っている曲「BeSmart PV Song」を追加しました','Added the built-in song “BeSmart PV Song”'),2500);else toast('',1);return added;}
+  if(io.silent){const nm=(io.names||['BeSmart PV Song']);if(added)toast(nm.length>1?L('最初から入っている曲を'+nm.length+'曲追加しました','Added '+nm.length+' built-in songs'):L('最初から入っている曲「'+nm[0]+'」を追加しました','Added the built-in song “'+nm[0]+'”'),2500);else toast('',1);return added;}
   toast([added?L(`${added} 譜面を追加しました`,`Added ${added} charts`):'',skipped?L(`${skipped} 譜面は追加済みのためスキップ`,`Skipped ${skipped} charts already in the library`):'',...errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
 }
 $('#fileIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};
@@ -3485,14 +3485,26 @@ function drawTimingGraph(cv){
 /* ---------- boot ---------- */
 applyPhosphor();applyI18n();renderOut();
 refreshLibrary().then(addBuiltinSongs);
-/* built-in song (the promo-video song): added once; if the player deletes it, it stays deleted */
+/* built-in songs: each is added once; if the player deletes it, it stays deleted */
+const BUILTIN=[
+  {key:'builtinPV',file:'BeSmartPV.zip',name:'BeSmart PV Song'},
+  {key:'builtinPQ2a',file:'PQ2_Grass.zip',name:'ピコーン・クエスト2 草原'},
+  {key:'builtinPQ2b',file:'PQ2_Desert.zip',name:'ピコーン・クエスト2 砂漠'},
+  {key:'builtinPQ2c',file:'PQ2_Boss1.zip',name:'ピコーン・クエスト2 ボス戦 1'}];
 async function addBuiltinSongs(){
-  if(S.builtinPV)return;
+  const todo=BUILTIN.filter(b=>!S[b.key]);if(!todo.length)return;
+  const files=[],names=[];
+  for(const b of todo){
+    try{
+      const r=await fetch('songs/'+b.file);if(!r.ok)continue;
+      files.push(new File([await r.blob()],b.file,{type:'application/zip'}));names.push(b.name);
+    }catch(e){}
+  }
+  if(!files.length)return;
   try{
-    const r=await fetch('songs/BeSmartPV.zip');if(!r.ok)return;
-    const f=new File([await r.blob()],'BeSmartPV.zip',{type:'application/zip'});
-    await importFiles([f],{builtin:true,silent:true});
-    S.builtinPV=1;saveS();
+    await importFiles(files,{builtin:true,silent:true,names});
+    for(const b of todo)if(names.includes(b.name))S[b.key]=1;
+    saveS();
   }catch(e){}
 }
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
