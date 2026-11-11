@@ -139,7 +139,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1112.0839)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0839)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1112.0856)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0856)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -739,7 +739,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1112.0839)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0839)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1112.0856)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0856)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2975,11 +2975,16 @@ function draw(){
     const ex=G.counts.PG*2+G.counts.GR,rate=G.judged?ex/(2*G.judged):0;
     g.font='20px '+GF();g.fillStyle=PP.ink;g.fillText(`SCORE ${ex}`,hx,top+15);
     const exW=g.measureText(`SCORE ${ex}`).width;
-    g.font='13px '+GF();g.fillStyle=PP.ink;g.fillText(`${(rate*100).toFixed(2)}%`,hx+exW+8,top+20);
+    g.font='13px '+GF();g.fillStyle=PP.ink;const rTxt=`${(rate*100).toFixed(2)}%`;g.fillText(rTxt,hx+exW+8,top+20);
     if(S.pace!=='off'&&!G.tut){
       const r0={max:1,aaa:8/9,aa:7/9,a:6/9}[S.pace]??((REC[c.hash]&&REC[c.hash].ex)?REC[c.hash].ex/(2*G.N):0);
       const tgt=Math.round(r0*2*G.judged),d=ex-tgt;
-      g.fillStyle=d>=0?'#6cf':'#f77';g.fillText(`${S.pace==='best'?'BEST':S.pace.toUpperCase()} ${d>=0?'+':''}${d}`,hx+exW+70,top+20);
+      const pTxt=`${S.pace==='best'?'BEST':S.pace.toUpperCase()} ${d>=0?'+':''}${d}`;
+      let px=hx+exW+8+g.measureText(rTxt).width+12;
+      const pw=g.measureText(pTxt).width,lim=hx+hw-56; /* keep clear of the pause button */
+      g.fillStyle=d>=0?'#6cf':'#f77';
+      if(px+pw<=lim)g.fillText(pTxt,px,top+20);
+      else{g.textAlign='right';g.fillText(pTxt,hx+hw,top+38);g.textAlign='left';}
     }
     g.font='12px '+GF();g.fillStyle=PP.dim;
     g.fillText(`BPM ${Math.round(curBpmAt(c.segs,t))}  ${L('スピード','SPD')} ${effHS().toFixed(2)}  ${greenTxt}${S.white&&S.suddenOn?`  ${L('白','W')} ${Math.round(S.sudden*10)}`:''}${S.white&&S.lift>0?`  LIFT ${Math.round(S.lift*10)}`:''}`,hx,top+38);
@@ -2988,11 +2993,26 @@ function draw(){
     const fill=Math.floor(gv/2);
     const gc=gcol(G.cur,true);for(let s=0;s<fill;s++){g.fillStyle=gt.surv?gc:(s*2>=gt.border?PP.hi:hexA(gc,.75));g.fillRect(hx+s*hw/50+0.5,gy,hw/50-1,8);}
     g.font='12px '+GF();g.textAlign='right';g.fillStyle=gc;
-    g.fillText(`${gt.n}${G.opts.gas?'(AUTO)':''} ${Math.floor(gv)}%`,hx+hw,gy+11);
-    if(S.judgeCount){g.textAlign='left';g.fillStyle=PP.dim;const C=G.counts;
-      g.fillText(`PF ${C.PG} GR ${C.GR} GD ${C.GD} BD ${C.BD} MS ${C.PR+C.KP}  F${G.fs.f}/S${G.fs.s}`,hx,gy+11);}
+    const gTxt=`${gt.n}${G.opts.gas?'(AUTO)':''} ${Math.floor(gv)}%`;
+    g.fillText(gTxt,hx+hw,gy+11);
+    /* song position: elapsed / total and time left (left of the gauge label, or on its own row if it does not fit) */
+    const fmtT=s=>`${Math.floor(Math.max(0,s)/60)}:${String(Math.floor(Math.max(0,s)%60)).padStart(2,'0')}`;
+    const endT=Math.max(1,c.endTime),tLong=`${fmtT(t)} / ${fmtT(endT)}  ${L('残り','left')} ${fmtT(endT-t)}`,tShort=`${fmtT(t)} / ${fmtT(endT)}`;
+    const room=hw-g.measureText(gTxt).width-12;
+    g.textAlign='left';g.fillStyle=PP.ink;
+    let rowY=gy+26;
+    if(g.measureText(tLong).width<=room)g.fillText(tLong,hx,gy+11);
+    else if(g.measureText(tShort).width<=room)g.fillText(tShort,hx,gy+11);
+    else{g.fillText(tShort,hx,gy+26);rowY=gy+41;}
+    if(S.judgeCount){g.fillStyle=PP.dim;const C=G.counts;
+      const jTxt=`PF ${C.PG} GR ${C.GR} GD ${C.GD} BD ${C.BD} MS ${C.PR+C.KP}  F${G.fs.f}/S${G.fs.s}`;
+      const jw=g.measureText(jTxt).width;
+      if(jw>hw){g.font=Math.max(8,Math.floor(12*hw/jw))+'px '+GF();}
+      g.fillText(jTxt,hx,rowY);}
   }
-  g.fillStyle=hexA(PP.ink,.5);g.fillRect(areaX,H-3,areaW*Math.max(0,Math.min(1,t/Math.max(1,c.endTime))),3);
+  {const pr=Math.max(0,Math.min(1,t/Math.max(1,c.endTime)));
+   g.fillStyle=hexA(PP.ink,.18);g.fillRect(areaX,H-5,areaW,5);
+   g.fillStyle=G.viewer?hexA(PP.ink,.6):PP.hi;g.fillRect(areaX,H-5,areaW*pr,5);}
   if(S.showFps){g.textAlign='right';g.textBaseline='bottom';g.font='12px '+GF();g.fillStyle=PP.hi;g.fillText(`${G.drawT.length}fps / ${G.rafT.length}Hz`,areaX+areaW-6,judgeY-12);}
   if(t<(G.practice?G.T0+2:0)&&!G.viewer){g.textAlign='center';g.textBaseline='middle';g.font='22px '+GF();g.fillStyle=PP.ink;g.fillText('READY',cx,len*0.38);}
   if(G.ctrlMsg&&nowMs-G.ctrlMsg.t<900){g.textAlign='center';g.textBaseline='middle';g.font='16px '+GF();g.fillStyle=PP.hi;g.fillText(G.ctrlMsg.s,cx,len*0.3);}
