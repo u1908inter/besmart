@@ -170,16 +170,16 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <div class="tw"><table>
       <thead><tr><th>ゲージ</th><th>開始</th><th>クリア条件</th><th>PERFECT・GREAT</th><th>GOOD</th><th>BAD</th><th>MISS</th><th>空打ち</th></tr></thead>
       <tbody>
-        <tr><td>ASSIST</td><td class="n">20%</td><td>終了時60%以上</td><td>基準×1.2</td><td>基準×0.6</td><td class="n">−1.6</td><td class="n">−2.4</td><td class="n">−1.6</td></tr>
+        <tr><td>ASSIST EASY</td><td class="n">20%</td><td>終了時60%以上</td><td>基準×1.2</td><td>基準×0.6</td><td class="n">−1.6</td><td class="n">−2.4</td><td class="n">−1.6</td></tr>
         <tr><td>EASY</td><td class="n">20%</td><td>終了時80%以上</td><td>基準×1.2</td><td>基準×0.6</td><td class="n">−3.2</td><td class="n">−4.8</td><td class="n">−1.6</td></tr>
         <tr><td>NORMAL</td><td class="n">20%</td><td>終了時80%以上</td><td>基準×1.0</td><td>基準×0.5</td><td class="n">−4</td><td class="n">−6</td><td class="n">−2</td></tr>
         <tr><td>HARD</td><td class="n">100%</td><td>0%にならない</td><td class="n">+0.16</td><td class="n">±0</td><td class="n">−5</td><td class="n">−9</td><td class="n">−5</td></tr>
-        <tr><td>EXTRA HARD</td><td class="n">100%</td><td>0%にならない</td><td class="n">+0.16</td><td class="n">±0</td><td class="n">−10</td><td class="n">−18</td><td class="n">−10</td></tr>
-        <tr><td>SUDDEN DEATH</td><td class="n">100%</td><td>BAD・MISSを出さない</td><td class="n">+0.16</td><td class="n">±0</td><td>即終了</td><td>即終了</td><td class="n">−10</td></tr>
+        <tr><td>EX HARD</td><td class="n">100%</td><td>0%にならない</td><td class="n">+0.16</td><td class="n">±0</td><td class="n">−10</td><td class="n">−18</td><td class="n">−10</td></tr>
+        <tr><td>HAZARD</td><td class="n">100%</td><td>BAD・MISSを出さない</td><td class="n">+0.16</td><td class="n">±0</td><td>即終了</td><td>即終了</td><td class="n">−10</td></tr>
       </tbody>
     </table></div>
     <ul>
-      <li>ASSIST・EASY・NORMAL は2%未満にはならず、最後まで遊べます。HARD 以上は0%になった時点で終了します。</li>
+      <li>ASSIST EASY・EASY・NORMAL は2%未満にはならず、最後まで遊べます。HARD 以上は0%になった時点で終了します。</li>
       <li>HARD はゲージが30%未満のとき、減る量が0.6倍になります。</li>
       <li>地雷はゲージを直接減らします（全ゲージ共通）。</li>
       <li><b>ゲージ自動降格</b>をオンにすると、選んだゲージで落ちても下のゲージに切り替えて続行し、最も良かったクリアを記録します（全ゲージを裏で同時に計算しています）。</li>
@@ -199,11 +199,11 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <tbody>
         <tr><td>NO PLAY</td><td>未プレイ</td></tr>
         <tr><td>FAILED</td><td>クリア条件を満たさなかった</td></tr>
-        <tr><td>ASSIST CLEAR</td><td>ASSIST ゲージでクリア、またはアシストを使ってクリア</td></tr>
+        <tr><td>ASSIST CLEAR</td><td>ASSIST EASY ゲージでクリア、またはアシストを使ってクリア</td></tr>
         <tr><td>EASY CLEAR</td><td>EASY ゲージでクリア</td></tr>
         <tr><td>CLEAR</td><td>NORMAL ゲージでクリア</td></tr>
         <tr><td>HARD CLEAR</td><td>HARD ゲージでクリア</td></tr>
-        <tr><td>EXTRA HARD</td><td>EXTRA HARD または SUDDEN DEATH でクリア</td></tr>
+        <tr><td>EX HARD CLEAR</td><td>EX HARD または HAZARD でクリア</td></tr>
         <tr><td>FULL COMBO</td><td>BAD・MISS なし（空打ちは可）</td></tr>
         <tr><td>PERFECT</td><td>フルコンボかつ GOOD なし</td></tr>
         <tr><td>MAX</td><td>すべて PERFECT</td></tr>

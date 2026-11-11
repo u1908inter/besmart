@@ -1361,8 +1361,8 @@ const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rran
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
   {k:'side',t:L('スクラッチ（皿）の位置','Scratch (turntable) side'),sel:[['L',L('左','Left')],['R',L('右','Right')]],h:L('5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます。','Puts the scratch lane at the left or right edge in single-side modes such as 5K and 7K.')},
-  {k:'gauge',t:L('ゲージ','Gauge'),sel:[['aeasy','ASSIST'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EXTRA HARD'],['hazard','SUDDEN DEATH']],
-   h:L('HARD以上は0%で即終了。SUDDEN DEATHはBAD/MISSで即終了。','HARD and above end at 0%. SUDDEN DEATH ends on any BAD/MISS.')},
+  {k:'gauge',t:L('ゲージ','Gauge'),sel:[['aeasy','ASSIST EASY'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EX HARD'],['hazard','HAZARD']],
+   h:L('HARD以上は0%で即終了。HAZARDはBAD/MISSで即終了。','HARD and above end at 0%. HAZARD ends on any BAD/MISS.')},
   {k:'gas',t:L('ゲージ自動降格','Auto gauge downgrade'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
   {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS(),h:L('MIRROR＝左右反転／RANDOM＝鍵盤を並べ替え／R-RANDOM＝鍵盤を回転／S-RANDOM＝ノーツ毎にランダム／H-RANDOM＝縦連を避けたS-RANDOM／ALL-SCRATCH＝空いているときノーツを皿へ','MIRROR flips the keys / RANDOM shuffles keys / R-RANDOM rotates keys / S-RANDOM randomizes each note / H-RANDOM is S-RANDOM avoiding jacks / ALL-SCRATCH moves notes to the scratch when free')},
   {k:'arr2',t:L('配置（2P側・DP）','Arrangement (2P side)'),sel:ARR_OPTS()},
@@ -1594,7 +1594,7 @@ function getArchive(arch){
 
 /* ---------- library ---------- */
 let CHARTS=[];
-const LAMPS=['NO PLAY','FAILED','ASSIST CLEAR','EASY CLEAR','CLEAR','HARD CLEAR','EXTRA HARD','FULL COMBO','PERFECT','MAX'];
+const LAMPS=['NO PLAY','FAILED','ASSIST CLEAR','EASY CLEAR','CLEAR','HARD CLEAR','EX HARD CLEAR','FULL COMBO','PERFECT','MAX'];
 const LAMPC=['#5a4a36','#FF5A3C','#B98CFF','#7CD992','#5BB4FF','#FF6A00','#FFE08A','#FFF6DC','#FFF6DC','#FFFFFF'];
 const DIFN=()=>LANG()==='en'?['','BEGINNER','NORMAL','HARD','EXPERT','INSANE']:['','入門','標準','上級','最上級','発狂'];
 const lvNum=v=>{const x=parseFloat(String(v).replace(/[^\d.]/g,''));return isNaN(x)?-1:x;};
@@ -2191,12 +2191,12 @@ let W=0,H=0,dpr=1,G=null,raf=0,safeTop=0,L_={};
 const JC=j=>{if(NEON())return {PG:'#9FF',GR:'#FFD23D',GD:'#5F5',BD:'#C7F',PR:'#F55',KP:'#F55'}[j];if(CLASSIC())return {PG:'#ECEBE6',GR:'#FFD21F',GD:'#3fd08a',BD:'#7d97ff',PR:'#FF3D9A',KP:'#FF3D9A'}[j];const p=pal();return {PG:p.hi,GR:p.ink,GD:p.dim,BD:p.dim,PR:p.alert,KP:p.alert}[j];};
 const JNAME={PG:'PERFECT',GR:'GREAT',GD:'GOOD',BD:'BAD',PR:'MISS',KP:'MISS'};
 const GT={
-  aeasy:{n:'ASSIST',start:20,border:60,surv:0,inc:1.2,gd:.6,bd:-1.6,pr:-2.4,kp:-1.6,col:'#9a5cff',lamp:2},
+  aeasy:{n:'ASSIST EASY',start:20,border:60,surv:0,inc:1.2,gd:.6,bd:-1.6,pr:-2.4,kp:-1.6,col:'#9a5cff',lamp:2},
   easy:{n:'EASY',start:20,border:80,surv:0,inc:1.2,gd:.6,bd:-3.2,pr:-4.8,kp:-1.6,col:'#2fbf6a',lamp:3},
   normal:{n:'NORMAL',start:20,border:80,surv:0,inc:1,gd:.5,bd:-4,pr:-6,kp:-2,col:'#4a8cff',lamp:4},
   hard:{n:'HARD',start:100,border:0,surv:1,fix:.16,bd:-5,pr:-9,kp:-5,low:1,col:'#ff4a6e',lamp:5},
-  exhard:{n:'EXTRA HARD',start:100,border:0,surv:1,fix:.16,bd:-10,pr:-18,kp:-10,col:'#FFC400',lamp:6},
-  hazard:{n:'SUDDEN DEATH',start:100,border:0,surv:1,fix:.16,bd:-100,pr:-100,kp:-10,col:'#FFF6DC',lamp:6}
+  exhard:{n:'EX HARD',start:100,border:0,surv:1,fix:.16,bd:-10,pr:-18,kp:-10,col:'#FFC400',lamp:6},
+  hazard:{n:'HAZARD',start:100,border:0,surv:1,fix:.16,bd:-100,pr:-100,kp:-10,col:'#FFF6DC',lamp:6}
 };
 const GORDER=['hazard','exhard','hard','normal','easy','aeasy'];
 function gcol(t,game){if(game&&NEON())return {aeasy:'#B07AFF',easy:'#66DD66',normal:'#3DD4FF',hard:'#FF4444',exhard:'#FFDD33',hazard:'#FFFFFF'}[t];if(game&&CLASSIC())return {aeasy:'#9a5cff',easy:'#2fbf6a',normal:'#4a8cff',hard:'#ff4a6e',exhard:'#FFC400',hazard:'#ECEBE6'}[t];const p=pal();return {aeasy:p.dim,easy:p.hi,normal:p.ink,hard:p.alert,exhard:p.hi,hazard:'#FFFFFF'}[t]||p.ink;}
