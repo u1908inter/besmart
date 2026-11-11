@@ -1991,9 +1991,15 @@ async function importFromUrl(raw){
   let res;const insecure=r.url.protocol==='http:'&&location.protocol==='https:';
   if(insecure)r.url.protocol='https:';
   try{res=await fetch(r.url.href,{signal:urlAbort.signal,mode:'cors',credentials:'omit',redirect:'follow'});}
-  catch(e){$('#urlGo').disabled=false;if(e.name==='AbortError')return;
-    if(insecure){urlMsg(L('http:// の配布元は、ブラウザの仕組み上BeSmartから読み込めません（https:// でも接続できませんでした）。URLを直接開いてファイルをダウンロードし、「追加」から選んでください。','Files on http:// sites cannot be loaded by BeSmart (https:// did not work either). Open the URL to download the file, then pick it with “Add”.'),true);return;}
-    urlMsg(L('読み込めませんでした。この配布元が他サイトからの読み込みを許可していないか、URLが間違っている可能性があります。スマホでダウンロードして「追加」から選んでください。','Could not load it. The host may block loading from other sites, or the URL may be wrong. Download the file and pick it with “Add”.'),true);return;}
+  catch(e){if(e.name==='AbortError'){$('#urlGo').disabled=false;return;}
+    // The browser hides why a fetch failed. Probe again in no-cors mode: if that reaches the server, the block is CORS.
+    urlMsg(L('原因を調べています…','Checking why…'));
+    let reach=false;try{const ac=new AbortController();const t=setTimeout(()=>ac.abort(),15000);const pr=await fetch(r.url.href,{mode:'no-cors',credentials:'omit',signal:ac.signal});clearTimeout(t);reach=pr.type==='opaque'||pr.ok;ac.abort();}catch(e2){}
+    $('#urlGo').disabled=false;
+    if(reach)urlMsg(L(`配布元（${r.url.hostname}）には接続できましたが、サーバーが他サイトからの読み込みを許可していません（応答に Access-Control-Allow-Origin がありません）。`,`Reached ${r.url.hostname}, but the server does not allow loading from other sites (no Access-Control-Allow-Origin in the response).`)+(insecure?L('なお、http:// のURLは https:// に読み替えて接続しています。','The http:// URL was tried as https://.'):'')+L('URLを直接開いてダウンロードし、「追加」から選んでください。',' Download the file and pick it with “Add”.'),true);
+    else if(insecure)urlMsg(L(`配布元（${r.url.hostname}）が https:// に対応していないため読み込めません。https:// のページ（BeSmart）から http:// のファイルを読み込むことは、ブラウザが禁止しています。URLを直接開いてダウンロードし、「追加」から選んでください。`,`${r.url.hostname} does not support https://, and browsers block http:// files on https:// pages. Download the file and pick it with “Add”.`),true);
+    else urlMsg(L(`配布元（${r.url.hostname}）に接続できませんでした。URLが正しいか、配布元が動いているかを確認してください。`,`Could not connect to ${r.url.hostname}. Check the URL and whether the site is up.`),true);
+    return;}
   if(!res.ok){$('#urlGo').disabled=false;urlMsg(L(`読み込めませんでした（HTTP ${res.status}）。URLを確認してください。`,`Could not load it (HTTP ${res.status}). Check the URL.`),true);return;}
   const total=+res.headers.get('content-length')||0;const parts=[];let got=0;
   try{
