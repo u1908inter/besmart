@@ -49,7 +49,7 @@ button:active,.btn:active,.ib:active{background:var(--hi);color:var(--bg);text-s
 button:disabled{opacity:.35}
 input[type=file]{display:none}
 .bar{display:flex;gap:6px;margin-bottom:6px}
-.bar input,.bar select,select,textarea,#urlIn,#tblUrl,#setBody input[type=text]{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
+.bar input,.bar select,select,textarea,#urlIn,#tblUrl,#setQ,#setBody input[type=text]{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
 select option{background:var(--bg);color:var(--ink)}
 input::placeholder,textarea::placeholder{color:var(--dim)}
 .bar select{flex:0 0 auto}
@@ -72,6 +72,7 @@ input::placeholder,textarea::placeholder{color:var(--dim)}
 .lv{display:inline-block;color:var(--bg);background:var(--ink);padding:0 6px;font-size:12px;margin-right:6px;text-shadow:none}
 .empty{font-size:15px;line-height:1.8;padding:14px 0}
 .empty p{margin:0 0 12px}
+.setTop{display:flex;gap:8px;margin:0 0 10px}.setTop input{flex:1;min-width:0}.setTop .ib{white-space:nowrap}.row .st{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.row .tt{min-width:0}.row .qh{width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:12px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row .chg{display:none;color:var(--hi);font-style:normal;font-size:10px}.row .rst{display:none;width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:13px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row.changed .chg,.row.changed .rst{display:inline-block}.hh{margin-top:-4px}.dopts{margin:8px 0;border-top:1px dashed var(--faint);padding-top:6px}.dopts .row{min-height:40px}
 .tblh{margin:14px 0 4px;padding:4px 8px;border-bottom:1px dashed var(--faint);color:var(--hi);font-size:15px}.song.miss{opacity:.62}.song.miss .ml{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.song.miss .ib{font-size:12px;padding:2px 8px;text-decoration:none}
 .guide{margin:22px 0 0;padding:14px 14px 4px;border:1px dashed var(--dim,#6E4800);text-align:left}.guide h3{margin:0 0 8px;font-size:17px;font-weight:400}.guide ol{margin:0;padding-left:1.3em}.guide li{margin:0 0 10px}.gchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.gchip{display:inline-block;border:1px solid currentColor;padding:2px 10px;font-size:14px;color:inherit;text-decoration:none;line-height:1.7}.gchip:active{opacity:.6}
 .hlp{font-size:12px;color:var(--dim);margin:-2px 0 8px;line-height:1.6}
@@ -138,7 +139,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1950)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1950)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1959)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -181,6 +182,7 @@ canvas{display:block;touch-action:none}
 <!-- ===== SETTINGS ===== -->
 <div id="settings" class="screen" style="display:none"><div class="wrap">
   <div class="top"><button class="ib" id="setBack" style="width:auto;margin:0" data-en="Back">戻る</button><h1 data-en="Settings">設定</h1></div>
+  <div class="setTop"><input id="setQ" type="search" autocomplete="off" placeholder="設定を検索（例：ずれ、BGA、振動）" data-en-ph="Search settings (e.g. offset, BGA)"><button class="ib" id="setMode">すべての設定を表示</button></div>
   <div id="setBody"></div>
   <details class="card"><summary data-en="Input &amp; timing">入力・タイミング</summary><div class="in">
     <button id="kcBtn" data-en="Keys and gamepad">キーとゲームパッド</button>
@@ -737,7 +739,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1950)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1950)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1959)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1422,7 +1424,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1519,7 +1521,7 @@ function SCHEMA(){return [
   {hint:'<div id="pwaBox"></div>'}
  ]},
  {sec:L('音量','Volume'),items:[
-  {k:'volM',t:L('全体','Master'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%'},
+  {k:'volM',t:L('音量（全体）','Volume (master)'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volK',t:L('キー音','Keysounds'),r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volB',t:'BGM',r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
  ]},
@@ -1529,29 +1531,51 @@ function SCHEMA(){return [
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
+const QUICK=['hs','suddenOn','sudden','gauge','arr','side','ofs','vofs','playSkin','volM','edge'];
+let setQ='';
+function findItem(k){for(const sec of SCHEMA())for(const it of sec.items)if(it.k===k)return it;return null;}
+function isChanged(k){return k in DEF&&JSON.stringify(S[k])!==JSON.stringify(DEF[k]);}
+function afterSet(k){saveS();applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();}
+function renderItem(it,inn,compact){
+  if(it.hint){if(!compact)inn.insertAdjacentHTML('beforeend',`<div class="hlp">${it.hint}</div>`);return;}
+  const row=document.createElement('div');row.className='row';
+  const ttl=`<span class="st"><span class="tt">${it.t}</span>${it.h&&!compact?`<button class="qh" type="button" aria-label="?">？</button>`:''}<i class="chg" title="${L('初期値から変更','Changed')}">●</i><button class="rst" type="button" title="${L('初期値に戻す','Reset')}">${L('戻す','Reset')}</button></span>`;
+  const mark=()=>row.classList.toggle('changed',isChanged(it.k));
+  if(it.sel){row.innerHTML=`${ttl}<select>${it.sel.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>`;
+    const c=row.querySelector('select');c.value=S[it.k];c.onchange=()=>{S[it.k]=c.value;afterSet(it.k);mark();};row._sync=()=>{c.value=S[it.k];mark();};}
+  else if(it.b){row.innerHTML=`${ttl}<label class="sw"><input type="checkbox"><i></i></label>`;
+    const c=row.querySelector('input');c.checked=!!S[it.k];c.onchange=()=>{S[it.k]=c.checked;afterSet(it.k);mark();};row._sync=()=>{c.checked=!!S[it.k];mark();};}
+  else if(it.txt){row.innerHTML=`${ttl}<input type="text" inputmode="numeric" autocomplete="off" placeholder="${it.txt}" style="width:9em">`;
+    const c=row.querySelector('input');c.value=S[it.k]||'';c.oninput=()=>{S[it.k]=c.value.replace(/[^0-9]/g,'');saveS();mark();};row._sync=()=>{c.value=S[it.k]||'';mark();};}
+  else if(it.r){row.innerHTML=`${ttl}<input type="range" min="${it.r[0]}" max="${it.r[1]}" step="${it.r[2]}"><output></output>`;
+    const r=row.querySelector('input'),o=row.querySelector('output');r.value=S[it.k];
+    r.oninput=()=>{S[it.k]=+r.value;o.textContent=it.f(S[it.k]);afterSet(it.k);mark();};o.textContent=it.f(S[it.k]);row._sync=()=>{r.value=S[it.k];o.textContent=it.f(S[it.k]);mark();};}
+  row.dataset.k=it.k;inn.appendChild(row);mark();
+  row.querySelector('.rst').onclick=e=>{e.preventDefault();S[it.k]=JSON.parse(JSON.stringify(DEF[it.k]));afterSet(it.k);row._sync&&row._sync();$$('.row').forEach(r=>{if(r!==row&&r.dataset.k===it.k&&r._sync)r._sync();});};
+  if(it.h&&!compact){const h=document.createElement('div');h.className='hlp hh';h.innerHTML=it.h;h.hidden=true;inn.appendChild(h);
+    row.querySelector('.qh').onclick=e=>{e.preventDefault();h.hidden=!h.hidden;};}
+}
 function buildSettings(){setTimeout(()=>{try{renderPwaBox();renderTblBox();}catch(e){}},0);
   const body=$('#setBody');body.innerHTML='';
-  for(const sec of SCHEMA()){
-    const d=document.createElement('details');d.className='card';if(sec.open)d.open=true;
-    d.innerHTML=`<summary>${sec.sec}</summary><div class="in"></div>`;
-    const inn=d.querySelector('.in');
-    for(const it of sec.items){
-      if(it.hint){inn.insertAdjacentHTML('beforeend',`<div class="hlp">${it.hint}</div>`);continue;}
-      const row=document.createElement('div');row.className='row';
-      if(it.sel){row.innerHTML=`<span>${it.t}</span><select>${it.sel.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>`;
-        const s=row.querySelector('select');s.value=S[it.k];s.onchange=()=>{S[it.k]=s.value;saveS();if(it.k==='lang'){applyI18n();buildSettings();renderLibrary();}if(it.k==='phosphor'){applyPhosphor();}};}
-      else if(it.b){row.innerHTML=`<span>${it.t}</span><label class="sw"><input type="checkbox"><i></i></label>`;
-        const c=row.querySelector('input');c.checked=!!S[it.k];c.onchange=()=>{S[it.k]=c.checked;saveS();};}
-      else if(it.txt){row.innerHTML=`<span>${it.t}</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="${it.txt}" style="width:9em">`;
-        const c=row.querySelector('input');c.value=S[it.k]||'';c.oninput=()=>{S[it.k]=c.value.replace(/[^0-9]/g,'');saveS();};}
-      else if(it.r){row.innerHTML=`<span>${it.t}</span><input type="range" min="${it.r[0]}" max="${it.r[1]}" step="${it.r[2]}"><output></output>`;
-        const r=row.querySelector('input'),o=row.querySelector('output');r.value=S[it.k];
-        const up=()=>{S[it.k]=+r.value;o.textContent=it.f(S[it.k]);saveS();applyVol();if(it.k==='ofs')storeOfs();};r.oninput=up;o.textContent=it.f(S[it.k]);row._sync=()=>{r.value=S[it.k];o.textContent=it.f(S[it.k]);};}
-      row.dataset.k=it.k;inn.appendChild(row);
-      if(it.h)inn.insertAdjacentHTML('beforeend',`<div class="hlp">${it.h}</div>`);
-    }
-    body.appendChild(d);
+  $('#setQ').placeholder=L('設定を検索（例：ずれ、BGA、振動）','Search settings (e.g. offset, BGA)');
+  const mb=$('#setMode');if(mb)mb.textContent=S.setAll?L('よく使う設定だけ表示','Show common settings only'):L('すべての設定を表示','Show all settings');
+  const q=setQ.trim().toLowerCase(),plain=x=>String(x||'').replace(/<[^>]+>/g,'').toLowerCase();
+  const sec=(title,open)=>{const d=document.createElement('details');d.className='card';d.open=!!open;d.innerHTML=`<summary>${title}</summary><div class="in"></div>`;body.appendChild(d);return d.querySelector('.in');};
+  if(q){
+    let n=0;
+    for(const s of SCHEMA()){const its=s.items.filter(it=>it.hint?plain(s.sec).includes(q):(plain(it.t).includes(q)||plain(it.h).includes(q)||plain(s.sec).includes(q)));
+      if(!its.length)continue;const inn=sec(s.sec,true);its.forEach(it=>renderItem(it,inn));n+=its.length;}
+    n=n||body.querySelectorAll('.hlp').length;
+    if(!n)body.insertAdjacentHTML('beforeend',`<div class="hlp" style="text-align:center;margin:16px 0">${L('見つかりませんでした','No matching settings')}</div>`);
+    return;
   }
+  if(!S.setAll){
+    const inn=sec(L('よく使う設定','Common settings'),true);
+    QUICK.map(findItem).filter(Boolean).forEach(it=>renderItem(it,inn));
+    inn.insertAdjacentHTML('beforeend',`<div class="hlp">${L('ほかの設定は「すべての設定を表示」から。上の検索欄で探すこともできます。●は初期値から変えた項目で、「戻す」で初期値に戻せます。','More options are under “Show all settings”, or use the search box. ● marks changed items; “Reset” restores the default.')}</div>`);
+    return;
+  }
+  for(const s of SCHEMA()){const inn=sec(s.sec,s.open);s.items.forEach(it=>renderItem(it,inn));}
 }
 function syncSettings(){$$('#setBody .row').forEach(r=>r._sync&&r._sync());}
 
@@ -1990,6 +2014,7 @@ async function openDetail(c){
       <span class="k">${L('ランプ','Clear')}</span><span style="color:${LAMPC[r.lamp||0]};font-weight:800">${LAMPS[r.lamp||0]}</span><span class="k">${L('ランク','Rank')}</span><span>${r.ex?rankOf(rate):'-'}</span>
       <span class="k">SCORE</span><span>${r.ex?`${r.ex}（${(rate*100).toFixed(2)}%）`:'-'}</span><span class="k">BP</span><span>${r.bp??'-'}</span>
       <span class="k">${L('最大コンボ','Max combo')}</span><span>${r.combo||'-'}</span><span class="k">${L('プレイ回数','Plays')}</span><span>${r.plays||0}</span></div></div>
+    <div class="dopts" id="dOpts"></div>
     <button class="pri" id="dPlay">${L('プレイする','Play')}</button>
     <div class="btns"><button id="dAuto">${L('オートプレイ','Autoplay')}</button><button id="dView">${L('譜面ビューア','Chart viewer')}</button></div>
     <button id="dRep" ${rep?'':'disabled style="opacity:.4"'}>${L('ベストのリプレイ','Watch best replay')}</button>
@@ -2008,6 +2033,7 @@ async function openDetail(c){
   $('#dClose').onclick=close;
   $('#detail').onclick=e=>{if(e.target.id==='detail')close();};
   $('#dFav').onclick=()=>{if(FAV.has(c.hash))FAV.delete(c.hash);else FAV.add(c.hash);saveFav();const f=FAV.has(c.hash);$('#dFav').textContent=f?'★':'☆';$('#dFav').style.color=f?'#fd3':'#889';renderLibrary();};
+  {const box=$('#dOpts');['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();startPlay(c,{});};
   $('#dAuto').onclick=()=>{close();startPlay(c,{auto:true});};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
@@ -2024,6 +2050,8 @@ async function openDetail(c){
 }
 
 /* ---------- settings screen ---------- */
+$('#setQ').oninput=e=>{setQ=e.target.value;buildSettings();};
+$('#setMode').onclick=()=>{S.setAll=!S.setAll;saveS();setQ='';$('#setQ').value='';buildSettings();};
 $('#setBtn').onclick=async()=>{buildSettings();renderPwaBox();show('#lib',false);show('#settings',true,'block');applyI18n();
   measureHz().then(hz=>{const el=$('#hzInfo');if(!el)return;const ios=/iPhone|iPad/.test(navigator.userAgent);
     el.innerHTML=L(`この画面の描画は 約<b>${hz}fps</b> です。`,`This screen renders at about <b>${hz}fps</b>. `)+(hz<=65?(ios?L('ProMotion（120Hz）対応のiPhone/iPadで120fpsにするには、<b>Safari</b>でこのページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてSafariを再起動してください。アプリ内の表示では60fpsに制限される場合があります。','For 120fps on ProMotion iPhone/iPad, open this page in <b>Safari</b>, turn off "Prefer Page Rendering Updates near 60fps" in Settings → Apps → Safari → Advanced → Feature Flags, then restart Safari. In-app viewers may be limited to 60fps.'):L('画面が60Hzのため、60fpsが上限です。','The display is 60Hz, so 60fps is the maximum.')):'');});
