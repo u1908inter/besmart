@@ -1357,16 +1357,16 @@ function applyI18n(){
 }
 let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem('bmsp2-fav')||'[]'));}catch(e){}
 const saveFav=()=>{try{localStorage.setItem('bmsp2-fav',JSON.stringify([...FAV]));}catch(e){}};
-const ARR_OPTS=()=>[['off','OFF'],['mirror',L('鏡像','MIRROR')],['random',L('ランダム','RANDOM')],['rrandom',L('回転ランダム','ROTATE')],['srandom',L('ノーツ毎ランダム','PER-NOTE')],['hrandom',L('縦連回避ランダム','PER-NOTE (no jacks)')],['allscr',L('皿に寄せる','TO SCRATCH')]];
+const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH']];
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
   {k:'side',t:L('スクラッチ（皿）の位置','Scratch (turntable) side'),sel:[['L',L('左','Left')],['R',L('右','Right')]],h:L('5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます。','Puts the scratch lane at the left or right edge in single-side modes such as 5K and 7K.')},
   {k:'gauge',t:L('ゲージ','Gauge'),sel:[['aeasy','ASSIST'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EXTRA HARD'],['hazard','SUDDEN DEATH']],
    h:L('HARD以上は0%で即終了。SUDDEN DEATHはBAD/MISSで即終了。','HARD and above end at 0%. SUDDEN DEATH ends on any BAD/MISS.')},
   {k:'gas',t:L('ゲージ自動降格','Auto gauge downgrade'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
-  {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS()},
+  {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS(),h:L('MIRROR＝左右反転／RANDOM＝鍵盤を並べ替え／R-RANDOM＝鍵盤を回転／S-RANDOM＝ノーツ毎にランダム／H-RANDOM＝縦連を避けたS-RANDOM／ALL-SCRATCH＝空いているときノーツを皿へ','MIRROR flips the keys / RANDOM shuffles keys / R-RANDOM rotates keys / S-RANDOM randomizes each note / H-RANDOM is S-RANDOM avoiding jacks / ALL-SCRATCH moves notes to the scratch when free')},
   {k:'arr2',t:L('配置（2P側・DP）','Arrangement (2P side)'),sel:ARR_OPTS()},
-  {k:'flip',t:L('左右入替（DP）','Swap sides (DP)'),b:1},
+  {k:'flip',t:L('FLIP（DPの左右入替）','FLIP (swap DP sides)'),b:1},
   {k:'lnmode',t:L('ロングノート','Long notes'),sel:[['chart',L('譜面の指定に従う','Chart default')],['ln',L('終点判定なし','No release judge')],['cn',L('離す判定あり','Release judged')],['hcn',L('押し続け必須','Must keep holding')]]},
  ]},
  {sec:L('アシスト','Assist'),items:[
@@ -2915,7 +2915,7 @@ function snapResult(R){
     glog:G.glog.slice(),endT:Math.max(1,c.endTime),t0:G.practice?G.T0:0,dts:G.dts.slice(),lim:G.W.BD*1000,
     thumb:G.meta&&G.meta.thumb||null,opts:G.opts,date:new Date(),news:R.news,tag:G.replay?'REPLAY':G.auto?'AUTO':G.practice?'PRACTICE':''};
 }
-const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'ROTATE',srandom:'PER-NOTE',hrandom:'PER-NOTE*',allscr:'TO-SCR'};
+const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'R-RANDOM',srandom:'S-RANDOM',hrandom:'H-RANDOM',allscr:'ALL-SCRATCH'};
 function shareText(D){
   const lamp=D.failed?'FAILED':LAMPS[D.lamp];
   return `${D.title}${D.subtitle&&!D.course?' '+D.subtitle:''}${D.course?' [COURSE]':''} ${lamp} ${D.rank} ${(D.rate*100).toFixed(2)}% BP${D.bp} #BeSmartBMS`.replace(/\s+/g,' ').trim();
