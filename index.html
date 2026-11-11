@@ -1323,7 +1323,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',judgeMs:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.5,laneA:1,judgeMs:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1392,6 +1392,8 @@ function SCHEMA(){return [
   {k:'showFps',t:L('FPSを表示','Show FPS'),b:1},
   {hint:'<span id="hzInfo">'+L('画面の更新頻度を測定中…','Measuring refresh rate…')+'</span>'},
   {k:'bga',t:'BGA',sel:[['on',L('表示','Show')],['off',L('非表示','Hide')]]},
+  {k:'laneA',t:L('レーン背景の濃さ','Lane background opacity'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%',h:L('下げるとレーンの後ろのBGAが透けて見えます。縦画面でBGAを見たいときに。','Lower it to see the BGA behind the lanes (useful in portrait).')},
+  {k:'bgaA',t:L('BGAの明るさ','BGA brightness'),r:[0.1,1,0.05],f:v=>Math.round(v*100)+'%',h:L('レーンの後ろに表示するBGAの明るさです。','Brightness of the BGA shown behind the lanes.')},
   {k:'persp',t:L('レーンを立体表示','3D lane view'),b:1},
   {k:'panel',t:L('レーンの位置（横画面）','Lane position (landscape)'),sel:[['center',L('中央','Center')],['left',L('左','Left')],['right',L('右','Right')]]},
   {k:'noteH',t:L('ノーツの太さ','Note thickness'),r:[0.5,2.5,0.1],f:v=>'×'+v.toFixed(1)},
@@ -2463,9 +2465,9 @@ function draw(){
     const im=poor||G.curBga;
     if(L_.bga){g.fillStyle='#0a0a10';g.fillRect(L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h);if(im)drawImg(im,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);
       if(G.curLayer&&!poor){g.globalCompositeOperation='lighter';drawImg(G.curLayer,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);g.globalCompositeOperation='source-over';}}
-    else if(im){drawImg(im,0,0,W,H,.5);}
+    else if(im){drawImg(im,0,0,W,H,S.bgaA);}
   }
-  g.fillStyle=PP.bg;quad(areaX,0,areaW,judgeY);g.fillRect(areaX,judgeY,areaW,H-judgeY);
+  g.fillStyle=PP.bg;g.globalAlpha=(S.bga==='on'&&!L_.bga&&!G.viewer)?S.laneA:1;quad(areaX,0,areaW,judgeY);g.fillRect(areaX,judgeY,areaW,H-judgeY);g.globalAlpha=1;
   L_.order.forEach((l,i)=>{if(i%2){g.fillStyle=hexA(PP.faint,.18);quad(xs[l],0,ws[l],judgeY);}g.fillStyle=hexA(PP.faint,.8);quad(xs[l],0,1,judgeY);quad(xs[l]+ws[l]-1,0,1,judgeY);g.fillRect(xs[l],judgeY,1,H-judgeY);g.fillRect(xs[l]+ws[l]-1,judgeY,1,H-judgeY);});
   const P=ppb();
   const yOf=d=>judgeY-(d-cd)*P;
