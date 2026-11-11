@@ -144,6 +144,10 @@ canvas{display:block;touch-action:none}
     <select id="sort"><option value="title" data-en="Title">曲名</option><option value="level" data-en="Level">レベル</option><option value="lamp" data-en="Clear">ランプ</option><option value="score" data-en="Score">スコア</option><option value="added" data-en="Added">追加日</option><option value="artist" data-en="Artist">アーティスト</option></select>
   </div>
   <div id="count" class="hlp"></div>
+  <div class="bar" id="rndBar" style="display:none">
+    <select id="rndF"><option value="all" data-en="Any chart">全譜面から</option><option value="notclear" data-en="Not cleared">未クリアから</option><option value="noteasy" data-en="Below EASY CLEAR">EASY未満から</option><option value="failed" data-en="Not played / FAILED">未プレイ・FAILEDから</option></select>
+    <button id="rndBtn" class="ib" data-en="Random pick">おまかせ選曲</button>
+  </div>
   <div id="songs"></div>
   <div id="empty" class="empty">
     <p data-en="Your library is empty. Add a BMS archive (ZIP, RAR, LZH or 7z) or a folder of BMS/bmson files with their sounds. Songs stay on this device.">ライブラリはまだ空です。BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて「追加」してください。曲はこの端末の中にだけ保存されます。</p>
@@ -969,7 +973,9 @@ function makePlay(base,o){
     if(a==='mirror')sh=ks.slice().reverse();
     else if(a==='random'){for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}}
     else if(a==='rrandom'){const r=1+Math.floor(rng()*(n-1));sh=ks.map((_,i)=>ks[(i+r)%n]);if(rng()<.5)sh.reverse();}
-    else if(a==='srandom'||a==='hrandom'||a==='allscr')perNote.push({side:si,mode:a});
+    else if(a==='srandom'||a==='hrandom'||a==='allscr'||a==='spiral')perNote.push({side:si,mode:a});
+    else if(a==='randomex'&&s.scr!=null){const pool=[s.scr,...ks],sh2=pool.slice();for(let i=sh2.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh2[i],sh2[j]]=[sh2[j],sh2[i]];}s.map={};pool.forEach((k,i)=>s.map[k]=sh2[i]);return;}
+    else if(a==='randomex'){for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}}
     // compose with flip: lane L(original) -> perm[L] (flipped) -> then random within destination side
     s.map={};ks.forEach((k,i)=>s.map[k]=sh[i]);
   });
@@ -999,6 +1005,14 @@ function makePlay(base,o){
         continue;
       }
       if(!inSide(n))continue;
+      if(pn.mode==='spiral'){
+        if(pn.r0==null){pn.r0=Math.floor(rng()*keys.length);pn.dir=rng()<.5?1:-1;}
+        const ms=base.measures||[];let lo=0,hi=ms.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(ms[mid].time<=n.time+1e-6)lo=mid;else hi=mid-1;}
+        const nk=keys.length,rot=((pn.r0+pn.dir*lo)%nk+nk)%nk,idx=keys.indexOf(n.lane);
+        let dest=keys[(idx+rot)%nk];
+        if(busy[dest]>=n.time-0.0005){const free=keys.filter(k=>busy[k]<n.time-0.0005);if(free.length)dest=free.reduce((b,k)=>Math.abs(keys.indexOf(k)-keys.indexOf(dest))<Math.abs(keys.indexOf(b)-keys.indexOf(dest))?k:b,free[0]);}
+        n.lane=dest;busy[dest]=n.et!=null?n.et:n.time;lastT[dest]=n.time;continue;
+      }
       let cand=keys.filter(k=>busy[k]<n.time-0.0005);
       if(pn.mode==='hrandom'){const c2=cand.filter(k=>n.time-lastT[k]>0.12);if(c2.length)cand=c2;}
       if(!cand.length)cand=keys.slice();
@@ -1338,7 +1352,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,judgeMs:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1347,6 +1361,7 @@ try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['
 try{Object.assign(S,JSON.parse(localStorage.getItem('bmsp2-set')||'{}'));}catch(e){}
 const saveS=()=>{try{localStorage.setItem('bmsp2-set',JSON.stringify(S));}catch(e){}};
 if(!S.edgeV2){if(S.edge===25)S.edge=10;S.edgeV2=1;saveS();}
+if(!S.fsV2){if(S.judgeMs===false)S.fsDisp='text';S.fsV2=1;saveS();}
 if(!S.bgaV2){if(S.laneA===1)S.laneA=.4;if(S.bgaA===.5)S.bgaA=.6;S.bgaV2=1;saveS();}
 if(!S.prof||!S.prof.speaker){S.prof={speaker:{ofs:S.ofs||0,set:!!S.ofs},wired:{ofs:0,set:false},bt:{ofs:0,set:false}};}
 let REC={};try{REC=JSON.parse(localStorage.getItem('bmsp2-rec')||'{}');}catch(e){}
@@ -1372,26 +1387,27 @@ function applyI18n(){
 }
 let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem('bmsp2-fav')||'[]'));}catch(e){}
 const saveFav=()=>{try{localStorage.setItem('bmsp2-fav',JSON.stringify([...FAV]));}catch(e){}};
-const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH']];
+const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH'],['spiral','SPIRAL'],['randomex','RANDOM-EX']];
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
   {k:'side',t:L('スクラッチ（皿）の位置','Scratch (turntable) side'),sel:[['L',L('左','Left')],['R',L('右','Right')]],h:L('5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます。','Puts the scratch lane at the left or right edge in single-side modes such as 5K and 7K.')},
   {k:'gauge',t:L('ゲージ','Gauge'),sel:[['aeasy','ASSIST EASY'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EX HARD'],['hazard','HAZARD']],
    h:L('HARD以上は0%で即終了。HAZARDはBAD/MISSで即終了。','HARD and above end at 0%. HAZARD ends on any BAD/MISS.')},
-  {k:'gas',t:L('ゲージ自動降格','Auto gauge downgrade'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
-  {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS(),h:L('MIRROR＝左右反転／RANDOM＝鍵盤を並べ替え／R-RANDOM＝鍵盤を回転／S-RANDOM＝ノーツ毎にランダム／H-RANDOM＝縦連を避けたS-RANDOM／ALL-SCRATCH＝空いているときノーツを皿へ','MIRROR flips the keys / RANDOM shuffles keys / R-RANDOM rotates keys / S-RANDOM randomizes each note / H-RANDOM is S-RANDOM avoiding jacks / ALL-SCRATCH moves notes to the scratch when free')},
+  {k:'gas',t:L('ゲージ自動降格（GAS）','Gauge auto shift (GAS)'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
+  {k:'gasMin',t:L('自動降格の下限','GAS lowest gauge'),sel:[['aeasy','ASSIST EASY'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EX HARD']],h:L('自動降格でここまで下がったら、それより下には下がりません。','GAS will not shift below this gauge.')},
+  {k:'arr',t:L('配置（1P）','Arrangement (1P)'),sel:ARR_OPTS(),h:L('MIRROR＝左右反転／RANDOM＝鍵盤を並べ替え／R-RANDOM＝鍵盤を回転／S-RANDOM＝ノーツ毎にランダム／H-RANDOM＝縦連を避けたS-RANDOM／ALL-SCRATCH＝空いているときノーツを皿へ／SPIRAL＝回転が小節ごとにずれていく／RANDOM-EX＝皿も含めて並べ替え','MIRROR flips the keys / RANDOM shuffles keys / R-RANDOM rotates keys / S-RANDOM randomizes each note / H-RANDOM is S-RANDOM avoiding jacks / ALL-SCRATCH moves notes to the scratch when free / SPIRAL rotation shifts every bar / RANDOM-EX shuffles including the scratch')},
   {k:'arr2',t:L('配置（2P側・DP）','Arrangement (2P side)'),sel:ARR_OPTS()},
   {k:'flip',t:L('FLIP（DPの左右入替）','FLIP (swap DP sides)'),b:1},
   {k:'lnmode',t:L('ロングノート','Long notes'),sel:[['chart',L('譜面の指定に従う','Chart default')],['ln',L('終点判定なし','No release judge')],['cn',L('離す判定あり','Release judged')],['hcn',L('押し続け必須','Must keep holding')]]},
  ]},
  {sec:L('アシスト','Assist'),items:[
   {k:'autoScr',t:L('オートスクラッチ','Auto scratch'),b:1},{k:'legacy',t:L('ロングノートを通常ノーツに','Long notes as normal notes'),b:1},{k:'expand',t:L('判定幅拡大','Wider timing window'),b:1},
-  {hint:L('アシストを使うとクリアランプは ASSIST CLEAR になります。','Using assists limits the clear lamp to ASSIST CLEAR.')}
+  {hint:L('アシストや、配置の H-RANDOM・ALL-SCRATCH・SPIRAL・RANDOM-EX を使うと、クリアランプは ASSIST CLEAR になります。','Assists, and the H-RANDOM / ALL-SCRATCH / SPIRAL / RANDOM-EX arrangements, limit the clear lamp to ASSIST CLEAR.')}
  ]},
  {sec:L('スピード・レーンカバー','Speed & lane cover'),items:[
   {k:'hs',t:L('スピード','Speed'),r:[0.5,10,0.25],f:v=>v.toFixed(2)},
   {k:'fix',t:L('スピード基準BPM','Speed reference BPM'),sel:[['off',L('OFF（BPMに比例）','Off (scales with BPM)')],['main',L('最も長いBPM','Main BPM')],['start',L('開始BPM','Start BPM')],['max',L('最大BPM','Max BPM')],['min',L('最小BPM','Min BPM')]]},
-  {k:'fhs',t:L('表示時間を固定','Keep visible time constant'),b:1,h:L('ONにすると下の表示時間に合わせてスピードを自動計算。カバーを動かしても見える時間が変わりません。','Speed is computed from the visible time below; moving the cover keeps it constant.')},
+  {k:'fhs',t:L('表示時間を固定（FLOATING）','Keep visible time constant (FLOATING)'),b:1,h:L('ONにすると下の表示時間に合わせてスピードを自動計算。カバーを動かしても見える時間が変わりません。','Speed is computed from the visible time below; moving the cover keeps it constant.')},
   {k:'green',t:L('表示時間','Visible time'),r:[150,2000,10],f:v=>v+'ms'},
   {k:'suddenOn',t:L('上カバー','Top cover'),b:1},{k:'sudden',t:L('上カバーの量','Top cover amount'),r:[0,80,1],f:v=>v+'%'},
   {k:'hiddenOn',t:L('下カバー','Bottom cover'),b:1},{k:'hidden',t:L('下カバーの量','Bottom cover amount'),r:[0,60,1],f:v=>v+'%'},
@@ -1401,13 +1417,15 @@ function SCHEMA(){return [
   {k:'ofs',t:L('判定タイミング','Audio offset'),r:[-400,400,1],f:v=>(v>0?'+':'')+v+'ms',h:L('音が遅れて聞こえる → プラス方向。出力先ごとに別々に保存されます。','Sound heard late → plus. Saved separately per audio output.')},
   {k:'vofs',t:L('表示タイミング','Visual offset'),r:[-300,300,1],f:v=>(v>0?'+':'')+v+'ms',h:L('ノーツの見た目だけをずらします（プラス＝早く表示）','Shifts only the note display (plus = drawn earlier)')},
   {k:'ksMode',t:L('キー音の鳴らし方','Keysound playback'),sel:[['input',L('押した瞬間に鳴らす','On key press')],['auto',L('譜面どおり自動で鳴らす','Auto, on chart timing')]],h:L('「自動」はBluetoothなど遅延の大きい環境向け。押さなくても音が鳴ります。','"Auto" suits high-latency outputs like Bluetooth; sounds play even if you miss.')},
-  {k:'judgeMs',t:L('判定のズレ(ms)を表示','Show timing (ms)'),b:1},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},
+  {k:'judgeAlg',t:L('判定アルゴリズム','Judge algorithm'),sel:[['lowest',L('LOWEST（手前のノーツを優先）','LOWEST (earliest note first)')],['combo',L('COMBO（コンボがつながる方を優先）','COMBO (keep the combo)')],['duration',L('DURATION（タイミングが近い方を優先）','DURATION (closest timing)')]],h:L('ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合、どれを判定するかを決めます。','Decides which note a press hits when several notes are within the timing window.')},
+  {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
   {k:'celebrate',t:L('フルコンボ演出','Full combo effect'),b:1},
   {k:'fps',t:L('フレームレート','Frame rate'),sel:[['auto',L('自動（画面の最大）','Auto (display max)')],['120','120fps'],['60','60fps'],['30',L('30fps（省電力）','30fps (battery saver)')]],h:L('判定は音の時計とタッチの瞬間で行うので、fpsを下げても判定の精度は変わりません。','Judging uses the audio clock and touch time, so lowering fps does not affect accuracy.')},
   {k:'showFps',t:L('FPSを表示','Show FPS'),b:1},
   {hint:'<span id="hzInfo">'+L('画面の更新頻度を測定中…','Measuring refresh rate…')+'</span>'},
   {k:'bga',t:'BGA',sel:[['on',L('表示','Show')],['off',L('非表示','Hide')]]},
+  {k:'bgaFit',t:L('BGAの表示サイズ','BGA size'),sel:[['keep',L('縦横比を保つ','Keep aspect')],['full',L('引き伸ばす','Stretch to fill')],['int',L('整数倍（ドットをくっきり）','Integer scale (crisp pixels)')]]},
   {k:'laneA',t:L('レーン背景の濃さ','Lane background opacity'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%',h:L('下げるとレーンの後ろのBGAが透けて見えます。縦画面でBGAを見たいときに。','Lower it to see the BGA behind the lanes (useful in portrait).')},
   {k:'bgaA',t:L('BGAの明るさ','BGA brightness'),r:[0.1,1,0.05],f:v=>Math.round(v*100)+'%',h:L('レーンの後ろに表示するBGAの明るさです。','Brightness of the BGA shown behind the lanes.')},
   {k:'persp',t:L('レーンを立体表示','3D lane view'),b:1},
@@ -1608,7 +1626,7 @@ function getArchive(arch){
 }
 
 /* ---------- library ---------- */
-let CHARTS=[];
+let CHARTS=[],LIBLIST=[];
 const LAMPS=['NO PLAY','FAILED','ASSIST CLEAR','EASY CLEAR','CLEAR','HARD CLEAR','EX HARD CLEAR','FULL COMBO','PERFECT','MAX'];
 const LAMPC=['#5a4a36','#FF5A3C','#B98CFF','#7CD992','#5BB4FF','#FF6A00','#FFE08A','#FFF6DC','#FFF6DC','#FFFFFF'];
 const DIFN=()=>LANG()==='en'?['','BEGINNER','NORMAL','HARD','EXPERT','INSANE']:['','入門','標準','上級','最上級','発狂'];
@@ -1628,6 +1646,7 @@ function renderLibrary(){
     score:(a,b)=>((rec(b).ex||0)/(2*b.notesN||1))-((rec(a).ex||0)/(2*a.notesN||1)),
     added:(a,b)=>b.added-a.added,artist:(a,b)=>(a.artist||'').localeCompare(b.artist||'','ja')||a.title.localeCompare(b.title,'ja')}[so]||(()=>0);
   list.sort(cmp);
+  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   show('#empty',!CHARTS.length,'block');show('#libFoot',!!CHARTS.length,'block');
@@ -1648,6 +1667,13 @@ function renderLibrary(){
   box.appendChild(frag);
 }
 $('#q').oninput=renderLibrary;
+$('#rndBtn').onclick=()=>{
+  const f=$('#rndF').value,lamp=c=>(REC[c.hash]||{}).lamp||0;
+  const ok={all:()=>true,notclear:c=>lamp(c)<4,noteasy:c=>lamp(c)<3,failed:c=>lamp(c)<=1}[f]||(()=>true);
+  const pool=LIBLIST.filter(ok);
+  if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return;}
+  openDetail(pool[Math.floor(Math.random()*pool.length)]);
+};
 $('#fmode').value=S.fmode;$('#sort').value=S.sort;
 $('#fmode').onchange=e=>{S.fmode=e.target.value;saveS();renderLibrary();};
 $('#sort').onchange=e=>{S.sort=e.target.value;saveS();renderLibrary();};
@@ -2192,7 +2218,7 @@ function startCourse(co){
 const bufCache=new Map(),imgCache=new Map();
 function setLoad(t,r){$('#loadTxt').textContent=t;$('#loadBar').style.width=Math.round(r*100)+'%';}
 let lastPlay=null,lastMode=null,lastMeta=null;
-function snapOpts(){return {arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas};}
+function snapOpts(){return {arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas,gasMin:S.gasMin,judgeAlg:S.judgeAlg};}
 async function startPlay(meta,mode){
   ensureAudio();lastMeta=meta;lastMode=mode;lastPlay=()=>startPlay(meta,Object.assign({},mode,{seed:undefined}));
   if(!mode.replay)autoProfile();
@@ -2381,7 +2407,7 @@ function gaugeApply(j,factor){
 function gaugeDamage(pct){for(const k in GT){const t=GT[k],s=G.gauges[k];if(s.dead)continue;s.v=Math.max(t.surv?0:2,s.v-pct);if(t.surv&&s.v<=0){s.v=0;s.dead=true;}}checkFail();}
 function checkFail(){
   if(!G.gauges[G.cur].dead||G.ended)return;
-  if(G.opts.gas){const i=GORDER.indexOf(G.cur);for(let k=i+1;k<GORDER.length;k++){if(!G.gauges[GORDER[k]].dead){G.cur=GORDER[k];return;}}}
+  if(G.opts.gas){const i=GORDER.indexOf(G.cur),lim=G.opts.gasMin&&GORDER.includes(G.opts.gasMin)?GORDER.indexOf(G.opts.gasMin):GORDER.length-1;for(let k=i+1;k<=lim;k++){if(!G.gauges[GORDER[k]].dead){G.cur=GORDER[k];return;}}}
   if(G.auto||G.practice||G.viewer||G.tut)return;
   G.failed=true;finish();
 }
@@ -2414,6 +2440,14 @@ function press(lane,src,tOv){
   const list=G.chart.laneNotes[lane];
   let i=G.laneIdx[lane],n=null;
   for(;i<list.length;i++){const x=list[i];if(x.state===4&&t<x.et){x.state=1;if(!G.ksAuto)playSound(x.id,0,'key');return;}if(x.state===0){n=x;break;}}
+  const alg=G.opts.judgeAlg||'lowest';
+  if(n&&alg!=='lowest'){
+    const lim=G.W.BD*G.rate;let best=null;
+    for(let j=i;j<list.length;j++){const x=list[j];if(x.time-t>lim)break;if(x.state!==0)continue;const ad=Math.abs(t-x.time)/G.rate;if(ad>G.W.BD)continue;
+      if(alg==='duration'){if(!best||ad<Math.abs(t-best.time)/G.rate)best=x;}
+      else if(alg==='combo'){if(ad<=G.W.GD){best=x;break;}}}
+    if(best)n=best;
+  }
   if(!G.ksAuto){const id=keysoundFor(lane,t,n);if(id)playSound(id,0,'key');}
   if(!n)return;
   const dt=(t-n.time)/G.rate;
@@ -2505,7 +2539,10 @@ function effHS(){if(!S.fhs)return S.hs;return Math.max(0.25,(1-coverFrac())*4000
 function ppb(){const f=G.ppbFix;return effHS()*L_.len*0.1*(f?150/f:1);}
 function greenNum(t){const b=timeToBeat(G.chart.segs,t),s=Math.abs(curScroll(G.chart.sc,b))||1;return Math.round((1-coverFrac())*L_.len/(ppb()*curBpmAt(G.chart.segs,t)/60*s)*1000);}
 function trunc(s,maxW){let o=s;while(o.length>1&&g.measureText(o).width>maxW)o=o.slice(0,-1);return o===s?s:o+'…';}
-function drawImg(im,x,y,w,h,alpha){const s=Math.min(w/im.width,h/im.height);g.globalAlpha=alpha;g.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);g.globalAlpha=1;}
+function drawImg(im,x,y,w,h,alpha){g.globalAlpha=alpha;
+  if(S.bgaFit==='full'){g.drawImage(im,x,y,w,h);}
+  else{let s=Math.min(w/im.width,h/im.height);if(S.bgaFit==='int'){s=s>=1?Math.floor(s):s;g.imageSmoothingEnabled=false;}g.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);g.imageSmoothingEnabled=true;}
+  g.globalAlpha=1;}
 // perspective helpers (3D lane view)
 let P3=null;
 function setupPersp(){if(!S.persp){P3=null;return;}const k=0.4,jy=L_.judgeY;P3={k,jy,hor:-k*jy/(1-k),D:k/(1-k),cx:L_.areaX+L_.areaW/2};}
@@ -2601,8 +2638,8 @@ function draw(){
     if(NE){g.font=`900 ${fs}px ${GF()}`;g.fillStyle=J.j==='PG'?`hsl(${(nowMs/3)%360},100%,75%)`:JC(J.j);g.fillText(txt,cx,jy);}
     else if(CL){if(J.j==='PG'){const o=Math.max(1,fs*0.05);g.fillStyle='rgba(255,61,154,.9)';g.fillText(txt,cx-o,jy+o*0.5);g.fillStyle='rgba(91,124,255,.9)';g.fillText(txt,cx+o,jy-o*0.5);}g.fillStyle=JC(J.j);g.fillText(txt,cx,jy);}
     else{g.save();g.shadowColor=PP.glow;g.shadowBlur=J.j==='PG'?16:8;g.fillStyle=JC(J.j);g.fillText(txt,cx,jy);g.restore();}
-    if(J.dt!=null&&J.j!=='PG'){g.font=`${Math.round(fs*.42)}px ${GF()}`;g.fillStyle=J.dt<0?(NE?'#4DC3FF':CL?'#7d97ff':PP.hi):(NE?'#FF8A4D':PP.alert);g.fillText(J.dt<0?'FAST':'SLOW',cx,jy-fs*0.85);}
-    if(S.judgeMs&&J.dt!=null){g.font=`${Math.round(fs*.4)}px ${GF()}`;g.fillStyle=PP.dim;g.fillText((J.dt>0?'+':'')+Math.round(J.dt*1000)+'ms',cx,jy+fs*0.75);}
+    if(J.dt!=null&&J.j!=='PG'&&(S.fsDisp==='both'||S.fsDisp==='text')){g.font=`${Math.round(fs*.42)}px ${GF()}`;g.fillStyle=J.dt<0?(NE?'#4DC3FF':CL?'#7d97ff':PP.hi):(NE?'#FF8A4D':PP.alert);g.fillText(J.dt<0?'FAST':'SLOW',cx,jy-fs*0.85);}
+    if((S.fsDisp==='both'||S.fsDisp==='ms')&&J.dt!=null){g.font=`${Math.round(fs*.4)}px ${GF()}`;g.fillStyle=PP.dim;g.fillText((J.dt>0?'+':'')+Math.round(J.dt*1000)+'ms',cx,jy+fs*0.75);}
   }
   const top=safeTop+6,hx=areaX+8,hw=areaW-16;
   g.textAlign='left';g.textBaseline='top';
@@ -2627,7 +2664,7 @@ function draw(){
       g.fillStyle=d>=0?'#6cf':'#f77';g.fillText(`${S.pace==='best'?'BEST':S.pace.toUpperCase()} ${d>=0?'+':''}${d}`,hx+exW+70,top+20);
     }
     g.font='12px '+GF();g.fillStyle=PP.dim;
-    g.fillText(`BPM ${Math.round(curBpmAt(c.segs,t))}  ${L('スピード','SPD')} ${effHS().toFixed(2)}  ${greenTxt}`,hx,top+38);
+    g.fillText(`BPM ${Math.round(curBpmAt(c.segs,t))}  ${L('スピード','SPD')} ${effHS().toFixed(2)}  ${greenTxt}${S.white&&S.suddenOn?`  ${L('白','W')} ${Math.round(S.sudden*10)}`:''}${S.white&&S.lift>0?`  LIFT ${Math.round(S.lift*10)}`:''}`,hx,top+38);
     const gy=top+54,gt=GT[G.cur],gv=G.gauges[G.cur].v;
     g.strokeStyle=PP.faint;g.lineWidth=1;g.strokeRect(hx+.5,gy-.5,hw-1,9);
     const fill=Math.floor(gv/2);
@@ -2847,14 +2884,17 @@ $('#retryBtn').onclick=()=>retry(false);
 $('#retrySame').onclick=()=>retry(true);
 
 /* ---------- result ---------- */
+const ASSIST_ARR=['hrandom','allscr','spiral','randomex'];
+function isAssist(o){return !!(o.autoScr||o.legacy||o.expand||ASSIST_ARR.includes(o.arr)||(G&&G.meta&&/^(10k|14k)$/.test(G.meta.mode)&&ASSIST_ARR.includes(o.arr2)));}
 function computeLamp(agg){
   const c=agg||G.counts;
   const cleared=t=>{const s=G.gauges[t];return GT[t].surv?!s.dead:s.v>=GT[t].border;};
   let lamp=1;
-  const cands=G.opts.gas?GORDER.slice(GORDER.indexOf(G.startGauge)):[G.cur];
+  const lim=G.opts.gasMin&&GORDER.includes(G.opts.gasMin)?GORDER.indexOf(G.opts.gasMin):GORDER.length-1;
+  const cands=G.opts.gas?GORDER.slice(GORDER.indexOf(G.startGauge),Math.max(GORDER.indexOf(G.startGauge),lim)+1):[G.cur];
   for(const t of cands){if(cleared(t)){lamp=GT[t].lamp;break;}}
   if(G.failed&&!G.opts.gas)lamp=1;
-  const assist=G.opts.autoScr||G.opts.legacy||G.opts.expand;
+  const assist=isAssist(G.opts);
   if(lamp>=2&&assist)lamp=2;
   const fc=c.BD===0&&c.PR===0&&(agg?true:G.N>0);
   if(lamp>=2&&!assist&&fc){lamp=Math.max(lamp,7);if(c.GD===0)lamp=8;if(c.GD===0&&c.GR===0)lamp=9;}
@@ -2877,7 +2917,7 @@ function finish(){
   }
   const thisReplay=G.record?{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec}:null;
   const fc=!G.failed&&c.BD===0&&c.PR===0&&N>0;
-  const assist=G.opts.autoScr||G.opts.legacy||G.opts.expand;
+  const assist=isAssist(G.opts);
   if(fc&&S.celebrate&&!G.auto&&!G.practice&&!G.tut&&!assist&&!G.replay){
     G.celebrate={type:c.GD===0&&c.GR===0?'MAX':c.GD===0?'PERFECT':'FULL COMBO',t:performance.now()};
   }
@@ -2977,7 +3017,7 @@ function snapResult(R){
     glog:G.glog.slice(),endT:Math.max(1,c.endTime),t0:G.practice?G.T0:0,dts:G.dts.slice(),lim:G.W.BD*1000,
     thumb:G.meta&&G.meta.thumb||null,opts:G.opts,date:new Date(),news:R.news,tag:G.replay?'REPLAY':G.auto?'AUTO':G.practice?'PRACTICE':''};
 }
-const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'R-RANDOM',srandom:'S-RANDOM',hrandom:'H-RANDOM',allscr:'ALL-SCRATCH'};
+const ARRN={off:'',mirror:'MIRROR',random:'RANDOM',rrandom:'R-RANDOM',srandom:'S-RANDOM',hrandom:'H-RANDOM',allscr:'ALL-SCRATCH',spiral:'SPIRAL',randomex:'RANDOM-EX'};
 function shareText(D){
   const lamp=D.failed?'FAILED':LAMPS[D.lamp];
   return `${D.title}${D.subtitle&&!D.course?' '+D.subtitle:''}${D.course?' [COURSE]':''} ${lamp} ${D.rank} ${(D.rate*100).toFixed(2)}% BP${D.bp} #BeSmartBMS`.replace(/\s+/g,' ').trim();
