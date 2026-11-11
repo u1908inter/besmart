@@ -39,6 +39,10 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <a href="./" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 26px; background: #FFB000; color: #140B01; font-family: 'DotGothic16', monospace; font-size: 20px; text-decoration: none">BeSmart で遊ぶ</a>
       <a href="#howto" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border: 2px solid #FFB000; color: #FFB000; font-family: 'DotGothic16', monospace; font-size: 17px; text-decoration: none">はじめ方を見る</a>
     </div>
+    <figure style="margin: 0">
+      <video src="media/BeSmart_PV.mp4" poster="media/pv_poster.jpg" controls playsinline preload="none" style="display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; border: 2px solid #6E4800"></video>
+      <figcaption style="font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00; margin-top: 6px">紹介動画（55秒）</figcaption>
+    </figure>
     <nav aria-label="ページ内の目次" style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; border-top: 2px dashed #6E4800; padding-top: 14px">
       <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#play">遊び方の幅</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a>
     </nav>
@@ -48,7 +52,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <h2>はじめ方</h2>
     <p>曲を入れて、選んで、タップするだけです。</p>
     <ol style="margin: 0; padding-left: 1.4em">
-      <li><b>曲を追加する</b>　曲一覧の「追加」から、BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて選びます。iPhoneでは「ファイル」アプリに保存した書庫をそのまま選べます。</li>
+      <li><b>曲を追加する</b>　曲一覧の「追加」から、BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて選びます。iPhoneでは「ファイル」アプリに保存した書庫をそのまま選べます。曲が1曲もないうちは、曲一覧に「曲の入れ方」の案内が出ます。タップで検索できる検索ワード（「BMS 配布」「BMS 難易度表」など）も載っています。</li>
       <li><b>曲を選ぶ</b>　曲をタップすると詳細が開きます。プレビュー曲が流れ、ノーツ密度のグラフと自己ベストが表示されます。</li>
       <li><b>プレイする</b>　ノーツが赤い（設定によっては光る）判定ラインに重なったら、そのレーンをタップします。一番端のレーンは「皿」（スクラッチ）です。</li>
     </ol>
@@ -75,6 +79,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     </table></div>
     <ul>
       <li><b>URLから追加</b>：配布元のダウンロードURLを貼るだけで読み込めます（GitHubのリポジトリ内のファイル、Dropboxの共有リンクなど、他サイトからの読み込みを許可している配布元のみ。Googleドライブ・MEGA・OneDriveなどは、端末にダウンロードしてから「追加」で選んでください）。<code>?url=</code> を付けたリンク（例：<code>https://u1908inter.github.io/besmart/?url=配布URL</code>）を開くと、そのURLが入力された状態で始まります。</li>
+      <li><b>URLから追加で読み込めなかったとき</b>は、原因を判定して表示します（配布元が他サイトからの読み込みを許可していない／https:// に対応していない／接続できない）。<code>http://</code> のURLは自動で <code>https://</code> に読み替えて試します。https:// のページから http:// のファイルを読み込むことはブラウザが禁止しているためです。</li>
       <li><b>書庫の中の書庫</b>（ZIPの中のRAR、さらにその中のLZH など）は、最下層まで自動で展開します（8階層まで）。</li>
       <li>1つの書庫に複数の曲・複数の難易度が入っていてもすべて登録します。同じ譜面は重複して登録しません。</li>
       <li>壊れた書庫が混ざっていても、読めるものだけを登録します。</li>
@@ -259,8 +264,9 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
         <tr><td>レーンの立体表示</td><td>奥行きのある3D表示に切り替え</td></tr>
         <tr><td>レーンの位置</td><td>横画面で左／中央／右</td></tr>
         <tr><td>レーン幅・ノーツの太さ</td><td>レーン幅 50〜100%、ノーツ ×0.5〜×2.5</td></tr>
-        <tr><td>皿の位置</td><td>左（1P）／右（2P）</td></tr>
+        <tr><td>スクラッチ（皿）の位置</td><td>左／右。5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます（設定画面の最初の項目）</td></tr>
         <tr><td>BGA</td><td>表示／非表示。横画面ではレーンの横に、縦画面では背景に表示。ミス時のBGAとレイヤーBGAにも対応</td></tr>
+        <tr><td>レーン背景の濃さ・BGAの明るさ</td><td>レーン背景の濃さ 0〜100%（初期値40%）、BGAの明るさ 10〜100%（初期値60%）。縦画面でもレーン越しにBGAが透けて見えます</td></tr>
         <tr><td>判定の表示</td><td>ずれ（ミリ秒）の表示、判定カウント（PERFECT〜MISS と FAST/SLOW）の表示</td></tr>
         <tr><td>フレームレート</td><td>自動（画面の最大）／120fps／60fps／30fps。FPS表示も可能</td></tr>
         <tr><td>言語</td><td>自動／日本語／English</td></tr>
@@ -274,7 +280,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <h3>練習モード</h3>
     <p>開始する小節と再生速度（0.5〜1.5倍）を選んで、苦手な場所だけを繰り返し練習できます。練習中はゲージで落ちることがなく、スコアも記録しません。</p>
     <h3>譜面ビューア</h3>
-    <p>譜面を自動再生で眺められます。再生・一時停止、シークバー、5秒戻し・送り、0.5〜2倍速の切り替えができ、小節番号・BPM・コンボを表示します。</p>
+    <p>譜面を自動再生で眺められます。再生・一時停止、シークバー、5秒戻し・送り、0.5〜2倍速の切り替えができ、小節番号・BPM・コンボを表示します。一時停止中は、画面を上下にスワイプすると譜面を指で動かして見られます（下へ動かすと先へ、上へ動かすと前へ）。</p>
     <h3>オートプレイ</h3>
     <p>すべてのノーツを自動で処理するお手本再生です。記録は残りません。</p>
     <h3>コースモード</h3>
@@ -358,7 +364,9 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
   <section id="faq">
     <h2>よくある質問</h2>
     <h3>曲はどこで手に入りますか？</h3>
-    <p>BMSは作者や配布イベントから公開されている曲を、それぞれの配布ページから入手してください。BeSmart から曲を配布することはありません。</p>
+    <p>BMSは作者や配布イベントから公開されている曲を、それぞれの配布ページから入手してください。BeSmart から曲を配布することはありません。探し方は、曲一覧が空のときに出る「曲の入れ方」の案内（タップで検索できる検索ワード付き）も参考にしてください。</p>
+    <h3>「URLから追加」で読み込めません</h3>
+    <p>多くの配布元（Googleドライブ・MEGA・OneDrive・個人サイトなど）は、他のサイトのページからの読み込みを許可していません。また http:// だけで配布しているサイトも読み込めません。どちらもブラウザの仕組みによるもので、表示される理由で見分けられます。その場合はURLを開いてファイルをダウンロードし、「追加」から選んでください。</p>
     <h3>RARが開けません</h3>
     <p>分割された書庫（part1, part2…）とパスワード付きの書庫には対応していません。1つの書庫にまとめ直すか、展開してからZIPに圧縮し直してください。</p>
     <h3>音がずれて聞こえます</h3>

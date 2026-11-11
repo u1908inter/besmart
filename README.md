@@ -3,7 +3,7 @@
 BMS／bmson 形式の譜面を、スマートフォンのブラウザでそのまま遊べるリズムゲームです。インストールも登録も要りません。
 
 - **遊ぶ**：https://u1908inter.github.io/besmart/
-- **機能と仕様の詳しい説明**：https://u1908inter.github.io/besmart/about.html
+- **機能と仕様の詳しい説明**：https://u1908inter.github.io/besmart/about.html（紹介動画つき）
 
 ## 曲の入れ方
 
@@ -51,6 +51,7 @@ BeSmart にはコードで作ったオリジナルのテストプレイ曲とチ
 | `unrar.js` / `unrar.wasm` | RAR の展開（node-unrar-js） |
 | `la/` | 7z の展開（libarchive.js） |
 | `vendor/ogg-vorbis-decoder.min.js` | OGG の再生（端末が対応していない場合） |
+| `media/` | 紹介動画とそのサムネイル |
 | `licenses/` | 同梱ソフトウェアとフォントのライセンス |
 
 ## 同梱しているソフトウェアとフォント
