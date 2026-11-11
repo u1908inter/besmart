@@ -138,7 +138,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1946)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1111.1950)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1950)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -737,7 +737,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1946)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1111.1950)">スマホで遊べるBMSプレイヤー　VER 1.0 (1111.1950)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2622,7 +2622,8 @@ function startGame(chart,buffers,images,o){
     rec:[],repIdx:0,ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
     record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null};
   if(startT!=null){G.bgmIdx=chart.bgm.findIndex(b=>b.time>=startT-0.001);if(G.bgmIdx<0)G.bgmIdx=chart.bgm.length;
-    G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;}
+    G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;
+    resumeTails(startT,false);}
   hold.clear();ptr.clear();ctrlPtr=null;
   ['#lib','#settings','#course','#result','#pause','#title','#cnext'].forEach(s=>show(s,false));
   show('#game',true,'block');show('#pauseBtn',!o.viewer,'block');document.body.classList.toggle('noscan',FLAT()||S.eco);show('#vbar',!!o.viewer,'flex');wakeOn();
@@ -2636,13 +2637,20 @@ const audioTime=()=>G.T0+(actx.currentTime-G.clock0)*G.rate;
 const songTime=()=>audioTime()-G.ofs/1000;
 const toCtx=t=>G.clock0+(t-G.T0)/G.rate;
 
-function playSound(id,when,bus){
-  const b=G.buffers[id];if(!b)return;
+function soundLen(id){const b=G.buffers[id];if(!b)return 0;if(b.b)return b.dur!=null?Math.min(b.dur,b.b.duration-b.off):b.b.duration-b.off;return b.duration||0;}
+// sounds that started before chart time ts and are still ringing: start them from the middle (seek, practice from a bar)
+function resumeTails(ts,withNotes){
+  const c=G.chart,when=toCtx(ts);
+  for(const e of c.bgm){if(e.time>=ts-0.001)break;const sk=ts-e.time;if(sk<soundLen(e.id))playSound(e.id,when,'bgm',sk);}
+  if(withNotes)for(const n of c.notes){if(n.time>=ts-0.001)break;if(!n.id)continue;const sk=ts-n.time;if(sk<soundLen(n.id))playSound(n.id,when,'key',sk);}
+}
+function playSound(id,when,bus,skip){
+  const b=G.buffers[id];if(!b)return;skip=skip||0;
   const src=actx.createBufferSource();src.playbackRate.value=G.rate;src.connect(bus==='bgm'?gBgm:gKey);
   const w=Math.max(when||0,actx.currentTime);
   const prev=G.playing[id];if(prev){try{prev.stop(w);}catch(e){}}
-  if(b.b){src.buffer=b.b;if(b.off>=b.b.duration)return;if(b.dur!=null)src.start(w,b.off,Math.min(b.dur,b.b.duration-b.off));else src.start(w,b.off);}
-  else{src.buffer=b;src.start(w);}
+  if(b.b){src.buffer=b.b;const off=b.off+skip;if(off>=b.b.duration)return;if(b.dur!=null){const d=Math.min(b.dur,b.b.duration-b.off)-skip;if(d<=0)return;src.start(w,off,d);}else src.start(w,off);}
+  else{if(skip>=b.duration)return;src.buffer=b;src.start(w,skip);}
   G.playing[id]=src;
 }
 function gaugeApply(j,factor){
@@ -3033,7 +3041,8 @@ function viewerSeek(t){
   G.bgmIdx=idx(c.bgm,b=>b.time>=t);G.autoIdx=idx(c.notes,n=>n.time>=t);
   stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;
   G.combo=combo;G.counts.PG=combo;G.judged=combo;
-  G.T0=t+G.ofs/1000;G.clock0=actx.currentTime+0.05;
+  G.T0=t+G.ofs/1000;G.clock0=actx.currentTime+(G.paused?0:0.05);
+  resumeTails(G.T0,true);
 }
 function viewerPause(p){
   if(!G||!G.viewer)return;
@@ -3097,7 +3106,7 @@ cv.addEventListener('pointermove',e=>{
     // finger down = chart moves down = later notes come into view
     const b=vDrag.b0+(ipj(e.clientY)-vDrag.y0)/ppb();
     const t=Math.max(0,Math.min(G.chart.endTime+1,beatToTime(G.chart.segs,b)));
-    viewerSeek(t);G.clock0=actx.currentTime;G.T0=t+G.ofs/1000;return;
+    viewerSeek(t);return;
   }
   if(ctrlPtr&&ctrlPtr.id===e.pointerId){
     const dy=e.clientY-ctrlPtr.y;if(Math.abs(dy)<4)return;ctrlPtr.y=e.clientY;
