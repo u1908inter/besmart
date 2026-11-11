@@ -1359,6 +1359,7 @@ const saveFav=()=>{try{localStorage.setItem('bmsp2-fav',JSON.stringify([...FAV])
 const ARR_OPTS=()=>[['off','OFF'],['mirror',L('鏡像','MIRROR')],['random',L('ランダム','RANDOM')],['rrandom',L('回転ランダム','ROTATE')],['srandom',L('ノーツ毎ランダム','PER-NOTE')],['hrandom',L('縦連回避ランダム','PER-NOTE (no jacks)')],['allscr',L('皿に寄せる','TO SCRATCH')]];
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
+  {k:'side',t:L('スクラッチ（皿）の位置','Scratch (turntable) side'),sel:[['L',L('左','Left')],['R',L('右','Right')]],h:L('5鍵・7鍵など鍵盤が1列のモードで、スクラッチのレーンを左端か右端に置きます。','Puts the scratch lane at the left or right edge in single-side modes such as 5K and 7K.')},
   {k:'gauge',t:L('ゲージ','Gauge'),sel:[['aeasy','ASSIST'],['easy','EASY'],['normal','NORMAL'],['hard','HARD'],['exhard','EXTRA HARD'],['hazard','SUDDEN DEATH']],
    h:L('HARD以上は0%で即終了。SUDDEN DEATHはBAD/MISSで即終了。','HARD and above end at 0%. SUDDEN DEATH ends on any BAD/MISS.')},
   {k:'gas',t:L('ゲージ自動降格','Auto gauge downgrade'),b:1,h:L('選んだゲージで落ちても下のゲージで続行し、最も良いランプを記録。','If you fail, continue on a lower gauge and keep the best clear.')},
@@ -1395,7 +1396,6 @@ function SCHEMA(){return [
   {k:'panel',t:L('レーンの位置（横画面）','Lane position (landscape)'),sel:[['center',L('中央','Center')],['left',L('左','Left')],['right',L('右','Right')]]},
   {k:'noteH',t:L('ノーツの太さ','Note thickness'),r:[0.5,2.5,0.1],f:v=>'×'+v.toFixed(1)},
   {k:'laneW',t:L('レーン幅','Lane width'),r:[0.5,1,0.05],f:v=>Math.round(v*100)+'%'},
-  {k:'side',t:L('皿の位置（SP）','Scratch side (SP)'),sel:[['L',L('左','Left')],['R',L('右','Right')]]},
   {k:'edge',t:L('境目の同時押し','Edge double-press'),r:[0,45,5],f:v=>v?v+'%':'OFF',h:L('レーンの境目付近を押すと1本の指で両隣を同時押し。','Pressing near a lane boundary presses both neighbours with one finger.')},
  ]},
  {sec:L('音量','Volume'),items:[
