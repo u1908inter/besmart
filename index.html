@@ -2677,6 +2677,7 @@ function viewerSeek(t){
 function viewerPause(p){
   if(!G||!G.viewer)return;
   G.paused=p;$('#vPlay').textContent=p?'▶':'❚❚';
+  if(p)G.ctrlMsg={s:L('上下にスワイプで譜面を移動','Swipe up/down to scroll the chart'),t:performance.now()+1600};
   if(p)actx.suspend();else{const t=songTime();if(t>G.chart.endTime+1.5)viewerSeek(0);actx.resume();}
 }
 $('#vPlay').onclick=()=>viewerPause(!G.paused);
@@ -2690,7 +2691,7 @@ $('#vClose').onclick=()=>toLib();
 const hold=new Map();
 function grab(l,src){let s=hold.get(l);if(!s){s=new Set();hold.set(l,s);}const was=s.size;s.add(src);if(was===0)press(l);}
 function drop(l,src){const s=hold.get(l);if(!s)return;s.delete(src);if(s.size===0){hold.delete(l);release(l);}}
-const ptr=new Map();let ctrlPtr=null;
+const ptr=new Map();let ctrlPtr=null;let vDrag=null;
 function lanesAt(x){
   const {xs,ws,order}=L_;if(!xs)return [0];
   let k=order.findIndex(l=>x>=xs[l]&&x<xs[l]+ws[l]);
@@ -2708,11 +2709,18 @@ const msgHS=()=>S.fhs?L(`表示時間 ${S.green}ms`,`Visible ${S.green}ms`):L(`�
 cv.addEventListener('pointerdown',e=>{
   e.preventDefault();if(!G)return;
   try{cv.setPointerCapture(e.pointerId);}catch(_){}
+  if(G.viewer&&G.paused){if(!vDrag)vDrag={id:e.pointerId,y0:e.clientY,b0:timeToBeat(G.chart.segs,songTime())};return;}
   if(ctrlZone(e.clientY)&&!ctrlPtr){ctrlPtr={id:e.pointerId,y:e.clientY};return;}
   const ls=lanesAt(e.clientX);ptr.set(e.pointerId,ls);ls.forEach(l=>grab(l,'t'+e.pointerId));
 },{passive:false});
 cv.addEventListener('pointermove',e=>{
   if(!G)return;
+  if(vDrag&&vDrag.id===e.pointerId){
+    // finger down = chart moves down = later notes come into view
+    const b=vDrag.b0+(e.clientY-vDrag.y0)/ppb();
+    const t=Math.max(0,Math.min(G.chart.endTime+1,beatToTime(G.chart.segs,b)));
+    viewerSeek(t);G.clock0=actx.currentTime;G.T0=t;return;
+  }
   if(ctrlPtr&&ctrlPtr.id===e.pointerId){
     const dy=e.clientY-ctrlPtr.y;if(Math.abs(dy)<4)return;ctrlPtr.y=e.clientY;
     if(S.suddenOn){S.sudden=Math.round(Math.max(0,Math.min(80,S.sudden+dy/L_.len*100)));G.ctrlMsg={s:L(`上カバー ${S.sudden}%`,`Top cover ${S.sudden}%`),t:performance.now()};}
@@ -2727,7 +2735,7 @@ cv.addEventListener('pointermove',e=>{
   os.filter(l=>!ns.includes(l)).forEach(l=>drop(l,'t'+e.pointerId));
   ns.filter(l=>!os.includes(l)).forEach(l=>grab(l,'t'+e.pointerId));
 });
-const up=e=>{if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
+const up=e=>{if(vDrag&&vDrag.id===e.pointerId){vDrag=null;return;}if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 document.addEventListener('touchmove',e=>{if(G&&!G.ended&&e.target===cv)e.preventDefault();},{passive:false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
