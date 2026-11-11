@@ -1323,7 +1323,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.5,laneA:1,judgeMs:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,judgeMs:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1332,6 +1332,7 @@ try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['
 try{Object.assign(S,JSON.parse(localStorage.getItem('bmsp2-set')||'{}'));}catch(e){}
 const saveS=()=>{try{localStorage.setItem('bmsp2-set',JSON.stringify(S));}catch(e){}};
 if(!S.edgeV2){if(S.edge===25)S.edge=10;S.edgeV2=1;saveS();}
+if(!S.bgaV2){if(S.laneA===1)S.laneA=.4;if(S.bgaA===.5)S.bgaA=.6;S.bgaV2=1;saveS();}
 if(!S.prof||!S.prof.speaker){S.prof={speaker:{ofs:S.ofs||0,set:!!S.ofs},wired:{ofs:0,set:false},bt:{ofs:0,set:false}};}
 let REC={};try{REC=JSON.parse(localStorage.getItem('bmsp2-rec')||'{}');}catch(e){}
 const saveRec=()=>{try{localStorage.setItem('bmsp2-rec',JSON.stringify(REC));}catch(e){}};
