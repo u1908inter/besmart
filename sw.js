@@ -1,7 +1,7 @@
 /* BeSmart service worker: offline cache + Android share target */
-const CACHE = 'besmart-v1';
+const CACHE = 'besmart-v2';
 const SHELL = ['./', './index.html', './unrar.js', './unrar.wasm', './la/libarchive.js', './la/worker-bundle.js', './la/libarchive.wasm',
-  './vendor/ogg-vorbis-decoder.min.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+  './vendor/ogg-vorbis-decoder.min.js', './songs/BeSmartPV.zip', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

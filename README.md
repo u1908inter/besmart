@@ -52,6 +52,7 @@ BeSmart にはコードで作ったオリジナルのテストプレイ曲とチ
 | `la/` | 7z の展開（libarchive.js） |
 | `vendor/ogg-vorbis-decoder.min.js` | OGG の再生（端末が対応していない場合） |
 | `media/` | 紹介動画とそのサムネイル |
+| `songs/BeSmartPV.zip` | 最初から入っている曲「BeSmart PV Song」（初回起動時に自動で追加） |
 | `manifest.webmanifest` / `sw.js` / `icons/` | ホーム画面への追加、オフライン動作、Androidの共有メニューからの取り込み |
 | `licenses/` | 同梱ソフトウェアとフォントのライセンス |
 

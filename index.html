@@ -164,7 +164,7 @@ canvas{display:block;touch-action:none}
   </div>
   <div id="songs"></div>
   <div id="empty" class="empty">
-    <p data-en="Your library is empty. Add a BMS archive (ZIP, RAR, LZH or 7z) or a folder of BMS/bmson files with their sounds. Songs stay on this device.">ライブラリはまだ空です。BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて「追加」してください。曲はこの端末の中にだけ保存されます。</p>
+    <p data-en="Add a BMS archive (ZIP, RAR, LZH or 7z) or a folder of BMS/bmson files with their sounds to play more songs. Songs stay on this device.">BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて「追加」すると、ほかの曲も遊べます。曲はこの端末の中だけに保存されます。</p>
     <label class="btn pri" for="fileIn" data-en="Add songs">曲を追加</label>
     <div class="guide" data-en="&lt;h3&gt;How to add songs&lt;/h3&gt;&lt;ol&gt;&lt;li&gt;&lt;b&gt;Find songs&lt;/b&gt;: search with the words below to find download pages and event entry lists.&lt;div class=&quot;gchips&quot;&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20download&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS download&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20event%20entries&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS event entries&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20difficulty%20table&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS difficulty table&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20for%20beginners&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS for beginners&lt;/a&gt;&lt;/div&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;Download to your phone&lt;/b&gt;: keep the ZIP, RAR, LZH or 7z as is; no need to extract. Songs shared on Google Drive and the like work once downloaded.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Pick it with “Add songs”&lt;/b&gt;: choose the file from Downloads in your Files app. If you have a direct download URL, “Add from URL” works too.&lt;/li&gt;&lt;/ol&gt;&lt;p class=&quot;hlp&quot;&gt;Tip: songs at the low levels of a difficulty table are easiest to start with. Please check each download page’s terms.&lt;/p&gt;"><h3>曲の入れ方</h3><ol><li><b>曲を探す</b>：下の言葉で検索すると、配布ページや作品の一覧が見つかります。<div class="gchips"><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%85%8D%E5%B8%83" target="_blank" rel="noopener">🔍 BMS 配布</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%20%E4%BD%9C%E5%93%81%E4%B8%80%E8%A6%A7" target="_blank" rel="noopener">🔍 BMS イベント 作品一覧</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%9B%A3%E6%98%93%E5%BA%A6%E8%A1%A8" target="_blank" rel="noopener">🔍 BMS 難易度表</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E5%88%9D%E5%BF%83%E8%80%85%20%E3%81%8A%E3%81%99%E3%81%99%E3%82%81" target="_blank" rel="noopener">🔍 BMS 初心者 おすすめ</a></div></li><li><b>スマホにダウンロード</b>：ZIP・RAR・LZH・7zのままでOK。展開はいりません。Googleドライブなどで配布されている曲も、いったんダウンロードすれば使えます。</li><li><b>「曲を追加」で選ぶ</b>：ファイルアプリの「ダウンロード」から選びます。直接ダウンロードできるURLなら「URLから追加」でも入れられます。</li></ol><p class="hlp">コツ：はじめは難易度表の低いレベル（☆1〜5くらい）の曲が遊びやすいです。配布ページに書かれた規約も確認してください。</p></div>
     <button id="tutBtn" data-en="Learn the controls">遊び方を練習する</button>
@@ -1858,7 +1858,8 @@ function renderLibrary(){
   LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
-  show('#empty',!CHARTS.length,'block');show('#libFoot',!!CHARTS.length,'block');
+  const onlyBuiltin=CHARTS.every(c=>c.builtin);
+  show('#empty',onlyBuiltin,'block');show('#libFoot',!onlyBuiltin,'block');
   const frag=document.createDocumentFragment();
   const T=S.table&&TABLES.find(t=>t.url===S.table);
   if(T){renderTable(T,list,frag);box.appendChild(frag);return;}
@@ -1894,7 +1895,7 @@ async function makeThumb(ix,dir,names){
   }
   return null;
 }
-async function importFiles(list){
+async function importFiles(list,io){io=io||{};
   const groups=[],loose=[];
   for(const f of list){const k=kindOf(f.name);if(k)groups.push({kind:k,file:f,name:f.name});else loose.push(f);}
   if(loose.length){
@@ -1926,7 +1927,7 @@ async function importFiles(list){
         metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,
           level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
           total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
-          preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
+          preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
       }catch(e){console.warn(e);}
     }
     if(!metas.length)continue;
@@ -1938,7 +1939,8 @@ async function importFiles(list){
     added+=metas.length;
   }
   await refreshLibrary();
-  if(added)track('import','曲を追加');
+  if(added&&!io.builtin)track('import','曲を追加');
+  if(io.silent){if(added)toast(L('最初から入っている曲「BeSmart PV Song」を追加しました','Added the built-in song “BeSmart PV Song”'),2500);else toast('',1);return added;}
   toast([added?L(`${added} 譜面を追加しました`,`Added ${added} charts`):'',skipped?L(`${skipped} 譜面は追加済みのためスキップ`,`Skipped ${skipped} charts already in the library`):'',...errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
 }
 $('#fileIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};
@@ -3443,7 +3445,17 @@ function drawTimingGraph(cv){
 
 /* ---------- boot ---------- */
 applyPhosphor();applyI18n();renderOut();
-refreshLibrary();
+refreshLibrary().then(addBuiltinSongs);
+/* built-in song (the promo-video song): added once; if the player deletes it, it stays deleted */
+async function addBuiltinSongs(){
+  if(S.builtinPV)return;
+  try{
+    const r=await fetch('songs/BeSmartPV.zip');if(!r.ok)return;
+    const f=new File([await r.blob()],'BeSmartPV.zip',{type:'application/zip'});
+    await importFiles([f],{builtin:true,silent:true});
+    S.builtinPV=1;saveS();
+  }catch(e){}
+}
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 let seenTitle=false;try{seenTitle=!!sessionStorage.getItem('bmsp-title');}catch(e){}
 if(!seenTitle)show('#title',true);
