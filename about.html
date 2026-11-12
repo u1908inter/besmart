@@ -46,7 +46,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <figcaption style="font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00; margin-top: 6px">紹介動画（55秒）</figcaption>
     </figure>
     <nav aria-label="ページ内の目次" style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; border-top: 2px dashed #6E4800; padding-top: 14px">
-      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#phone">スマホ向け機能</a><a href="#play">遊び方の幅</a><a href="#tables">難易度表</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a>
+      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#phone">スマホ向け機能</a><a href="#play">遊び方の幅</a><a href="#tables">難易度表</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a><a href="#history">アップデート履歴</a>
     </nav>
   </header>
 
@@ -426,6 +426,38 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <p>読み込みの最後に「読めなかった音声」の件数が表示されます。ファイルが書庫に入っていない、または端末が再生できない形式の可能性があります。</p>
     <h3>機種変更したら記録は移せますか？</h3>
     <p>移せます。設定の「データ」→「データを書き出す（エクスポート）」で、スコア・クリアランプ・リプレイ・お気に入り・コース・設定を1つのファイルに保存し、新しい端末の「データを読み込む（インポート）」で読み込んでください。曲そのものは含まれないので、新しい端末で同じ曲の書庫を「追加」すると記録がつながります。読み込むときは「統合する（曲ごとに良い方の記録を残す）」か「置き換える」を選べます。</p>
+  </section>
+
+  <section id="history">
+    <h2>アップデート履歴</h2>
+    <h3>2026-11-12</h3>
+    <ul>
+      <li>数GBの大きなパック（400MBを超えるZIP・RAR）に対応。中身の曲フォルダを一覧から選んで、1曲ずつ取り込めるようにしました。4GBを超えるZIP（ZIP64）にも対応。</li>
+      <li>プレイ画面に経過時間・曲の長さ・残り時間を表示し、画面下の進行バーを見やすくしました。</li>
+      <li>ペースメーカーや判定数の表示が、ほかの文字と重なる問題を修正。</li>
+      <li>再生速度が ×1.00 以外のまま始めようとしたとき、確認を出すようにしました。</li>
+    </ul>
+    <h3>2026-11-11</h3>
+    <ul>
+      <li>ブラウザRPG「ピコーン・クエスト2」のBGMから「草原」「砂漠」「ボス戦 1」の3曲を最初から収録。紹介動画の曲「BeSmart PV Song」も最初から入るようにしました。</li>
+      <li>PLiCy版を公開。</li>
+      <li>設定画面を整理。よく使う項目だけの表示、項目の検索、変更した項目の印と「戻す」ボタンを追加しました。</li>
+      <li>難易度表、動画BGA、韓国語（EUC-KR）の曲名、再生速度の変更、RANDOMの配置の保存と再利用に対応。</li>
+      <li>スマホ向け機能を追加。ホーム画面への追加とオフライン、共有からの読み込み、画面の消灯防止、タップ時の振動、省電力モード、スクラッチをこする操作、タップ位置の自動補正、鍵盤数を減らすオプションなど。</li>
+      <li>オプションを追加。判定アルゴリズム、FAST/SLOW表示、GAS、SPIRAL、RANDOM-EX、白数字、BGAの表示サイズ、おまかせ選曲など。</li>
+      <li>データの書き出し（エクスポート）・読み込み（インポート）に対応。</li>
+      <li>譜面ビューアで、停止中に上下スワイプで譜面を動かせるようにしました。</li>
+      <li>BGAの透け具合を設定できるようにしました（初期値で透けて見えます）。</li>
+      <li>スクラッチを右側にも置けるようにしました。</li>
+      <li>配置オプションとゲージの名前を、一般的な用語に統一。</li>
+      <li>曲が入っていないとき、「曲の入れ方」の案内と検索ワードを表示するようにしました。</li>
+      <li>URLから追加で読み込めなかったとき、原因を表示するようにしました。</li>
+      <li>譜面ビューアで移動したあとノーツが消える問題と、音が鳴らなくなる問題を修正。</li>
+    </ul>
+    <h3>2026-11-10</h3>
+    <ul>
+      <li>BeSmart を公開。</li>
+    </ul>
   </section>
 
   <footer style="border-top: 2px dashed #6E4800; padding-top: 18px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00">
