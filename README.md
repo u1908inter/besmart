@@ -48,7 +48,8 @@ BeSmart にはコードで作ったオリジナルのテストプレイ曲とチ
 |---|---|
 | `index.html` | アプリ本体（HTML・CSS・JavaScript・フォントを1ファイルに同梱） |
 | `about.html` | 紹介ページ |
-| `unrar.js` / `unrar.wasm` | RAR の展開（node-unrar-js） |
+| `unrar.js` / `unrar.wasm` | RAR の展開（node-unrar-js。大きな書庫を少しずつ読めるよう1か所だけ改変） |
+| `unrar-worker.js` | 数GBのRARを、メモリに全部載せずに少しずつ読んで展開するワーカー |
 | `la/` | 7z の展開（libarchive.js） |
 | `vendor/ogg-vorbis-decoder.min.js` | OGG の再生（端末が対応していない場合） |
 | `media/` | 紹介動画とそのサムネイル |

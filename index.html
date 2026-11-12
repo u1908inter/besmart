@@ -130,6 +130,7 @@ canvas{display:block;touch-action:none}
 @media (prefers-reduced-motion:reduce){.blink{animation:none}*{transition:none!important}}
 #title{background:var(--bg)!important}
 #title .box{background:transparent!important;border:0!important}
+.bigRow{display:flex;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px dashed var(--faint);cursor:pointer}.bigRow input{flex:none;width:18px;height:18px}.bigRow .bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bigRow .bs{flex:none;opacity:.7;font-size:.85em}
 </style>
 </head>
 <body>
@@ -139,7 +140,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1112.0856)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0856)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1112.2334)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.2334)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -739,7 +740,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1112.0856)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.0856)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1112.2334)">スマホで遊べるBMSプレイヤー　VER 1.0 (1112.2334)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -757,6 +758,17 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <label style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-start;text-align:left;margin:8px 0 12px"><input type="checkbox" id="impSet" style="width:auto;margin-top:6px"><span data-en="Also import settings (speed, judge offset, etc.). Audio delay can differ between devices, so re-measuring is recommended.">設定も読み込む（スピードや判定のズレなど）。音の遅延は端末ごとに違うので、移したあとで測り直すのがおすすめです。</span></label>
   <button class="pri" id="impGo" data-en="Import">読み込む</button>
   <button id="impCancel" data-en="Cancel">やめる</button>
+</div></div>
+<div id="bigDlg" class="overlay" style="z-index:12"><div class="box card" style="max-height:92vh;display:flex;flex-direction:column">
+  <h2 data-en="Choose songs from a large pack">大きな書庫から曲を選ぶ</h2>
+  <p id="bigInfo" class="hlp" style="margin:0 0 6px"></p>
+  <p id="bigRar" class="hlp" style="margin:0 0 6px" data-en="RAR packs are extracted from the start, so it can take a while even for a few songs. Keep the screen on.">RARは先頭から順に展開するため、選んだ曲が少なくても時間がかかることがあります。画面を消さずにお待ちください。</p>
+  <input id="bigQ" type="search" placeholder="曲名で絞り込み" data-en-ph="Filter by name" style="width:100%;margin:2px 0 6px">
+  <div style="display:flex;gap:6px;margin-bottom:6px"><button id="bigAll" style="flex:1;margin:0" data-en="Select all">すべて選択</button><button id="bigNone" style="flex:1;margin:0" data-en="Select none">すべて解除</button></div>
+  <div id="bigList" style="flex:1;min-height:120px;overflow:auto;border:1px solid var(--faint)"></div>
+  <p id="bigSum" class="hlp" style="margin:6px 0"></p>
+  <button class="pri" id="bigGo" data-en="Load">読み込む</button>
+  <button id="bigCancel" data-en="Cancel">やめる</button>
 </div></div>
 <div id="rateDlg" class="overlay" style="z-index:12"><div class="box card">
   <h2 data-en="Playback speed is changed">再生速度が変わっています</h2>
@@ -1421,6 +1433,75 @@ async function readRar(file){
 }
 
 
+/* ===== ZIP reader for very large archives (random access, ZIP64) =====
+   Reads only the directory up front; each entry is read from its own slice when needed. */
+async function readZipBlob(file){
+  const size=file.size,rd=async(a,b)=>new Uint8Array(await file.slice(a,b).arrayBuffer());
+  const n64=(dv,o)=>dv.getUint32(o,true)+dv.getUint32(o+4,true)*4294967296;
+  const tl=Math.min(size,65557+22),tail=await rd(size-tl,size),tv=new DataView(tail.buffer);
+  let e=-1;for(let i=tail.length-22;i>=0;i--){if(tv.getUint32(i,true)===0x06054b50){e=i;break;}}
+  if(e<0)throw new Error(file.name+' はZIPとして読めませんでした');
+  let cnt=tv.getUint16(e+10,true),cdSize=tv.getUint32(e+12,true),cdOff=tv.getUint32(e+16,true);
+  if(e>=20&&tv.getUint32(e-20,true)===0x07064b50){
+    const zo=n64(tv,e-12),z=await rd(zo,zo+56),zv=new DataView(z.buffer);
+    if(zv.getUint32(0,true)===0x06064b50){cnt=n64(zv,32);cdSize=n64(zv,40);cdOff=n64(zv,48);}
+  }
+  const cd=await rd(cdOff,cdOff+cdSize),dv=new DataView(cd.buffer);
+  const u8=new TextDecoder('utf-8');let sj;try{sj=new TextDecoder('shift_jis');}catch(x){sj=u8;}
+  {const parts=[];let q=0;
+    for(let n=0;n<cnt&&q+46<=cd.length;n++){if(dv.getUint32(q,true)!==0x02014b50)break;const fl=dv.getUint16(q+8,true),nl=dv.getUint16(q+28,true),el=dv.getUint16(q+30,true),cl=dv.getUint16(q+32,true);
+      if(!(fl&0x800)){let utf=true;try{new TextDecoder('utf-8',{fatal:true}).decode(cd.subarray(q+46,q+46+nl));}catch(x){utf=false;}if(!utf)parts.push(cd.subarray(q+46,q+46+nl),new Uint8Array([10]));}
+      q+=46+nl+el+cl;}
+    if(parts.length){const all=new Uint8Array(parts.reduce((a,x)=>a+x.length,0));let o=0;for(const x of parts){all.set(x,o);o+=x.length;}
+      if(legacyCodec(all)==='euc-kr'){try{sj=new TextDecoder('euc-kr');}catch(x){}}}}
+  const out=[];let p=0;
+  for(let n=0;n<cnt&&p+46<=cd.length;n++){
+    if(dv.getUint32(p,true)!==0x02014b50)break;
+    const flag=dv.getUint16(p+8,true),method=dv.getUint16(p+10,true);
+    let csize=dv.getUint32(p+20,true),usize=dv.getUint32(p+24,true);
+    const nlen=dv.getUint16(p+28,true),elen=dv.getUint16(p+30,true),clen=dv.getUint16(p+32,true);
+    let loff=dv.getUint32(p+42,true);
+    const nb=cd.subarray(p+46,p+46+nlen);let name;if(flag&0x800)name=u8.decode(nb);else{try{name=new TextDecoder('utf-8',{fatal:true}).decode(nb);}catch(x){name=sj.decode(nb);}}
+    if(usize===0xFFFFFFFF||csize===0xFFFFFFFF||loff===0xFFFFFFFF){ // ZIP64 extra field
+      let x=p+46+nlen;const xe=x+elen;
+      while(x+4<=xe){const id=dv.getUint16(x,true),sz=dv.getUint16(x+2,true);
+        if(id===1){let o=x+4;if(usize===0xFFFFFFFF){usize=n64(dv,o);o+=8;}if(csize===0xFFFFFFFF){csize=n64(dv,o);o+=8;}if(loff===0xFFFFFFFF){loff=n64(dv,o);o+=8;}break;}
+        x+=4+sz;}
+    }
+    p+=46+nlen+elen+clen;
+    name=name.replace(/\\/g,'/');
+    if(name.endsWith('/')||/(^|\/)__MACOSX\//.test(name))continue;
+    if(flag&1)throw new Error('パスワード付きZIPには対応していません');
+    out.push({path:name,size:usize,get:async()=>{
+      const h=await rd(loff,loff+30),hv=new DataView(h.buffer);
+      const st=loff+30+hv.getUint16(26,true)+hv.getUint16(28,true);
+      const data=file.slice(st,st+csize);
+      if(method===0)return await data.arrayBuffer();
+      if(method===8){
+        if(typeof DecompressionStream==='undefined')throw new Error('このブラウザはZIP展開に未対応です（iOS 16.4以降 / 最新Chrome推奨）');
+        return await new Response(data.stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+      }
+      throw new Error('未対応の圧縮形式です');
+    }});
+  }
+  return out;
+}
+
+/* ===== RAR extraction for very large archives (runs in a worker, reads the file piece by piece) ===== */
+class RarJob{
+  constructor(file){this.file=file;this.w=new Worker('unrar-worker.js');}
+  _run(msg,handler){return new Promise((res,rej)=>{
+    this.w.onerror=e=>{e.preventDefault&&e.preventDefault();rej(new Error(e.message||'RAR展開モジュールを読み込めませんでした'));};
+    this.w.onmessage=async e=>{const m=e.data;if(m.type==='error')rej(new Error(m.message));else{try{await handler(m,res);}catch(err){rej(err);}}};
+    this.w.postMessage(msg);});}
+  list(){return this._run({cmd:'list',file:this.file},(m,res)=>{if(m.type==='list')res(m.heads);});}
+  extract(names,onFile,onProg){return this._run({cmd:'extract',names},async(m,res)=>{
+    if(m.type==='file'){try{await onFile(m.name,m.buf);}finally{this.w.postMessage({cmd:'ack'});}}
+    else if(m.type==='progress'){if(onProg)onProg(m.pos,m.size);}
+    else if(m.type==='done')res(m.failed||[]);});}
+  close(){try{this.w.terminate();}catch(e){}}
+}
+
 /* ======================= APP ======================= */
 if(typeof document!=='undefined'){(function(){
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1931,6 +2012,146 @@ async function makeThumb(ix,dir,names){
   }
   return null;
 }
+/* import one archive / folder group into the library */
+async function importGroup(gr,st){
+  if(!st.quiet)toast(L(`${gr.name} を読み込み中…`,`Loading ${gr.name}…`),0);
+  const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const arch={id,kind:gr.kind,name:gr.name,file:gr.file||null,files:gr.files||null,added:Date.now()};
+  let ix;
+  try{ix=makeIndex(await listArchive(arch));}catch(e){st.errs.push(gr.name+'：'+e.message);return;}
+  const bms=ix.files.filter(f=>/\.(bms|bme|bml|pms|bmson)$/i.test(f.n));
+  if(!bms.length){st.errs.push(gr.name+L('：BMSファイルが見つかりません',': no BMS files found'));return;}
+  const metas=[],thumbs=new Map();
+  for(const f of bms){
+    try{
+      const raw=await f.get();const rawU=raw instanceof Uint8Array?raw:new Uint8Array(raw);
+      const text=decodeText(rawU);const ext=f.n.split('.').pop();
+      const b=compileBase(text,ext,mulberry32(1));
+      if(st.have.has(b.hash)){st.skipped++;continue;}
+      st.have.add(b.hash);
+      const dir=f.n.includes('/')?f.n.slice(0,f.n.lastIndexOf('/')+1):'';
+      const tk=dir+'|'+b.P.stagefile+'|'+b.P.banner+'|'+b.P.backbmp;
+      if(!thumbs.has(tk))thumbs.set(tk,await makeThumb(ix,dir,[b.P.stagefile,b.P.banner,b.P.backbmp]));
+      const N=b.notes.length;
+      metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,
+        level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
+        total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
+        preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!st.io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
+    }catch(e){console.warn(e);}
+  }
+  if(!metas.length)return;
+  try{
+    await DB.put('archives',arch);
+    for(const m of metas)await DB.put('charts',m);
+  }catch(e){st.errs.push(gr.name+L('：保存できませんでした（容量不足の可能性）',': could not be saved (storage may be full)'));}
+  if(!st.big)archCache.set(id,Promise.resolve(ix));
+  st.added+=metas.length;
+  
+}
+/* ---------- very large packs: pick songs, extract them one by one ---------- */
+const BIG_BYTES=()=>(+localStorage.getItem('besmart-bigmb')||400)*1048576;
+const fmtSize=b=>b>=1073741824?(b/1073741824).toFixed(1)+'GB':b>=1048576?Math.max(1,Math.round(b/1048576))+'MB':Math.max(1,Math.round(b/1024))+'KB';
+function planUnits(entries,packName){
+  const isB=p=>/\.(bms|bme|bml|pms|bmson)$/i.test(p);
+  const dirOf=p=>p.includes('/')?p.slice(0,p.lastIndexOf('/')+1):'';
+  const bdirs=[...new Set(entries.filter(e=>isB(e.path)).map(e=>dirOf(e.path)))].sort((a,b)=>b.length-a.length);
+  const units=new Map();
+  for(const d of bdirs)units.set(d,{key:d,name:d?d.slice(0,-1).split('/').pop():packName.replace(/\.[^.]+$/,''),kind:'files',entries:[],charts:0,size:0});
+  for(const e of entries){
+    const owner=bdirs.find(d=>e.path.startsWith(d));
+    if(owner===undefined){
+      const k=kindOf(e.path);
+      if(k)units.set('@'+e.path,{key:'@'+e.path,name:e.path.split('/').pop().replace(/\.[^.]+$/,''),kind:k,entries:[e],charts:null,size:e.size});
+      continue;
+    }
+    const u=units.get(owner);u.entries.push(e);u.size+=e.size;if(isB(e.path))u.charts++;
+  }
+  const list=[...units.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+  const cnt={};list.forEach(u=>cnt[u.name]=(cnt[u.name]||0)+1);
+  list.forEach(u=>{if(cnt[u.name]>1&&u.kind==='files'){const ps=u.key.slice(0,-1).split('/');if(ps.length>1)u.name=ps[ps.length-2]+' / '+u.name;}});
+  return list;
+}
+function pickUnits(gr,units,isRar){
+  return new Promise(async resolve=>{
+    let free=null;try{const e=await navigator.storage.estimate();free=Math.max(0,e.quota-e.usage);}catch(e){}
+    const sel=new Set(units.map(u=>u.key));
+    $('#bigInfo').textContent=L(`${gr.name}（${fmtSize(gr.file.size)}）には ${units.length} 曲分のフォルダが入っています。読み込む曲を選んでください。`,`${gr.name} (${fmtSize(gr.file.size)}) contains ${units.length} song folders. Choose the songs to load.`);
+    $('#bigRar').style.display=isRar?'':'none';
+    $('#bigQ').value='';
+    const sum=()=>{let n=0,b=0;for(const u of units)if(sel.has(u.key)){n++;b+=u.size;}
+      const over=free!=null&&b>free*0.9;
+      $('#bigSum').innerHTML=L(`選択中：${n} 曲 / ${fmtSize(b)}`,`Selected: ${n} songs / ${fmtSize(b)}`)+(free!=null?L(`　（この端末の空き：約 ${fmtSize(free)}）`,`  (free on this device: about ${fmtSize(free)})`):'')+(over?`<br><span style="color:var(--alert)">${L('空き容量が足りない可能性があります。曲を減らしてください。','There may not be enough free space. Choose fewer songs.')}</span>`:'');
+      $('#bigGo').disabled=!n;};
+    const render=()=>{const q=$('#bigQ').value.trim().toLowerCase();const box=$('#bigList');box.innerHTML='';
+      for(const u of units){if(q&&!u.name.toLowerCase().includes(q))continue;
+        const row=document.createElement('label');row.className='bigRow';
+        row.innerHTML=`<input type="checkbox" ${sel.has(u.key)?'checked':''}><span class="bn"></span><span class="bs">${u.charts==null?L('書庫','archive'):u.charts+L('譜面',' charts')} · ${fmtSize(u.size)}</span>`;
+        row.querySelector('.bn').textContent=u.name;
+        row.querySelector('input').onchange=e=>{if(e.target.checked)sel.add(u.key);else sel.delete(u.key);sum();};
+        box.appendChild(row);}
+      sum();};
+    $('#bigQ').oninput=render;
+    $('#bigAll').onclick=()=>{const q=$('#bigQ').value.trim().toLowerCase();units.forEach(u=>{if(!q||u.name.toLowerCase().includes(q))sel.add(u.key);});render();};
+    $('#bigNone').onclick=()=>{const q=$('#bigQ').value.trim().toLowerCase();units.forEach(u=>{if(!q||u.name.toLowerCase().includes(q))sel.delete(u.key);});render();};
+    const fin=v=>{show('#bigDlg',false);resolve(v);};
+    $('#bigGo').onclick=()=>fin(units.filter(u=>sel.has(u.key)));
+    $('#bigCancel').onclick=()=>fin(null);
+    render();show('#bigDlg',true);
+  });
+}
+async function importBig(gr,st){
+  const isRar=gr.kind==='rar';let job=null;
+  st.big=true;st.quiet=true;
+  wakeOn();
+  try{
+    toast(L(`${gr.name}（${fmtSize(gr.file.size)}）の中身を確認しています…`,`Checking ${gr.name} (${fmtSize(gr.file.size)})…`),0);
+    let entries;
+    if(isRar){
+      job=new RarJob(gr.file);
+      const heads=await job.list();
+      if(heads.some(h=>h.enc))throw new Error(L('パスワード付きRARには対応していません','Password-protected RAR is not supported'));
+      entries=heads.filter(h=>!h.dir).map(h=>({path:h.name.replace(/\\/g,'/'),raw:h.name,size:h.size}));
+    }else entries=await readZipBlob(gr.file);
+    entries=entries.filter(e=>!/(^|\/)__MACOSX\//.test(e.path));
+    const units=planUnits(entries,gr.name);
+    if(!units.length){st.errs.push(gr.name+L('：BMSファイルが見つかりません',': no BMS files found'));return;}
+    toast('',1);
+    const chosen=await pickUnits(gr,units,isRar);
+    if(!chosen||!chosen.length)return;
+    track('import-big','大きな書庫から追加');
+    const total=chosen.length;let doneN=0;
+    const build=(u,bufs)=>u.kind==='files'
+      ?{kind:'files',name:u.name,files:u.entries.filter(e=>bufs.has(e.path)).map(e=>({path:e.path,blob:new Blob([bufs.get(e.path)])}))}
+      :{kind:u.kind,name:u.name+'.'+u.kind,file:new File([bufs.get(u.entries[0].path)],u.name+'.'+u.kind)};
+    const status=extra=>toast(L(`${gr.name} から読み込み中… ${doneN}/${total} 曲${extra||''}\n画面を消さずにお待ちください`,`Loading from ${gr.name}… ${doneN}/${total} songs${extra||''}\nKeep the screen on`),0);
+    if(!isRar){
+      for(const u of chosen){
+        status();
+        const bufs=new Map();
+        for(const e of u.entries){try{bufs.set(e.path,await e.get());}catch(err){console.warn(err);}}
+        if(bufs.size)await importGroup(build(u,bufs),st);
+        doneN++;
+      }
+    }else{
+      const owner=new Map(),left=new Map(),got=new Map();
+      for(const u of chosen){left.set(u,u.entries.length);got.set(u,new Map());for(const e of u.entries)owner.set(e.raw,{u,e});}
+      let pct='';status();
+      const failed=await job.extract([...owner.keys()],async(name,buf)=>{
+        const o=owner.get(name);if(!o)return;
+        got.get(o.u).set(o.e.path,buf);
+        const r=left.get(o.u)-1;left.set(o.u,r);
+        if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);doneN++;status(pct);}
+      },(pos,size)=>{pct=`（${Math.floor(pos/size*100)}%）`;status(pct);});
+      for(const [u,bufs] of got){if(bufs.size){await importGroup(build(u,bufs),st);}doneN++;}
+      if(failed.length)st.errs.push(gr.name+L(`：${failed.length} 個のファイルを展開できませんでした`,`: ${failed.length} files could not be extracted`));
+    }
+  }catch(e){
+    st.errs.push(gr.name+'：'+(e.message||e));
+  }finally{
+    if(job)job.close();
+    wakeOff();st.big=false;st.quiet=false;
+  }
+}
 async function importFiles(list,io){io=io||{};
   const groups=[],loose=[];
   for(const f of list){const k=kindOf(f.name);if(k)groups.push({kind:k,file:f,name:f.name});else loose.push(f);}
@@ -1938,46 +2159,16 @@ async function importFiles(list,io){io=io||{};
     const p0=loose[0].webkitRelativePath||'';
     groups.push({kind:'files',name:p0?p0.split('/')[0]:(loose.find(f=>/\.(bms|bme|bml|pms|bmson)$/i.test(f.name))||loose[0]).name,files:loose.map(f=>({path:f.webkitRelativePath||f.name,blob:f}))});
   }
-  const have=new Set(CHARTS.map(c=>c.hash));
-  let added=0,skipped=0,errs=[];
+  const st={have:new Set(CHARTS.map(c=>c.hash)),added:0,skipped:0,errs:[],io,big:false};
   for(const gr of groups){
-    toast(L(`${gr.name} を読み込み中…`,`Loading ${gr.name}…`),0);
-    const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-    const arch={id,kind:gr.kind,name:gr.name,file:gr.file||null,files:gr.files||null,added:Date.now()};
-    let ix;
-    try{ix=makeIndex(await listArchive(arch));}catch(e){errs.push(gr.name+'：'+e.message);continue;}
-    const bms=ix.files.filter(f=>/\.(bms|bme|bml|pms|bmson)$/i.test(f.n));
-    if(!bms.length){errs.push(gr.name+L('：BMSファイルが見つかりません',': no BMS files found'));continue;}
-    const metas=[],thumbs=new Map();
-    for(const f of bms){
-      try{
-        const raw=await f.get();const rawU=raw instanceof Uint8Array?raw:new Uint8Array(raw);
-        const text=decodeText(rawU);const ext=f.n.split('.').pop();
-        const b=compileBase(text,ext,mulberry32(1));
-        if(have.has(b.hash)){skipped++;continue;}
-        have.add(b.hash);
-        const dir=f.n.includes('/')?f.n.slice(0,f.n.lastIndexOf('/')+1):'';
-        const tk=dir+'|'+b.P.stagefile+'|'+b.P.banner+'|'+b.P.backbmp;
-        if(!thumbs.has(tk))thumbs.set(tk,await makeThumb(ix,dir,[b.P.stagefile,b.P.banner,b.P.backbmp]));
-        const N=b.notes.length;
-        metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,
-          level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
-          total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
-          preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
-      }catch(e){console.warn(e);}
-    }
-    if(!metas.length)continue;
-    try{
-      await DB.put('archives',arch);
-      for(const m of metas)await DB.put('charts',m);
-    }catch(e){errs.push(gr.name+L('：保存できませんでした（容量不足の可能性）',': could not be saved (storage may be full)'));}
-    archCache.set(id,Promise.resolve(ix));
-    added+=metas.length;
+    if(!io.builtin&&(gr.kind==='zip'||gr.kind==='rar')&&gr.file&&gr.file.size>BIG_BYTES()){await importBig(gr,st);continue;}
+    if(!io.builtin&&gr.file&&gr.file.size>BIG_BYTES()){st.errs.push(gr.name+L('：このサイズの7z / LZHは読み込めません。ZIPかRARにしてください',': 7z / LZH this large cannot be loaded. Please use ZIP or RAR'));continue;}
+    await importGroup(gr,st);
   }
   await refreshLibrary();
-  if(added&&!io.builtin)track('import','曲を追加');
-  if(io.silent){const nm=(io.names||['BeSmart PV Song']);if(added)toast(nm.length>1?L('最初から入っている曲を'+nm.length+'曲追加しました','Added '+nm.length+' built-in songs'):L('最初から入っている曲「'+nm[0]+'」を追加しました','Added the built-in song “'+nm[0]+'”'),2500);else toast('',1);return added;}
-  toast([added?L(`${added} 譜面を追加しました`,`Added ${added} charts`):'',skipped?L(`${skipped} 譜面は追加済みのためスキップ`,`Skipped ${skipped} charts already in the library`):'',...errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
+  if(st.added&&!io.builtin)track('import','曲を追加');
+  if(io.silent){const nm=(io.names||['BeSmart PV Song']);if(st.added)toast(nm.length>1?L('最初から入っている曲を'+nm.length+'曲追加しました','Added '+nm.length+' built-in songs'):L('最初から入っている曲「'+nm[0]+'」を追加しました','Added the built-in song “'+nm[0]+'”'),2500);else toast('',1);return added;}
+  toast([st.added?L(`${st.added} 譜面を追加しました`,`Added ${st.added} charts`):'',st.skipped?L(`${st.skipped} 譜面は追加済みのためスキップ`,`Skipped ${st.skipped} charts already in the library`):'',...st.errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
 }
 $('#fileIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};
 $('#dirIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};

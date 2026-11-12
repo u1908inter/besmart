@@ -1,6 +1,6 @@
 /* BeSmart service worker: offline cache + Android share target */
-const CACHE = 'besmart-v4';
-const SHELL = ['./', './index.html', './unrar.js', './unrar.wasm', './la/libarchive.js', './la/worker-bundle.js', './la/libarchive.wasm',
+const CACHE = 'besmart-v5';
+const SHELL = ['./', './index.html', './unrar.js', './unrar.wasm', './unrar-worker.js', './la/libarchive.js', './la/worker-bundle.js', './la/libarchive.wasm',
   './vendor/ogg-vorbis-decoder.min.js', './songs/BeSmartPV.zip', './songs/PQ2_Grass.zip', './songs/PQ2_Desert.zip', './songs/PQ2_Boss1.zip', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
