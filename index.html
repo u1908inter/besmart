@@ -163,7 +163,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2220)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2319)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2319)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -764,7 +764,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2220)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2319)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2319)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2149,7 +2149,7 @@ async function importGroup(gr,st){
   try{
     await DB.put('archives',arch);
     for(const m of metas)await DB.put('charts',m);
-  }catch(e){st.errs.push(gr.name+L('：保存できませんでした（容量不足の可能性）',': could not be saved (storage may be full)'));}
+  }catch(e){if(st.big&&(e&&(e.name==='QuotaExceededError'||/quota/i.test(e.message||''))))st.quota=true;st.errs.push(gr.name+L('：保存できませんでした（容量不足の可能性）',': could not be saved (storage may be full)'));}
   if(!st.big)archCache.set(id,Promise.resolve(ix));
   st.added+=metas.length;
   
@@ -2186,7 +2186,7 @@ function pickUnits(gr,units,isRar){
     $('#bigQ').value='';
     const sum=()=>{let n=0,b=0;for(const u of units)if(sel.has(u.key)){n++;b+=u.size;}
       const over=free!=null&&b>free*0.9;
-      $('#bigSum').innerHTML=L(`選択中：${n} 曲 / ${fmtSize(b)}`,`Selected: ${n} songs / ${fmtSize(b)}`)+(free!=null?L(`　（この端末の空き：約 ${fmtSize(free)}）`,`  (free on this device: about ${fmtSize(free)})`):'')+(over?`<br><span style="color:var(--alert)">${L('空き容量が足りない可能性があります。曲を減らしてください。','There may not be enough free space. Choose fewer songs.')}</span>`:'');
+      $('#bigSum').innerHTML=L(`選択中：${n} 曲 / ${fmtSize(b)}`,`Selected: ${n} songs / ${fmtSize(b)}`)+(free!=null?`<br>`+L(`ブラウザがBeSmartに使わせてくれる残り容量：約 ${fmtSize(free)}`,`Space the browser allows BeSmart to use: about ${fmtSize(free)} left`):'')+(over?`<br><span style="color:var(--alert)">${L('この容量を超えると途中で保存できなくなるかもしれません。端末の空きとは別の、ブラウザごとの上限です。超えた場合はそこで止まり、それまでの曲は残ります。','Beyond this, saving may stop partway. This is a per-browser limit, separate from the phone’s free space. If it is reached, loading stops and the songs saved so far are kept.')}</span>`:'');
       $('#bigGo').disabled=!n;};
     const render=()=>{const q=$('#bigQ').value.trim().toLowerCase();const box=$('#bigList');box.innerHTML='';
       for(const u of units){if(q&&!u.name.toLowerCase().includes(q))continue;
@@ -2237,6 +2237,7 @@ async function importBig(gr,st){
         for(const e of u.entries){try{bufs.set(e.path,await e.get());}catch(err){console.warn(err);}}
         if(bufs.size)await importGroup(build(u,bufs),st);
         doneN++;
+        if(st.quota)break;
       }
     }else{
       const owner=new Map(),left=new Map(),got=new Map();
@@ -2246,14 +2247,16 @@ async function importBig(gr,st){
         const o=owner.get(name);if(!o)return;
         got.get(o.u).set(o.e.path,buf);
         const r=left.get(o.u)-1;left.set(o.u,r);
-        if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);doneN++;status(pct);}
+        if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);doneN++;status(pct);if(st.quota)throw new Error('__quota');}
       },(pos,size)=>{pct=`（${Math.floor(pos/size*100)}%）`;status(pct);});
       for(const [u,bufs] of got){if(bufs.size){await importGroup(build(u,bufs),st);}doneN++;}
       if(failed.length)st.errs.push(gr.name+L(`：${failed.length} 個のファイルを展開できませんでした`,`: ${failed.length} files could not be extracted`));
     }
   }catch(e){
-    st.errs.push(gr.name+'：'+(e.message||e));
+    if(!st.quota)st.errs.push(gr.name+'：'+(e.message||e));
   }finally{
+    if(st.quota)st.errs.push(L('ブラウザの保存容量の上限に達したため、途中で止めました。ここまでの曲は保存されています。いらない曲を削除してから、残りの曲を選び直してください。','Stopped because the browser storage limit was reached. Songs saved so far are kept. Delete songs you do not need, then choose the rest again.'));
+    st.quota=false;
     if(job)job.close();
     wakeOff();st.big=false;st.quiet=false;
   }
