@@ -50,7 +50,13 @@ h1{font:400 22px/1.2 var(--font);margin:0}
 .libhead{border:2px solid var(--ink);padding:12px 14px;margin:0 0 12px}
 .mark{font:400 clamp(30px,9vw,38px)/1 var(--font);letter-spacing:.04em}
 .libhead .tag{font-size:12px;color:var(--dim);margin-top:4px}
-.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:6;background:var(--bg);padding:6px 0;box-shadow:0 -40px 0 var(--bg),0 6px 10px -6px rgba(0,0,0,.6)}
+#fsc{position:fixed;right:calc(env(safe-area-inset-right) + 2px);top:0;bottom:0;width:0;z-index:7;pointer-events:none}
+#fsc .th{position:absolute;right:0;width:40px;height:60px;pointer-events:auto;touch-action:none;display:flex;justify-content:flex-end;align-items:center;opacity:.5;transition:opacity .2s}
+#fsc .th:before{content:"";width:12px;height:56px;border-radius:6px;background:var(--hi);box-shadow:0 0 8px var(--hi)}
+#fsc.on .th{opacity:1}
+#fsc .bub{position:absolute;right:46px;min-width:64px;padding:6px 14px;background:var(--bg);border:2px solid var(--hi);color:var(--hi);font-size:26px;text-align:center;white-space:nowrap;display:none;transform:translateY(-50%)}
+#fsc.on .bub{display:block}
 .ib{border:2px solid var(--ink);border-radius:0;background:transparent;color:var(--ink);font:400 14px/1 var(--font);padding:8px 6px;cursor:pointer;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;justify-content:center;width:auto;margin:0;text-shadow:inherit}
 .ib.pri{background:var(--ink);color:var(--bg);text-shadow:none}
 button,.btn{display:block;width:100%;border:2px solid var(--ink);border-radius:0;padding:12px;font:400 16px/1.3 var(--font);color:var(--ink);background:transparent;margin:8px 0;cursor:pointer;text-align:center;text-shadow:inherit}
@@ -152,7 +158,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.1106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1106)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.1333)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1333)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -177,6 +183,7 @@ canvas{display:block;touch-action:none}
     <button id="rndBtn" class="ib" data-en="Random pick">おまかせ選曲</button>
   </div>
   <div id="songs"></div>
+  <div id="fsc" style="display:none"><div class="th"></div><div class="bub"></div></div>
   <div id="empty" class="empty">
     <p data-en="Add a BMS archive (ZIP, RAR, LZH or 7z) or a folder of BMS/bmson files with their sounds to play more songs. Songs stay on this device.">BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて「追加」すると、ほかの曲も遊べます。曲はこの端末の中だけに保存されます。</p>
     <label class="btn pri" for="fileIn" data-en="Add songs">曲を追加</label>
@@ -752,7 +759,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.1106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1106)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.1333)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1333)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1991,10 +1998,46 @@ function renderLibrary(){
   show('#empty',onlyBuiltin,'block');show('#libFoot',!onlyBuiltin,'block');
   const frag=document.createDocumentFragment();
   const T=S.table&&TABLES.find(t=>t.url===S.table);
-  if(T){renderTable(T,list,frag);box.appendChild(frag);return;}
-  for(const c of list)frag.appendChild(songRow(c));
+  if(T){renderTable(T,list,frag);box.appendChild(frag);fscRefresh();return;}
+  const kf={title:c=>(c.title||'?').trim().charAt(0).toUpperCase(),artist:c=>(c.artist||'?').trim().charAt(0).toUpperCase(),level:c=>String(c.level??'?'),lamp:c=>LAMPS[(REC[c.hash]||{}).lamp||0]||'',added:c=>{const d=new Date(c.added||0);return `${d.getMonth()+1}/${d.getDate()}`;}}[so];
+  for(const c of list){const r=songRow(c);if(kf)try{r.dataset.k=kf(c);}catch(e){}frag.appendChild(r);}
   box.appendChild(frag);
+  fscRefresh();
 }
+/* ---------- fast scroller: drag the handle on the right edge to jump through a long list ---------- */
+const FSC={el:null,rows:null,drag:false,hide:0};
+function fscRefresh(){FSC.rows=null;requestAnimationFrame(fscPos);}
+function fscTopGap(){const a=$('#lib .acts');return a?a.getBoundingClientRect().height+10:70;}
+function fscPos(){
+  const lib=$('#lib'),f=$('#fsc');if(!lib||!f)return;
+  const long=lib.scrollHeight>lib.clientHeight*2.5&&getComputedStyle(lib).display!=='none';
+  f.style.display=long?'':'none';if(!long)return;
+  const top=fscTopGap(),h=lib.clientHeight-top-70,th=f.querySelector('.th');
+  const r=lib.scrollTop/Math.max(1,lib.scrollHeight-lib.clientHeight);
+  th.style.top=(top+r*h)+'px';
+  f.querySelector('.bub').style.top=(top+r*h+30)+'px';
+}
+function fscLabel(){
+  const lib=$('#lib');
+  if(!FSC.rows)FSC.rows=[...$('#songs').querySelectorAll('.song,.tblh')];
+  const y=lib.scrollTop+fscTopGap()+20;let lo=0,hi=FSC.rows.length-1,best=0;
+  while(lo<=hi){const m=(lo+hi)>>1;if(FSC.rows[m].offsetTop<=y){best=m;lo=m+1;}else hi=m-1;}
+  for(let i=best;i>=0;i--){const e=FSC.rows[i];if(e.classList.contains('tblh'))return e.textContent.trim().split(/\s/)[0];if(e.dataset.k)return e.dataset.k;if(S.table)continue;break;}
+  const e=FSC.rows[best];return e&&e.dataset.k||'';
+}
+(function(){
+  const lib=$('#lib'),f=$('#fsc'),th=f.querySelector('.th'),bub=f.querySelector('.bub');
+  lib.addEventListener('scroll',()=>{fscPos();if(!FSC.drag){f.classList.add('on');bub.style.display='none';clearTimeout(FSC.hide);FSC.hide=setTimeout(()=>{if(!FSC.drag){f.classList.remove('on');bub.style.display='';}},900);}},{passive:true});
+  addEventListener('resize',fscPos);
+  const move=e=>{const top=fscTopGap(),h=lib.clientHeight-top-70;
+    const r=Math.max(0,Math.min(1,(e.clientY-30-top)/h));
+    lib.scrollTop=r*(lib.scrollHeight-lib.clientHeight);fscPos();
+    const t=fscLabel();bub.textContent=t;bub.style.visibility=t?'visible':'hidden';};
+  th.addEventListener('pointerdown',e=>{e.preventDefault();FSC.drag=true;th.setPointerCapture(e.pointerId);f.classList.add('on');bub.style.display='';move(e);});
+  th.addEventListener('pointermove',e=>{if(FSC.drag)move(e);});
+  const end=()=>{FSC.drag=false;clearTimeout(FSC.hide);FSC.hide=setTimeout(()=>f.classList.remove('on'),600);};
+  th.addEventListener('pointerup',end);th.addEventListener('pointercancel',end);
+})();
 $('#q').oninput=renderLibrary;
 $('#rndBtn').onclick=()=>{
   const f=$('#rndF').value,lamp=c=>(REC[c.hash]||{}).lamp||0;
