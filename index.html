@@ -86,6 +86,7 @@ input::placeholder,textarea::placeholder{color:var(--dim)}
 .song .b{flex:1;min-width:0}
 .song .t{font-size:16px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .song .t .sub{color:var(--dim)}
+.song .redb{flex:none;border:1px solid;padding:0 4px;line-height:1.35;font-size:11px}
 .song .m{font-size:12px;color:var(--dim);margin-top:1px;display:flex;gap:10px;white-space:nowrap;overflow:hidden}
 .song .r{text-align:right;flex:0 0 auto;min-width:46px}
 .song .r .rk{font:400 17px/1 var(--font)}
@@ -162,7 +163,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2216)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2216)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2220)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -763,7 +764,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2216)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2216)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2220)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1588,7 +1589,7 @@ function SCHEMA(){return [
   {k:'arr2',t:L('配置（2P側・DP）','Arrangement (2P side)'),sel:ARR_OPTS()},
   {k:'flip',t:L('FLIP（DPの左右入替）','FLIP (swap DP sides)'),b:1},
   {k:'lnmode',t:L('ロングノート','Long notes'),sel:[['chart',L('譜面の指定に従う','Chart default')],['ln',L('終点判定なし','No release judge')],['cn',L('離す判定あり','Release judged')],['hcn',L('押し続け必須','Must keep holding')]]},
-  {k:'reduce',t:L('鍵盤を減らす','Fewer keys'),sel:[['off','OFF'],['5k',L('7鍵→5鍵','7K → 5K')],['4k',L('4鍵にする（7鍵・5鍵）','4 keys (from 7K/5K)')]],h:L('7鍵・5鍵の譜面を少ない鍵盤に変換して遊びます。置けないノーツは音だけ鳴ります。変換したプレイはスコア・ランプを記録しません。','Converts 7K/5K charts to fewer keys. Notes that cannot be placed only play their sound. Converted plays are not recorded.')},
+  {k:'reduce',t:L('鍵盤を減らす','Fewer keys'),sel:[['off','OFF'],['5k',L('7鍵→5鍵','7K → 5K')],['4k',L('4鍵にする（7鍵・5鍵）','4 keys (from 7K/5K)')]],h:L('7鍵・5鍵の譜面を少ない鍵盤に変換して遊びます。置けないノーツは音だけ鳴ります。変換したプレイは、通常の記録とは別に「4K」「5K」のランプとして記録され、曲一覧に表示されます。','Converts 7K/5K charts to fewer keys. Notes that cannot be placed only play their sound. Converted plays are saved separately as “4K” / “5K” lamps shown in the song list.')},
   {k:'playRate',t:L('再生速度','Playback speed'),r:[0.5,2,0.05],f:v=>'×'+v.toFixed(2),h:L('曲全体の速さを変えます（音の高さも変わります）。×1.00以外のプレイはスコア・ランプを記録しません。','Changes the speed of the whole song (pitch changes too). Plays at a speed other than ×1.00 are not recorded.')},
  ]},
  {sec:L('アシスト','Assist'),items:[
@@ -1903,6 +1904,11 @@ async function refreshLibrary(){
   try{CHARTS=await DB.all('charts')||[];}catch(e){CHARTS=[];}
   renderLibrary();
 }
+const RED_N={'4k':'4K','5k':'5K'};
+function redBadges(r){if(!r||!r.red)return '';let o='';
+  for(const m of ['4k','5k']){const q=r.red[m];if(!q||!q.plays)continue;const col=LAMPC[q.lamp||0];
+    o+=`<span class="redb" style="color:${col};border-color:${col}" title="${RED_N[m]} ${LAMPS[q.lamp||0]}">${RED_N[m]}</span>`;}
+  return o;}
 function songRow(c,lvLabel){
   const r=REC[c.hash]||{},d=document.createElement('div');d.className='song';
   const rate=r.ex?r.ex/(2*c.notesN):0;
@@ -1910,7 +1916,7 @@ function songRow(c,lvLabel){
   d.style.borderLeftColor=r.lamp?LAMPC[r.lamp]:'transparent';d.tabIndex=0;
   d.innerHTML=`<div class="lvb"><b>${esc(String(lvLabel||c.level||'?').slice(0,5))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
     <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
-    <div class="m"><span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
+    <div class="m">${redBadges(r)}<span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
     <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}</div>`;
   d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
   d.onclick=()=>openDetail(c);
@@ -2316,7 +2322,8 @@ async function openDetail(c){
     <div class="card" style="margin:8px 0;padding:10px"><div class="grid" style="margin:0">
       <span class="k">${L('ランプ','Clear')}</span><span style="color:${LAMPC[r.lamp||0]};font-weight:800">${LAMPS[r.lamp||0]}</span><span class="k">${L('ランク','Rank')}</span><span>${r.ex?rankOf(rate):'-'}</span>
       <span class="k">SCORE</span><span>${r.ex?`${r.ex}（${(rate*100).toFixed(2)}%）`:'-'}</span><span class="k">BP</span><span>${r.bp??'-'}</span>
-      <span class="k">${L('最大コンボ','Max combo')}</span><span>${r.combo||'-'}</span><span class="k">${L('プレイ回数','Plays')}</span><span>${r.plays||0}</span></div></div>
+      <span class="k">${L('最大コンボ','Max combo')}</span><span>${r.combo||'-'}</span><span class="k">${L('プレイ回数','Plays')}</span><span>${r.plays||0}</span>
+      ${['4k','5k'].filter(m=>r.red&&r.red[m]&&r.red[m].plays).map(m=>{const q=r.red[m],rr=q.max?q.ex/q.max:0;return `<span class="k">${RED_N[m]}${L('変換','')}</span><span style="grid-column:span 3"><b style="color:${LAMPC[q.lamp||0]}">${LAMPS[q.lamp||0]}</b>　${q.ex?`${rankOf(rr)}（${(rr*100).toFixed(2)}%）`:''}　${L('プレイ','plays')} ${q.plays}</span>`;}).join('')}</div></div>
     <div class="dopts" id="dOpts"></div>
     <button class="pri" id="dPlay">${L('プレイする','Play')}</button>
     <div class="btns"><button id="dAuto">${L('オートプレイ','Autoplay')}</button><button id="dView">${L('譜面ビューア','Chart viewer')}</button></div>
@@ -3613,6 +3620,14 @@ function finish(){wakeOff();if(G&&G.record)track('finish','プレイ完了');
     REC[hash]=r;saveRec();
     if(news.ex)DB.put('replays',{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec,date:Date.now(),lamp}).catch(()=>{});
   }
+  if(G.reduced&&G.rate===1&&!G.auto&&!G.practice&&!G.replay&&!G.viewer&&!G.tut&&!G.course){
+    const m=G.opts.reduce,r=REC[hash]||{lamp:0,ex:0,bp:null,combo:0,plays:0};
+    r.red=r.red||{};const q=r.red[m]||{lamp:0,ex:0,plays:0};
+    q.plays=(q.plays||0)+1;
+    if(lamp>q.lamp){q.lamp=lamp;news.lamp=1;}
+    if(ex>q.ex){q.ex=ex;q.max=max;news.ex=1;}
+    r.red[m]=q;REC[hash]=r;saveRec();G.redSaved=m;
+  }
   const thisReplay=G.record?{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec}:null;
   const fc=!G.failed&&c.BD===0&&c.PR===0&&N>0;
   const assist=isAssist(G.opts);
@@ -3639,7 +3654,7 @@ function showResult(R){
   if(!G)return;
   const meta=G.meta;
   const N=k=>R.news[k]?'<span class="new">NEW</span>':'';
-  const tag=G.replay?L('（リプレイ）',' (replay)'):G.auto?L('（オート）',' (auto)'):G.practice?L('（練習・記録なし）',' (practice, not recorded)'):'';
+  const tag=G.replay?L('（リプレイ）',' (replay)'):G.auto?L('（オート）',' (auto)'):G.practice?L('（練習・記録なし）',' (practice, not recorded)'):G.redSaved?L(`（${RED_N[G.redSaved]}変換・${RED_N[G.redSaved]}の記録に保存）`,` (${RED_N[G.redSaved]} conversion, saved to ${RED_N[G.redSaved]} record)`):'';
   $('#resultBox').innerHTML=`<div class="hlp" style="text-align:center">${esc(G.chart.title)} ${esc(G.chart.subtitle||'')} ${tag}</div>
     <div class="res-clear" style="color:${LAMPC[R.lamp]}">${G.failed?'FAILED':LAMPS[R.lamp]}${N('lamp')}</div>
     <div class="rank" data-t="${rankOf(R.rate)}">${rankOf(R.rate)}</div>
