@@ -158,7 +158,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.1333)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1333)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2140)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2140)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -759,7 +759,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.1333)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.1333)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2140)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2140)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1534,7 +1534,7 @@ const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'char
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
   ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
-  prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
+  preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
 const S=Object.assign({},DEF);
 try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['hs','ofs','edge','side'])if(o[k]!==undefined)S[k]=o[k];}catch(e){}
@@ -1647,6 +1647,46 @@ const QUICK=['hs','suddenOn','sudden','gauge','arr','side','ofs','vofs','playSki
 let setQ='';
 function findItem(k){for(const sec of SCHEMA())for(const it of sec.items)if(it.k===k)return it;return null;}
 function isChanged(k){return k in DEF&&JSON.stringify(S[k])!==JSON.stringify(DEF[k]);}
+/* ---------- setting presets (named snapshots of the play settings) ---------- */
+const PRESET_SKIP=new Set(['preset','setAll','table','tblMissing','sort','fmode','prof','profAuto','profCur','lowProf','lang','tapOfs']);
+let PRESETS=[];try{PRESETS=JSON.parse(localStorage.getItem(LSK+'presets')||'[]');if(!Array.isArray(PRESETS))PRESETS=[];}catch(e){PRESETS=[];}
+const savePresets=()=>{try{localStorage.setItem(LSK+'presets',JSON.stringify(PRESETS));}catch(e){}};
+function snapSettings(){const o={};for(const k in DEF){if(PRESET_SKIP.has(k))continue;o[k]=JSON.parse(JSON.stringify(S[k]));}return o;}
+function applyPreset(p){
+  for(const k in p.v){if(k in DEF&&!PRESET_SKIP.has(k))S[k]=JSON.parse(JSON.stringify(p.v[k]));}
+  S.preset=p.name;saveS();
+  try{if(S.prof&&S.prof[S.profCur])storeOfs();}catch(e){}
+  try{applyVol();applyPhosphor();}catch(e){}
+  try{if(typeof layout==='function')layout();}catch(e){}
+  toast(L(`設定セット「${p.name}」を呼び出しました`,`Loaded preset “${p.name}”`));
+}
+function presetBoxHTML(){
+  const opts=PRESETS.map((p,i)=>`<option value="${i}" ${p.name===S.preset?'selected':''}>${esc(p.name)}</option>`).join('');
+  return `<div class="card" id="presetBox" style="padding:10px 12px;margin-bottom:10px">
+   <div style="color:var(--hi);margin-bottom:6px">${L('設定セット','Setting presets')}</div>
+   <div class="hlp" style="margin:0 0 8px">${L('今の設定に名前をつけて保存し、あとで切り替えられます（例：スマホBT用、スマホ有線用）。','Save the current settings under a name and switch later (e.g. “Phone + Bluetooth”).')}</div>
+   ${PRESETS.length?`<div style="display:flex;gap:6px;margin-bottom:6px"><select id="psSel" style="flex:1;min-width:0">${opts}</select><button class="ib" id="psLoad" style="margin:0;flex:none">${L('呼び出す','Load')}</button></div>
+   <div style="display:flex;gap:6px;margin-bottom:8px"><button class="ib" id="psOver" style="margin:0;flex:1">${L('上書き保存','Overwrite')}</button><button class="ib" id="psRen" style="margin:0;flex:1">${L('名前を変更','Rename')}</button><button class="ib" id="psDel" style="margin:0;flex:1">${L('削除','Delete')}</button></div>`:''}
+   <div style="display:flex;gap:6px"><input id="psName" maxlength="24" placeholder="${L('新しいセットの名前','New preset name')}" style="flex:1;min-width:0"><button class="ib pri" id="psNew" style="margin:0;flex:none">${L('今の設定を保存','Save current')}</button></div>
+  </div>`;
+}
+function wirePresetBox(){
+  const sel=()=>PRESETS[+($('#psSel')||{}).value];
+  const nm=()=>($('#psName').value||'').trim();
+  const re=()=>{buildSettings();};
+  $('#psNew').onclick=()=>{const n=nm();if(!n){toast(L('名前を入力してください','Enter a name'));$('#psName').focus();return;}
+    const i=PRESETS.findIndex(p=>p.name===n);const v=snapSettings();
+    if(i>=0)PRESETS[i].v=v;else PRESETS.push({name:n,v});
+    S.preset=n;saveS();savePresets();toast(L(`「${n}」として保存しました`,`Saved as “${n}”`));re();};
+  if(!PRESETS.length)return;
+  $('#psLoad').onclick=()=>{const p=sel();if(p){applyPreset(p);re();}};
+  $('#psOver').onclick=()=>{const p=sel();if(!p)return;p.v=snapSettings();S.preset=p.name;saveS();savePresets();toast(L(`「${p.name}」を今の設定で上書きしました`,`Overwrote “${p.name}”`));re();};
+  $('#psRen').onclick=()=>{const p=sel(),n=nm();if(!p)return;if(!n){toast(L('新しい名前を下の欄に入力してください','Type the new name in the box below'));$('#psName').focus();return;}
+    if(S.preset===p.name)S.preset=n;p.name=n;saveS();savePresets();toast(L('名前を変更しました','Renamed'));re();};
+  $('#psDel').onclick=()=>{const p=sel();if(!p)return;
+    if($('#psDel').dataset.armed!=='1'){$('#psDel').dataset.armed='1';$('#psDel').textContent=L('もう一度押すと削除','Tap again to delete');setTimeout(()=>{const b=$('#psDel');if(b){b.dataset.armed='';b.textContent=L('削除','Delete');}},3000);return;}
+    PRESETS.splice(PRESETS.indexOf(p),1);if(S.preset===p.name)S.preset='';saveS();savePresets();toast(L('削除しました','Deleted'));re();};
+}
 function afterSet(k){saveS();applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();}
 function renderItem(it,inn,compact){
   if(it.hint){if(!compact)inn.insertAdjacentHTML('beforeend',`<div class="hlp">${it.hint}</div>`);return;}
@@ -1669,6 +1709,7 @@ function renderItem(it,inn,compact){
 }
 function buildSettings(){setTimeout(()=>{try{renderPwaBox();renderTblBox();}catch(e){}},0);
   const body=$('#setBody');body.innerHTML='';
+  if(!$('#setQ').value.trim()){body.insertAdjacentHTML('beforeend',presetBoxHTML());wirePresetBox();}
   $('#setQ').placeholder=L('設定を検索（例：ずれ、BGA、振動）','Search settings (e.g. offset, BGA)');
   const mb=$('#setMode');if(mb)mb.textContent=S.setAll?L('よく使う設定だけ表示','Show common settings only'):L('すべての設定を表示','Show all settings');
   const q=setQ.trim().toLowerCase(),plain=x=>String(x||'').replace(/<[^>]+>/g,'').toLowerCase();
@@ -2291,7 +2332,12 @@ async function openDetail(c){
   $('#dClose').onclick=close;
   $('#detail').onclick=e=>{if(e.target.id==='detail')close();};
   $('#dFav').onclick=()=>{if(FAV.has(c.hash))FAV.delete(c.hash);else FAV.add(c.hash);saveFav();const f=FAV.has(c.hash);$('#dFav').textContent=f?'★':'☆';$('#dFav').style.color=f?'#fd3':'#889';renderLibrary();};
-  {const box=$('#dOpts');['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
+  {const box=$('#dOpts');
+   if(PRESETS.length){const r=document.createElement('div');r.className='row';
+     r.innerHTML=`<span>${L('設定セット','Preset')}</span><select id="dPs" style="max-width:60%"><option value="">${L('（今の設定のまま）','(keep current)')}</option>${PRESETS.map((p,i)=>`<option value="${i}" ${p.name===S.preset?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
+     box.appendChild(r);
+     r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));};}
+   ['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();rateGuard(()=>startPlay(c,{}));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
@@ -2354,7 +2400,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],courses:COURSES,settings:S,replays};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],courses:COURSES,settings:S,presets:PRESETS,replays};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -2395,6 +2441,7 @@ $('#impGo').onclick=async()=>{
   for(const r of (d.replays||[])){if(!r||!r.hash)continue;
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
+  if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
   saveRec();saveFav();saveCourses();impData=null;show('#impDlg',false);
   toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
   buildSettings();renderPwaBox();if(typeof applyPhosphor==='function')applyPhosphor();
