@@ -32,6 +32,10 @@
 :root,[data-ph=amber]{--ink:#FFB000;--hi:#FFD466;--dim:#B57A00;--faint:#6E4800;--bg:#140B01;--bg2:#2A1804;--glow:rgba(255,176,0,.55);--alert:#FF6A3C}
 [data-ph=green]{--ink:#33FF77;--hi:#A6FFC4;--dim:#1FA84E;--faint:#0F5A2A;--bg:#021208;--bg2:#06301A;--glow:rgba(51,255,119,.5);--alert:#FFB000}
 [data-ph=white]{--ink:#E8F4FF;--hi:#FFFFFF;--dim:#8FA3B8;--faint:#3D4A5A;--bg:#05080C;--bg2:#141C26;--glow:rgba(200,230,255,.45);--alert:#FF6A6A}
+[data-ph=purple]{--ink:#C77DFF;--hi:#E9CCFF;--dim:#8A52BF;--faint:#4A2B6B;--bg:#0D0614;--bg2:#22112F;--glow:rgba(199,125,255,.5);--alert:#FFB000}
+[data-ph=pink]{--ink:#FF5FA2;--hi:#FFC6DE;--dim:#B83F76;--faint:#5E2040;--bg:#14050C;--bg2:#2E0E1E;--glow:rgba(255,95,162,.5);--alert:#FFD23D}
+[data-ph=yellow]{--ink:#FFE14D;--hi:#FFF5B8;--dim:#B39B24;--faint:#5C5012;--bg:#121002;--bg2:#2A2507;--glow:rgba(255,225,77,.5);--alert:#FF6A3C}
+[data-ph=blue]{--ink:#4DB8FF;--hi:#C2E8FF;--dim:#2F7FB5;--faint:#164262;--bg:#020A12;--bg2:#082236;--glow:rgba(77,184,255,.5);--alert:#FFB000}
 :root{--font:"Dot","DotGothic16","Osaka-Mono","MS Gothic",monospace;--fg:var(--ink);--acc:var(--ink);--acc2:var(--hi);--mut:var(--dim);--line:var(--faint)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);overscroll-behavior:none;font-size:15px;line-height:1.6;-webkit-font-smoothing:none}
@@ -158,7 +162,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2140)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2140)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2203)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2203)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -759,7 +763,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2140)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2140)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2203)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2203)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1639,7 +1643,7 @@ function SCHEMA(){return [
  ]},
  {sec:L('画面の色・言語','Colour & language'),items:[
   {k:'playSkin',t:L('プレイ画面のデザイン','Play screen style'),sel:[['crt',L('デフォルト','Default')],['classic',L('ポップ','Pop')],['neon',L('ネオン','Neon')]],h:L('デフォルト：アンバーのドット文字。ポップ：白と青の鍵盤にピンクの判定ライン、太い文字。ネオン：黒地に青緑とピンクが光る、くっきりした表示。','Default: amber pixel text. Pop: white/blue keys, pink judge line, bold type. Neon: black background with glowing cyan and pink.')},
-  {k:'phosphor',t:L('文字の色','Screen colour'),sel:[['amber',L('アンバー','Amber')],['green',L('グリーン','Green')],['white',L('ホワイト','White')]]},
+  {k:'phosphor',t:L('文字の色','Screen colour'),sel:[['amber',L('アンバー','Amber')],['green',L('グリーン','Green')],['white',L('ホワイト','White')],['purple',L('パープル','Purple')],['pink',L('ピンク','Pink')],['yellow',L('イエロー','Yellow')],['blue',L('ブルー','Blue')]]},
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
