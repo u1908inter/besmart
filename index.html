@@ -163,7 +163,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2319)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2319)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1113.2339)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2339)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -764,7 +764,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2319)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2319)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1113.2339)">スマホで遊べるBMSプレイヤー　VER 1.0 (1113.2339)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3231,7 +3231,7 @@ function draw(){
     g.fillStyle='#c22';g.beginPath();g.moveTo(x,py-hh);g.lineTo(x+hw,py);g.lineTo(x,py+hh);g.lineTo(x-hw,py);g.fill();}}
   const greenTxt=L(`表示 ${greenNum(t)}ms`,`View ${greenNum(t)}ms`);
   if(S.suddenOn&&S.sudden>0){const h=len*S.sudden/100;g.fillStyle=FL?'#16161f':PP.bg2;quad(areaX,0,areaW,h);g.fillStyle=FL?'#3a3a52':PP.ink;quad(areaX,h-2,areaW,2);
-    const ly=P3?pj(h)[0]:h;g.fillStyle=NE?'#66FF66':CL?'#FFD21F':PP.ink;g.font='13px '+GF();g.textAlign='center';const below=ly<safeTop+90;g.textBaseline=below?'top':'bottom';g.fillText(greenTxt+L(`  カバー ${S.sudden}%`,`  Cover ${S.sudden}%`),areaX+areaW/2,below?ly+4:ly-5);}
+    const ly=P3?pj(h)[0]:h;g.fillStyle=NE?'#66FF66':CL?'#FFD21F':PP.ink;g.font='13px '+GF();g.textAlign='center';const hb=(G.hudBottom||safeTop+90)+6,below=ly-20<hb;g.textBaseline=below?'top':'bottom';g.fillText(greenTxt+L(`  カバー ${S.sudden}%`,`  Cover ${S.sudden}%`),areaX+areaW/2,below?Math.max(ly+4,hb):ly-5);}
   if(S.hiddenOn&&S.hidden>0){const h=len*S.hidden/100;g.fillStyle=PP.bg2;quad(areaX,judgeY-h,areaW,h);g.fillStyle=PP.ink;quad(areaX,judgeY-h,areaW,2);}
   if(NE){g.fillStyle='#FF2D55';g.fillRect(areaX,judgeY-2,areaW,4);g.fillStyle='rgba(255,45,85,.22)';g.fillRect(areaX,judgeY-8,areaW,16);}
   else if(CL){g.fillStyle='#FF3D9A';g.fillRect(areaX,judgeY-2,areaW,4);g.fillStyle='rgba(255,61,154,.2)';g.fillRect(areaX,judgeY-8,areaW,16);}
@@ -3316,6 +3316,7 @@ function draw(){
       const jw=g.measureText(jTxt).width;
       if(jw>hw){g.font=Math.max(8,Math.floor(12*hw/jw))+'px '+GF();}
       g.fillText(jTxt,hx,rowY);}
+    G.hudBottom=(S.judgeCount?rowY:rowY-15)+4;
   }
   {const pr=Math.max(0,Math.min(1,t/Math.max(1,c.endTime)));
    g.fillStyle=hexA(PP.ink,.18);g.fillRect(areaX,H-5,areaW,5);
