@@ -166,7 +166,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1606)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1606)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1828)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1828)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -770,7 +770,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1606)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1606)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1828)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1828)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1702,7 +1702,7 @@ function SCHEMA(){return [
   {k:'rub',t:L('スクラッチをこすって操作','Rub the scratch'),b:1,h:L('スクラッチのレーンを上下にこすると、こするたびに打鍵になります。タップでも操作できます。','Rubbing the scratch lane up and down counts as a hit each stroke. Tapping still works.')},
   {k:'tapAdj',t:L('タップ位置の補正','Tap position correction'),b:1,h:L('ノーツを叩いた位置を覚えて、レーンの境目をあなたの押し方に合わせて少しずつずらします（最大でレーン幅の3割）。','Learns where you hit notes and gradually shifts lane borders to match (up to 30% of a lane).')},
   {hint:`<button class="ib" id="tapReset">${L('タップ位置の補正をリセット','Reset tap correction')}</button>`},
-  {k:'vib',t:L('振動','Vibration'),sel:[['off','OFF'],['weak',L('弱','Weak')],['strong',L('強','Strong')]],h:L('押したときとフルコンボのときに振動します（Androidのみ。iPhoneのブラウザは振動に対応していません）。','Vibrates on hits and full combos (Android only).')},
+  {k:'vib',t:L('振動','Vibration'),sel:[['off','OFF'],['weak',L('弱','Weak')],['strong',L('強','Strong')]],h:L('押したときとフルコンボのときに振動します（Androidのみ。iPhoneのブラウザは振動に対応していません）。切り替えると試しに振動します。振動しないときは、スマホがマナーモードの「ミュート（消音）」になっていないか、本体の設定で振動がオフになっていないかを確かめてください。','Vibrates on hits and full combos (Android only). Changing it gives a test buzz. If nothing happens, check that the phone is not in mute (silent) mode and that vibration is on in the system settings.')},
   {k:'wake',t:L('プレイ中は画面を消灯させない','Keep the screen on while playing'),b:1},
   {k:'eco',t:L('省電力モード','Battery saver'),b:1,h:L('30fps・光の効果と走査線なし・画面を少し暗くして、電池の減りを抑えます。','30 fps, no glow or scanlines and a slightly dimmer screen to save battery.')},
   {hint:L('Bluetoothのゲームコントローラーも使えます。割り当ては「キー設定」から変えられます。','Bluetooth game controllers work too; change the mapping in Key config.')},
@@ -1764,7 +1764,7 @@ function wirePresetBox(){
     if($('#psDel').dataset.armed!=='1'){$('#psDel').dataset.armed='1';$('#psDel').textContent=L('もう一度押すと削除','Tap again to delete');setTimeout(()=>{const b=$('#psDel');if(b){b.dataset.armed='';b.textContent=L('削除','Delete');}},3000);return;}
     PRESETS.splice(PRESETS.indexOf(p),1);if(S.preset===p.name)S.preset='';saveS();savePresets();toast(L('削除しました','Deleted'));re();};
 }
-function afterSet(k){saveS();applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();}
+function afterSet(k){saveS();applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();if(k==='vib'&&S.vib!=='off'){vib(S.vib==='strong'?[45,80,45]:[25,80,25]);if(!navigator.vibrate)toast(L('このブラウザは振動に対応していません（iPhoneは非対応）','This browser does not support vibration (not available on iPhone)'),3500);}}
 function renderItem(it,inn,compact){
   if(it.hint){if(!compact)inn.insertAdjacentHTML('beforeend',`<div class="hlp">${it.hint}</div>`);return;}
   const row=document.createElement('div');row.className='row';
@@ -3294,7 +3294,7 @@ function press(lane,src,tOv){
   if(G.replay&&src!=='rep')return;
   if(G.viewer)return;
   G.pressed[lane]=true;G.beam[lane]=performance.now();
-  if(src!=='rep'&&!G.auto)vib(S.vib==='strong'?20:9);
+  if(src!=='rep'&&!G.auto)vib(S.vib==='strong'?45:25);
   const t=tOv!=null?tOv:songTime();
   if(G.record||G.course)G.rec.push([+t.toFixed(4),lane,1]);
   if(G.autoLanes.has(lane))return;
