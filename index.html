@@ -97,7 +97,7 @@ input[data-c]{padding:6px 7px;flex:none}input[type=number]{-moz-appearance:textf
 .lv{display:inline-block;color:var(--bg);background:var(--ink);padding:0 6px;font-size:12px;margin-right:6px;text-shadow:none}
 .empty{font-size:15px;line-height:1.8;padding:14px 0}
 .empty p{margin:0 0 12px}
-.setTop{display:flex;gap:8px;margin:0 0 10px}.setTop input{flex:1;min-width:0}.setTop .ib{white-space:nowrap}.row .st{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.row .tt{min-width:0}.row .qh{width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:12px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row .chg{display:none;color:var(--hi);font-style:normal;font-size:10px}.row .rst{display:none;width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:13px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row.changed .chg,.row.changed .rst{display:inline-block}.hh{margin-top:-4px}.dopts{margin:8px 0;border-top:1px dashed var(--faint);padding-top:6px}.dopts .row{min-height:40px}
+.setTop{display:flex;gap:8px;margin:0 0 10px}.setTop input{flex:1;min-width:0}.setTop .ib{white-space:nowrap}.row .st{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.row .tt{min-width:0}.row .qh{width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:12px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row .chg{display:none;color:var(--hi);font-style:normal;font-size:10px}.row .rst{display:none;white-space:nowrap;flex:none;width:auto;margin:0;padding:0 6px;min-height:0;height:22px;font-size:13px;line-height:20px;border:1px solid var(--faint);background:none;color:var(--dim)}.row.changed .chg,.row.changed .rst{display:inline-block}.hh{margin-top:-4px}.dopts{margin:8px 0;border-top:1px dashed var(--faint);padding-top:6px}.dopts .row{min-height:40px}
 .tblh{margin:14px 0 4px;padding:4px 8px;border-bottom:1px dashed var(--faint);color:var(--hi);font-size:15px}.song.miss{opacity:.62}.song.miss .ml{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.song.miss .ib{font-size:12px;padding:2px 8px;text-decoration:none}
 .guide{margin:22px 0 0;padding:14px 14px 4px;border:1px dashed var(--dim,#6E4800);text-align:left}.guide h3{margin:0 0 8px;font-size:17px;font-weight:400}.guide ol{margin:0;padding-left:1.3em}.guide li{margin:0 0 10px}.gchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.gchip{display:inline-block;border:1px solid currentColor;padding:2px 10px;font-size:14px;color:inherit;text-decoration:none;line-height:1.7}.gchip:active{opacity:.6}
 .hlp{font-size:12px;color:var(--dim);margin:-2px 0 8px;line-height:1.6}
@@ -175,7 +175,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.2359)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2359)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0008)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0008)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -783,7 +783,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.2359)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2359)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0008)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0008)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1695,10 +1695,10 @@ function SCHEMA(){return [
   {hint:L('アシストや、配置の H-RANDOM・ALL-SCRATCH・SPIRAL・RANDOM-EX を使うと、クリアランプは ASSIST CLEAR になります。','Assists, and the H-RANDOM / ALL-SCRATCH / SPIRAL / RANDOM-EX arrangements, limit the clear lamp to ASSIST CLEAR.')}
  ]},
  {sec:L('スピード・レーンカバー','Speed & lane cover'),items:[
-  {k:'hs',t:L('スピード','Speed'),r:[0.5,10,0.25],f:v=>v.toFixed(2)},
+  {k:'hs',t:L('スピード','Speed'),r:[0.5,10,0.25],f:v=>v.toFixed(2),h:L('<b>はじめは「少し速め」がおすすめ</b>です。遅すぎるとノーツが詰まって重なり、どれを押すか見分けにくくなります。少し速いほうがノーツの間隔が広がって読みやすく、タイミングも合わせやすくなります。目安は表示時間で500〜700ms。「表示時間を固定（FLOATING）」がONのときは、下の表示時間で速さが決まります。','<b>Start a little fast.</b> Too slow and notes bunch up and overlap; a bit faster spreads them out so they are easier to read and time. Aim for 500–700 ms visible time. With FLOATING on, the visible time below sets the speed.')},
   {k:'fix',t:L('スピード基準BPM','Speed reference BPM'),sel:[['off',L('OFF（BPMに比例）','Off (scales with BPM)')],['main',L('最も長いBPM','Main BPM')],['start',L('開始BPM','Start BPM')],['max',L('最大BPM','Max BPM')],['min',L('最小BPM','Min BPM')]]},
-  {k:'fhs',t:L('表示時間を固定（FLOATING）','Keep visible time constant (FLOATING)'),b:1,h:L('ONにすると下の表示時間に合わせてスピードを自動計算。カバーを動かしても見える時間が変わりません。','Speed is computed from the visible time below; moving the cover keeps it constant.')},
-  {k:'green',t:L('表示時間','Visible time'),r:[150,2000,10],f:v=>v+'ms'},
+  {k:'fhs',t:L('表示時間を固定（FLOATING）','Keep visible time constant (FLOATING)'),b:1,h:L('<b>おすすめはON</b>。ノーツが画面に見えている時間（表示時間）を決めておくと、スピードを自動で計算します。<br>・BPMが速い曲でも遅い曲でも、ノーツが落ちてくる速さの感覚が同じなので、曲ごとにスピードを合わせ直さなくてよい<br>・レーンカバー（SUDDEN）を動かしても見える時間が変わらないので、目が慣れたリズムのまま叩ける<br>・「いつも600msで遊ぶ」のように、自分の基準を1つの数字で覚えられる','<b>Recommended: on.</b> You set how long notes stay visible and the speed is calculated for you.<br>• Fast and slow BPM songs feel the same, so no re-tuning per song<br>• Moving the lane cover keeps the visible time, so your eyes stay used to it<br>• Your preference becomes one number, e.g. “always 600 ms”')},
+  {k:'green',t:L('表示時間','Visible time'),r:[150,2000,10],f:v=>v+'ms',h:L('ノーツが上に出てから判定ラインに届くまでの時間です。<b>小さいほど速く</b>なります。はじめての人は600〜700ms、慣れてきたら500ms前後が目安。遅く感じるより「少し速いかな」くらいのほうが、ノーツの間隔が開いて叩きやすくなります。','Time from a note appearing to reaching the judge line. <b>Smaller = faster.</b> Beginners: 600–700 ms; later around 500 ms. Slightly fast is easier than slow because notes are spread out.')},
   {k:'suddenOn',t:L('上カバー','Top cover'),b:1},{k:'sudden',t:L('上カバーの量','Top cover amount'),r:[0,80,1],f:v=>v+'%'},
   {k:'hiddenOn',t:L('下カバー','Bottom cover'),b:1},{k:'hidden',t:L('下カバーの量','Bottom cover amount'),r:[0,60,1],f:v=>v+'%'},
   {k:'lift',t:L('判定ライン位置','Judge line height'),r:[0,50,1],f:v=>v+'%'},
@@ -1778,8 +1778,8 @@ function recoValues(dev,lv,four,aud){
   const v={};for(const k of RECO_KEYS)v[k]=JSON.parse(JSON.stringify(DEF[k]));
   const keyIn=dev==='bt'||dev==='pc';
   Object.assign(v,{fix:'main',fhs:true,judgeAlg:'lowest',ghost:'on',lnmode:'chart',noteH:1});
-  if(lv==='new')Object.assign(v,{gauge:'easy',gas:true,gasMin:'aeasy',autoScr:dev!=='iidx',expand:true,legacy:true,green:850,judgeMs:false,fsDisp:'text',judgeCount:false,white:false,pace:'off',noteH:1.3});
-  if(lv==='mid')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:dev==='touch'||keyIn,expand:false,legacy:false,green:650,judgeMs:true,fsDisp:'both',judgeCount:true,pace:'off',noteH:1.1});
+  if(lv==='new')Object.assign(v,{gauge:'easy',gas:true,gasMin:'aeasy',autoScr:dev!=='iidx',expand:true,legacy:true,green:700,judgeMs:false,fsDisp:'text',judgeCount:false,white:false,pace:'off',noteH:1.3});
+  if(lv==='mid')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:dev==='touch'||keyIn,expand:false,legacy:false,green:600,judgeMs:true,fsDisp:'both',judgeCount:true,pace:'off',noteH:1.1});
   if(lv==='pro')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:false,expand:false,legacy:false,green:500,judgeMs:true,fsDisp:'both',judgeCount:true,white:true,pace:'best'});
   if(dev==='touch')Object.assign(v,{rub:true,tapAdj:true});
   v.reduce=four?'4k':'off';v.ksMode=aud==='bt'?'auto':'input';
@@ -1792,7 +1792,8 @@ function recoSummary(v,dev,aud){
     v.autoScr?L('スクラッチ（皿）は自動','Scratch is played for you'):L('スクラッチも自分で操作','You play the scratch'),
     v.expand?L('判定を少し甘くする','Slightly wider timing window'):null,
     v.legacy?L('ロングノーツは普通のノーツとして叩く','Long notes become normal notes'):null,
-    L(`ノーツが見えている時間：${v.green}ms（${v.green>=800?'ゆっくり':v.green>=600?'ふつう':'速め'}）`,`Notes visible for ${v.green} ms (${v.green>=800?'slow':v.green>=600?'medium':'fast'})`),
+    L(`スピードは少し速め（ノーツが見えている時間 ${v.green}ms）。遅すぎるとノーツが詰まって見分けにくいので、少し速いほうが叩きやすくなります`,`Speed a little fast (${v.green} ms visible). Too slow bunches notes up; a bit faster is easier`),
+    L('FLOATING（表示時間を固定）をON：BPMが違う曲でも同じ速さに感じるので、曲ごとにスピードを直さなくてOK','FLOATING on: every song feels the same speed regardless of BPM, so no re-tuning'),
     v.judgeMs?L('判定のズレ（FAST/SLOWとms）を表示','Show timing (FAST/SLOW and ms)'):L('画面の表示を少なめにする','Keep the screen simple'),
     v.pace==='best'?L('自己ベストのペースメーカーを表示','Show a personal-best pacemaker'):null,
     aud==='bt'?L('キー音は「譜面どおり自動で鳴らす」（Bluetoothの遅れで、叩いた音がずれて聞こえるのを防ぎます）','Keysounds play automatically on chart timing (avoids hearing Bluetooth delay)'):L('キー音は押した瞬間に鳴らす','Keysounds play when you press'),
@@ -2717,8 +2718,8 @@ async function openDetail(c){
    if(PRESETS.length){const r=document.createElement('div');r.className='row';
      r.innerHTML=`<span>${L('設定セット','Preset')}</span><select id="dPs" style="max-width:60%"><option value="">${L('（今の設定のまま）','(keep current)')}</option>${PRESETS.map((p,i)=>`<option value="${i}" ${p.name===S.preset?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
      box.appendChild(r);
-     r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));};}
-   ['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
+     r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));};}
+   ['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();rateGuard(()=>startPlay(c,{}));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
