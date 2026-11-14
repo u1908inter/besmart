@@ -163,7 +163,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1228)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1228)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1259)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1259)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -767,7 +767,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1228)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1228)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1259)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1259)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1601,7 +1601,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1693,6 +1693,9 @@ function SCHEMA(){return [
  ]},
  {sec:L('難易度表','Difficulty tables'),items:[{hint:'<div id="tblBox"></div>'}]},
  {sec:L('スマホ向け','Phone'),items:[
+  {k:'scrSens',t:L('コントローラーの皿の感度','Turntable sensitivity'),r:[1,10,1],f:v=>String(v),h:L('専用コントローラーのターンテーブル（アナログスクラッチ）が、どれだけ回したら反応するかです。数字が大きいほど、少し回しただけで反応します。反応しにくいときは上げ、触れただけで反応してしまうときは下げてください。','How far the controller turntable (analog scratch) must turn to register. Higher reacts to smaller movements.')},
+  {k:'scrHold',t:L('皿を止めてから離すまで','Turntable release time'),r:[30,200,10],f:v=>v+'ms',h:L('ターンテーブルの回転が止まってから、押していない状態に戻るまでの時間です。短いと細かい連続スクラッチに強く、長いと回しっぱなしのスクラッチ（長いスクラッチ）が切れにくくなります。','Time from when the turntable stops until the scratch is released. Shorter suits quick repeated scratches; longer keeps long scratches from cutting out.')},
+  {k:'scrRev',t:L('皿の逆回転で新しい入力','Reverse turn = new scratch'),b:1,h:L('ターンテーブルを回す向きを変えたとき、新しいスクラッチとして判定します（往復の連続スクラッチ向け）。','Treats changing the turning direction as a new scratch (for back-and-forth scratches).')},
   {k:'rub',t:L('スクラッチをこすって操作','Rub the scratch'),b:1,h:L('スクラッチのレーンを上下にこすると、こするたびに打鍵になります。タップでも操作できます。','Rubbing the scratch lane up and down counts as a hit each stroke. Tapping still works.')},
   {k:'tapAdj',t:L('タップ位置の補正','Tap position correction'),b:1,h:L('ノーツを叩いた位置を覚えて、レーンの境目をあなたの押し方に合わせて少しずつずらします（最大でレーン幅の3割）。','Learns where you hit notes and gradually shifts lane borders to match (up to 30% of a lane).')},
   {hint:`<button class="ib" id="tapReset">${L('タップ位置の補正をリセット','Reset tap correction')}</button>`},
@@ -2703,6 +2706,7 @@ $('#kcClose').onclick=()=>{kcCap=null;cancelAnimationFrame(kcRaf);show('#keycfg'
 
 /* gamepad polling */
 const padPrev={},axisSt={};
+const SCR_TH=[0.02,0.015,0.011,0.008,0.006,0.004,0.003,0.002,0.0015,0.001];
 function pollPads(handler){
   if(!navigator.getGamepads)return;
   const now=performance.now();
@@ -2710,10 +2714,20 @@ function pollPads(handler){
   for(const pad of pads){
     if(!pad)continue;
     pad.buttons.forEach((b,i)=>{const k=pad.index+'b'+i,on=b.pressed||b.value>0.5;if(on!==!!padPrev[k]){padPrev[k]=on;handler('b'+i,on);}});
-    pad.axes.forEach((v,i)=>{const k=pad.index+'a'+i;let st=axisSt[k];if(!st){axisSt[k]={v,last:0,on:false};return;}
-      let d=v-st.v;if(Math.abs(d)>1)d=0;st.v=v;
-      if(Math.abs(d)>0.004){st.last=now;if(!st.on){st.on=true;handler('a'+i,true);}}
-      else if(st.on&&now-st.last>90){st.on=false;handler('a'+i,false);}});
+    pad.axes.forEach((v,i)=>{const k=pad.index+'a'+i,code='a'+i;let st=axisSt[k];
+      if(!st){axisSt[k]={v,last:0,on:false,dir:0,dig:true};return;}
+      /* digital turntables (PS2-style) report only -1 / 0 / +1: hold = scratch held, reversing = new hit */
+      if(st.dig&&Math.abs(v)>0.02&&Math.abs(Math.abs(v)-1)>0.02)st.dig=false;
+      if(st.dig){const dir=v>0.5?1:v<-0.5?-1:0;st.v=v;
+        if(dir!==st.dir){if(st.on){st.on=false;handler(code,false);}st.dir=dir;if(dir){st.on=true;handler(code,true);}}
+        return;}
+      /* analog turntables: react to the amount of movement; wrap-around at the ends is treated as continuous motion */
+      let d=v-st.v;if(d>1)d-=2;else if(d<-1)d+=2;st.v=v;
+      const th=SCR_TH[Math.max(0,Math.min(9,(S.scrSens|0)-1))]||0.004,hold=S.scrHold||90;
+      if(Math.abs(d)>th){const dir=d>0?1:-1;st.last=now;
+        if(!st.on){st.on=true;st.dir=dir;handler(code,true);}
+        else if(S.scrRev&&dir!==st.dir){st.dir=dir;handler(code,false);handler(code,true);} /* turned back: count as a new scratch */
+      }else if(st.on&&now-st.last>hold){st.on=false;st.dir=0;handler(code,false);}});
   }
 }
 
