@@ -147,6 +147,7 @@ canvas{display:block;touch-action:none}
 .ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
 .ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
 .ldist .bar2 i{display:block;height:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .ib{width:auto;flex:1 1 45%;margin:0;padding:8px 6px;min-height:0;font-size:13px}
 .lleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin:4px 0 8px}
 .lleg i{display:inline-block;width:10px;height:10px;margin-right:3px;vertical-align:-1px}
 .stt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;margin:6px 0}
@@ -174,7 +175,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1919)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1919)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.2350)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2350)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -201,6 +202,7 @@ canvas{display:block;touch-action:none}
     <button id="rndCfg" class="ib" style="flex:0 0 auto;width:auto;padding:0 12px" data-en="Conditions">条件</button>
   </div>
   <div id="fltBox" class="card" style="display:none;padding:10px;margin:0 0 10px"></div>
+  <div id="recoHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="New to BMS?">はじめての方へ</b><div class="hlp" style="margin:2px 0 0" data-en="Pick how you play and your level to get easy settings.">遊び方と腕前を選ぶだけで、遊びやすい設定にできます。</div></div><button class="ib pri" id="recoHintGo" style="flex:none;width:auto;margin:0;padding:0 12px" data-en="Set up">おすすめ設定</button><button class="ib" id="recoHintX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="songs"></div>
   <div id="fsc" style="display:none"><div class="th"></div><div class="bub"></div></div>
   <div id="empty" class="empty">
@@ -781,7 +783,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1919)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1919)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.2350)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2350)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1767,9 +1769,74 @@ function applyPreset(p){
   try{if(typeof layout==='function')layout();}catch(e){}
   toast(L(`設定セット「${p.name}」を呼び出しました`,`Loaded preset “${p.name}”`));
 }
+/* ---------- recommended templates for newcomers ---------- */
+const RECO_DEV=[['touch',L('スマホ・タッチ','Phone, touch')],['bt',L('スマホ＋キーボード／コントローラー','Phone + keyboard / pad')],['pc',L('PC・キーボード','PC keyboard')],['iidx',L('専用コントローラー','IIDX-style controller')]];
+const RECO_LV=[['new',L('BMSははじめて','New to BMS')],['mid',L('音ゲーは少し慣れている','Some rhythm-game experience')],['pro',L('BMS・IIDX経験者','BMS / IIDX player')]];
+const RECO_KEYS=['gauge','gas','gasMin','autoScr','legacy','expand','reduce','lnmode','fix','fhs','green','suddenOn','hiddenOn','lift','judgeAlg','fsDisp','judgeMs','judgeCount','white','pace','ghost','rub','tapAdj','noteH','arr','arr2'];
+function recoValues(dev,lv,four){
+  const v={};for(const k of RECO_KEYS)v[k]=JSON.parse(JSON.stringify(DEF[k]));
+  const keyIn=dev==='bt'||dev==='pc';
+  Object.assign(v,{fix:'main',fhs:true,judgeAlg:'lowest',ghost:'on',lnmode:'chart',noteH:1});
+  if(lv==='new')Object.assign(v,{gauge:'easy',gas:true,gasMin:'aeasy',autoScr:dev!=='iidx',expand:true,legacy:true,green:850,judgeMs:false,fsDisp:'text',judgeCount:false,white:false,pace:'off',noteH:1.3});
+  if(lv==='mid')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:dev==='touch'||keyIn,expand:false,legacy:false,green:650,judgeMs:true,fsDisp:'both',judgeCount:true,pace:'off',noteH:1.1});
+  if(lv==='pro')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:false,expand:false,legacy:false,green:500,judgeMs:true,fsDisp:'both',judgeCount:true,white:true,pace:'best'});
+  if(dev==='touch')Object.assign(v,{rub:true,tapAdj:true});
+  v.reduce=four?'4k':'off';
+  return v;
+}
+function recoSummary(v,dev){
+  const g={aeasy:'ASSIST EASY',easy:'EASY',normal:'NORMAL',hard:'HARD'}[v.gauge]||v.gauge;
+  const a=[L(`ゲージは${g}`,`Gauge: ${g}`)+(v.gas?L('（落ちても下のゲージで最後まで遊べる）',' (keeps playing on a lower gauge if you fail)'):''),
+    v.reduce==='4k'?L('7鍵・5鍵の曲を4つの鍵盤に減らして遊ぶ','Play 7K/5K charts with 4 keys'):null,
+    v.autoScr?L('スクラッチ（皿）は自動','Scratch is played for you'):L('スクラッチも自分で操作','You play the scratch'),
+    v.expand?L('判定を少し甘くする','Slightly wider timing window'):null,
+    v.legacy?L('ロングノーツは普通のノーツとして叩く','Long notes become normal notes'):null,
+    L(`ノーツが見えている時間：${v.green}ms（${v.green>=800?'ゆっくり':v.green>=600?'ふつう':'速め'}）`,`Notes visible for ${v.green} ms (${v.green>=800?'slow':v.green>=600?'medium':'fast'})`),
+    v.judgeMs?L('判定のズレ（FAST/SLOWとms）を表示','Show timing (FAST/SLOW and ms)'):L('画面の表示を少なめにする','Keep the screen simple'),
+    v.pace==='best'?L('自己ベストのペースメーカーを表示','Show a personal-best pacemaker'):null,
+    dev==='bt'?L('Bluetoothは音が遅れやすいので、あとで上の「タイミング」ボタンで調整すると叩きやすくなります','Bluetooth adds delay; tune it later with the timing button at the top'):null,
+    dev==='touch'?L('タップ位置の補正とスクラッチのこすり操作をON','Tap correction and scratch rubbing on'):null];
+  return a.filter(Boolean);
+}
+function openReco(){
+  let dev=PLICY||matchMedia('(pointer:fine)').matches?'pc':'touch',lv='new',four=null;
+  const ov=document.createElement('div');ov.className='overlay';ov.id='recoDlg';ov.style.zIndex=13;ov.style.display='flex';
+  const draw=()=>{const f=four==null?(dev==='touch'&&lv==='new'):four;const v=recoValues(dev,lv,f);
+    const chips=(arr,cur,k)=>`<div class="chips">${arr.map(([x,t])=>`<button class="ib ${x===cur?'pri':''}" data-${k}="${x}">${esc(t)}</button>`).join('')}</div>`;
+    ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto">
+      <h2>${L('おすすめ設定','Recommended settings')}</h2>
+      <div class="hlp" style="margin:0 0 8px">${L('2つ選ぶだけで、遊びやすい設定にまとめて切り替えます。キー割り当て・タイミング・音量・色はそのままです。あとから細かく変えてもOK。','Pick two answers and we set things up for you. Key bindings, timing, volume and colours stay as they are.')}</div>
+      <div style="color:var(--hi);margin:6px 0 4px">${L('① どうやって遊ぶ？','① How do you play?')}</div>${chips(RECO_DEV,dev,'dev')}
+      <div style="color:var(--hi);margin:10px 0 4px">${L('② 腕前は？','② Your level?')}</div>${chips(RECO_LV,lv,'lv')}
+      ${dev!=='iidx'?`<label style="display:flex;gap:8px;align-items:center;margin:10px 0 0"><input type="checkbox" id="rcFour" style="width:auto" ${f?'checked':''}>${L('鍵盤を4つに減らす（スマホのタッチではじめてならおすすめ）','Use 4 keys (recommended for touch beginners)')}</label>`:''}
+      <div style="color:var(--hi);margin:12px 0 4px">${L('この設定になります','You will get')}</div>
+      <ul class="hlp" style="margin:0 0 10px;padding-left:1.2em">${recoSummary(v,dev).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      <label style="display:flex;gap:8px;align-items:center;margin:0 0 8px"><input type="checkbox" id="rcSave" style="width:auto" checked>${L('設定セットとしても保存する','Also save as a preset')}</label>
+      <button class="pri" id="rcGo">${L('この設定にする','Use these settings')}</button>
+      <button id="rcClose">${L('閉じる','Close')}</button></div>`;
+    ov.querySelectorAll('[data-dev]').forEach(b=>b.onclick=()=>{dev=b.dataset.dev;four=null;draw();});
+    ov.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{lv=b.dataset.lv;four=null;draw();});
+    if(ov.querySelector('#rcFour'))ov.querySelector('#rcFour').onchange=e=>{four=e.target.checked;draw();};
+    ov.querySelector('#rcClose').onclick=()=>{ov.remove();try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
+    ov.querySelector('#rcGo').onclick=()=>{
+      const name=L('おすすめ：','Rec: ')+RECO_DEV.find(x=>x[0]===dev)[1]+'・'+RECO_LV.find(x=>x[0]===lv)[1];
+      const p={name,v:Object.assign(snapSettings(),v)};
+      if(ov.querySelector('#rcSave').checked){const i=PRESETS.findIndex(x=>x.name===name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);savePresets();}
+      applyPreset(p);if(!ov.querySelector('#rcSave').checked){S.preset='';saveS();}
+      try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}
+      ov.remove();renderRecoHint();if($('#settings')&&$('#settings').style.display!=='none')buildSettings();
+      toast(L('おすすめ設定にしました。曲を選んで遊んでみましょう','Recommended settings applied. Pick a song and play!'),3000);
+      track('reco-'+dev+'-'+lv,'おすすめ設定');
+    };
+  };
+  draw();document.body.appendChild(ov);
+}
+function renderRecoHint(){const b=$('#recoHint');if(!b)return;let seen=false;try{seen=!!localStorage.getItem(LSK+'recoSeen');}catch(e){}
+  const played=Object.keys(REC).length>0;show('#recoHint',!seen&&!played,'flex');}
 function presetBoxHTML(){
   const opts=PRESETS.map((p,i)=>`<option value="${i}" ${p.name===S.preset?'selected':''}>${esc(p.name)}</option>`).join('');
-  return `<div class="card" id="presetBox" style="padding:10px 12px;margin-bottom:10px">
+  return `<div class="card" style="padding:10px 12px;margin-bottom:10px"><div style="color:var(--hi);margin-bottom:6px">${L('おすすめ設定','Recommended settings')}</div><div class="hlp" style="margin:0 0 8px">${L('設定が多くて迷ったら、遊び方と腕前を選ぶだけでまとめて設定できます。','Too many options? Pick how you play and your level, and we set it all up.')}</div><button class="ib pri" id="recoOpen" style="margin:0">${L('おすすめ設定を選ぶ','Choose recommended settings')}</button></div>
+  <div class="card" id="presetBox" style="padding:10px 12px;margin-bottom:10px">
    <div style="color:var(--hi);margin-bottom:6px">${L('設定セット','Setting presets')}</div>
    <div class="hlp" style="margin:0 0 8px">${L('今の設定に名前をつけて保存し、あとで切り替えられます（例：スマホBT用、スマホ有線用）。','Save the current settings under a name and switch later (e.g. “Phone + Bluetooth”).')}</div>
    ${PRESETS.length?`<div style="display:flex;gap:6px;margin-bottom:6px"><select id="psSel" style="flex:1;min-width:0">${opts}</select><button class="ib" id="psLoad" style="margin:0;flex:none">${L('呼び出す','Load')}</button></div>
@@ -1778,6 +1845,7 @@ function presetBoxHTML(){
   </div>`;
 }
 function wirePresetBox(){
+  if($('#recoOpen'))$('#recoOpen').onclick=openReco;
   const sel=()=>PRESETS[+($('#psSel')||{}).value];
   const nm=()=>($('#psName').value||'').trim();
   const re=()=>{buildSettings();};
@@ -2145,7 +2213,7 @@ function renderLibrary(){
     score:(a,b)=>((rec(b).ex||0)/(2*b.notesN||1))-((rec(a).ex||0)/(2*a.notesN||1)),
     added:(a,b)=>b.added-a.added,artist:(a,b)=>(a.artist||'').localeCompare(b.artist||'','ja')||a.title.localeCompare(b.title,'ja')}[so]||(()=>0);
   list.sort(cmp);
-  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();
+  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();renderRecoHint();
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   const onlyBuiltin=CHARTS.every(c=>c.builtin);
@@ -2242,6 +2310,7 @@ function renderFoldMgr(b){
   b.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>{const F=FOLDERS[+x.dataset.rn];const nm=(prompt(L('新しいフォルダ名','New folder name'),F.name)||'').trim();if(!nm||FOLDERS.some(G=>G!==F&&G.name===nm))return;if(S.flt.fd==='f:'+F.name)S.flt.fd='f:'+nm;if(S.rnd.fd==='f:'+F.name)S.rnd.fd='f:'+nm;F.name=nm;saveFolders();saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
   b.querySelectorAll('[data-dl]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dl;if(x.dataset.ok!=='1'){x.dataset.ok='1';x.textContent=L('本当に削除','Really delete');return;}const F=FOLDERS[i];FOLDERS.splice(i,1);saveFolders();if(S.flt.fd==='f:'+F.name)S.flt.fd='';if(S.rnd.fd==='f:'+F.name)S.rnd.fd='';saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
 }
+$('#recoHintGo').onclick=openReco;$('#recoHintX').onclick=()=>{try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
 $('#fltBtn').onclick=()=>{const b=$('#fltBox'),on=b.style.display==='none';if(on)renderFlt();show('#fltBox',on,'block');};
 function rndPool(){const f=S.rnd||{};return (f.src==='list'?LIBLIST:CHARTS).filter(c=>condOk(c,f));}
 function rndPick(){const pool=rndPool();if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return false;}openDetail(pool[Math.floor(Math.random()*pool.length)]);return true;}
