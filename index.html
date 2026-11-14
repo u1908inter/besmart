@@ -166,7 +166,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1828)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1828)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1845)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1845)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -770,7 +770,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1828)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1828)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1845)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1845)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1604,7 +1604,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1680,6 +1680,7 @@ function SCHEMA(){return [
   {k:'judgeAlg',t:L('判定アルゴリズム','Judge algorithm'),sel:[['lowest',L('LOWEST（手前のノーツを優先）','LOWEST (earliest note first)')],['combo',L('COMBO（コンボがつながる方を優先）','COMBO (keep the combo)')],['duration',L('DURATION（タイミングが近い方を優先）','DURATION (closest timing)')]],h:L('ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合、どれを判定するかを決めます。','Decides which note a press hits when several notes are within the timing window.')},
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
+  {k:'ghost',t:L('ゴースト','Ghost'),sel:[['off','OFF'],['on',L('スコア差','Score gap')],['lane',L('スコア差＋レーン','Gap + lanes')]],h:L('自己ベストのリプレイと同時に競います。スコア差を判定の下に表示し、リザルトで勝敗を出します。「＋レーン」はゴーストが押したレーンを判定ラインの上に半透明で表示します（通常プレイで、自己ベストのリプレイがある曲のみ）','Race your best replay: the score gap shows under the judgement and the result says WIN or LOSE. Gap + lanes also marks where the ghost pressed (normal plays with a saved best replay only)')},
   {k:'celebrate',t:L('フルコンボ演出','Full combo effect'),b:1},
   {k:'fps',t:L('フレームレート','Frame rate'),sel:[['auto',L('自動（画面の最大）','Auto (display max)')],['120','120fps'],['60','60fps'],['30',L('30fps（省電力）','30fps (battery saver)')]],h:L('判定は音の時計とタッチの瞬間で行うので、fpsを下げても判定の精度は変わりません。','Judging uses the audio clock and touch time, so lowering fps does not affect accuracy.')},
   {k:'showFps',t:L('FPSを表示','Show FPS'),b:1},
@@ -3041,6 +3042,7 @@ function snapOpts(){return {judgeBase:S.judgeBase,arr:S.arr,arr2:S.arr2,flip:S.f
 async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
+  GHOST=null;
   if(BT){bAct(0);BT=null;hold=new Map();}
   ensureAudio();lastMeta=meta;lastMode=mode;lastPlay=()=>startPlay(meta,Object.assign({},mode,{seed:undefined}));
   if(!mode.replay)autoProfile();
@@ -3111,7 +3113,20 @@ async function startPlay(meta,mode){
       BT={P:[G1,G2],L:[{},{}],H:[new Map(),new Map()]};layoutBattle();bAct(0);
       track('battle','バトル開始');
       if(innerHeight>innerWidth)toast(L('横向きにすると遊びやすくなります。左半分が1P、右半分が2Pです','Turn sideways for more room. Left half is 1P, right half is 2P'),3000);
-    }else startGame(chart,buffers,images,so);
+    }else{
+      let GH=null;
+      const canGhost=S.ghost!=='off'&&!meta.demo&&!mode.auto&&!mode.practice&&!mode.replay&&!mode.viewer&&!mode.tutorial&&!mode.course&&base2===base&&!(opts.playRate&&opts.playRate!==1);
+      if(canGhost){try{
+        const rp=await DB.get('replays',meta.hash);
+        if(rp&&rp.events&&rp.events.length&&(rp.opts.judgeBase||'lr2')===(opts.judgeBase||'lr2')&&(rp.opts.lnmode||'ln')===(opts.lnmode||'ln')&&!(rp.opts.reduce&&rp.opts.reduce!=='off')){
+          const gb=compileBase(text,ext,mulberry32(rp.seed^0x5bd1e995));
+          const gc=makePlay(gb,Object.assign({},rp.opts,{seed:rp.seed}));
+          startGame(gc,{},{},Object.assign({},so,{opts:rp.opts,seed:rp.seed,replay:rp}));GH=G;
+          GH.noSound=true;GH.ksAuto=true;GH.ghost=true;
+        }}catch(e){console.warn('ghost',e);GH=null;}}
+      startGame(chart,buffers,images,so);
+      if(GH){GH.clock0=G.clock0;GH.T0=G.T0;GHOST=GH;}
+    }
   }catch(e){show('#loading',false);toast('⚠ '+e.message,4000);console.error(e);if(!G){show('#lib',true,'block');}}
 }
 
@@ -3119,7 +3134,7 @@ async function startPlay(meta,mode){
 const cv=$('#cv'),g=cv.getContext('2d');
 let W=0,H=0,dpr=1,G=null,raf=0,safeTop=0,L_={};
 /* ---------- battle (two players on one device): each side has its own G / layout / held keys ---------- */
-let BT=null;
+let BT=null,GHOST=null;
 function bAct(i){G=BT.P[i];L_=BT.L[i];hold=BT.H[i];}
 function layoutBattle(){const cur=BT.P.indexOf(G);for(let i=0;i<2;i++){bAct(i);layout();BT.L[i]=L_;}bAct(cur>=0?cur:0);}
 const BKEYS={
@@ -3493,6 +3508,13 @@ function draw(){
     g.strokeStyle=hexA(b.col,1-k);g.lineWidth=3*(1-k)+1;g.beginPath();g.arc(x,judgeY,ws[b.lane]*(0.3+0.6*k),0,Math.PI*2);g.stroke();
     g.fillStyle=hexA(b.col,(1-k)*.5);quad(xs[b.lane],judgeY-len*0.08*(1-k),ws[b.lane],len*0.08*(1-k));}
   const cx=areaX+areaW/2,jy=judgeY*0.55;
+  const GHd=GHOST&&!BT&&!G.ghost&&!G.replay?GHOST:null;
+  if(GHd&&S.ghost==='lane'){for(const l of L_.order){if(xs[l]==null)continue;const a=GHd.pressed[l]?1:Math.max(0,1-(nowMs-GHd.beam[l])/160);if(a<=0)continue;
+    const bh=Math.max(6,nh*1.3);g.fillStyle=`rgba(255,255,255,${.4*a})`;quad(xs[l]+ws[l]*.18,judgeY-bh-4,ws[l]*.64,bh);
+    g.fillStyle=`rgba(255,255,255,${.9*a})`;quad(xs[l]+ws[l]*.18,judgeY-bh-4,ws[l]*.64,2);}}
+  if(GHd&&G.judged>0){const me=G.counts.PG*2+G.counts.GR,ge=GHd.counts.PG*2+GHd.counts.GR,d=me-ge;
+    g.textAlign='center';g.textBaseline='middle';g.font=`${Math.round(Math.min(areaW*0.045,16))}px ${GF()}`;
+    g.fillStyle=d>0?'#6cf':d<0?'#f77':PP.dim;g.fillText(`GHOST ${d>0?'+':d<0?'−':'±'}${Math.abs(d)}`,cx,jy+Math.min(areaW*0.11,44)*1.35);}
   if(G.judge&&nowMs-G.judge.t<600&&!G.viewer){
     const J=G.judge,k=Math.min(1,(nowMs-J.t)/60);
     g.textAlign='center';g.textBaseline='middle';
@@ -3655,6 +3677,7 @@ function loop(ts){
   ts=ts||performance.now();
   pollPads(padHandler);
   if(!G.paused&&!G.ended)update();
+  if(GHOST&&G&&!G.ended){const m=G;if(m.paused)GHOST.lastFrame=0;else{GHOST.clock0=m.clock0;GHOST.T0=m.T0;G=GHOST;try{if(!G.ended)update();}finally{G=m;}}}
   if(G&&G.curVid)syncVideo();
   const live=!G.ended||(G.celebrate&&performance.now()-G.celebrate.t<1850);
   if(G&&live){
@@ -3904,7 +3927,7 @@ $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
 function stopAll(){if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
-function toLib(){wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
+function toLib(){GHOST=null;wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
 function retry(same){const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
   actx.resume().then(()=>{if(!lastMeta)return;startPlay(lastMeta,Object.assign({},lastMode,{seed:same?seed:undefined,replay:null}));});}
@@ -3991,7 +4014,7 @@ function computeLamp(agg){
   if(lamp>=2&&!assist&&fc){lamp=Math.max(lamp,7);if(c.GD===0)lamp=8;if(c.GD===0&&c.GR===0)lamp=9;}
   return lamp;
 }
-function finish(){if(BT){if(G.ended)return;G.ended=true;G.endAt=performance.now();if(BT.P.every(p=>p.ended))setTimeout(battleResult,G.failed?400:1200);return;}
+function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G.ended=true;G.endAt=performance.now();if(BT.P.every(p=>p.ended))setTimeout(battleResult,G.failed?400:1200);return;}
   wakeOff();if(G&&G.record)track('finish','プレイ完了');
   if(G.ended)return;G.ended=true;
   const c=G.counts,N=G.N,ex=c.PG*2+c.GR,max=N*2,rate=max?ex/max:0;
@@ -4022,6 +4045,7 @@ function finish(){if(BT){if(G.ended)return;G.ended=true;G.endAt=performance.now(
     vib([70,50,70,50,180]);G.celebrate={type:c.GD===0&&c.GR===0?'MAX':c.GD===0?'PERFECT':'FULL COMBO',t:performance.now()};
   }
   const R={lamp,ex,max,rate,bp,news,thisReplay};
+  if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx};}
   const delay=G.celebrate?1900:G.failed?900:300;
   if(G.course){setTimeout(()=>courseNext(R),delay);return;}
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
@@ -4049,6 +4073,7 @@ function showResult(R){
     <div class="grid2" style="margin:12px 0">
       <span class="k">SCORE${N('ex')}</span><span>${R.ex} / ${R.max}（${(R.rate*100).toFixed(2)}%）</span>
       <span class="k">MISS COUNT${N('bp')}</span><span>${R.bp}</span>
+      ${R.ghost?`<span class="k">VS GHOST</span><span style="color:${R.ghost.d>0?'#6cf':R.ghost.d<0?'#f77':'inherit'}">${R.ghost.d>0?'WIN':R.ghost.d<0?'LOSE':'DRAW'}（${R.ghost.d>0?'+':R.ghost.d<0?'−':'±'}${Math.abs(R.ghost.d)} / ${L('ゴースト','ghost')} ${R.ghost.ex}）</span>`:''}
       <span class="k">MAX COMBO${N('combo')}</span><span>${G.maxCombo} / ${G.N}</span>
       ${statsHTML()}
       <span class="k">${L('ゲージ','Gauge')}</span><span>${GT[G.cur].n} ${Math.floor(G.gauges[G.cur].v)}%</span>
