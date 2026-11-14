@@ -164,7 +164,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1349)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1349)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1406)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1406)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -768,7 +768,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1349)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1349)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1406)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1406)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2474,6 +2474,7 @@ async function openDetail(c){
     <div class="dopts" id="dOpts"></div>
     <button class="pri" id="dPlay">${L('プレイする','Play')}</button>
     <div class="btns"><button id="dAuto">${L('オートプレイ','Autoplay')}</button><button id="dView">${L('譜面ビューア','Chart viewer')}</button></div>
+    ${(BATTLE_MODES.includes(c.mode)||((S.reduce==='4k'||S.reduce==='5k')&&(c.mode==='7k'||c.mode==='5k')))&&!c.demo?`<button id="dBattle">${L('2人で対戦（バトル）','2-player battle')}</button>`:''}
     <button id="dRep" ${rep?'':'disabled style="opacity:.4"'}>${L('ベストのリプレイ','Watch best replay')}</button>
     <details class="card" style="margin-top:6px"><summary>${L('練習モード','Practice')}</summary><div class="in">
       <div class="row"><span>${L('開始小節','Start measure')}</span><input type="range" id="pM" min="0" max="${Math.max(0,(c.measures||2)-2)}" step="1" value="0"><output id="pMo">0</output></div>
@@ -2498,6 +2499,7 @@ async function openDetail(c){
    ['gauge','arr','hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();rateGuard(()=>startPlay(c,{}));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
+  if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
   if(rep)$('#dRep').onclick=()=>{close();startPlay(c,{replay:rep});};
   $('#dPrac').onclick=()=>{close();startPlay(c,{practice:{measure:+pM.value,rate:+pR.value}});};
@@ -2718,21 +2720,21 @@ function pollPads(handler){
   let pads;try{pads=navigator.getGamepads();}catch(e){return;}
   for(const pad of pads){
     if(!pad)continue;
-    pad.buttons.forEach((b,i)=>{const k=pad.index+'b'+i,on=b.pressed||b.value>0.5;if(on!==!!padPrev[k]){padPrev[k]=on;handler('b'+i,on);}});
+    pad.buttons.forEach((b,i)=>{const k=pad.index+'b'+i,on=b.pressed||b.value>0.5;if(on!==!!padPrev[k]){padPrev[k]=on;handler('b'+i,on,pad.index);}});
     pad.axes.forEach((v,i)=>{const k=pad.index+'a'+i,code='a'+i;let st=axisSt[k];
       if(!st){axisSt[k]={v,last:0,on:false,dir:0,dig:true};return;}
       /* digital turntables (PS2-style) report only -1 / 0 / +1: hold = scratch held, reversing = new hit */
       if(st.dig&&Math.abs(v)>0.02&&Math.abs(Math.abs(v)-1)>0.02)st.dig=false;
       if(st.dig){const dir=v>0.5?1:v<-0.5?-1:0;st.v=v;
-        if(dir!==st.dir){if(st.on){st.on=false;handler(code,false);}st.dir=dir;if(dir){st.on=true;handler(code,true);}}
+        if(dir!==st.dir){if(st.on){st.on=false;handler(code,false,pad.index);}st.dir=dir;if(dir){st.on=true;handler(code,true,pad.index);}}
         return;}
       /* analog turntables: react to the amount of movement; wrap-around at the ends is treated as continuous motion */
       let d=v-st.v;if(d>1)d-=2;else if(d<-1)d+=2;st.v=v;
       const th=SCR_TH[Math.max(0,Math.min(9,(S.scrSens|0)-1))]||0.004,hold=S.scrHold||90;
       if(Math.abs(d)>th){const dir=d>0?1:-1;st.last=now;
-        if(!st.on){st.on=true;st.dir=dir;handler(code,true);}
-        else if(S.scrRev&&dir!==st.dir){st.dir=dir;handler(code,false);handler(code,true);} /* turned back: count as a new scratch */
-      }else if(st.on&&now-st.last>hold){st.on=false;st.dir=0;handler(code,false);}});
+        if(!st.on){st.on=true;st.dir=dir;handler(code,true,pad.index);}
+        else if(S.scrRev&&dir!==st.dir){st.dir=dir;handler(code,false,pad.index);handler(code,true,pad.index);} /* turned back: count as a new scratch */
+      }else if(st.on&&now-st.last>hold){st.on=false;st.dir=0;handler(code,false,pad.index);}});
   }
 }
 
@@ -3037,6 +3039,7 @@ function snapOpts(){return {judgeBase:S.judgeBase,arr:S.arr,arr2:S.arr2,flip:S.f
 async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
+  if(BT){bAct(0);BT=null;hold=new Map();}
   ensureAudio();lastMeta=meta;lastMode=mode;lastPlay=()=>startPlay(meta,Object.assign({},mode,{seed:undefined}));
   if(!mode.replay)autoProfile();
   show('#loading',true);setLoad(L('読み込み中…','Loading…'),0);
@@ -3095,13 +3098,33 @@ async function startPlay(meta,mode){
     const chart=makePlay(base2,Object.assign({},opts,{seed}));
     show('#loading',false);
     if(base2!==base&&!mode.replay)toast(L(`${base.mode.toUpperCase()}→${base2.mode.toUpperCase()}に変換してプレイ（記録されません）`,`Playing converted ${base.mode.toUpperCase()}→${base2.mode.toUpperCase()} (not recorded)`),2600);
-    startGame(chart,buffers,images,{reduced:base2!==base,meta,opts,seed,auto:!!mode.auto,practice:mode.practice||null,replay:mode.replay||null,viewer:!!mode.viewer,tutorial:mode.tutorial?meta._demo.msgs:null,course:mode.course||null});
+    const so={reduced:base2!==base,meta,opts,seed,auto:!!mode.auto,practice:mode.practice||null,replay:mode.replay||null,viewer:!!mode.viewer,tutorial:mode.tutorial?meta._demo.msgs:null,course:mode.course||null};
+    if(mode.battle&&BATTLE_MODES.includes(chart.mode)){
+      const seed2=(seed*2654435761+12345)>>>0;
+      const chart2=makePlay(base2,Object.assign({},opts,{seed:seed2}));
+      startGame(chart2,buffers,images,Object.assign({},so,{seed:seed2}));const G2=G;
+      startGame(chart,buffers,images,so);const G1=G;
+      G2.clock0=G1.clock0;G2.T0=G1.T0;G1.ksAuto=G2.ksAuto=true;G2.noSound=true;G1.record=G2.record=false;
+      G1.side=S.side;G2.side=S.side==='L'?'R':'L';
+      BT={P:[G1,G2],L:[{},{}],H:[new Map(),new Map()]};layoutBattle();bAct(0);
+      track('battle','バトル開始');
+      if(innerHeight>innerWidth)toast(L('横向きにすると遊びやすくなります。左半分が1P、右半分が2Pです','Turn sideways for more room. Left half is 1P, right half is 2P'),3000);
+    }else startGame(chart,buffers,images,so);
   }catch(e){show('#loading',false);toast('⚠ '+e.message,4000);console.error(e);if(!G){show('#lib',true,'block');}}
 }
 
 /* ======================= GAME ======================= */
 const cv=$('#cv'),g=cv.getContext('2d');
 let W=0,H=0,dpr=1,G=null,raf=0,safeTop=0,L_={};
+/* ---------- battle (two players on one device): each side has its own G / layout / held keys ---------- */
+let BT=null;
+function bAct(i){G=BT.P[i];L_=BT.L[i];hold=BT.H[i];}
+function layoutBattle(){const cur=BT.P.indexOf(G);for(let i=0;i<2;i++){bAct(i);layout();BT.L[i]=L_;}bAct(cur>=0?cur:0);}
+const BKEYS={
+  '7k':[{ShiftLeft:0,KeyZ:1,KeyS:2,KeyX:3,KeyD:4,KeyC:5,KeyF:6,KeyV:7},{ShiftRight:0,KeyM:1,KeyK:2,Comma:3,KeyL:4,Period:5,Semicolon:6,Slash:7}],
+  '5k':[{ShiftLeft:0,KeyZ:1,KeyS:2,KeyX:3,KeyD:4,KeyC:5},{ShiftRight:0,KeyM:1,KeyK:2,Comma:3,KeyL:4,Period:5}],
+  '4k':[{KeyZ:0,KeyX:1,KeyC:2,KeyV:3},{KeyM:0,Comma:1,Period:2,Slash:3}]};
+const BATTLE_MODES=['7k','5k','4k'];
 const JC=j=>{if(NEON())return {PG:'#9FF',GR:'#FFD23D',GD:'#5F5',BD:'#C7F',PR:'#F55',KP:'#F55'}[j];if(CLASSIC())return {PG:'#ECEBE6',GR:'#FFD21F',GD:'#3fd08a',BD:'#7d97ff',PR:'#FF3D9A',KP:'#FF3D9A'}[j];const p=pal();return {PG:p.hi,GR:p.ink,GD:p.dim,BD:p.dim,PR:p.alert,KP:p.alert}[j];};
 const JNAME={PG:'PERFECT',GR:'GREAT',GD:'GOOD',BD:'BAD',PR:'MISS',KP:'MISS'};
 const GT={
@@ -3142,19 +3165,20 @@ function layout(){
   cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
   safeTop=$('#safe').offsetHeight||0;
   if(!G)return;
-  const c=G.chart,M=c.M,landscape=W>H;
+  const bi=BT?BT.P.indexOf(G):-1,VW=bi>=0?W/2:W,VX=bi===1?W/2:0,side=G.side||S.side;
+  const c=G.chart,M=c.M,landscape=VW>H;
   let order=[];
   M.sides.forEach((s,si)=>{const part=s.scr==null?s.keys.slice():(si===0?[s.scr,...s.keys]:[...s.keys,s.scr]);if(si>0)order.push('gap');order.push(...part);});
-  if(M.sides.length===1&&M.scr.length&&S.side==='R'){order=order.filter(x=>x!==0);order.push(0);}
+  if(M.sides.length===1&&M.scr.length&&side==='R'){order=order.filter(x=>x!==0);order.push(0);}
   const wt=x=>x==='gap'?0.5:M.scr.includes(x)?1.55:1;
   const units=order.reduce((a,x)=>a+wt(x),0);
-  let areaW=landscape?Math.min(W*0.96,H*0.95*units/8.55):W;
+  let areaW=bi>=0?Math.min(VW*0.94,H*0.95*units/8.55):landscape?Math.min(W*0.96,H*0.95*units/8.55):W;
   areaW*=S.laneW;
-  const bgaSide=landscape&&S.bga==='on'&&!G.viewer&&(W-areaW)>=190;
-  let areaX=(W-areaW)/2,bga=null;
+  const bgaSide=bi<0&&landscape&&S.bga==='on'&&!G.viewer&&(W-areaW)>=190;
+  let areaX=VX+(VW-areaW)/2,bga=null;
   if(bgaSide){const sz=Math.min(H*0.72,W-areaW-48);const tot=areaW+24+sz;const x0=S.panel==='right'?W-tot-(W-tot)/2:(W-tot)/2;
     if(S.panel==='right'){bga={x:x0,y:(H-sz)/2,w:sz,h:sz};areaX=x0+sz+24;}else{areaX=S.panel==='left'?Math.max(8,(W-tot)/4):x0;bga={x:areaX+areaW+24,y:(H-sz)/2,w:sz,h:sz};}}
-  else if(W-areaW>16){if(S.panel==='left')areaX=8;else if(S.panel==='right')areaX=W-areaW-8;}
+  else if(bi<0&&W-areaW>16){if(S.panel==='left')areaX=8;else if(S.panel==='right')areaX=W-areaW-8;}
   const unit=areaW/units,xs=[],ws=[];let x=areaX;
   for(const l of order){const w=wt(l)*unit;if(l!=='gap'){xs[l]=x;ws[l]=w;}x+=w;}
   const lanesOrd=order.filter(l=>l!=='gap');
@@ -3163,7 +3187,7 @@ function layout(){
   const colors=[...Array(M.lanes)].map((_,l)=>laneColor(c.mode,l));
   L_={areaX,areaW,xs,ws,order:lanesOrd,judgeY,len:judgeY,colors,bga};
 }
-addEventListener('resize',()=>{if(G)layout();});
+addEventListener('resize',()=>{if(BT)layoutBattle();else if(G)layout();});
 
 function startGame(chart,buffers,images,o){
   cancelAnimationFrame(raf);
@@ -3316,12 +3340,13 @@ function breakLN(n,lane){
   applyJudge('PR',null,lane);
 }
 
+function schedSound(at){const c=G.chart,ahead=at+0.25*G.rate;
+  while(G.bgmIdx<c.bgm.length&&c.bgm[G.bgmIdx].time<ahead){const e=c.bgm[G.bgmIdx++];playSound(e.id,toCtx(e.time),'bgm');}
+  while(G.autoIdx<c.notes.length&&c.notes[G.autoIdx].time<ahead){const e=c.notes[G.autoIdx++];if((G.ksAuto||G.autoLanes.has(e.lane))&&(e.state!==2||BT))playSound(e.id,toCtx(e.time),'key');}}
 function update(){
   const now=performance.now(),dtF=G.lastFrame?Math.min(0.1,(now-G.lastFrame)/1000):0;G.lastFrame=now;
   const t=songTime(),at=audioTime(),c=G.chart;
-  const ahead=at+0.25*G.rate;
-  while(G.bgmIdx<c.bgm.length&&c.bgm[G.bgmIdx].time<ahead){const e=c.bgm[G.bgmIdx++];playSound(e.id,toCtx(e.time),'bgm');}
-  while(G.autoIdx<c.notes.length&&c.notes[G.autoIdx].time<ahead){const e=c.notes[G.autoIdx++];if((G.ksAuto||G.autoLanes.has(e.lane))&&e.state!==2)playSound(e.id,toCtx(e.time),'key');}
+  if(!G.noSound)schedSound(at);
   const dtime=t+S.vofs/1000;
   while(G.bgaIdx<c.bga.length&&c.bga[G.bgaIdx].time<=dtime){const ev=c.bga[G.bgaIdx],im=G.images[ev.id];if(im){if(G.curVid&&G.curVid.v!==im){try{G.curVid.v.pause();}catch(e){}G.curVid=null;}G.curBga=im;if(im._isVideo)G.curVid={v:im,te:ev.time};}G.bgaIdx++;}
   while(G.layerIdx<c.layer.length&&c.layer[G.layerIdx].time<=dtime){G.curLayer=G.images[c.layer[G.layerIdx].id]||null;G.layerIdx++;}
@@ -3481,7 +3506,7 @@ function draw(){
   const top=safeTop+6,hx=areaX+8,hw=areaW-16;
   g.textAlign='left';g.textBaseline='top';
   g.font='13px '+GF();g.fillStyle=PP.dim;
-  const tag=(G.rate!==1&&!G.practice&&!G.viewer?`[×${G.rate.toFixed(2)}] `:'')+(G.reduced?`[${G.chart.mode.toUpperCase()}${L('変換','')}] `:'')+(G.viewer?'[VIEWER] ':G.replay?'[REPLAY] ':G.auto?'[AUTO] ':G.tut?'[TUTORIAL] ':G.practice?`[${L('練習','PRACTICE')} ×${G.rate.toFixed(2)}] `:G.course?`[${G.course.co.name} ${G.course.idx+1}/${G.course.charts.length}] `:'');
+  const tag=(BT?`[${BT.P.indexOf(G)+1}P] `:'')+(G.rate!==1&&!G.practice&&!G.viewer?`[×${G.rate.toFixed(2)}] `:'')+(G.reduced?`[${G.chart.mode.toUpperCase()}${L('変換','')}] `:'')+(G.viewer?'[VIEWER] ':G.replay?'[REPLAY] ':G.auto?'[AUTO] ':G.tut?'[TUTORIAL] ':G.practice?`[${L('練習','PRACTICE')} ×${G.rate.toFixed(2)}] `:G.course?`[${G.course.co.name} ${G.course.idx+1}/${G.course.charts.length}] `:'');
   g.fillText(trunc(tag+c.title,hw-56),hx,top);
   if(G.viewer){
     const mi=Math.max(0,c.measures.findIndex(m=>m.time>t)-1);
@@ -3603,7 +3628,27 @@ function drawCelebrate(nowMs){
   g.globalAlpha=1;
   if(S.eco){g.fillStyle='rgba(0,0,0,.22)';g.fillRect(0,0,W,H);}
 }
+function loopBattle(ts){
+  if(!BT)return;
+  pollPads(padHandler);
+  for(let i=0;i<2;i++){bAct(i);if(!G.paused&&!G.ended)update();}
+  if(BT.P[0].ended&&!BT.P[1].ended){bAct(0);schedSound(audioTime());}
+  bAct(0);if(G.curVid)syncVideo();
+  if(BT.P.some(p=>!p.ended)||performance.now()-Math.max(...BT.P.map(p=>p.endAt||0))<1200){
+    g.setTransform(dpr,0,0,dpr,0,0);
+    for(let i=0;i<2;i++){bAct(i);const x0=i?W/2:0;
+      g.save();g.beginPath();g.rect(x0,0,W/2,H);g.clip();draw();
+      g.setTransform(dpr,0,0,dpr,0,0);
+      if(G.ended){g.fillStyle='rgba(0,0,0,.55)';g.fillRect(x0,0,W/2,H);const PP=gpal();g.fillStyle=G.failed?PP.alert:PP.hi;g.font='bold 28px '+GF();g.textAlign='center';g.fillText(G.failed?'FAILED':'FINISH',x0+W/4,H*0.45);g.textAlign='left';}
+      g.restore();}
+    g.setTransform(dpr,0,0,dpr,0,0);const PP=gpal();
+    g.fillStyle=PP.faint;g.fillRect(W/2-1,0,2,H);
+    bAct(0);
+    raf=requestAnimationFrame(loopBattle);
+  }
+}
 function loop(ts){
+  if(BT)return loopBattle(ts);
   if(!G)return;
   ts=ts||performance.now();
   pollPads(padHandler);
@@ -3651,11 +3696,11 @@ $('#vFwd').onclick=()=>{if(G&&G.viewer)viewerSeek(Math.min(G.chart.endTime,songT
 $('#vClose').onclick=()=>toLib();
 
 /* ---------- input ---------- */
-const hold=new Map();
+let hold=new Map();
 function grab(l,src){let s=hold.get(l);if(!s){s=new Set();hold.set(l,s);}const was=s.size;s.add(src);if(was===0)press(l);}
 function drop(l,src){const s=hold.get(l);if(!s)return;s.delete(src);if(s.size===0){hold.delete(l);release(l);}}
-const ptr=new Map();let ctrlPtr=null;let vDrag=null;
-function tapKey(){return G.chart.mode+'|'+S.side+'|'+(innerWidth>innerHeight?'L':'P');}
+const ptr=new Map(),ptrP=new Map();let ctrlPtr=null;let vDrag=null;
+function tapKey(){return G.chart.mode+'|'+(G.side||S.side)+'|'+(innerWidth>innerHeight?'L':'P');}
 function lanesAt(x){
   const {xs,ws,order}=L_;if(!xs)return [0];
   const o=(S.tapAdj&&G&&S.tapOfs&&S.tapOfs[tapKey()])||null;
@@ -3687,6 +3732,7 @@ const msgHS=()=>S.fhs?L(`表示時間 ${S.green}ms`,`Visible ${S.green}ms`):L(`�
 cv.addEventListener('pointerdown',e=>{
   e.preventDefault();if(!G)return;
   try{cv.setPointerCapture(e.pointerId);}catch(_){}
+  if(BT){const pi=e.clientX<W/2?0:1;bAct(pi);ptrP.set(e.pointerId,pi);}
   if(G.viewer&&G.paused){if(!vDrag)vDrag={id:e.pointerId,y0:ipj(e.clientY),b0:timeToBeat(G.chart.segs,songTime())};return;}
   if(ctrlZone(e.clientY)&&!ctrlPtr){ctrlPtr={id:e.pointerId,y:e.clientY};return;}
   const ls=lanesAt(e.clientX);ptr.set(e.pointerId,ls);G.lastHit=null;ls.forEach(l=>grab(l,'t'+e.pointerId));
@@ -3709,6 +3755,7 @@ cv.addEventListener('pointermove',e=>{
     saveS();return;
   }
   if(!ptr.has(e.pointerId))return;
+  if(BT&&ptrP.has(e.pointerId))bAct(ptrP.get(e.pointerId));
   if(S.rub&&!G.viewer&&G.chart.M){const cur=ptr.get(e.pointerId),sl=cur.find(l=>G.chart.M.scr.includes(l)),st=rubSt.get(e.pointerId);
     if(sl!==undefined&&st){const dy=e.clientY-st.y;st.y=e.clientY;const d=Math.sign(dy);if(d&&st.dir&&d!==st.dir){st.acc=0;st.armed=true;}if(d)st.dir=d;st.acc+=Math.abs(dy);
       const th=Math.max(14,L_.len*0.03);if((st.armed&&st.acc>=th)||st.acc>=th*6){st.acc=0;st.armed=false;if(!holdingLN(sl)){drop(sl,'t'+e.pointerId);grab(sl,'t'+e.pointerId);}}}}
@@ -3718,7 +3765,7 @@ cv.addEventListener('pointermove',e=>{
   os.filter(l=>!ns.includes(l)).forEach(l=>drop(l,'t'+e.pointerId));
   ns.filter(l=>!os.includes(l)).forEach(l=>grab(l,'t'+e.pointerId));
 });
-const up=e=>{rubSt.delete(e.pointerId);if(vDrag&&vDrag.id===e.pointerId){vDrag=null;return;}if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
+const up=e=>{rubSt.delete(e.pointerId);if(BT&&ptrP.has(e.pointerId)){bAct(ptrP.get(e.pointerId));ptrP.delete(e.pointerId);}if(vDrag&&vDrag.id===e.pointerId){vDrag=null;return;}if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 document.addEventListener('touchmove',e=>{if(G&&!G.ended&&e.target===cv)e.preventDefault();},{passive:false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -3727,18 +3774,26 @@ addEventListener('keydown',e=>{
   if(!G||G.ended)return;
   if(G.viewer){if(e.code==='Space'){e.preventDefault();viewerPause(!G.paused);}if(e.code==='Escape')toLib();if(e.code==='ArrowLeft')viewerSeek(Math.max(0,songTime()-5));if(e.code==='ArrowRight')viewerSeek(songTime()+5);return;}
   if(e.code==='Escape'||e.code==='Enter'){togglePause();return;}
+  if(BT){const bm=BKEYS[G.chart.mode]||[];for(let i=0;i<bm.length;i++){if(bm[i][e.code]!==undefined){e.preventDefault();if(!e.repeat){bAct(i);grab(bm[i][e.code],'k'+e.code);}return;}}}
   const m=keyMap(G.chart.mode);
   if(m[e.code]!==undefined){e.preventDefault();if(!e.repeat)grab(m[e.code],'k'+e.code);return;}
   if(e.code==='ArrowUp'){S.hs=Math.min(10,S.hs+.25);saveS();G.ctrlMsg={s:msgHS(),t:performance.now()};}
   if(e.code==='ArrowDown'){S.hs=Math.max(.5,S.hs-.25);saveS();G.ctrlMsg={s:msgHS(),t:performance.now()};}
   if(e.code==='ArrowRight'||e.code==='ArrowLeft'){S.suddenOn=true;S.sudden=Math.max(0,Math.min(80,S.sudden+(e.code==='ArrowRight'?2:-2)));saveS();G.ctrlMsg={s:L(`上カバー ${S.sudden}%`,`Top cover ${S.sudden}%`),t:performance.now()};}
 });
-addEventListener('keyup',e=>{if(!G)return;const m=keyMap(G.chart.mode);if(m[e.code]!==undefined)drop(m[e.code],'k'+e.code);});
-function padHandler(code,on){if(!G||G.ended)return;const m=padMap(G.chart.mode);if(m[code]===undefined)return;if(on)grab(m[code],'p'+code);else drop(m[code],'p'+code);}
+addEventListener('keyup',e=>{if(!G)return;
+  if(BT){const bm=BKEYS[G.chart.mode]||[];for(let i=0;i<bm.length;i++){if(bm[i][e.code]!==undefined){bAct(i);drop(bm[i][e.code],'k'+e.code);return;}}}
+  const m=keyMap(G.chart.mode);if(m[e.code]!==undefined)drop(m[e.code],'k'+e.code);});
+function padHandler(code,on,pi){if(BT)bAct(pi>=1?1:0);if(!G||G.ended)return;const m=padMap(G.chart.mode);if(m[code]===undefined)return;if(on)grab(m[code],'p'+code);else drop(m[code],'p'+code);}
 
 /* ---------- pause ---------- */
 function syncPause(){$('#qHs').textContent=S.fhs?S.green+'ms':S.hs.toFixed(2);$('#qSud').textContent=S.suddenOn?S.sudden+'%':'OFF';$('#qOfs').textContent=(G?G.ofs:S.ofs)+'ms';}
 function togglePause(force){
+  if(BT){if(BT.P.every(p=>p.ended))return;const p=force!==undefined?force:!BT.P[0].paused;if(p===BT.P[0].paused)return;
+    for(let i=0;i<2;i++){bAct(i);G.paused=p;if(p){for(const l of [...hold.keys()])release(l);hold.clear();}else G.lastFrame=0;}
+    bAct(0);ptr.clear();ptrP.clear();ctrlPtr=null;
+    if(p){actx.suspend();syncPause();show('#pause',true);show('#retrySame',false);}else{show('#pause',false);actx.resume();}
+    return;}
   if(!G||G.ended||G.viewer)return;
   const p=force!==undefined?force:!G.paused;if(p===G.paused)return;
   G.paused=p;
@@ -3755,15 +3810,37 @@ $$('#pause [data-q]').forEach(b=>b.onclick=()=>{
 $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
-function stopAll(){if(!G)return;stopVideos();for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}}
-function toLib(){wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
-function retry(same){const seed=G?G.seed:undefined;stopAll();show('#pause',false);show('#result',false);
+function stopAll(){if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
+function toLib(){wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
+function retry(same){const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
   actx.resume().then(()=>{if(!lastMeta)return;startPlay(lastMeta,Object.assign({},lastMode,{seed:same?seed:undefined,replay:null}));});}
 $('#quitBtn').onclick=toLib;
 $('#retryBtn').onclick=()=>retry(false);
 $('#retrySame').onclick=()=>retry(true);
 
+/* ---------- battle result ---------- */
+function battleResult(){
+  if(!BT)return;wakeOff();track('battle-finish','バトル終了');
+  const R=BT.P.map((P,i)=>{bAct(i);const c=G.counts,ex=c.PG*2+c.GR,max=G.N*2;
+    return {ex,max,rate:max?ex/max:0,lamp:G.failed?'FAILED':LAMPS[computeLamp()],failed:G.failed,bp:c.BD+c.PR+c.KP,combo:G.maxCombo,c};});
+  bAct(0);
+  const win=R[0].ex>R[1].ex?0:R[1].ex>R[0].ex?1:-1;
+  const col=(r,i)=>`<div style="flex:1;min-width:0;text-align:center;padding:8px;border:2px solid ${win===i?'var(--hi)':'var(--faint)'}">
+    <div style="font-size:22px;color:var(--hi)">${i+1}P</div>
+    <div style="font-size:28px;margin:6px 0;color:${win===i?'var(--hi)':'var(--ink)'}">${win===i?'WIN':win<0?'DRAW':'LOSE'}</div>
+    <div class="rank" style="font-size:40px">${rankOf(r.rate)}</div>
+    <div style="color:${r.failed?'var(--alert)':'var(--ink)'}">${r.lamp}</div>
+    <div style="margin-top:6px">EX ${r.ex}<br><small>${(r.rate*100).toFixed(2)}%</small></div>
+    <div class="hlp" style="margin:6px 0 0">PG ${r.c.PG} / GR ${r.c.GR} / GD ${r.c.GD}<br>BD ${r.c.BD} / MISS ${r.c.PR+r.c.KP}<br>${L('最大コンボ','Max combo')} ${r.combo}</div></div>`;
+  $('#resultBox').innerHTML=`<div class="hlp" style="text-align:center">${esc(G.chart.title)} ${esc(G.chart.subtitle||'')}（${L('バトル・記録なし','battle, not recorded')}）</div>
+    <div style="display:flex;gap:8px;margin:10px 0">${col(R[0],0)}${col(R[1],1)}</div>
+    <div style="text-align:center;font-size:20px;margin-bottom:8px;color:var(--hi)">${win<0?L('引き分け','Draw'):L(`${win+1}P の勝ち！`,`${win+1}P wins!`)}　<small>${L('差','Diff')} ${Math.abs(R[0].ex-R[1].ex)}</small></div>
+    <button class="pri" id="rRetry">${L('もう一度対戦','Rematch')}</button>
+    <button id="rBack">${L('曲選択へ','Back to songs')}</button>`;
+  $('#rRetry').onclick=()=>retry(false);$('#rBack').onclick=toLib;
+  show('#result',true);
+}
 /* ---------- result ---------- */
 const ASSIST_ARR=['hrandom','allscr','spiral','randomex'];
 function isAssist(o){return !!(o.autoScr||o.legacy||o.expand||ASSIST_ARR.includes(o.arr)||(G&&G.meta&&/^(10k|14k)$/.test(G.meta.mode)&&ASSIST_ARR.includes(o.arr2)));}
@@ -3821,7 +3898,8 @@ function computeLamp(agg){
   if(lamp>=2&&!assist&&fc){lamp=Math.max(lamp,7);if(c.GD===0)lamp=8;if(c.GD===0&&c.GR===0)lamp=9;}
   return lamp;
 }
-function finish(){wakeOff();if(G&&G.record)track('finish','プレイ完了');
+function finish(){if(BT){if(G.ended)return;G.ended=true;G.endAt=performance.now();if(BT.P.every(p=>p.ended))setTimeout(battleResult,G.failed?400:1200);return;}
+  wakeOff();if(G&&G.record)track('finish','プレイ完了');
   if(G.ended)return;G.ended=true;
   const c=G.counts,N=G.N,ex=c.PG*2+c.GR,max=N*2,rate=max?ex/max:0;
   const lamp=computeLamp(),bp=c.BD+c.PR+c.KP;
