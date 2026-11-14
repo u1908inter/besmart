@@ -147,6 +147,9 @@ canvas{display:block;touch-action:none}
 .ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
 .ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
 .ldist .bar2 i{display:block;height:100%}
+.begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
+.advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
+.achg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}.ach{display:flex;gap:6px;align-items:center;border:1px solid var(--faint);padding:5px 6px;font-size:12px;opacity:.45}.ach.on{opacity:1;border-color:var(--hi)}.ach b{font-size:18px}.ach small{display:block;color:var(--dim);font-size:10px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chips .ib{width:auto;flex:1 1 45%;margin:0;padding:8px 6px;min-height:0;font-size:13px}
 .lleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin:4px 0 8px}
 .lleg i{display:inline-block;width:10px;height:10px;margin-right:3px;vertical-align:-1px}
@@ -175,7 +178,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0008)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0008)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0019)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0019)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -202,6 +205,7 @@ canvas{display:block;touch-action:none}
     <button id="rndCfg" class="ib" style="flex:0 0 auto;width:auto;padding:0 12px" data-en="Conditions">条件</button>
   </div>
   <div id="fltBox" class="card" style="display:none;padding:10px;margin:0 0 10px"></div>
+  <div id="safeHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="Keep your songs safe">曲と記録を消さないために</b><div class="hlp" style="margin:2px 0 0" data-en="On iPhone, Safari may delete site data after a while unless the app is on your home screen. Add it via Share → Add to Home Screen, and make a backup in Settings → Data.">iPhoneのSafariは、ホーム画面に追加していないサイトのデータを、しばらく使わないと消すことがあります。共有ボタン→「ホーム画面に追加」から開くと消えにくくなります。念のため 設定 → データ からバックアップもできます。</div></div><button class="ib pri" id="safeHintGo" style="flex:none;width:auto;margin:0;padding:0 10px" data-en="Settings">設定へ</button><button class="ib" id="safeHintX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="recoHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="New to BMS?">はじめての方へ</b><div class="hlp" style="margin:2px 0 0" data-en="Pick how you play and your level to get easy settings.">遊び方と腕前を選ぶだけで、遊びやすい設定にできます。</div></div><button class="ib pri" id="recoHintGo" style="flex:none;width:auto;margin:0;padding:0 12px" data-en="Set up">おすすめ設定</button><button class="ib" id="recoHintX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="songs"></div>
   <div id="fsc" style="display:none"><div class="th"></div><div class="bub"></div></div>
@@ -209,6 +213,7 @@ canvas{display:block;touch-action:none}
     <p data-en="Add a BMS archive (ZIP, RAR, LZH, 7z or tar.gz) or a folder of BMS/bmson files with their sounds to play more songs. Songs stay on this device.">BMSの書庫（ZIP・RAR・LZH・7z・tar.gz）か、BMS／bmsonと音声ファイルをまとめて「追加」すると、ほかの曲も遊べます。曲はこの端末の中だけに保存されます。</p>
     <label class="btn pri" for="fileIn" data-en="Add songs">曲を追加</label>
     <div class="guide" data-en="&lt;h3&gt;How to add songs&lt;/h3&gt;&lt;ol&gt;&lt;li&gt;&lt;b&gt;Find songs&lt;/b&gt;: search with the words below to find download pages and event entry lists.&lt;div class=&quot;gchips&quot;&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20download&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS download&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20event%20entries&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS event entries&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20difficulty%20table&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS difficulty table&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20for%20beginners&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS for beginners&lt;/a&gt;&lt;/div&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;Download to your phone&lt;/b&gt;: keep the ZIP, RAR, LZH or 7z as is; no need to extract. Songs shared on Google Drive and the like work once downloaded.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Pick it with “Add songs”&lt;/b&gt;: choose the file from Downloads in your Files app. If you have a direct download URL, “Add from URL” works too.&lt;/li&gt;&lt;/ol&gt;&lt;p class=&quot;hlp&quot;&gt;Tip: songs at the low levels of a difficulty table are easiest to start with. Please check each download page’s terms.&lt;/p&gt;"><h3>曲の入れ方</h3><ol><li><b>曲を探す</b>：下の言葉で検索すると、配布ページや作品の一覧が見つかります。<div class="gchips"><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%85%8D%E5%B8%83" target="_blank" rel="noopener">🔍 BMS 配布</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%20%E4%BD%9C%E5%93%81%E4%B8%80%E8%A6%A7" target="_blank" rel="noopener">🔍 BMS イベント 作品一覧</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%9B%A3%E6%98%93%E5%BA%A6%E8%A1%A8" target="_blank" rel="noopener">🔍 BMS 難易度表</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E5%88%9D%E5%BF%83%E8%80%85%20%E3%81%8A%E3%81%99%E3%81%99%E3%82%81" target="_blank" rel="noopener">🔍 BMS 初心者 おすすめ</a></div></li><li><b>スマホにダウンロード</b>：ZIP・RAR・LZH・7zのままでOK。展開はいりません。Googleドライブなどで配布されている曲も、いったんダウンロードすれば使えます。</li><li><b>「曲を追加」で選ぶ</b>：ファイルアプリの「ダウンロード」から選びます。直接ダウンロードできるURLなら「URLから追加」でも入れられます。</li></ol><p class="hlp">コツ：はじめは難易度表の低いレベル（☆1〜5くらい）の曲が遊びやすいです。配布ページに書かれた規約も確認してください。</p></div>
+    <button id="guideBtn" class="sec" data-en="How to find songs">曲の探し方ガイド</button>
     <button id="tutBtn" data-en="Learn the controls">遊び方を練習する</button>
     <button id="urlBtn" data-en="Add from a download URL">URLから追加</button>
     <button id="demoBtn" data-en="Test play (do-re-mi scale)">テストプレイ（ドレミの音階）</button>
@@ -216,6 +221,7 @@ canvas{display:block;touch-action:none}
   </div>
   <div id="libFoot" style="display:none">
     <button id="urlBtn2" data-en="Add from a download URL">URLから追加</button>
+    <button id="guideBtn2" data-en="How to find songs">曲の探し方ガイド</button>
     <div class="btns"><button id="demoBtn2" data-en="Test play">テストプレイ</button><button id="tutBtn2" data-en="How to play">遊び方</button></div>
   </div>
 </div></div>
@@ -783,7 +789,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0008)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0008)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0019)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0019)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1630,7 +1636,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1801,6 +1807,84 @@ function recoSummary(v,dev,aud){
     dev==='touch'?L('タップ位置の補正とスクラッチのこすり操作をON','Tap correction and scratch rubbing on'):null];
   return a.filter(Boolean);
 }
+/* ---------- beginner helpers ---------- */
+const totalPlays=()=>Object.values(STATS).reduce((a,q)=>a+(q.p||0),0);
+const isBeginner=()=>S.recoLv==='new'||totalPlays()<30;
+let ACH={};try{ACH=JSON.parse(localStorage.getItem(LSK+'ach')||'{}')||{};}catch(e){}
+const saveAch=()=>{try{localStorage.setItem(LSK+'ach',JSON.stringify(ACH));}catch(e){}};
+function achList(){return [
+  ['play1','🎵',L('はじめの一歩','First steps'),L('1回プレイする','Play once')],
+  ['clear1','🌱',L('はじめてのクリア','First clear'),L('どれかの曲をEASY CLEAR以上','Get EASY CLEAR or better on any chart')],
+  ['normal1','✅',L('ノーマル突破','Normal cleared'),L('CLEAR以上をとる','Get CLEAR or better')],
+  ['hard1','🔥',L('ハードクリア','Hard clear'),L('HARD CLEAR以上をとる','Get HARD CLEAR or better')],
+  ['fc1','💎',L('フルコンボ','Full combo'),L('ミスなしで最後まで','Finish without a miss')],
+  ['aa1','🅰',L('AAランク','Rank AA'),L('スコア77.8%以上','Score 77.8% or more')],
+  ['aaa1','👑',L('AAAランク','Rank AAA'),L('スコア88.9%以上','Score 88.9% or more')],
+  ['lv5','⭐',L('☆5の壁','Level 5'),L('☆5以上をクリア','Clear a ☆5+ chart')],
+  ['lv10','🌟',L('☆10の壁','Level 10'),L('☆10以上をクリア','Clear a ☆10+ chart')],
+  ['songs10','📚',L('レパートリー','Repertoire'),L('10譜面をクリア','Clear 10 charts')],
+  ['plays10','🔟',L('10回プレイ','10 plays'),L('合計10回プレイ','Play 10 times')],
+  ['plays100','💯',L('100回プレイ','100 plays'),L('合計100回プレイ','Play 100 times')],
+  ['notes10k','🥁',L('1万ノーツ','10,000 notes'),L('合計1万ノーツを叩く','Hit 10,000 notes in total')],
+  ['streak3','📅',L('3日連続','3-day streak'),L('3日続けて遊ぶ','Play 3 days in a row')],
+  ['ghost1','👻',L('過去の自分に勝つ','Beat your ghost'),L('ゴーストに勝つ','Win against the ghost')],
+  ['rival1','🤝',L('ライバルに勝つ','Beat a rival'),L('ライバルのゴーストに勝つ','Win against a rival ghost')]];}
+function checkAch(R){
+  const recs=Object.entries(REC),byHash=new Map(CHARTS.map(c=>[c.hash,c]));
+  const has=(f)=>recs.some(([h,r])=>f(r,byHash.get(h)));
+  const tp=totalPlays(),tn=Object.values(STATS).reduce((a,q)=>a+(q.n||0),0);
+  let streak=0;for(let i=0;i<400;i++){if(STATS[dayKey(Date.now()-i*86400000)]){streak++;}else if(i>0)break;else continue;}
+  const ok={play1:tp>=1,clear1:has(r=>r.lamp>=3),normal1:has(r=>r.lamp>=4),hard1:has(r=>r.lamp>=5),fc1:has(r=>r.lamp>=7),
+    aa1:has((r,c)=>c&&r.ex/(2*c.notesN)>=7/9),aaa1:has((r,c)=>c&&r.ex/(2*c.notesN)>=8/9),
+    lv5:has((r,c)=>c&&r.lamp>=3&&lvNum(c.level)>=5),lv10:has((r,c)=>c&&r.lamp>=3&&lvNum(c.level)>=10),
+    songs10:recs.filter(([h,r])=>r.lamp>=3).length>=10,plays10:tp>=10,plays100:tp>=100,notes10k:tn>=10000,streak3:streak>=3,
+    ghost1:!!(R&&R.ghost&&!R.ghost.name&&R.ghost.d>0),rival1:!!(R&&R.ghost&&R.ghost.name&&R.ghost.d>0)};
+  const got=[];for(const [id,ic,nm] of achList())if(ok[id]&&!ACH[id]){ACH[id]=Date.now();got.push(ic+' '+nm);}
+  if(got.length)saveAch();return got;
+}
+function achHTML(){const L2=achList();const n=L2.filter(a=>ACH[a[0]]).length;
+  return `<div class="hlp" style="margin-top:12px">${L('実績','Achievements')}（${n} / ${L2.length}）</div><div class="achg">${L2.map(([id,ic,nm,ds])=>`<div class="ach ${ACH[id]?'on':''}"><b>${ACH[id]?ic:'🔒'}</b><span>${esc(nm)}<small>${esc(ds)}</small></span></div>`).join('')}</div>`;}
+/* glossary */
+function glossTerms(){return [
+  [L('判定','Judgements'),L('PERFECT（ぴったり）＞GREAT＞GOOD はコンボが続きます。BAD と POOR（見逃し）はミス。何もないところを押すと「空打ち（空POOR）」です。','PERFECT > GREAT > GOOD keep the combo. BAD and POOR (missed) break it. Pressing with no note is an empty POOR.')],
+  [L('EXスコア／SCORE','EX score'),L('PERFECT＝2点、GREAT＝1点の合計。満点はノーツ数×2。％はその割合です。','PERFECT = 2, GREAT = 1. Max is notes × 2; the % is your share of it.')],
+  [L('ランク（AAA／AA／A…）','Rank'),L('EXスコアの割合で決まります。AAA＝88.9%以上、AA＝77.8%以上、A＝66.7%以上。','Based on EX %: AAA ≥ 88.9%, AA ≥ 77.8%, A ≥ 66.7%.')],
+  [L('MISS COUNT（BP）','Miss count (BP)'),L('BAD＋POOR＋空打ちの数。少ないほど上手に叩けています。','BAD + POOR + empty POORs. Lower is better.')],
+  [L('ゲージ','Gauge'),L('曲の終わりに一定以上残っていればクリア。ASSIST EASY・EASYは甘く、HARD・EX HARDは0になった時点で失敗（FAILED）です。','Clear if enough remains at the end. ASSIST EASY / EASY are lenient; HARD / EX HARD fail as soon as they hit 0.')],
+  [L('クリアランプ','Clear lamp'),L('その譜面の一番いい結果を色で表します。FAILED → ASSIST → EASY → CLEAR → HARD → EX HARD → FULL COMBO → PERFECT → MAX の順に上です。','Your best result per chart as a colour, from FAILED up to FULL COMBO, PERFECT and MAX.')],
+  ['GAS',L('ゲージ自動降格。上のゲージで落ちても下のゲージで最後まで続き、一番いいランプが記録されます。','Gauge auto shift: if you fail a gauge you continue on a lower one; the best lamp is saved.')],
+  [L('FAST／SLOW','FAST / SLOW'),L('早すぎ（FAST）か遅すぎ（SLOW）か。どちらかに偏るなら判定タイミングを調整すると良くなります。','Early or late. If one side dominates, adjust the timing offset.')],
+  [L('判定タイミング（オフセット）','Timing offset'),L('音や映像の遅れを補正する値。上の「SP +0ms」ボタンからタップで合わせられます。','Corrects audio/video delay. Tune it by tapping from the “SP +0ms” button at the top.')],
+  [L('スクラッチ（皿）','Scratch'),L('いちばん端の太いレーン。タッチでは上下にこすっても叩けます。オートスクラッチで自動にもできます。','The wide lane at the edge. On touch you can rub it; auto scratch plays it for you.')],
+  [L('表示時間（緑数字）とFLOATING','Visible time & FLOATING'),L('ノーツが見えている時間。小さいほど速い。FLOATINGをONにするとどの曲でも同じ速さに感じます。','How long notes are visible; smaller is faster. FLOATING keeps it the same on every song.')],
+  [L('SUDDEN／HIDDEN／LIFT','SUDDEN / HIDDEN / LIFT'),L('レーンを上（SUDDEN）や下（HIDDEN）から隠すカバー、LIFTは判定ラインを上げる設定。見やすい範囲に絞るために使います。','Covers that hide the top (SUDDEN) or bottom (HIDDEN) of the lane; LIFT raises the judge line.')],
+  [L('ロングノーツ（LN／CN／HCN）','Long notes'),L('押しっぱなしにするノーツ。LNは押すだけ、CNは離すタイミングも判定、HCNは押し続けないとゲージが減ります。','Held notes. LN: press only; CN: release is judged; HCN: must keep holding.')],
+  [L('☆レベルと難易度表','Levels & tables'),L('☆1〜12が一般的な難しさ。★はさらに難しい「発狂」。難易度表は有志がつけた共通のレベルの一覧です。','☆1–12 is the normal range; ★ is the harder “insane” range. Tables are community-made level lists.')],
+  [L('鍵盤を減らす（4K／5K）','Fewer keys'),L('7鍵の譜面を4鍵などに変換して遊ぶモード。記録は通常とは別のランプになります。','Plays 7-key charts with fewer keys; recorded as separate lamps.')],
+  [L('ゴースト／ライバル','Ghost / rival'),L('自己ベストや友達のリプレイと同時に走り、スコア差を表示します。','Races your best or a friend’s replay and shows the score gap.')]];}
+function openGloss(){const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=14;ov.style.display='flex';
+  ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto"><h2>${L('用語の説明','Glossary')}</h2>${glossTerms().map(([t,d])=>`<div style="margin:0 0 10px"><b style="color:var(--hi)">${esc(t)}</b><div class="hlp" style="margin:2px 0 0">${esc(d)}</div></div>`).join('')}<button class="pri" data-x>${L('閉じる','Close')}</button></div>`;
+  ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-x'))ov.remove();};document.body.appendChild(ov);}
+/* song finding guide */
+function openSongGuide(){const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=14;ov.style.display='flex';
+  const a=(u,t,d)=>`<a class="btn" href="${u}" target="_blank" rel="noopener" style="display:block;text-align:left;margin:6px 0;padding:8px 10px;text-decoration:none"><b>${esc(t)}</b><br><small style="color:var(--dim)">${esc(d)}</small></a>`;
+  ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto"><h2>${L('曲の探し方','Finding songs')}</h2>
+   <div class="hlp">${L('BMSの曲は、作曲者さんがイベントや自分のサイトで無料で配布しています。ダウンロードしたzipなどの書庫を「追加」で選ぶだけで遊べます（解凍は不要）。','BMS songs are given away free by their creators at events and on their sites. Just pick the downloaded archive with “Add” — no need to unzip.')}</div>
+   <ol class="hlp" style="padding-left:1.2em"><li>${L('下のページで曲を探す','Find a song on the pages below')}</li><li>${L('作品ページのダウンロードリンクから書庫を保存','Save the archive from the entry’s download link')}</li><li>${L('BeSmartの「追加」でそのファイルを選ぶ','Pick the file with “Add” in BeSmart')}</li></ol>
+   <div style="color:var(--hi);margin:10px 0 2px">${L('まずはここから','Start here')}</div>
+   ${a('https://keysounds.net/bofguide/',L('BOF初心者ガイド（日本語あり）','Beginner’s guide to BOF'),L('BMSとは何か、最大のイベントBOFの楽しみ方の解説','What BMS is and how the biggest event, BOF, works'))}
+   ${a('https://manbow.nothing.sh/event/event.cgi',L('BMSイベント一覧（BOFなど）','BMS event list (BOF etc.)'),L('イベントの作品ページから、各曲のダウンロード先に行けます','Each entry page links to the song download'))}
+   ${a('https://bmssearch.net/',L('BMS SEARCH','BMS SEARCH'),L('曲名やアーティストからBMSを探せる検索サイト','Search BMS by title or artist'))}
+   <div style="color:var(--hi);margin:10px 0 2px">${L('初心者向けの難易度表','Beginner-friendly tables')}</div>
+   <div class="hlp">${L('難易度表は「どの曲がどのくらい難しいか」の一覧です。登録すると、手持ちの曲が表のレベル別に並びます。','A table lists how hard each chart is. Once added, your songs are sorted by its levels.')}</div>
+   ${a('https://mqppppp.neocities.org/StardustTable.html',L('Stardust難易度表','Stardust table'),L('BMSがはじめての人向け。やさしい曲を細かいレベルで紹介','Made for complete beginners, with fine-grained easy levels'))}
+   ${a('http://www.ribbit.xyz/bms/tables/normal.html',L('通常難易度表（☆1〜12）','Normal table (☆1–12)'),L('定番の表。☆1〜5あたりから始めるのがおすすめ','The classic table; start around ☆1–5'))}
+   ${a('https://stellabms.xyz/sl/table.html',L('Satellite','Satellite'),L('慣れてきた人向けの、よく遊ばれている表','A popular table once you are comfortable'))}
+   <div class="hlp">${L('表の登録は 設定 → 難易度表 から。表のページのURLを貼るか、URLで読めないときは表のファイルを保存して読み込みます。','Add tables in Settings → Difficulty tables: paste the page URL, or save the table files and load them if the URL is blocked.')}</div>
+   <div style="color:var(--hi);margin:10px 0 2px">${L('曲選びのコツ','Tips')}</div>
+   <ul class="hlp" style="padding-left:1.2em"><li>${L('はじめは☆1〜5、譜面の名前が NORMAL や BEGINNER のものから','Begin with ☆1–5, NORMAL or BEGINNER charts')}</li><li>${L('1つの書庫に難しさ違いの譜面がいくつも入っていることが多いです','One archive often holds several difficulties')}</li><li>${L('ダウンロード先は外部サイトです。作者さんの説明や利用条件も読んでおきましょう','Downloads are on external sites; read the author’s notes and terms')}</li></ul>
+   <button class="pri" data-x>${L('閉じる','Close')}</button></div>`;
+  ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-x'))ov.remove();};document.body.appendChild(ov);track('song-guide','曲の探し方');}
 function openReco(){
   let dev=PLICY||matchMedia('(pointer:fine)').matches?'pc':'touch',lv='new',four=null,aud=PROF[S.profCur]?S.profCur:'speaker';
   const ov=document.createElement('div');ov.className='overlay';ov.id='recoDlg';ov.style.zIndex=13;ov.style.display='flex';
@@ -1828,7 +1912,7 @@ function openReco(){
       const name=L('おすすめ：','Rec: ')+RECO_DEV.find(x=>x[0]===dev)[1]+'・'+PROF[aud].i+'・'+RECO_LV.find(x=>x[0]===lv)[1];
       const p={name,v:Object.assign(snapSettings(),v)};
       if(ov.querySelector('#rcSave').checked){const i=PRESETS.findIndex(x=>x.name===name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);savePresets();}
-      const ksPrev=S.ksMode;
+      const ksPrev=S.ksMode;S.recoLv=lv;
       applyPreset(p);if(!ov.querySelector('#rcSave').checked){S.preset='';saveS();}
       try{if(S.prof&&S.prof[aud]){S.prof[aud].ks=v.ksMode;if(aud!==S.profCur){S.ksMode=ksPrev;setProfile(aud);}}}catch(e){}
       try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}
@@ -1839,6 +1923,9 @@ function openReco(){
   };
   draw();document.body.appendChild(ov);
 }
+function renderSafeHint(){const b=$('#safeHint');if(!b)return;let seen=false;try{seen=!!localStorage.getItem(LSK+'safeSeen');}catch(e){}
+  const own=CHARTS.filter(c=>!c.builtin).length;const need=!PLICY&&IS_IOS&&!IS_STANDALONE()&&own>=1&&!seen;show('#safeHint',need,'flex');
+  if(own>=1&&!renderSafeHint.p){renderSafeHint.p=1;try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}}}
 function renderRecoHint(){const b=$('#recoHint');if(!b)return;let seen=false;try{seen=!!localStorage.getItem(LSK+'recoSeen');}catch(e){}
   const played=Object.keys(REC).length>0;show('#recoHint',!seen&&!played,'flex');}
 function presetBoxHTML(){
@@ -2088,6 +2175,11 @@ function redBadges(r){if(!r||!r.red)return '';let o='';
   for(const m of ['4k','5k']){const q=r.red[m];if(!q||!q.plays)continue;const col=LAMPC[q.lamp||0];
     o+=`<span class="redb" style="color:${col};border-color:${col}" title="${RED_N[m]} ${LAMPS[q.lamp||0]}">${RED_N[m]}</span>`;}
   return o;}
+let BEG_FIRST=null;
+function begTag(c,r){if(!isBeginner())return '';
+  if(BEG_FIRST===null){const anyClear=Object.values(REC).some(x=>x.lamp>=3);const b=CHARTS.filter(x=>x.builtin&&lvNum(x.level)>0).sort((a,b)=>lvNum(a.level)-lvNum(b.level))[0];BEG_FIRST=!anyClear&&b?b.hash:'';}
+  if(c.hash===BEG_FIRST)return `<span class="begb first">${L('まずはこれ','Start here')}</span>`;
+  const lv=lvNum(c.level);return lv>0&&lv<=3&&!(r.lamp>=3)?`<span class="begb">${L('初心者向け','Beginner')}</span>`:'';}
 function songRow(c,lvLabel){
   const r=REC[c.hash]||{},d=document.createElement('div');d.className='song';
   const rate=r.ex?r.ex/(2*c.notesN):0;
@@ -2095,7 +2187,7 @@ function songRow(c,lvLabel){
   d.style.borderLeftColor=r.lamp?LAMPC[r.lamp]:'transparent';d.tabIndex=0;
   d.innerHTML=`<div class="lvb"><b>${esc(String(lvLabel||c.level||'?').slice(0,5))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
     <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
-    <div class="m">${redBadges(r)}<span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
+    <div class="m">${begTag(c,r)}${redBadges(r)}<span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
     <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}</div>`;
   d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
   d.onclick=()=>openDetail(c);
@@ -2221,7 +2313,7 @@ function renderLibrary(){
     score:(a,b)=>((rec(b).ex||0)/(2*b.notesN||1))-((rec(a).ex||0)/(2*a.notesN||1)),
     added:(a,b)=>b.added-a.added,artist:(a,b)=>(a.artist||'').localeCompare(b.artist||'','ja')||a.title.localeCompare(b.title,'ja')}[so]||(()=>0);
   list.sort(cmp);
-  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();renderRecoHint();
+  BEG_FIRST=null;LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();renderRecoHint();renderSafeHint();
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   const onlyBuiltin=CHARTS.every(c=>c.builtin);
@@ -2318,7 +2410,8 @@ function renderFoldMgr(b){
   b.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>{const F=FOLDERS[+x.dataset.rn];const nm=(prompt(L('新しいフォルダ名','New folder name'),F.name)||'').trim();if(!nm||FOLDERS.some(G=>G!==F&&G.name===nm))return;if(S.flt.fd==='f:'+F.name)S.flt.fd='f:'+nm;if(S.rnd.fd==='f:'+F.name)S.rnd.fd='f:'+nm;F.name=nm;saveFolders();saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
   b.querySelectorAll('[data-dl]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dl;if(x.dataset.ok!=='1'){x.dataset.ok='1';x.textContent=L('本当に削除','Really delete');return;}const F=FOLDERS[i];FOLDERS.splice(i,1);saveFolders();if(S.flt.fd==='f:'+F.name)S.flt.fd='';if(S.rnd.fd==='f:'+F.name)S.rnd.fd='';saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
 }
-$('#recoHintGo').onclick=openReco;$('#recoHintX').onclick=()=>{try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
+$('#recoHintGo').onclick=openReco;$('#safeHintX').onclick=()=>{try{localStorage.setItem(LSK+'safeSeen','1');}catch(e){}renderSafeHint();};$('#safeHintGo').onclick=()=>{try{localStorage.setItem(LSK+'safeSeen','1');}catch(e){}renderSafeHint();$('#setBtn').click();};
+$('#guideBtn').onclick=openSongGuide;$('#guideBtn2').onclick=openSongGuide;$('#recoHintX').onclick=()=>{try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
 $('#fltBtn').onclick=()=>{const b=$('#fltBox'),on=b.style.display==='none';if(on)renderFlt();show('#fltBox',on,'block');};
 function rndPool(){const f=S.rnd||{};return (f.src==='list'?LIBLIST:CHARTS).filter(c=>condOk(c,f));}
 function rndPick(){const pool=rndPool();if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return false;}openDetail(pool[Math.floor(Math.random()*pool.length)]);return true;}
@@ -2720,7 +2813,7 @@ async function openDetail(c){
      box.appendChild(r);
      r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));};}
    ['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
-  $('#dPlay').onclick=()=>{close();rateGuard(()=>startPlay(c,{}));};
+  $('#dPlay').onclick=()=>{close();rateGuard(()=>firstCal(()=>startPlay(c,{})));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
@@ -2783,7 +2876,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,courses:COURSES,settings:S,presets:PRESETS,replays};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,courses:COURSES,settings:S,presets:PRESETS,replays};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -2871,11 +2964,12 @@ $('#impIn').onchange=async e=>{
 $('#impCancel').onclick=()=>{impData=null;show('#impDlg',false);};
 $('#impGo').onclick=async()=>{
   const d=impData;if(!d)return;const replace=$$('input[name=impMode]')[1].checked;
-  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);FOLDERS=Array.isArray(d.folders)?d.folders:[];STATS=d.stats||{};COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
+  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);FOLDERS=Array.isArray(d.folders)?d.folders:[];STATS=d.stats||{};ACH=d.ach||{};COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
   else{
     for(const k in d.rec)REC[k]=mergeRecOne(REC[k],d.rec[k]);
     (d.fav||[]).forEach(x=>FAV.add(x));
     (Array.isArray(d.folders)?d.folders:[]).forEach(F=>{if(!F||!F.name)return;const M=FOLDERS.find(x=>x.name===F.name);if(M)(F.hashes||[]).forEach(h=>{if(!M.hashes.includes(h))M.hashes.push(h);});else FOLDERS.push({name:F.name,hashes:(F.hashes||[]).slice()});});
+    Object.assign(ACH,d.ach||{});
     for(const k in (d.stats||{})){const a=STATS[k],b=d.stats[k];if(!a||(b.p||0)>(a.p||0))STATS[k]=b;}
     const ids=new Set(COURSES.map(c=>c.id));(d.courses||[]).forEach(c=>{if(c&&!ids.has(c.id))COURSES.push(c);});
   }
@@ -2884,7 +2978,7 @@ $('#impGo').onclick=async()=>{
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
   if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
-  saveRec();saveFav();saveFolders();saveStats();saveCourses();impData=null;show('#impDlg',false);
+  saveRec();saveFav();saveFolders();saveStats();saveAch();saveCourses();impData=null;show('#impDlg',false);
   toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
   buildSettings();renderPwaBox();if(typeof applyPhosphor==='function')applyPhosphor();
 };
@@ -2964,7 +3058,20 @@ function pollPads(handler){
 }
 
 /* ---------- audio calibration ---------- */
-let cal=null;
+let cal=null,calPending=null;
+function firstCal(go){
+  let asked=false;try{asked=!!localStorage.getItem(LSK+'calAsk');}catch(e){}
+  const pr=S.prof&&S.prof[S.profCur];
+  if(asked||(pr&&pr.set)||totalPlays()>0){go();return;}
+  try{localStorage.setItem(LSK+'calAsk','1');}catch(e){}
+  const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=14;ov.style.display='flex';
+  ov.innerHTML=`<div class="box card"><h2>${L('はじめに、タイミングを合わせましょう','First, let’s set your timing')}</h2>
+   <div class="hlp">${L('スマホやイヤホンによって、音が届くまでの時間が少しずつ違います。ずれたまま遊ぶと、ちゃんと叩いても判定が悪くなります。<br>「ピッ」という音に合わせて8回以上タップするだけ（約20秒）です。','Every phone and earphone delays sound a little differently. If it is off, good hits get bad judgements.<br>Just tap along with the beeps 8+ times (about 20 s).')}</div>
+   <button class="pri" data-go>${L('合わせる（おすすめ）','Set timing (recommended)')}</button><button data-skip>${L('このまま遊ぶ','Play now')}</button></div>`;
+  ov.querySelector('[data-go]').onclick=()=>{ov.remove();calPending=go;$('#calBtn').click();};
+  ov.querySelector('[data-skip]').onclick=()=>{ov.remove();go();};
+  document.body.appendChild(ov);
+}
 $('#calBtn').onclick=()=>{
   ensureAudio();
   const sr=actx.sampleRate,b=actx.createBuffer(1,Math.floor(sr*.06),sr),d=b.getChannelData(0);
@@ -2981,8 +3088,8 @@ $('#calTap').addEventListener('pointerdown',e=>{
   cal.med=Math.round(med);
   $('#calInfo').textContent=L(`${cal.taps.length} 回 ／ ズレ ${cal.med>0?'+':''}${cal.med}ms${cal.taps.length>=8?'（適用できます）':''}`,`${cal.taps.length} taps / offset ${cal.med>0?'+':''}${cal.med}ms${cal.taps.length>=8?' (ready to apply)':''}`);
 });
-$('#calApply').onclick=()=>{if(cal&&cal.taps.length>=8){S.ofs=Math.max(-400,Math.min(400,cal.med));saveS();storeOfs();syncSettings();toast(L(`判定タイミングを ${S.ofs}ms にしました`,`Audio offset set to ${S.ofs}ms`));}else toast(L('8回以上タップしてください','Tap at least 8 times'));};
-$('#calClose').onclick=()=>{if(cal){clearInterval(cal.timer);cal=null;}show('#calib',false);};
+$('#calApply').onclick=()=>{if(cal&&cal.taps.length>=8){S.ofs=Math.max(-400,Math.min(400,cal.med));saveS();storeOfs();syncSettings();toast(L(`判定タイミングを ${S.ofs}ms にしました`,`Audio offset set to ${S.ofs}ms`));if(calPending)$('#calClose').click();}else toast(L('8回以上タップしてください','Tap at least 8 times'));};
+$('#calClose').onclick=()=>{if(cal){clearInterval(cal.timer);cal=null;}show('#calib',false);if(calPending){const g=calPending;calPending=null;setTimeout(g,200);}};
 
 /* ---------- visual calibration ---------- */
 let vc=null;
@@ -3460,7 +3567,7 @@ function startGame(chart,buffers,images,o){
     autoLanes,laneIdx:Array(chart.M.lanes).fill(0),mineIdx:Array(chart.M.lanes).fill(0),laneLast:Array(chart.M.lanes).fill(null),
     pressed:Array(chart.M.lanes).fill(false),beam:Array(chart.M.lanes).fill(-9),bombs:[],judge:null,fs:{f:0,s:0},dts:[],glog:[],
     rafT:[],drawT:[],lastDraw:0,bgmIdx:0,autoIdx:0,bgaIdx:0,layerIdx:0,poorIdx:0,curBga:null,curLayer:null,curPoor:null,poorUntil:0,
-    rec:[],repIdx:0,t0ms:performance.now(),ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
+    rec:[],repIdx:0,t0ms:performance.now(),khint:(!o.auto&&!o.replay&&!o.viewer&&totalPlays()<5)?performance.now():0,khintTouch:matchMedia('(pointer:coarse)').matches,ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
     record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null};
   if(startT!=null){G.bgmIdx=chart.bgm.findIndex(b=>b.time>=startT-0.001);if(G.bgmIdx<0)G.bgmIdx=chart.bgm.length;
     G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;
@@ -3513,12 +3620,13 @@ function checkFail(){
   if(!G.gauges[G.cur].dead||G.ended)return;
   if(G.opts.gas){const i=GORDER.indexOf(G.cur),lim=G.opts.gasMin&&GORDER.includes(G.opts.gasMin)?GORDER.indexOf(G.opts.gasMin):GORDER.length-1;for(let k=i+1;k<=lim;k++){if(!G.gauges[GORDER[k]].dead){G.cur=GORDER[k];return;}}}
   if(G.auto||G.practice||G.viewer||G.tut)return;
-  G.failed=true;finish();
+  G.failed=true;G.failAt=songTime();finish();
 }
 function applyJudge(j,dt,lane){
   const c=G.counts;c[j]++;
   if(j!=='KP')G.judged++;
   if(j==='PG'||j==='GR'||j==='GD'){G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);}else if(j!=='KP')G.combo=0;
+  if((j==='BD'||j==='PR')&&!G.ghost)(G.missT||(G.missT=[])).push(songTime());
   if(dt!=null&&j!=='PR'&&j!=='KP'){G.dts.push(dt*1000);if(j!=='PG'){if(dt<0)G.fs.f++;else G.fs.s++;}}
   G.judge={j,t:performance.now(),dt:(j==='PR'||j==='KP')?null:dt};
   if(lane!=null&&(j==='PG'||j==='GR'||j==='GD'))G.bombs.push({lane,t:performance.now(),col:NEON()?(j==='PG'?'#BBFFFF':j==='GR'?'#FFD23D':'#66FF66'):CLASSIC()?(j==='PG'?'#ECEBE6':j==='GR'?'#FFD21F':'#3fd08a'):(j==='PG'?pal().hi:pal().ink)});
@@ -3738,6 +3846,12 @@ function draw(){
     g.strokeStyle=hexA(b.col,1-k);g.lineWidth=3*(1-k)+1;g.beginPath();g.arc(x,judgeY,ws[b.lane]*(0.3+0.6*k),0,Math.PI*2);g.stroke();
     g.fillStyle=hexA(b.col,(1-k)*.5);quad(xs[b.lane],judgeY-len*0.08*(1-k),ws[b.lane],len*0.08*(1-k));}
   const cx=areaX+areaW/2,jy=judgeY*0.55;
+  if(G.khint&&!BT&&nowMs-G.khint<7000&&!G.auto&&!G.replay){const a=Math.min(1,(7000-(nowMs-G.khint))/1500);
+    g.save();g.globalAlpha=a*0.85;g.textAlign='center';g.textBaseline='middle';
+    if(G.khintTouch){g.font=`${Math.round(Math.min(areaW*0.05,18))}px ${GF()}`;g.fillStyle=PP.hi;g.fillText(L('▼ 判定ラインより下のレーンをタップ','▼ Tap the lanes below the judge line'),cx,judgeY+Math.min(60,(H-judgeY)*0.45));}
+    else{const km=keyMap(G.chart.mode),inv={};for(const k in km)if(inv[km[k]]==null)inv[km[k]]=k;const kn=k=>String(k).replace(/^Key/,'').replace(/^Digit/,'').replace(/^Numpad/,'N').replace(/Left$|Right$/,'').replace('Space','␣').replace('Shift','⇧').replace('Control','Ctrl').slice(0,5);
+      g.font=`${Math.round(Math.min(areaW*0.04,15))}px ${GF()}`;for(const l of L_.order){if(xs[l]==null||inv[l]==null)continue;g.fillStyle=PP.hi;g.fillText(kn(inv[l]),xs[l]+ws[l]/2,judgeY+16);}}
+    g.restore();}
   const GHd=GHOST&&!BT&&!G.ghost&&!G.replay?GHOST:null;
   if(GHd&&S.ghost==='lane'){for(const l of L_.order){if(xs[l]==null)continue;const a=GHd.pressed[l]?1:Math.max(0,1-(nowMs-GHd.beam[l])/160);if(a<=0)continue;
     const bh=Math.max(6,nh*1.3);g.fillStyle=`rgba(255,255,255,${.4*a})`;quad(xs[l]+ws[l]*.18,judgeY-bh-4,ws[l]*.64,bh);
@@ -3952,7 +4066,8 @@ function renderRec(){
     <div class="hlp" style="margin-top:10px">${L('クリアランプの分布','Clear lamp distribution')}</div>
     <select id="recSrc"><option value="">${L('すべての曲（☆レベル別）','All songs (by ☆ level)')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select>
     <div class="lleg">${[9,8,7,6,5,4,3,2,1,0].map(i=>`<span><i style="background:${LAMPC[i]}"></i>${LAMPS[i]}</span>`).join('')}</div>
-    <div id="recDist"></div>`;
+    <div id="recDist"></div>${achHTML()}<button class="ib" id="recGloss" style="margin-top:10px">${L('用語の説明','Glossary')}</button>`;
+  $('#recGloss').onclick=openGloss;
   const sel=$('#recSrc');sel.value=TABLES.some(T=>T.url===src)?src:'';
   sel.onchange=()=>{S.recSrc=sel.value;saveS();renderDist();};
   renderDist();
@@ -4339,6 +4454,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
   }
   const R={lamp,ex,max,rate,bp,news,thisReplay};
   if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx,name:GHOST.rival};}
+  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){try{R.ach=checkAch(R);}catch(e){}}
   const delay=G.celebrate?1900:G.failed?900:300;
   if(G.course){setTimeout(()=>courseNext(R),delay);return;}
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
@@ -4371,14 +4487,19 @@ function showResult(R){
       ${statsHTML()}
       <span class="k">${L('ゲージ','Gauge')}</span><span>${GT[G.cur].n} ${Math.floor(G.gauges[G.cur].v)}%</span>
     </div>
+    ${R.ach&&R.ach.length?`<div class="advc"><b>🏆 ${L('実績を達成','Achievement unlocked')}</b>${R.ach.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:''}
+    <div id="advBox"></div>
     <div class="hlp">${L('ゲージ推移','Gauge history')}</div><canvas class="graph" id="gGraph"></canvas>
     <div class="hlp">${L('タイミング分布（左＝早い／右＝遅い）','Timing (left = early / right = late)')}</div><canvas class="graph" id="tGraph"></canvas>
     <button class="pri" id="rRetry">${L('もう一度','Retry')}</button>
     ${G.replay||G.auto?'':`<button id="rSame">${L('同じ配置でもう一度','Retry with same arrangement')}</button>`}
     ${R.thisReplay?`<button id="rReplay">${L('今のプレイをリプレイ','Watch this play')}</button>`:''}
     <button class="sec" id="rShare">${L('結果を共有','Share result')}</button>
-    <button id="rBack">${L('曲選択へ','Back to songs')}</button>`;
+    <button id="rBack">${L('曲選択へ','Back to songs')}</button>
+    <button class="ib" id="rGloss" style="margin-top:6px;border:none;color:var(--dim)">${L('？ 用語の説明（SCORE・ランプなど）','? Glossary (score, lamps…)')}</button>`;
   show('#result',true);
+  $('#rGloss').onclick=openGloss;
+  try{renderAdvice(R,meta);}catch(e){console.warn(e);}
   const SH=snapResult(R);
   requestAnimationFrame(()=>{drawGaugeGraph($('#gGraph'));drawTimingGraph($('#tGraph'));});
   $('#rRetry').onclick=()=>retry(false);
@@ -4386,6 +4507,39 @@ function showResult(R){
   $('#rBack').onclick=toLib;
   $('#rShare').onclick=()=>openShare(SH);
   if(R.thisReplay)$('#rReplay').onclick=()=>{show('#result',false);startPlay(meta,{replay:R.thisReplay});};
+}
+function renderAdvice(R,meta){
+  const box=$('#advBox');if(!box||G.auto||G.replay||G.viewer||G.tut||G.course)return;
+  const adv=[];const btn=(id,t)=>`<button class="ib" data-adv="${id}" style="margin:6px 0 0">${t}</button>`;
+  const d=G.dts||[];
+  if(G.rate===1&&d.length>=30&&!G.practice){const s=d.slice().sort((a,b)=>a-b),med=s[Math.floor(s.length/2)];
+    if(Math.abs(med)>=12){const nv=Math.max(-400,Math.min(400,Math.round(S.ofs+med)));
+      adv.push([med<0?L(`全体的に<b>早め</b>に押しています（平均 ${Math.round(-med)}ms）。判定タイミングを合わせると判定が良くなります。`,`You tend to press <b>early</b> (about ${Math.round(-med)} ms).`):L(`全体的に<b>遅め</b>に押しています（平均 ${Math.round(med)}ms）。判定タイミングを合わせると判定が良くなります。`,`You tend to press <b>late</b> (about ${Math.round(med)} ms).`),
+        btn('ofs:'+nv,L(`判定タイミングを ${nv>0?'+':''}${nv}ms にする`,`Set timing to ${nv>0?'+':''}${nv} ms`)),3]);}}
+  const c=G.chart,endT=c.endTime||(c.notes.length?c.notes[c.notes.length-1].time:1);
+  if(G.failed&&!G.practice){const ft=G.failAt!=null?G.failAt:songTime(),prog=Math.max(0,Math.min(1,ft/endT));
+    let h=L(`曲の${Math.round(prog*100)}%で落ちてしまいました。`,`Failed at ${Math.round(prog*100)}% of the song.`),b='';
+    if(['normal','hard','exhard','hazard'].includes(S.gauge)||!S.gas)b+=btn('easy',L('ゲージをEASY＋自動降格にしてもう一度','Retry on EASY with auto shift'));
+    if((c.mode==='7k'||c.mode==='5k')&&S.reduce==='off')b+=btn('4k',L('鍵盤を4つに減らしてもう一度','Retry with 4 keys'));
+    b+=btn('slow',L('再生速度×0.9で練習する（記録なし）','Practise at ×0.9 (not recorded)'));
+    adv.push([h+L('次のどれかを試すとクリアに近づきます。','Try one of these:'),b,1]);}
+  const mt=G.missT||[],ms=c.measures||[];
+  if(mt.length>=6&&ms.length>4){const mIdx=t=>{let i=0;while(i+1<ms.length&&ms[i+1].time<=t)i++;return i;};
+    const cnt=new Map();mt.forEach(t=>{const m=mIdx(t);cnt.set(m,(cnt.get(m)||0)+1);});
+    let best=null;for(const [m] of cnt){let n=0;for(let k=m;k<m+4;k++)n+=cnt.get(k)||0;if(!best||n>best.n)best={m,n};}
+    if(best&&best.n>=5&&best.n>=mt.length*0.3){const a=best.m,b=Math.min(ms.length-2,best.m+3);
+      adv.push([L(`ミスが<b>${a}〜${b}小節</b>に集中しています（${best.n}回）。`,`Misses cluster around <b>measures ${a}–${b}</b> (${best.n}).`),btn(`loop:${a}:${b}`,L('この区間をくり返し練習する','Loop-practise this section')),2]);}}
+  if(!G.failed&&R.lamp>=3&&R.lamp<=4&&S.gauge==='easy'&&R.rate>0.8)adv.push([L('余裕のクリア！ゲージをNORMALにすると、もう一段上のランプが狙えます。','Comfortable clear! Try the NORMAL gauge for a better lamp.'),btn('normal',L('ゲージをNORMALにする','Switch to NORMAL')),4]);
+  if(!adv.length)return;adv.sort((x,y)=>x[2]-y[2]);
+  box.innerHTML=adv.slice(0,2).map(([h,b])=>`<div class="advc"><b>💡 ${L('ひとことアドバイス','Tip')}</b><div>${h}</div>${b||''}</div>`).join('');
+  box.querySelectorAll('[data-adv]').forEach(x=>x.onclick=()=>{const v=x.dataset.adv;
+    if(v.startsWith('ofs:')){S.ofs=+v.slice(4);saveS();try{storeOfs();}catch(e){}syncSettings();toast(L(`判定タイミングを ${S.ofs}ms にしました`,`Timing set to ${S.ofs} ms`));x.disabled=true;x.style.opacity=.5;return;}
+    if(v==='easy'){S.gauge='easy';S.gas=true;saveS();retry(false);return;}
+    if(v==='normal'){S.gauge='normal';S.gas=true;saveS();toast(L('ゲージをNORMALにしました','Gauge set to NORMAL'));x.disabled=true;x.style.opacity=.5;return;}
+    if(v==='4k'){S.reduce='4k';saveS();retry(false);return;}
+    if(v==='slow'){show('#result',false);stopAll();startPlay(meta,{practice:{measure:0,rate:0.9,end:null,loop:false,step:0}});return;}
+    if(v.startsWith('loop:')){const [,a,b]=v.split(':').map(Number);show('#result',false);stopAll();startPlay(meta,{practice:{measure:a,rate:1,end:b,loop:true,step:0.05}});return;}
+  });
 }
 function courseNext(R){
   const cs=G.course;
