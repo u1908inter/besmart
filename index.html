@@ -54,7 +54,7 @@ h1{font:400 22px/1.2 var(--font);margin:0}
 .libhead{border:2px solid var(--ink);padding:12px 14px;margin:0 0 12px}
 .mark{font:400 clamp(30px,9vw,38px)/1 var(--font);letter-spacing:.04em}
 .libhead .tag{font-size:12px;color:var(--dim);margin-top:4px}
-.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:6;background:var(--bg);padding:6px 0}
+.acts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:6;background:var(--bg);padding:6px 0}
 .acts.stuck{box-shadow:0 -40px 0 var(--bg),0 6px 10px -6px rgba(0,0,0,.6)}
 #fsc{position:fixed;right:calc(env(safe-area-inset-right) + 2px);top:0;bottom:0;width:0;z-index:7;pointer-events:none}
 #fsc .th{position:absolute;right:0;width:40px;height:60px;pointer-events:auto;touch-action:none;display:flex;justify-content:flex-end;align-items:center;opacity:.5;transition:opacity .2s}
@@ -72,9 +72,10 @@ button:active,.btn:active,.ib:active{background:var(--hi);color:var(--bg);text-s
 button:disabled{opacity:.35}
 input[type=file]{display:none}
 .bar{display:flex;gap:6px;margin-bottom:6px}
-.bar input,.bar select,select,textarea,#urlIn,#tblUrl,#setQ,#setBody input[type=text]{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
+.bar input,.bar select,select,textarea,#urlIn,#tblUrl,#setQ,#setBody input[type=text],input[data-c],#dFldNew,#dPname{flex:1;min-width:0;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:8px 9px;font:400 14px var(--font);text-shadow:inherit}
 select option{background:var(--bg);color:var(--ink)}
 input::placeholder,textarea::placeholder{color:var(--dim)}
+input[data-c]{padding:6px 7px;flex:none}input[type=number]{-moz-appearance:textfield}input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .bar select{flex:0 0 auto}
 #songs{border-top:2px dashed var(--faint)}
 .song{display:flex;gap:10px;padding:9px 6px;cursor:pointer;align-items:center;border-left:4px solid transparent}
@@ -143,6 +144,13 @@ canvas{display:block;touch-action:none}
 .rank{font:400 80px/1 var(--font);text-align:center;color:var(--hi);text-shadow:0 0 14px var(--glow)}
 .new{display:inline-block;background:var(--ink);color:var(--bg);font:400 11px/1.4 var(--font);padding:0 4px;margin-left:6px;vertical-align:middle;text-shadow:none}
 .graph{width:100%;height:110px;border:2px solid var(--faint);margin:6px 0}
+.ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
+.ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
+.ldist .bar2 i{display:block;height:100%}
+.lleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin:4px 0 8px}
+.lleg i{display:inline-block;width:10px;height:10px;margin-right:3px;vertical-align:-1px}
+.stt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;margin:6px 0}
+.stt div{border:2px solid var(--faint);padding:6px 2px}.stt b{display:block;font-size:18px;color:var(--hi)}.stt small{color:var(--dim);font-size:11px}
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translateX(-50%);background:var(--bg);color:var(--ink);border:2px solid var(--ink);padding:10px 16px;font:400 14px var(--font);z-index:30;display:none;max-width:90%;text-align:center;white-space:pre-wrap;text-shadow:0 0 6px var(--glow)}
 .kc{display:flex;align-items:center;gap:8px;margin:6px 0}
 .kc .ln{flex:0 0 58px;text-align:center;padding:8px 0;color:var(--bg)!important;background:var(--ink)!important;text-shadow:none}
@@ -166,11 +174,12 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1845)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1845)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1919)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1919)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
     <button class="ib" id="courseBtn" data-en="Course">コース</button>
+    <button class="ib" id="recBtn" data-en="Records">記録</button>
     <button class="ib" id="outBtn" title="音の遅延">0ms</button>
     <button class="ib" id="setBtn" data-en="Settings">設定</button>
   </nav>
@@ -187,9 +196,11 @@ canvas{display:block;touch-action:none}
     <label style="display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:13px"><input type="checkbox" id="tblMiss" style="width:auto"><span data-en="Missing">未所持も表示</span></label>
   </div>
   <div class="bar" id="rndBar" style="display:none">
-    <select id="rndF"><option value="all" data-en="Any chart">全譜面から</option><option value="notclear" data-en="Not cleared">未クリアから</option><option value="noteasy" data-en="Below EASY CLEAR">EASY未満から</option><option value="failed" data-en="Not played / FAILED">未プレイ・FAILEDから</option></select>
+    <button id="fltBtn" class="ib" data-en="Filter">絞り込み</button>
     <button id="rndBtn" class="ib" data-en="Random pick">おまかせ選曲</button>
+    <button id="rndCfg" class="ib" style="flex:0 0 auto;width:auto;padding:0 12px" data-en="Conditions">条件</button>
   </div>
+  <div id="fltBox" class="card" style="display:none;padding:10px;margin:0 0 10px"></div>
   <div id="songs"></div>
   <div id="fsc" style="display:none"><div class="th"></div><div class="bub"></div></div>
   <div id="empty" class="empty">
@@ -770,7 +781,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1845)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1845)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1919)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1919)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -799,6 +810,19 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <p id="bigSum" class="hlp" style="margin:6px 0"></p>
   <button class="pri" id="bigGo" data-en="Load">読み込む</button>
   <button id="bigCancel" data-en="Cancel">やめる</button>
+</div></div>
+<div id="rndDlg" class="overlay" style="z-index:12"><div class="box card" style="max-height:92vh;overflow:auto">
+  <h2 data-en="Random pick conditions">おまかせ選曲の条件</h2>
+  <div id="rndBody"></div>
+  <div id="rndCnt" class="hlp" style="margin:8px 0"></div>
+  <button class="pri" id="rndGo" data-en="Pick with these conditions">この条件で選ぶ</button>
+  <button id="rndClr" data-en="Clear conditions">条件をクリア</button>
+  <button id="rndClose" data-en="Close">閉じる</button>
+</div></div>
+<div id="recDlg" class="overlay" style="z-index:12"><div class="box card" style="max-height:92vh;overflow:auto">
+  <h2 data-en="Records">記録</h2>
+  <div id="recBody"></div>
+  <button class="pri" id="recClose" data-en="Close">閉じる</button>
 </div></div>
 <div id="rateDlg" class="overlay" style="z-index:12"><div class="box card">
   <h2 data-en="Playback speed is changed">再生速度が変わっています</h2>
@@ -1604,7 +1628,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1643,6 +1667,11 @@ function applyI18n(){
 }
 let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem(LSK+'fav')||'[]'));}catch(e){}
 const saveFav=()=>{try{localStorage.setItem(LSK+'fav',JSON.stringify([...FAV]));}catch(e){}};
+let FOLDERS=[];try{FOLDERS=JSON.parse(localStorage.getItem(LSK+'folders')||'[]');if(!Array.isArray(FOLDERS))FOLDERS=[];}catch(e){}
+const saveFolders=()=>{try{localStorage.setItem(LSK+'folders',JSON.stringify(FOLDERS));}catch(e){}};
+let STATS={};try{STATS=JSON.parse(localStorage.getItem(LSK+'stats')||'{}')||{};}catch(e){}
+const saveStats=()=>{try{const ks=Object.keys(STATS).sort();while(ks.length>400)delete STATS[ks.shift()];localStorage.setItem(LSK+'stats',JSON.stringify(STATS));}catch(e){}};
+const dayKey=(d)=>{d=d?new Date(d):new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 const ARR_OPTS=()=>[['off','OFF'],['mirror','MIRROR'],['random','RANDOM'],['rrandom','R-RANDOM'],['srandom','S-RANDOM'],['hrandom','H-RANDOM'],['allscr','ALL-SCRATCH'],['spiral','SPIRAL'],['randomex','RANDOM-EX'],['custom',L('RANDOM（並びを指定）','RANDOM (set pattern)')]];
 function SCHEMA(){return [
  {sec:L('ゲージ・オプション','Gauge & options'),open:true,items:[
@@ -2108,7 +2137,7 @@ async function afterTableAdd(T,upd){track(upd?'table-update':'table-add',upd?'�
 }
 function renderLibrary(){
   const q=$('#q').value.trim().toLowerCase(),fm=S.fmode,so=S.sort;
-  let list=CHARTS.filter(c=>(fm==='all'||(fm==='fav'?FAV.has(c.hash):c.mode===fm))&&(!q||(c.title+' '+(c.subtitle||'')+' '+(c.artist||'')+' '+(c.genre||'')).toLowerCase().includes(q)));
+  let list=CHARTS.filter(c=>(fm==='all'||(fm==='fav'?FAV.has(c.hash):c.mode===fm))&&condOk(c,S.flt)&&(!q||(c.title+' '+(c.subtitle||'')+' '+(c.artist||'')+' '+(c.genre||'')).toLowerCase().includes(q)));
   const rec=c=>REC[c.hash]||{};
   const cmp={title:(a,b)=>a.title.localeCompare(b.title,'ja')||a.difficulty-b.difficulty||lvNum(a.level)-lvNum(b.level),
     level:(a,b)=>lvNum(a.level)-lvNum(b.level)||a.title.localeCompare(b.title,'ja'),
@@ -2116,7 +2145,7 @@ function renderLibrary(){
     score:(a,b)=>((rec(b).ex||0)/(2*b.notesN||1))-((rec(a).ex||0)/(2*a.notesN||1)),
     added:(a,b)=>b.added-a.added,artist:(a,b)=>(a.artist||'').localeCompare(b.artist||'','ja')||a.title.localeCompare(b.title,'ja')}[so]||(()=>0);
   list.sort(cmp);
-  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');
+  LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   const onlyBuiltin=CHARTS.every(c=>c.builtin);
@@ -2168,13 +2197,63 @@ function fscLabel(){
   th.addEventListener('pointerup',end);th.addEventListener('pointercancel',end);
 })();
 $('#q').oninput=renderLibrary;
-$('#rndBtn').onclick=()=>{
-  const f=$('#rndF').value,lamp=c=>(REC[c.hash]||{}).lamp||0;
-  const ok={all:()=>true,notclear:c=>lamp(c)<4,noteasy:c=>lamp(c)<3,failed:c=>lamp(c)<=1}[f]||(()=>true);
-  const pool=LIBLIST.filter(ok);
-  if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return;}
-  openDetail(pool[Math.floor(Math.random()*pool.length)]);
+/* ---------- conditions shared by the list filter and random pick ---------- */
+function condOk(c,f){
+  if(!f)return true;const r=REC[c.hash]||{},lp=r.lamp||0;
+  if(f.fd==='fav'&&!FAV.has(c.hash))return false;
+  if(f.fd&&f.fd.startsWith('f:')){const F=FOLDERS.find(x=>x.name===f.fd.slice(2));if(!F||!F.hashes.includes(c.hash))return false;}
+  if(f.km&&f.km!=='all'&&c.mode!==f.km)return false;
+  if(f.st&&f.st!=='all'){const ok={np:lp===0,nc:lp<4,ne:lp<3,nh:lp<5,nfc:lp<7,pl:lp>0}[f.st];if(ok===false)return false;}
+  const num=v=>(v===''||v==null||isNaN(+v))?null:+v,rng=(x,a,b)=>{a=num(a);b=num(b);return (a==null||x>=a)&&(b==null||x<=b);};
+  if(!rng(lvNum(c.level),f.lv0,f.lv1))return false;
+  if(!rng(Math.round(c.mainB||c.bpm||0),f.bp0,f.bp1))return false;
+  if(!rng(c.notesN||0,f.n0,f.n1))return false;
+  if(+f.rec>0&&r.last&&Date.now()-r.last<(+f.rec)*86400000)return false;
+  return true;
+}
+function condCount(f){return ['fd','km','st'].filter(k=>f[k]&&f[k]!=='all').length+[['lv0','lv1'],['bp0','bp1'],['n0','n1']].filter(([a,b])=>(f[a]!==''&&f[a]!=null)||(f[b]!==''&&f[b]!=null)).length+(+f.rec>0?1:0);}
+function condHTML(o){
+  const sel=(k,opts)=>`<select data-c="${k}">${opts.map(([v,t])=>`<option value="${esc(v)}">${esc(t)}</option>`).join('')}</select>`;
+  const pair=(a,b,ph)=>`<span style="display:flex;gap:4px;align-items:center"><input data-c="${a}" type="number" inputmode="decimal" placeholder="${ph}" style="width:4.6em"> 〜 <input data-c="${b}" type="number" inputmode="decimal" placeholder="${ph}" style="width:4.6em"></span>`;
+  let h='';
+  if(o.src)h+=`<div class="row"><span>${L('選ぶ範囲','Pick from')}</span>${sel('src',[['all',L('すべての曲','All songs')],['list',L('いま一覧に出ている曲','Songs in the list now')]])}</div>`;
+  h+=`<div class="row"><span>${L('フォルダ','Folder')}</span>${sel('fd',[['',L('すべて','All')],['fav','★ '+L('お気に入り','Favourites')]].concat(FOLDERS.map(F=>['f:'+F.name,'📁 '+F.name])))}</div>`;
+  if(o.km)h+=`<div class="row"><span>${L('鍵盤','Keys')}</span>${sel('km',[['all',L('すべて','All')],['5k','5K'],['7k','7K'],['9k','9K'],['10k','10K'],['14k','14K']])}</div>`;
+  h+=`<div class="row"><span>${L('クリア状況','Clear status')}</span>${sel('st',[['all',L('すべて','All')],['np',L('未プレイ','Not played')],['nc',L('CLEAR未満','Below CLEAR')],['ne',L('EASY CLEAR未満','Below EASY')],['nh',L('HARD CLEAR未満','Below HARD')],['nfc',L('フルコン未満','Below FULL COMBO')],['pl',L('プレイ済み','Played')]])}</div>`;
+  h+=`<div class="row"><span>${L('レベル','Level')}</span>${pair('lv0','lv1','☆')}</div>`;
+  h+=`<div class="row"><span>BPM</span>${pair('bp0','bp1','')}</div>`;
+  h+=`<div class="row"><span>${L('ノーツ数','Notes')}</span>${pair('n0','n1','')}</div>`;
+  if(o.rec)h+=`<div class="row"><span>${L('最近遊んだ曲','Recently played')}</span>${sel('rec',[['0',L('含める','Include')],['1',L('1日以内は除く','Skip last 1 day')],['3',L('3日以内は除く','Skip last 3 days')],['7',L('7日以内は除く','Skip last 7 days')]])}</div>`;
+  return h;
+}
+function wireCond(box,f,on){box.querySelectorAll('[data-c]').forEach(el=>{const k=el.dataset.c;
+  if(el.tagName==='SELECT'){if(f[k]!=null&&[...el.options].some(o=>o.value===String(f[k])))el.value=String(f[k]);else el.selectedIndex=0;}else el.value=f[k]??'';
+  const h=()=>{f[k]=el.value;saveS();on&&on();};el.onchange=h;if(el.tagName==='INPUT')el.oninput=h;});}
+function fltSync(){const n=condCount(S.flt||{}),b=$('#fltBtn');if(!b)return;b.textContent=n?L(`絞り込み（${n}）`,`Filter (${n})`):L('絞り込み','Filter');b.classList.toggle('pri',n>0);}
+function renderFlt(){
+  const box=$('#fltBox');S.flt=S.flt||{};
+  box.innerHTML=condHTML({})+`<div class="btns"><button class="ib" id="fltClr">${L('条件をクリア','Clear')}</button><button class="ib" id="fltFold">${L('フォルダの管理','Manage folders')}</button></div><div id="fltFoldBox"></div>`;
+  wireCond(box,S.flt,()=>renderLibrary());
+  $('#fltClr').onclick=()=>{S.flt={};saveS();renderFlt();renderLibrary();};
+  $('#fltFold').onclick=()=>renderFoldMgr($('#fltFoldBox'));
+}
+function renderFoldMgr(b){
+  b.innerHTML=(FOLDERS.length?FOLDERS.map((F,i)=>`<div class="row" style="gap:6px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">📁 ${esc(F.name)} <small>(${F.hashes.length})</small></span><button class="ib" data-rn="${i}">${L('名前','Rename')}</button><button class="ib" data-dl="${i}">${L('削除','Delete')}</button></div>`).join(''):`<div class="hlp">${L('フォルダはまだありません。曲の詳細の 📁 から作れます','No folders yet. Create one from 📁 in a song’s details')}</div>`);
+  b.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>{const F=FOLDERS[+x.dataset.rn];const nm=(prompt(L('新しいフォルダ名','New folder name'),F.name)||'').trim();if(!nm||FOLDERS.some(G=>G!==F&&G.name===nm))return;if(S.flt.fd==='f:'+F.name)S.flt.fd='f:'+nm;if(S.rnd.fd==='f:'+F.name)S.rnd.fd='f:'+nm;F.name=nm;saveFolders();saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
+  b.querySelectorAll('[data-dl]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dl;if(x.dataset.ok!=='1'){x.dataset.ok='1';x.textContent=L('本当に削除','Really delete');return;}const F=FOLDERS[i];FOLDERS.splice(i,1);saveFolders();if(S.flt.fd==='f:'+F.name)S.flt.fd='';if(S.rnd.fd==='f:'+F.name)S.rnd.fd='';saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
+}
+$('#fltBtn').onclick=()=>{const b=$('#fltBox'),on=b.style.display==='none';if(on)renderFlt();show('#fltBox',on,'block');};
+function rndPool(){const f=S.rnd||{};return (f.src==='list'?LIBLIST:CHARTS).filter(c=>condOk(c,f));}
+function rndPick(){const pool=rndPool();if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return false;}openDetail(pool[Math.floor(Math.random()*pool.length)]);return true;}
+$('#rndBtn').onclick=rndPick;
+$('#rndCfg').onclick=()=>{
+  const box=$('#rndBody');S.rnd=S.rnd||{src:'all'};box.innerHTML=condHTML({src:1,km:1,rec:1});
+  const cnt=()=>{$('#rndCnt').textContent=L(`条件に合う譜面：${rndPool().length}`,`Matching charts: ${rndPool().length}`);};
+  wireCond(box,S.rnd,cnt);cnt();show('#rndDlg',true);
 };
+$('#rndGo').onclick=()=>{if(rndPool().length){show('#rndDlg',false);rndPick();}else toast(L('条件に合う譜面がありません','No chart matches'));};
+$('#rndClr').onclick=()=>{S.rnd={src:'all'};saveS();$('#rndCfg').onclick();};
+$('#rndClose').onclick=()=>show('#rndDlg',false);
 $('#tblSel').onchange=e=>{S.table=e.target.value;saveS();renderLibrary();};
 $('#tblMiss').onchange=e=>{S.tblMissing=e.target.checked;saveS();renderLibrary();};
 loadTables().then(()=>{if(S.table)renderLibrary();});
@@ -2346,6 +2425,9 @@ async function importBig(gr,st){
   }
 }
 async function importFiles(list,io){io=io||{};
+  for(const f of list.slice()){if(!/\.json$/i.test(f.name)||f.size>16e6)continue;let o=null;try{o=JSON.parse(await f.text());}catch(e){continue;}
+    if(o&&o.app==='BeSmart'&&o.kind==='replay'){list=list.filter(x=>x!==f);try{const c=await importRival(o);S.ghostVs='rival';saveS();toast(L(`ライバル「${o.name||'RIVAL'}」を読み込みました：${c.title}（EX ${o.ex|0}）`,`Loaded rival “${o.name||'RIVAL'}”: ${c.title} (EX ${o.ex|0})`),3500);if(list.length===0)openDetail(c);}catch(e){toast('⚠ '+e.message,4500);}}}
+  if(!list.length)return;
   const groups=[],loose=[];
   for(const f of list){const k=kindOf(f.name);if(k)groups.push({kind:k,file:f,name:f.name});else loose.push(f);}
   if(loose.length){
@@ -2452,17 +2534,57 @@ function densityCanvas(c){
   });
   return cv;
 }
+/* ---------- rival replays (stored next to your own as 'rival:'+hash) ---------- */
+const RIV=h=>'rival:'+h;
+async function exportReplay(c,rep){
+  const nm=(localStorage.getItem(LSK+'pname')||'').trim()||'PLAYER';
+  const d={app:'BeSmart',kind:'replay',v:1,name:nm,title:c.title+(c.subtitle?' '+c.subtitle:''),md5:c.md5||'',sha256:c.sha256||'',hash:c.hash,ex:rep.ex,max:c.notesN*2,lamp:rep.lamp||0,seed:rep.seed,opts:rep.opts,ofs:rep.ofs,events:rep.events,date:rep.date||Date.now()};
+  const fn=('BeSmart_'+(c.title||'replay').slice(0,40)+'_'+nm+'.json').replace(/[\\/:*?"<>|\s]+/g,'_');
+  const blob=new Blob([JSON.stringify(d)],{type:'application/json'});
+  track('replay-export','リプレイ書き出し');
+  try{const file=new File([blob],fn,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'BeSmart',text:`${d.title} EX ${d.ex}`});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  toast(L('リプレイのファイルを保存しました','Replay file saved'));
+}
+async function importRival(o,want){
+  if(!o||o.app!=='BeSmart'||o.kind!=='replay'||!Array.isArray(o.events))throw new Error(L('BeSmartのリプレイのファイルではありません','Not a BeSmart replay file'));
+  const lc=x=>String(x||'').toLowerCase();
+  const hit=x=>x.hash===o.hash||(o.sha256&&lc(x.sha256)===lc(o.sha256))||(o.md5&&lc(x.md5)===lc(o.md5));
+  const c=want&&hit(want)?want:CHARTS.find(hit);
+  if(!c)throw new Error(L(`この譜面（${o.title||'?'}）が入っていません。同じ譜面を追加してから読み込んでください`,`You don’t have this chart (${o.title||'?'}). Add it first`));
+  if(want&&c!==want)throw new Error(L(`このファイルは別の譜面（${o.title||'?'}）のリプレイです`,`This replay is for a different chart (${o.title||'?'})`));
+  await DB.put('replays',{hash:RIV(c.hash),rhash:c.hash,rname:String(o.name||'RIVAL').slice(0,20),ex:o.ex|0,lamp:o.lamp|0,seed:o.seed>>>0,opts:o.opts||{},ofs:+o.ofs||0,events:o.events,date:o.date||Date.now()});
+  track('rival-import','ライバル読み込み');return c;
+}
+function renderDFld(b,c){
+  b.innerHTML=(FOLDERS.map((F,i)=>`<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" data-i="${i}" style="width:auto" ${F.hashes.includes(c.hash)?'checked':''}>📁 ${esc(F.name)} <small style="color:var(--dim)">(${F.hashes.length})</small></label>`).join('')||`<div class="hlp">${L('フォルダを作って、好きな曲をまとめられます','Make folders to group songs you like')}</div>`)
+    +`<div style="display:flex;gap:6px;margin-top:6px"><input id="dFldNew" maxlength="30" placeholder="${L('新しいフォルダ名','New folder name')}" style="flex:1;min-width:0"><button class="ib" id="dFldAdd" style="width:auto">${L('作って入れる','Create & add')}</button></div>`;
+  b.querySelectorAll('[data-i]').forEach(x=>x.onchange=()=>{const F=FOLDERS[+x.dataset.i];const k=F.hashes.indexOf(c.hash);if(x.checked&&k<0)F.hashes.push(c.hash);if(!x.checked&&k>=0)F.hashes.splice(k,1);saveFolders();renderLibrary();renderDFld(b,c);});
+  $('#dFldAdd').onclick=()=>{const nm=$('#dFldNew').value.trim();if(!nm)return;let F=FOLDERS.find(x=>x.name===nm);if(!F){F={name:nm,hashes:[]};FOLDERS.push(F);}if(!F.hashes.includes(c.hash))F.hashes.push(c.hash);saveFolders();renderLibrary();renderDFld(b,c);toast(L(`「${nm}」に入れました`,`Added to “${nm}”`));};
+}
+function drawHist(cv,hist,notes){
+  const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;const x=cv.getContext('2d');x.scale(d,d);
+  const W=r.width,H=r.height,ink=getComputedStyle(document.body).getPropertyValue('--hi')||'#fc3',dim=getComputedStyle(document.body).getPropertyValue('--faint')||'#444';
+  const pts=hist.map(h=>h[1]/(2*notes||1)),lo=Math.max(0,Math.floor((Math.min(...pts)-0.02)*20)/20),hi=Math.min(1,Math.ceil((Math.max(...pts)+0.01)*20)/20);
+  const yOf=v=>H-6-(v-lo)/Math.max(0.01,hi-lo)*(H-18),xOf=i=>8+i/(pts.length-1)*(W-16);
+  x.strokeStyle=dim;x.lineWidth=1;x.font='10px sans-serif';x.fillStyle=dim;
+  for(const[v,t] of [[8/9,'AAA'],[7/9,'AA'],[6/9,'A']])if(v>lo&&v<hi){x.beginPath();x.moveTo(0,yOf(v));x.lineTo(W,yOf(v));x.stroke();x.fillText(t,2,yOf(v)-2);}
+  x.strokeStyle=ink;x.lineWidth=2;x.beginPath();pts.forEach((v,i)=>{i?x.lineTo(xOf(i),yOf(v)):x.moveTo(xOf(i),yOf(v));});x.stroke();
+  pts.forEach((v,i)=>{x.fillStyle=LAMPC[hist[i][3]||0];x.fillRect(xOf(i)-2.5,yOf(v)-2.5,5,5);});
+  x.fillStyle=ink;x.textAlign='right';x.fillText(`${(pts[pts.length-1]*100).toFixed(1)}%`,W-4,10);
+}
 async function openDetail(c){
   const r=REC[c.hash]||{};
   const rate=r.ex?r.ex/(2*c.notesN):0;
-  let rep=null;try{rep=await DB.get('replays',c.hash);}catch(e){}
+  let rep=null,riv=null;try{rep=await DB.get('replays',c.hash);riv=await DB.get('replays',RIV(c.hash));}catch(e){}
   const bpm=c.minB!==c.maxB?`${Math.round(c.minB)}-${Math.round(c.maxB)}（${L('主','main')} ${Math.round(c.mainB)}）`:Math.round(c.bpm);
   const rk=['VERY HARD','HARD','NORMAL','EASY','VERY EASY'][c.rank]||'NORMAL';
   const box=$('#detailBox');
   const fav=FAV.has(c.hash);
   box.innerHTML=`${c.thumb?`<img class="thumb" src="${c.thumb}">`:''}
     <div style="display:flex;gap:8px;align-items:flex-start"><div class="dt" style="flex:1"><span class="lv d${c.difficulty||0}">${DIFN()[c.difficulty]||''} ☆${esc(c.level||'?')}</span><br>${esc(c.title)} ${esc(c.subtitle||'')}</div>
-      <button class="ib" id="dFav" style="width:auto;margin:0;font-size:20px;color:${fav?'#fd3':'#889'}">${fav?'★':'☆'}</button></div>
+      <button class="ib" id="dFld" style="width:auto;margin:0;font-size:18px" title="${L('フォルダ','Folder')}">📁</button><button class="ib" id="dFav" style="width:auto;margin:0;font-size:20px;color:${fav?'#fd3':'#889'}">${fav?'★':'☆'}</button></div>
+    <div id="dFldBox" class="card" style="display:none;padding:8px 10px;margin:6px 0"></div>
     <div class="ds">${esc(c.artist||'')} ${esc(c.subartist||'')}${c.genre?' ／ '+esc(c.genre):''}</div>
     <div class="grid"><span class="k">${L('鍵盤','Keys')}</span><span>${c.mode.toUpperCase()}</span><span class="k">BPM</span><span>${bpm}</span>
       <span class="k">${L('ノーツ','Notes')}</span><span>${c.notesN}${c.ln?`（LN ${c.ln}）`:''}${c.mines?` ${L('地雷','mines ')}${c.mines}`:''}</span><span class="k">${L('判定','Judge')}</span><span>${c.defexrank?'RANK '+c.defexrank+'%':rk}</span>
@@ -2472,15 +2594,26 @@ async function openDetail(c){
       <span class="k">${L('ランプ','Clear')}</span><span style="color:${LAMPC[r.lamp||0]};font-weight:800">${LAMPS[r.lamp||0]}</span><span class="k">${L('ランク','Rank')}</span><span>${r.ex?rankOf(rate):'-'}</span>
       <span class="k">SCORE</span><span>${r.ex?`${r.ex}（${(rate*100).toFixed(2)}%）`:'-'}</span><span class="k">BP</span><span>${r.bp??'-'}</span>
       <span class="k">${L('最大コンボ','Max combo')}</span><span>${r.combo||'-'}</span><span class="k">${L('プレイ回数','Plays')}</span><span>${r.plays||0}</span>
-      ${['4k','5k'].filter(m=>r.red&&r.red[m]&&r.red[m].plays).map(m=>{const q=r.red[m],rr=q.max?q.ex/q.max:0;return `<span class="k">${RED_N[m]}${L('変換','')}</span><span style="grid-column:span 3"><b style="color:${LAMPC[q.lamp||0]}">${LAMPS[q.lamp||0]}</b>　${q.ex?`${rankOf(rr)}（${(rr*100).toFixed(2)}%）`:''}　${L('プレイ','plays')} ${q.plays}</span>`;}).join('')}</div></div>
+      ${['4k','5k'].filter(m=>r.red&&r.red[m]&&r.red[m].plays).map(m=>{const q=r.red[m],rr=q.max?q.ex/q.max:0;return `<span class="k">${RED_N[m]}${L('変換','')}</span><span style="grid-column:span 3"><b style="color:${LAMPC[q.lamp||0]}">${LAMPS[q.lamp||0]}</b>　${q.ex?`${rankOf(rr)}（${(rr*100).toFixed(2)}%）`:''}　${L('プレイ','plays')} ${q.plays}</span>`;}).join('')}</div>${(r.hist||[]).length>=2?`<div class="hlp" style="margin:8px 0 0">${L('スコアの推移（最近','Score history (last ')}${r.hist.length}${L('回）',' plays)')}</div><canvas class="graph" id="dHist" style="height:90px"></canvas>`:''}</div>
     <div id="dPv" class="hlp" style="margin:4px 0 0;min-height:1.2em;color:var(--hi)"></div>
     <div class="dopts" id="dOpts"></div>
     <button class="pri" id="dPlay">${L('プレイする','Play')}</button>
     <div class="btns"><button id="dAuto">${L('オートプレイ','Autoplay')}</button><button id="dView">${L('譜面ビューア','Chart viewer')}</button></div>
     ${(BATTLE_MODES.includes(c.mode)||((S.reduce==='4k'||S.reduce==='5k')&&(c.mode==='7k'||c.mode==='5k')))&&!c.demo?`<button id="dBattle">${L('2人で対戦（バトル）','2-player battle')}</button>`:''}
     <button id="dRep" ${rep?'':'disabled style="opacity:.4"'}>${L('ベストのリプレイ','Watch best replay')}</button>
+    ${c.demo?'':`<details class="card" style="margin-top:6px"><summary>${L('ライバル（友達のゴースト）','Rival (a friend’s ghost)')}${riv?`：${esc(riv.rname)}`:''}</summary><div class="in">
+      ${riv?`<div class="row"><span>${esc(riv.rname)}</span><span>EX ${riv.ex}（${(riv.ex/(2*c.notesN)*100).toFixed(2)}%）<button class="ib" id="dRivDel" style="width:auto;margin-left:6px">${L('削除','Delete')}</button></span></div>
+      <div class="row"><span>${L('ゴーストの相手','Ghost opponent')}</span><select id="dGvs"><option value="best">${L('自己ベスト','Personal best')}</option><option value="rival">${L('ライバル','Rival')}</option></select></div>
+      <button id="dRivWatch">${L('ライバルのリプレイを見る','Watch rival replay')}</button>`:`<div class="hlp">${L('友達から届いたリプレイのファイルを読み込むと、その記録をゴーストにして勝負できます。','Load a replay file from a friend to race their record as a ghost.')}</div>`}
+      <label class="btn" for="rivIn" style="margin:6px 0">${L('ライバルのリプレイを読み込む','Load a rival replay')}</label><input type="file" id="rivIn" accept=".json,application/json" style="display:none">
+      <div class="row"><span>${L('自分の名前','Your name')}</span><input id="dPname" maxlength="20" style="max-width:55%" placeholder="PLAYER"></div>
+      <button id="dRepOut" ${rep?'':'disabled style="opacity:.4"'}>${L('自分のベストを書き出す（友達に送る）','Export my best (send to a friend)')}</button>
+      <div class="hlp">${L('書き出したファイルを送り、相手が同じ曲で「ライバルのリプレイを読み込む」から選ぶと対戦できます。ゴーストは設定 → ゴースト がOFF以外のときに出ます。','Send the file; your friend picks it with “Load a rival replay” on the same song. The ghost appears when Settings → Ghost is not OFF.')}</div></div></details>`}
     <details class="card" style="margin-top:6px"><summary>${L('練習モード','Practice')}</summary><div class="in">
       <div class="row"><span>${L('開始小節','Start measure')}</span><input type="range" id="pM" min="0" max="${Math.max(0,(c.measures||2)-2)}" step="1" value="0"><output id="pMo">0</output></div>
+      <div class="row"><span>${L('終了小節','End measure')}</span><input type="range" id="pE" min="0" max="${Math.max(0,(c.measures||2)-1)}" step="1" value="${Math.max(0,(c.measures||2)-1)}"><output id="pEo"></output></div>
+      <div class="row"><span>${L('区間をくり返す','Loop the section')}</span><select id="pL"><option value="0">OFF</option><option value="1">ON</option></select></div>
+      <div class="row"><span>${L('ノーミスで速度アップ','Speed up on no-miss')}</span><select id="pU"><option value="0">OFF</option><option value="0.05">+0.05</option><option value="0.1">+0.10</option></select></div>
       <div class="row"><span>${L('再生速度','Speed')}</span><input type="range" id="pR" min="0.5" max="1.5" step="0.05" value="${S.rate}"><output id="pRo"></output></div>
       <div class="hlp">${L('練習モードと速度変更プレイはスコアを記録しません。','Practice and speed-changed plays are not recorded.')}</div>
       <button class="sec" id="dPrac">${L('練習開始','Start practice')}</button></div></details>
@@ -2489,7 +2622,17 @@ async function openDetail(c){
     <button id="dClose">${L('閉じる','Close')}</button>`;
   $('#dens').appendChild(densityCanvas(c));
   const pM=$('#pM'),pR=$('#pR');
-  const upP=()=>{$('#pMo').textContent=pM.value;$('#pRo').textContent='×'+(+pR.value).toFixed(2);};pM.oninput=upP;pR.oninput=()=>{S.rate=+pR.value;saveS();upP();};upP();
+  const pE=$('#pE');
+  const upP=()=>{if(+pE.value<+pM.value)pE.value=pM.value;$('#pMo').textContent=pM.value;$('#pEo').textContent=+pE.value>=+pE.max?L('最後','end'):pE.value;$('#pRo').textContent='×'+(+pR.value).toFixed(2);};pM.oninput=upP;pE.oninput=()=>{if(+pE.value<+pM.value)pM.value=pE.value;upP();};pR.oninput=()=>{S.rate=+pR.value;saveS();upP();};upP();
+  if($('#dHist'))requestAnimationFrame(()=>drawHist($('#dHist'),r.hist,c.notesN));
+  $('#dFld').onclick=()=>{const b=$('#dFldBox'),on=b.style.display==='none';show('#dFldBox',on,'block');if(on)renderDFld(b,c);};
+  if($('#dPname')){$('#dPname').value=localStorage.getItem(LSK+'pname')||'';$('#dPname').oninput=e=>{try{localStorage.setItem(LSK+'pname',e.target.value.trim());}catch(_){}};}
+  if($('#dRepOut')&&rep)$('#dRepOut').onclick=()=>exportReplay(c,rep);
+  if($('#rivIn'))$('#rivIn').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+    try{const o=JSON.parse(await f.text());const cc=await importRival(o,c);S.ghostVs='rival';saveS();toast(L(`ライバル「${o.name||'RIVAL'}」を読み込みました（EX ${o.ex|0}）`,`Loaded rival “${o.name||'RIVAL'}” (EX ${o.ex|0})`),3000);openDetail(cc);}catch(err){toast('⚠ '+err.message,4500);}};
+  if(riv){$('#dGvs').value=S.ghostVs==='rival'?'rival':'best';$('#dGvs').onchange=e=>{S.ghostVs=e.target.value;saveS();};
+    $('#dRivDel').onclick=async()=>{await DB.del('replays',RIV(c.hash));toast(L('ライバルを削除しました','Rival removed'));openDetail(c);};
+    $('#dRivWatch').onclick=()=>{close();startPlay(c,{replay:riv});};}
   const close=()=>{stopPreview();show('#detail',false);};
   $('#dClose').onclick=close;
   $('#detail').onclick=e=>{if(e.target.id==='detail')close();};
@@ -2505,7 +2648,7 @@ async function openDetail(c){
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
   if(rep)$('#dRep').onclick=()=>{close();startPlay(c,{replay:rep});};
-  $('#dPrac').onclick=()=>{close();startPlay(c,{practice:{measure:+pM.value,rate:+pR.value}});};
+  $('#dPrac').onclick=()=>{close();const en=+pE.value>=+pE.max?null:+pE.value;startPlay(c,{practice:{measure:+pM.value,rate:+pR.value,end:en,loop:$('#pL').value==='1',step:+$('#pU').value}});};
   if($('#dDel'))$('#dDel').onclick=async()=>{
     const n=CHARTS.filter(x=>x.archiveId===c.archiveId).length;
     $('#dDel').textContent=L(`本当に削除する（${n}譜面）`,`Really delete (${n} charts)`);$('#dDel').onclick=async()=>{
@@ -2563,7 +2706,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],courses:COURSES,settings:S,presets:PRESETS,replays};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,courses:COURSES,settings:S,presets:PRESETS,replays};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -2651,10 +2794,12 @@ $('#impIn').onchange=async e=>{
 $('#impCancel').onclick=()=>{impData=null;show('#impDlg',false);};
 $('#impGo').onclick=async()=>{
   const d=impData;if(!d)return;const replace=$$('input[name=impMode]')[1].checked;
-  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
+  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);FOLDERS=Array.isArray(d.folders)?d.folders:[];STATS=d.stats||{};COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
   else{
     for(const k in d.rec)REC[k]=mergeRecOne(REC[k],d.rec[k]);
     (d.fav||[]).forEach(x=>FAV.add(x));
+    (Array.isArray(d.folders)?d.folders:[]).forEach(F=>{if(!F||!F.name)return;const M=FOLDERS.find(x=>x.name===F.name);if(M)(F.hashes||[]).forEach(h=>{if(!M.hashes.includes(h))M.hashes.push(h);});else FOLDERS.push({name:F.name,hashes:(F.hashes||[]).slice()});});
+    for(const k in (d.stats||{})){const a=STATS[k],b=d.stats[k];if(!a||(b.p||0)>(a.p||0))STATS[k]=b;}
     const ids=new Set(COURSES.map(c=>c.id));(d.courses||[]).forEach(c=>{if(c&&!ids.has(c.id))COURSES.push(c);});
   }
   let nr=0;
@@ -2662,7 +2807,7 @@ $('#impGo').onclick=async()=>{
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
   if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
-  saveRec();saveFav();saveCourses();impData=null;show('#impDlg',false);
+  saveRec();saveFav();saveFolders();saveStats();saveCourses();impData=null;show('#impDlg',false);
   toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
   buildSettings();renderPwaBox();if(typeof applyPhosphor==='function')applyPhosphor();
 };
@@ -3117,12 +3262,15 @@ async function startPlay(meta,mode){
       let GH=null;
       const canGhost=S.ghost!=='off'&&!meta.demo&&!mode.auto&&!mode.practice&&!mode.replay&&!mode.viewer&&!mode.tutorial&&!mode.course&&base2===base&&!(opts.playRate&&opts.playRate!==1);
       if(canGhost){try{
-        const rp=await DB.get('replays',meta.hash);
-        if(rp&&rp.events&&rp.events.length&&(rp.opts.judgeBase||'lr2')===(opts.judgeBase||'lr2')&&(rp.opts.lnmode||'ln')===(opts.lnmode||'ln')&&!(rp.opts.reduce&&rp.opts.reduce!=='off')){
+        let rp=null;if(S.ghostVs==='rival')rp=await DB.get('replays',RIV(meta.hash));
+        if(!rp)rp=await DB.get('replays',meta.hash);
+        const okG=rp&&rp.events&&rp.events.length&&(rp.opts.judgeBase||'lr2')===(opts.judgeBase||'lr2')&&(rp.opts.lnmode||'ln')===(opts.lnmode||'ln')&&!(rp.opts.reduce&&rp.opts.reduce!=='off');
+        if(rp&&!okG)toast(L('ゴーストの記録と「判定幅の基準」か「LNの種類」の設定が違うため、ゴーストなしで始めます','Ghost skipped: its judge basis or LN type differs from your settings'),3000);
+        if(okG){
           const gb=compileBase(text,ext,mulberry32(rp.seed^0x5bd1e995));
           const gc=makePlay(gb,Object.assign({},rp.opts,{seed:rp.seed}));
           startGame(gc,{},{},Object.assign({},so,{opts:rp.opts,seed:rp.seed,replay:rp}));GH=G;
-          GH.noSound=true;GH.ksAuto=true;GH.ghost=true;
+          GH.noSound=true;GH.ksAuto=true;GH.ghost=true;GH.rival=rp.rname||null;
         }}catch(e){console.warn('ghost',e);GH=null;}}
       startGame(chart,buffers,images,so);
       if(GH){GH.clock0=G.clock0;GH.T0=G.T0;GHOST=GH;}
@@ -3232,11 +3380,12 @@ function startGame(chart,buffers,images,o){
     autoLanes,laneIdx:Array(chart.M.lanes).fill(0),mineIdx:Array(chart.M.lanes).fill(0),laneLast:Array(chart.M.lanes).fill(null),
     pressed:Array(chart.M.lanes).fill(false),beam:Array(chart.M.lanes).fill(-9),bombs:[],judge:null,fs:{f:0,s:0},dts:[],glog:[],
     rafT:[],drawT:[],lastDraw:0,bgmIdx:0,autoIdx:0,bgaIdx:0,layerIdx:0,poorIdx:0,curBga:null,curLayer:null,curPoor:null,poorUntil:0,
-    rec:[],repIdx:0,ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
+    rec:[],repIdx:0,t0ms:performance.now(),ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
     record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null};
   if(startT!=null){G.bgmIdx=chart.bgm.findIndex(b=>b.time>=startT-0.001);if(G.bgmIdx<0)G.bgmIdx=chart.bgm.length;
     G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;
     resumeTails(startT,false);}
+  if(o.practice&&o.practice.end!=null){const mE=chart.measures[o.practice.end+1];G.pracEnd=mE?mE.time:null;G.pracSt=startT;G.pracLoops=1;G.pracG=JSON.parse(JSON.stringify(gauges));}
   hold.clear();ptr.clear();ctrlPtr=null;
   ['#lib','#settings','#course','#result','#pause','#title','#cnext'].forEach(s=>show(s,false));
   show('#game',true,'block');show('#pauseBtn',!o.viewer,'block');document.body.classList.toggle('noscan',FLAT()||S.eco);show('#vbar',!!o.viewer,'flex');wakeOn();
@@ -3357,12 +3506,13 @@ function breakLN(n,lane){
   applyJudge('PR',null,lane);
 }
 
-function schedSound(at){const c=G.chart,ahead=at+0.25*G.rate;
+function schedSound(at){const c=G.chart,ahead=G.pracEnd!=null&&G.practice&&G.practice.loop?Math.min(at+0.25*G.rate,G.pracEnd+0.05):at+0.25*G.rate;
   while(G.bgmIdx<c.bgm.length&&c.bgm[G.bgmIdx].time<ahead){const e=c.bgm[G.bgmIdx++];playSound(e.id,toCtx(e.time),'bgm');}
   while(G.autoIdx<c.notes.length&&c.notes[G.autoIdx].time<ahead){const e=c.notes[G.autoIdx++];if((G.ksAuto||G.autoLanes.has(e.lane))&&(e.state!==2||BT))playSound(e.id,toCtx(e.time),'key');}}
 function update(){
   const now=performance.now(),dtF=G.lastFrame?Math.min(0.1,(now-G.lastFrame)/1000):0;G.lastFrame=now;
   const t=songTime(),at=audioTime(),c=G.chart;
+  if(G.pracEnd!=null&&t>G.pracEnd+G.W.BD*G.rate+0.15){if(G.practice.loop){pracLoop();return;}else{G.pracEnd=null;finish();return;}}
   if(!G.noSound)schedSound(at);
   const dtime=t+S.vofs/1000;
   while(G.bgaIdx<c.bga.length&&c.bga[G.bgaIdx].time<=dtime){const ev=c.bga[G.bgaIdx],im=G.images[ev.id];if(im){if(G.curVid&&G.curVid.v!==im){try{G.curVid.v.pause();}catch(e){}G.curVid=null;}G.curBga=im;if(im._isVideo)G.curVid={v:im,te:ev.time};}G.bgaIdx++;}
@@ -3514,7 +3664,7 @@ function draw(){
     g.fillStyle=`rgba(255,255,255,${.9*a})`;quad(xs[l]+ws[l]*.18,judgeY-bh-4,ws[l]*.64,2);}}
   if(GHd&&G.judged>0){const me=G.counts.PG*2+G.counts.GR,ge=GHd.counts.PG*2+GHd.counts.GR,d=me-ge;
     g.textAlign='center';g.textBaseline='middle';g.font=`${Math.round(Math.min(areaW*0.045,16))}px ${GF()}`;
-    g.fillStyle=d>0?'#6cf':d<0?'#f77':PP.dim;g.fillText(`GHOST ${d>0?'+':d<0?'−':'±'}${Math.abs(d)}`,cx,jy+Math.min(areaW*0.11,44)*1.35);}
+    g.fillStyle=d>0?'#6cf':d<0?'#f77':PP.dim;g.fillText(`${GHd.rival?'RIVAL':'GHOST'} ${d>0?'+':d<0?'−':'±'}${Math.abs(d)}`,cx,jy+Math.min(areaW*0.11,44)*1.35);}
   if(G.judge&&nowMs-G.judge.t<600&&!G.viewer){
     const J=G.judge,k=Math.min(1,(nowMs-J.t)/60);
     g.textAlign='center';g.textBaseline='middle';
@@ -3690,6 +3840,67 @@ function loop(ts){
     raf=requestAnimationFrame(loop);
   }
 }
+/* ---------- practice: loop a section, optionally speeding up after a clean pass ---------- */
+function pracLoop(){
+  const c=G.chart,st=G.pracSt,P=G.practice,clean=G.counts.BD+G.counts.PR===0&&G.judged>0;
+  for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}G.playing={};
+  if(clean&&P.step>0&&G.rate<2-1e-6)G.rate=Math.min(2,+(G.rate+P.step).toFixed(2));
+  for(const n of c.notes)if(n.time>=st-0.001)n.state=0;
+  for(const m of c.mines)if(m.time>=st-0.001)m.state=0;
+  G.laneIdx.fill(0);G.mineIdx.fill(0);G.drawIdx=0;G.pressed.fill(false);hold.clear();
+  const idx=(arr,f)=>{const i=arr.findIndex(f);return i<0?arr.length:i;};
+  G.bgmIdx=idx(c.bgm,b=>b.time>=st-0.001);G.autoIdx=idx(c.notes,n=>n.time>=st-0.001);
+  stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;G.curPoor=null;
+  for(const k in G.counts)G.counts[k]=0;G.combo=0;G.judged=0;G.dts=[];G.fs={f:0,s:0};G.glog=[];G.judge=null;G.bombs=[];
+  G.gauges=JSON.parse(JSON.stringify(G.pracG));
+  G.pracLoops++;G.T0=st-1.5;G.clock0=actx.currentTime+0.1;G.lastFrame=0;
+  resumeTails(st,false);
+  toast(L(`${G.pracLoops}回目${clean?'（前回ノーミス）':''}　×${G.rate.toFixed(2)}`,`Loop ${G.pracLoops}${clean?' (last pass clean)':''}  ×${G.rate.toFixed(2)}`),1600);
+}
+/* ---------- records: play stats and lamp distribution ---------- */
+function fmtDur(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?L(`${h}時間${m}分`,`${h}h ${m}m`):L(`${m}分`,`${m}m`);}
+function renderRec(){
+  const body=$('#recBody'),days=Object.keys(STATS).sort(),today=dayKey();
+  const sum=ks=>ks.reduce((a,k)=>{const q=STATS[k]||{};a.p+=q.p||0;a.n+=q.n||0;a.s+=q.s||0;return a;},{p:0,n:0,s:0});
+  const last7=[];for(let i=6;i>=0;i--)last7.push(dayKey(Date.now()-i*86400000));
+  const t=sum([today]),w=sum(last7),all=sum(days);
+  const cell=(lb,q)=>`<div><small>${lb}</small><b>${q.p}</b><small>${L('回','plays')} ／ ${q.n.toLocaleString()}${L('ノーツ',' notes')}<br>${fmtDur(q.s)}</small></div>`;
+  const src=S.recSrc||'';
+  body.innerHTML=`<div class="hlp">${L('プレイ記録（オートやリプレイは数えません）','Play stats (autoplay and replays are not counted)')}</div>
+    <div class="stt">${cell(L('今日','Today'),t)}${cell(L('7日間','7 days'),w)}${cell(L('累計','Total'),all)}</div>
+    <canvas class="graph" id="recDays" style="height:90px"></canvas>
+    <div class="hlp" style="margin-top:10px">${L('クリアランプの分布','Clear lamp distribution')}</div>
+    <select id="recSrc"><option value="">${L('すべての曲（☆レベル別）','All songs (by ☆ level)')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select>
+    <div class="lleg">${[9,8,7,6,5,4,3,2,1,0].map(i=>`<span><i style="background:${LAMPC[i]}"></i>${LAMPS[i]}</span>`).join('')}</div>
+    <div id="recDist"></div>`;
+  const sel=$('#recSrc');sel.value=TABLES.some(T=>T.url===src)?src:'';
+  sel.onchange=()=>{S.recSrc=sel.value;saveS();renderDist();};
+  renderDist();
+  requestAnimationFrame(()=>{
+    const cv=$('#recDays');if(!cv)return;const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;const x=cv.getContext('2d');x.scale(d,d);
+    const ks=[];for(let i=13;i>=0;i--)ks.push(dayKey(Date.now()-i*86400000));const v=ks.map(k=>(STATS[k]||{}).p||0),mx=Math.max(1,...v);
+    const cs=getComputedStyle(document.body),hi=cs.getPropertyValue('--hi')||'#fc3',dim=cs.getPropertyValue('--dim')||'#888';
+    const bw=(r.width-8)/14;x.font='9px sans-serif';x.textAlign='center';
+    v.forEach((n,i)=>{const h=(r.height-22)*n/mx;x.fillStyle=hi;x.fillRect(4+i*bw+2,r.height-12-h,bw-4,h);x.fillStyle=dim;if(i%2===1||i===13)x.fillText(ks[i].slice(8).replace(/^0/,''),4+i*bw+bw/2,r.height-2);if(n)x.fillText(n,4+i*bw+bw/2,r.height-14-h);});
+  });
+}
+function renderDist(){
+  const box=$('#recDist'),T=S.recSrc&&TABLES.find(t=>t.url===S.recSrc);let groups=[];
+  if(T){const byM=new Map(),byS=new Map();for(const c of CHARTS){if(c.md5)byM.set(c.md5.toLowerCase(),c);if(c.sha256)byS.set(c.sha256.toLowerCase(),c);}
+    for(const lv of tblLevels(T)){const es=T.data.filter(e=>String(e.level)===lv);const cs=[];for(const e of es){const c=(e.sha256&&byS.get(String(e.sha256).toLowerCase()))||(e.md5&&byM.get(String(e.md5).toLowerCase()));if(c)cs.push(c);}groups.push({lb:T.symbol+lv,cs,tot:es.length});}}
+  else{const m=new Map();for(const c of CHARTS){const k=lvNum(c.level);const kk=k<0?'?':String(Math.floor(k));if(!m.has(kk))m.set(kk,[]);m.get(kk).push(c);}
+    groups=[...m.keys()].sort((a,b)=>(a==='?')-(b==='?')||(+a)-(+b)).map(k=>({lb:'☆'+k,cs:m.get(k),tot:m.get(k).length}));}
+  groups=groups.filter(g=>g.tot);
+  if(!groups.length){box.innerHTML=`<div class="hlp">${L('まだ曲がありません','No songs yet')}</div>`;return;}
+  box.innerHTML=`<div class="ldist">${groups.map(g=>{const n=Array(10).fill(0);g.cs.forEach(c=>n[(REC[c.hash]||{}).lamp||0]++);const den=Math.max(1,g.tot);
+    const segs=[9,8,7,6,5,4,3,2,1].map(i=>n[i]?`<i style="width:${n[i]/den*100}%;background:${LAMPC[i]}" title="${LAMPS[i]} ${n[i]}"></i>`:'').join('');
+    const cl=n.slice(3).reduce((a,b)=>a+b,0);
+    return `<b>${esc(g.lb)}</b><span class="bar2">${segs}</span><small>${cl}/${g.tot}${g.tot!==g.cs.length?L(`（所持${g.cs.length}）`,` (own ${g.cs.length})`):''}</small>`;}).join('')}</div>
+    <div class="hlp">${L('右の数字は「EASY CLEAR以上の数／譜面数」です。','Right: charts at EASY CLEAR or better / total.')}</div>`;
+}
+$('#recBtn').onclick=()=>{renderRec();show('#recDlg',true);track('records','記録を開く');};
+$('#recClose').onclick=()=>show('#recDlg',false);
+$('#recDlg').onclick=e=>{if(e.target.id==='recDlg')show('#recDlg',false);};
 function measureHz(ms){return new Promise(res=>{const ts=[];const f=t=>{ts.push(t);if(t-ts[0]<(ms||700))requestAnimationFrame(f);else{const d=[];for(let i=1;i<ts.length;i++)d.push(ts[i]-ts[i-1]);d.sort((a,b)=>a-b);res(Math.round(1000/d[Math.floor(d.length/2)]));}};requestAnimationFrame(f);});}
 
 /* ---------- viewer ---------- */
@@ -4027,6 +4238,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     if(ex>r.ex){r.ex=ex;news.ex=1;}
     if(!G.failed&&(r.bp==null||bp<r.bp)){r.bp=bp;news.bp=1;}
     if(G.maxCombo>r.combo){r.combo=G.maxCombo;news.combo=1;}
+    r.hist=(r.hist||[]).concat([[Date.now(),ex,bp,lamp]]).slice(-60);r.last=Date.now();
     REC[hash]=r;saveRec();
     if(news.ex)DB.put('replays',{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec,date:Date.now(),lamp}).catch(()=>{});
   }
@@ -4038,6 +4250,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     if(ex>q.ex){q.ex=ex;q.max=max;news.ex=1;}
     r.red[m]=q;REC[hash]=r;saveRec();G.redSaved=m;
   }
+  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){const k=dayKey(),q=STATS[k]||(STATS[k]={p:0,n:0,s:0});q.p++;q.n+=G.judged;q.s+=Math.min(3600,Math.round((performance.now()-(G.t0ms||performance.now()))/1000));saveStats();}
   const thisReplay=G.record?{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec}:null;
   const fc=!G.failed&&c.BD===0&&c.PR===0&&N>0;
   const assist=isAssist(G.opts);
@@ -4045,7 +4258,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     vib([70,50,70,50,180]);G.celebrate={type:c.GD===0&&c.GR===0?'MAX':c.GD===0?'PERFECT':'FULL COMBO',t:performance.now()};
   }
   const R={lamp,ex,max,rate,bp,news,thisReplay};
-  if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx};}
+  if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx,name:GHOST.rival};}
   const delay=G.celebrate?1900:G.failed?900:300;
   if(G.course){setTimeout(()=>courseNext(R),delay);return;}
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
@@ -4073,7 +4286,7 @@ function showResult(R){
     <div class="grid2" style="margin:12px 0">
       <span class="k">SCORE${N('ex')}</span><span>${R.ex} / ${R.max}（${(R.rate*100).toFixed(2)}%）</span>
       <span class="k">MISS COUNT${N('bp')}</span><span>${R.bp}</span>
-      ${R.ghost?`<span class="k">VS GHOST</span><span style="color:${R.ghost.d>0?'#6cf':R.ghost.d<0?'#f77':'inherit'}">${R.ghost.d>0?'WIN':R.ghost.d<0?'LOSE':'DRAW'}（${R.ghost.d>0?'+':R.ghost.d<0?'−':'±'}${Math.abs(R.ghost.d)} / ${L('ゴースト','ghost')} ${R.ghost.ex}）</span>`:''}
+      ${R.ghost?`<span class="k">VS ${R.ghost.name?esc(R.ghost.name):'GHOST'}</span><span style="color:${R.ghost.d>0?'#6cf':R.ghost.d<0?'#f77':'inherit'}">${R.ghost.d>0?'WIN':R.ghost.d<0?'LOSE':'DRAW'}（${R.ghost.d>0?'+':R.ghost.d<0?'−':'±'}${Math.abs(R.ghost.d)} / ${R.ghost.name?esc(R.ghost.name):L('ゴースト','ghost')} ${R.ghost.ex}）</span>`:''}
       <span class="k">MAX COMBO${N('combo')}</span><span>${G.maxCombo} / ${G.N}</span>
       ${statsHTML()}
       <span class="k">${L('ゲージ','Gauge')}</span><span>${GT[G.cur].n} ${Math.floor(G.gauges[G.cur].v)}%</span>
