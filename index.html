@@ -179,7 +179,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0642)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0642)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0648)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0648)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -790,7 +790,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0642)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0642)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0648)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0648)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1957,19 +1957,14 @@ function openSongGuide(){const ov=document.createElement('div');ov.className='ov
    <div class="hlp">${L('BMSの曲は、作曲者さんがイベントや自分のサイトで無料で配布しています。ダウンロードしたzipなどの書庫を「追加」で選ぶだけで遊べます（解凍は不要）。','BMS songs are given away free by their creators at events and on their sites. Just pick the downloaded archive with “Add” — no need to unzip.')}</div>
    <ol class="hlp" style="padding-left:1.2em"><li>${L('下のページで曲を探す','Find a song on the pages below')}</li><li>${L('作品ページのダウンロードリンクから書庫を保存','Save the archive from the entry’s download link')}</li><li>${L('BeSmartの「追加」でそのファイルを選ぶ','Pick the file with “Add” in BeSmart')}</li></ol>
    <div style="color:var(--hi);margin:10px 0 2px">${L('まずはここから','Start here')}</div>
-   ${a('https://ja.wikipedia.org/wiki/Be-Music_Source',L('BMSとは（Wikipedia）','What is BMS (Wikipedia)'),L('BMSの歴史や、BOFなどのイベントの解説','History of BMS and events like BOF'))}
-   ${a('https://manbow.nothing.sh/event/event.cgi',L('BMSイベント一覧（BOFなど）','BMS event list (BOF etc.)'),L('イベントの作品ページから、各曲のダウンロード先に行けます','Each entry page links to the song download'))}
-   ${a('https://bmssearch.net/',L('BMS SEARCH','BMS SEARCH'),L('曲名やアーティストからBMSを探せる検索サイト','Search BMS by title or artist'))}
-   <div style="color:var(--hi);margin:10px 0 2px">${L('初心者向けの難易度表','Beginner-friendly tables')}</div>
+   ${a('https://ja.wikipedia.org/wiki/BMS_(%E9%9F%B3%E6%A5%BD%E3%82%B2%E3%83%BC%E3%83%A0)',L('BMSとは（Wikipedia）','What is BMS (Wikipedia)'),L('BMSの成り立ちや、曲が配布されているイベントの解説','How BMS began and the events where songs are released'))}
+   ${a('https://manbow.nothing.sh/event/event.cgi',L('BMSイベント一覧（BOFなど）','BMS event list (BOF etc.)'),L('過去〜開催中のイベント一覧。作品ページから各曲のダウンロード先に行けます','Past and current events; entry pages link to downloads'))}
+   <div style="color:var(--hi);margin:10px 0 2px">${L('初心者向けの難易度表','Beginner-friendly table')}</div>
    <div class="hlp">${L('難易度表は「どの曲がどのくらい難しいか」の一覧です。登録すると、手持ちの曲が表のレベル別に並びます。','A table lists how hard each chart is. Once added, your songs are sorted by its levels.')}</div>
-   ${a('https://mqppppp.neocities.org/StardustTable.html',L('Stardust難易度表','Stardust table'),L('BMSがはじめての人向け。やさしい曲を細かいレベルで紹介','Made for complete beginners, with fine-grained easy levels'))}
-   ${a('http://www.ribbit.xyz/bms/tables/normal.html',L('通常難易度表（☆1〜12）','Normal table (☆1–12)'),L('定番の表。☆1〜5あたりから始めるのがおすすめ','The classic table; start around ☆1–5'))}
-   ${a('https://stellabms.xyz/sl/table.html',L('Satellite','Satellite'),L('慣れてきた人向けの、よく遊ばれている表','A popular table once you are comfortable'))}
+   ${a('https://bmsnormal2.syuriken.jp/',L('BMS第2通常難易度表','BMS 2nd Normal table'),L('BMSを始めたばかりの人〜通常十段くらい向け。▽1〜12が☆1〜12に相当','For newcomers up to about normal 10-dan; ▽1–12 ≈ ☆1–12'))}
    <div style="color:var(--hi);margin:10px 0 2px">${L('慣れてきたら','Once you’re comfortable')}</div>
-   ${a('https://stellabms.xyz/st/table.html',L('Stella','Stella'),L('Satelliteの上の段階。発狂（★）へのステップに','The step above Satellite, toward insane charts'))}
-   ${a('http://www.ribbit.xyz/bms/tables/insane.html',L('発狂BMS難易度表（★1〜★25）','Insane BMS table (★1–25)'),L('☆12より難しい「発狂」譜面の定番の表','The classic table for charts harder than ☆12'))}
-   ${a('https://mocha-repository.info/',L('Mocha-Repository','Mocha-Repository'),L('曲ごとの情報やダウンロード先、プレイ記録をまとめたサイト','Song info, download links and play records'))}
-   ${a('http://www.dream-pro.info/~lavalse/LR2IR/',L('LR2IR','LR2IR'),L('PC版LR2のネットランキング。曲名で検索して配布元を探すのにも使えます','LR2’s online ranking; also handy for finding where a song is hosted'))}
+   ${a('https://mochibms.github.io/',L('SP BMS難易度表','SP BMS table'),L('☆5〜☆12。IIDXに近い遊びごたえの譜面を集めた表。このページのURLをそのまま登録できます','☆5–12, IIDX-like charts; register this page URL directly'))}
+   ${a('https://stellabms.xyz/sl/table.html',L('Satellite','Satellite'),L('☆11くらいから。乱打・同時押しなどを段階的に練習できる、よく遊ばれている表','From about ☆11; a popular table for building all-round skill'))}
    <div class="hlp">${L('表の登録は 設定 → 難易度表 から。表のページのURLを貼るか、URLで読めないときは表のファイルを保存して読み込みます。','Add tables in Settings → Difficulty tables: paste the page URL, or save the table files and load them if the URL is blocked.')}</div>
    <div style="color:var(--hi);margin:10px 0 2px">${L('曲選びのコツ','Tips')}</div>
    <ul class="hlp" style="padding-left:1.2em"><li>${L('はじめは☆1〜5、譜面の名前が NORMAL や BEGINNER のものから','Begin with ☆1–5, NORMAL or BEGINNER charts')}</li><li>${L('1つの書庫に難しさ違いの譜面がいくつも入っていることが多いです','One archive often holds several difficulties')}</li><li>${L('ダウンロード先は外部サイトです。作者さんの説明や利用条件も読んでおきましょう','Downloads are on external sites; read the author’s notes and terms')}</li></ul>
