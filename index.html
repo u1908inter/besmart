@@ -54,7 +54,8 @@ h1{font:400 22px/1.2 var(--font);margin:0}
 .libhead{border:2px solid var(--ink);padding:12px 14px;margin:0 0 12px}
 .mark{font:400 clamp(30px,9vw,38px)/1 var(--font);letter-spacing:.04em}
 .libhead .tag{font-size:12px;color:var(--dim);margin-top:4px}
-.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:6;background:var(--bg);padding:6px 0;box-shadow:0 -40px 0 var(--bg),0 6px 10px -6px rgba(0,0,0,.6)}
+.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:6;background:var(--bg);padding:6px 0}
+.acts.stuck{box-shadow:0 -40px 0 var(--bg),0 6px 10px -6px rgba(0,0,0,.6)}
 #fsc{position:fixed;right:calc(env(safe-area-inset-right) + 2px);top:0;bottom:0;width:0;z-index:7;pointer-events:none}
 #fsc .th{position:absolute;right:0;width:40px;height:60px;pointer-events:auto;touch-action:none;display:flex;justify-content:flex-end;align-items:center;opacity:.5;transition:opacity .2s}
 #fsc .th:before{content:"";width:12px;height:56px;border-radius:6px;background:var(--hi);box-shadow:0 0 8px var(--hi)}
@@ -163,7 +164,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1259)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1259)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1349)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1349)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -767,7 +768,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1259)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1259)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1349)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1349)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2148,6 +2149,10 @@ function fscLabel(){
 }
 (function(){
   const lib=$('#lib'),f=$('#fsc'),th=f.querySelector('.th'),bub=f.querySelector('.bub');
+  const acts=lib.querySelector('.acts');
+  const stuckChk=()=>{if(!acts)return;const pt=parseFloat(getComputedStyle(lib).paddingTop)||0;
+    acts.classList.toggle('stuck',lib.scrollTop>0&&acts.getBoundingClientRect().top<=lib.getBoundingClientRect().top+pt+0.5);};
+  lib.addEventListener('scroll',stuckChk,{passive:true});addEventListener('resize',stuckChk);
   lib.addEventListener('scroll',()=>{fscPos();if(!FSC.drag){f.classList.add('on');bub.style.display='none';clearTimeout(FSC.hide);FSC.hide=setTimeout(()=>{if(!FSC.drag){f.classList.remove('on');bub.style.display='';}},900);}},{passive:true});
   addEventListener('resize',fscPos);
   const move=e=>{const top=fscTopGap(),h=lib.clientHeight-top-70;
