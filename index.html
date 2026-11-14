@@ -175,7 +175,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.2350)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2350)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.2359)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2359)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -783,7 +783,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.2350)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2350)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.2359)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.2359)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1706,7 +1706,7 @@ function SCHEMA(){return [
  {sec:L('判定・表示','Timing & display'),items:[
   {k:'ofs',t:L('判定タイミング','Audio offset'),r:[-400,400,1],f:v=>(v>0?'+':'')+v+'ms',h:L('音が遅れて聞こえる → プラス方向。出力先ごとに別々に保存されます。','Sound heard late → plus. Saved separately per audio output.')},
   {k:'vofs',t:L('表示タイミング','Visual offset'),r:[-300,300,1],f:v=>(v>0?'+':'')+v+'ms',h:L('ノーツの見た目だけをずらします（プラス＝早く表示）','Shifts only the note display (plus = drawn earlier)')},
-  {k:'ksMode',t:L('キー音の鳴らし方','Keysound playback'),sel:[['input',L('押した瞬間に鳴らす','On key press')],['auto',L('譜面どおり自動で鳴らす','Auto, on chart timing')]],h:L('「自動」はBluetoothなど遅延の大きい環境向け。押さなくても音が鳴ります。','"Auto" suits high-latency outputs like Bluetooth; sounds play even if you miss.')},
+  {k:'ksMode',t:L('キー音の鳴らし方','Keysound playback'),sel:[['input',L('押した瞬間に鳴らす','On key press')],['auto',L('譜面どおり自動で鳴らす','Auto, on chart timing')]],h:L('<b>Bluetoothイヤホンでは「自動」がおすすめ</b>です。Bluetoothは音が遅れて届くため、押した瞬間に鳴らすと音がずれて聞こえます。「自動」なら曲どおりのタイミングで鳴ります（押さなくても鳴ります）。出力をBluetoothに切り替えると自動でこちらになり、スピーカー・有線に戻すと元に戻ります。','<b>Auto is recommended for Bluetooth.</b> Bluetooth audio arrives late, so sounds played on press feel off. Auto plays them on chart timing (even if you miss). Switching output to Bluetooth selects Auto; switching back restores your choice.')},
   {k:'judgeBase',t:L('判定幅の基準','Judge window basis'),sel:[['lr2',L('LR2基準（標準）','LR2 style (default)')],['beatoraja',L('beatoraja基準','beatoraja style')]],h:L('判定の幅（PGREAT・GREAT・GOOD・BADになる時間のずれ）を、どのPC版プレイヤーに合わせるかを選びます。beatoraja基準は、譜面の判定ランク（EASY〜VERY HARD）によって幅が大きく変わります。EASYではLR2基準とほぼ同じ、VERY HARDではかなり厳しくなります。','Choose which PC player the judge windows follow. beatoraja style changes a lot with the chart’s judge rank: about the same as LR2 on EASY, much stricter on VERY HARD.')},
   {k:'judgeAlg',t:L('判定アルゴリズム','Judge algorithm'),sel:[['lowest',L('LOWEST（手前のノーツを優先）','LOWEST (earliest note first)')],['combo',L('COMBO（コンボがつながる方を優先）','COMBO (keep the combo)')],['duration',L('DURATION（タイミングが近い方を優先）','DURATION (closest timing)')]],h:L('ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合、どれを判定するかを決めます。','Decides which note a press hits when several notes are within the timing window.')},
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
@@ -1772,8 +1772,9 @@ function applyPreset(p){
 /* ---------- recommended templates for newcomers ---------- */
 const RECO_DEV=[['touch',L('スマホ・タッチ','Phone, touch')],['bt',L('スマホ＋キーボード／コントローラー','Phone + keyboard / pad')],['pc',L('PC・キーボード','PC keyboard')],['iidx',L('専用コントローラー','IIDX-style controller')]];
 const RECO_LV=[['new',L('BMSははじめて','New to BMS')],['mid',L('音ゲーは少し慣れている','Some rhythm-game experience')],['pro',L('BMS・IIDX経験者','BMS / IIDX player')]];
-const RECO_KEYS=['gauge','gas','gasMin','autoScr','legacy','expand','reduce','lnmode','fix','fhs','green','suddenOn','hiddenOn','lift','judgeAlg','fsDisp','judgeMs','judgeCount','white','pace','ghost','rub','tapAdj','noteH','arr','arr2'];
-function recoValues(dev,lv,four){
+const RECO_AUD=[['speaker',L('スピーカー','Speaker')],['wired',L('有線イヤホン','Wired earphones')],['bt',L('Bluetoothイヤホン','Bluetooth earphones')]];
+const RECO_KEYS=['ksMode','gauge','gas','gasMin','autoScr','legacy','expand','reduce','lnmode','fix','fhs','green','suddenOn','hiddenOn','lift','judgeAlg','fsDisp','judgeMs','judgeCount','white','pace','ghost','rub','tapAdj','noteH','arr','arr2'];
+function recoValues(dev,lv,four,aud){
   const v={};for(const k of RECO_KEYS)v[k]=JSON.parse(JSON.stringify(DEF[k]));
   const keyIn=dev==='bt'||dev==='pc';
   Object.assign(v,{fix:'main',fhs:true,judgeAlg:'lowest',ghost:'on',lnmode:'chart',noteH:1});
@@ -1781,10 +1782,10 @@ function recoValues(dev,lv,four){
   if(lv==='mid')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:dev==='touch'||keyIn,expand:false,legacy:false,green:650,judgeMs:true,fsDisp:'both',judgeCount:true,pace:'off',noteH:1.1});
   if(lv==='pro')Object.assign(v,{gauge:'normal',gas:true,gasMin:'easy',autoScr:false,expand:false,legacy:false,green:500,judgeMs:true,fsDisp:'both',judgeCount:true,white:true,pace:'best'});
   if(dev==='touch')Object.assign(v,{rub:true,tapAdj:true});
-  v.reduce=four?'4k':'off';
+  v.reduce=four?'4k':'off';v.ksMode=aud==='bt'?'auto':'input';
   return v;
 }
-function recoSummary(v,dev){
+function recoSummary(v,dev,aud){
   const g={aeasy:'ASSIST EASY',easy:'EASY',normal:'NORMAL',hard:'HARD'}[v.gauge]||v.gauge;
   const a=[L(`ゲージは${g}`,`Gauge: ${g}`)+(v.gas?L('（落ちても下のゲージで最後まで遊べる）',' (keeps playing on a lower gauge if you fail)'):''),
     v.reduce==='4k'?L('7鍵・5鍵の曲を4つの鍵盤に減らして遊ぶ','Play 7K/5K charts with 4 keys'):null,
@@ -1794,39 +1795,45 @@ function recoSummary(v,dev){
     L(`ノーツが見えている時間：${v.green}ms（${v.green>=800?'ゆっくり':v.green>=600?'ふつう':'速め'}）`,`Notes visible for ${v.green} ms (${v.green>=800?'slow':v.green>=600?'medium':'fast'})`),
     v.judgeMs?L('判定のズレ（FAST/SLOWとms）を表示','Show timing (FAST/SLOW and ms)'):L('画面の表示を少なめにする','Keep the screen simple'),
     v.pace==='best'?L('自己ベストのペースメーカーを表示','Show a personal-best pacemaker'):null,
-    dev==='bt'?L('Bluetoothは音が遅れやすいので、あとで上の「タイミング」ボタンで調整すると叩きやすくなります','Bluetooth adds delay; tune it later with the timing button at the top'):null,
+    aud==='bt'?L('キー音は「譜面どおり自動で鳴らす」（Bluetoothの遅れで、叩いた音がずれて聞こえるのを防ぎます）','Keysounds play automatically on chart timing (avoids hearing Bluetooth delay)'):L('キー音は押した瞬間に鳴らす','Keysounds play when you press'),
+    aud==='bt'?L('判定タイミングはBluetooth用に切り替え。ずれを感じたら上の「BT ○ms」ボタンで調整できます','Timing switches to the Bluetooth profile; fine-tune with the “BT ms” button at the top'):null,
     dev==='touch'?L('タップ位置の補正とスクラッチのこすり操作をON','Tap correction and scratch rubbing on'):null];
   return a.filter(Boolean);
 }
 function openReco(){
-  let dev=PLICY||matchMedia('(pointer:fine)').matches?'pc':'touch',lv='new',four=null;
+  let dev=PLICY||matchMedia('(pointer:fine)').matches?'pc':'touch',lv='new',four=null,aud=PROF[S.profCur]?S.profCur:'speaker';
   const ov=document.createElement('div');ov.className='overlay';ov.id='recoDlg';ov.style.zIndex=13;ov.style.display='flex';
-  const draw=()=>{const f=four==null?(dev==='touch'&&lv==='new'):four;const v=recoValues(dev,lv,f);
+  const draw=()=>{const f=four==null?(dev==='touch'&&lv==='new'):four;const v=recoValues(dev,lv,f,aud);
     const chips=(arr,cur,k)=>`<div class="chips">${arr.map(([x,t])=>`<button class="ib ${x===cur?'pri':''}" data-${k}="${x}">${esc(t)}</button>`).join('')}</div>`;
     ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto">
       <h2>${L('おすすめ設定','Recommended settings')}</h2>
-      <div class="hlp" style="margin:0 0 8px">${L('2つ選ぶだけで、遊びやすい設定にまとめて切り替えます。キー割り当て・タイミング・音量・色はそのままです。あとから細かく変えてもOK。','Pick two answers and we set things up for you. Key bindings, timing, volume and colours stay as they are.')}</div>
+      <div class="hlp" style="margin:0 0 8px">${L('3つ選ぶだけで、遊びやすい設定にまとめて切り替えます。キー割り当て・タイミング・音量・色はそのままです。あとから細かく変えてもOK。','Pick three answers and we set things up for you. Key bindings, timing, volume and colours stay as they are.')}</div>
       <div style="color:var(--hi);margin:6px 0 4px">${L('① どうやって遊ぶ？','① How do you play?')}</div>${chips(RECO_DEV,dev,'dev')}
-      <div style="color:var(--hi);margin:10px 0 4px">${L('② 腕前は？','② Your level?')}</div>${chips(RECO_LV,lv,'lv')}
+      <div style="color:var(--hi);margin:10px 0 4px">${L('② 音はどこから聞く？','② How do you listen?')}</div>${chips(RECO_AUD,aud,'aud')}
+      ${aud==='bt'?`<div class="hlp" style="margin:4px 0 0">${L('Bluetoothは音が0.1〜0.3秒ほど遅れて届くため、押した瞬間に鳴らすと音がずれて聞こえます。キー音を譜面どおり自動で鳴らす設定がおすすめです。','Bluetooth audio arrives 0.1–0.3 s late, so keysounds played on press sound off. Auto keysounds are recommended.')}</div>`:''}
+      <div style="color:var(--hi);margin:10px 0 4px">${L('③ 腕前は？','③ Your level?')}</div>${chips(RECO_LV,lv,'lv')}
       ${dev!=='iidx'?`<label style="display:flex;gap:8px;align-items:center;margin:10px 0 0"><input type="checkbox" id="rcFour" style="width:auto" ${f?'checked':''}>${L('鍵盤を4つに減らす（スマホのタッチではじめてならおすすめ）','Use 4 keys (recommended for touch beginners)')}</label>`:''}
       <div style="color:var(--hi);margin:12px 0 4px">${L('この設定になります','You will get')}</div>
-      <ul class="hlp" style="margin:0 0 10px;padding-left:1.2em">${recoSummary(v,dev).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      <ul class="hlp" style="margin:0 0 10px;padding-left:1.2em">${recoSummary(v,dev,aud).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
       <label style="display:flex;gap:8px;align-items:center;margin:0 0 8px"><input type="checkbox" id="rcSave" style="width:auto" checked>${L('設定セットとしても保存する','Also save as a preset')}</label>
       <button class="pri" id="rcGo">${L('この設定にする','Use these settings')}</button>
       <button id="rcClose">${L('閉じる','Close')}</button></div>`;
     ov.querySelectorAll('[data-dev]').forEach(b=>b.onclick=()=>{dev=b.dataset.dev;four=null;draw();});
+    ov.querySelectorAll('[data-aud]').forEach(b=>b.onclick=()=>{aud=b.dataset.aud;draw();});
     ov.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{lv=b.dataset.lv;four=null;draw();});
     if(ov.querySelector('#rcFour'))ov.querySelector('#rcFour').onchange=e=>{four=e.target.checked;draw();};
     ov.querySelector('#rcClose').onclick=()=>{ov.remove();try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
     ov.querySelector('#rcGo').onclick=()=>{
-      const name=L('おすすめ：','Rec: ')+RECO_DEV.find(x=>x[0]===dev)[1]+'・'+RECO_LV.find(x=>x[0]===lv)[1];
+      const name=L('おすすめ：','Rec: ')+RECO_DEV.find(x=>x[0]===dev)[1]+'・'+PROF[aud].i+'・'+RECO_LV.find(x=>x[0]===lv)[1];
       const p={name,v:Object.assign(snapSettings(),v)};
       if(ov.querySelector('#rcSave').checked){const i=PRESETS.findIndex(x=>x.name===name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);savePresets();}
+      const ksPrev=S.ksMode;
       applyPreset(p);if(!ov.querySelector('#rcSave').checked){S.preset='';saveS();}
+      try{if(S.prof&&S.prof[aud]){S.prof[aud].ks=v.ksMode;if(aud!==S.profCur){S.ksMode=ksPrev;setProfile(aud);}}}catch(e){}
       try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}
       ov.remove();renderRecoHint();if($('#settings')&&$('#settings').style.display!=='none')buildSettings();
       toast(L('おすすめ設定にしました。曲を選んで遊んでみましょう','Recommended settings applied. Pick a song and play!'),3000);
-      track('reco-'+dev+'-'+lv,'おすすめ設定');
+      track('reco-'+dev+'-'+aud+'-'+lv,'おすすめ設定');
     };
   };
   draw();document.body.appendChild(ov);
@@ -3152,7 +3159,10 @@ function storeOfs(){const p=S.prof[S.profCur];p.ofs=S.ofs;p.set=true;saveS();ren
 function setProfile(p,why){
   const pr=S.prof[p];
   if(!pr.set){const l=measuredLatency();if(l!=null)pr.ofs=Math.round(l*1000);}
+  const old=S.prof[S.profCur];if(old&&old!==pr)old.ks=S.ksMode;
+  const ks0=S.ksMode;S.ksMode=pr.ks||(p==='bt'?'auto':'input');pr.ks=S.ksMode;
   S.profCur=p;S.ofs=pr.ofs;if(p!=='bt')S.lowProf=p;saveS();syncSettings();renderOut();
+  if(S.ksMode!==ks0)setTimeout(()=>toast(S.ksMode==='auto'?L('Bluetoothなので、キー音を「譜面どおり自動で鳴らす」にしました（設定で変えられます）','Bluetooth: keysounds now play automatically (change in Settings)'):L(`${PROF[p].n()}なので、キー音を「押した瞬間に鳴らす」に戻しました`,`${PROF[p].n()}: keysounds play on press again`),3500),why?3200:0);
   if(why)toast(L(`${PROF[p].n()}${why==='det'?'を検出':'に戻りました'}：判定タイミング ${S.ofs>0?'+':''}${S.ofs}ms を適用`,`${why==='det'?'Detected ':'Back to '}${PROF[p].n()}: audio offset ${S.ofs>0?'+':''}${S.ofs}ms applied`),3000);
 }
 function autoProfile(){
