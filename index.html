@@ -163,7 +163,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1220)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1228)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1228)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -190,7 +190,7 @@ canvas{display:block;touch-action:none}
   <div id="songs"></div>
   <div id="fsc" style="display:none"><div class="th"></div><div class="bub"></div></div>
   <div id="empty" class="empty">
-    <p data-en="Add a BMS archive (ZIP, RAR, LZH or 7z) or a folder of BMS/bmson files with their sounds to play more songs. Songs stay on this device.">BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて「追加」すると、ほかの曲も遊べます。曲はこの端末の中だけに保存されます。</p>
+    <p data-en="Add a BMS archive (ZIP, RAR, LZH, 7z or tar.gz) or a folder of BMS/bmson files with their sounds to play more songs. Songs stay on this device.">BMSの書庫（ZIP・RAR・LZH・7z・tar.gz）か、BMS／bmsonと音声ファイルをまとめて「追加」すると、ほかの曲も遊べます。曲はこの端末の中だけに保存されます。</p>
     <label class="btn pri" for="fileIn" data-en="Add songs">曲を追加</label>
     <div class="guide" data-en="&lt;h3&gt;How to add songs&lt;/h3&gt;&lt;ol&gt;&lt;li&gt;&lt;b&gt;Find songs&lt;/b&gt;: search with the words below to find download pages and event entry lists.&lt;div class=&quot;gchips&quot;&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20download&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS download&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20event%20entries&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS event entries&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20difficulty%20table&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS difficulty table&lt;/a&gt;&lt;a class=&quot;gchip&quot; href=&quot;https://www.google.com/search?q=BMS%20for%20beginners&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;🔍 BMS for beginners&lt;/a&gt;&lt;/div&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;Download to your phone&lt;/b&gt;: keep the ZIP, RAR, LZH or 7z as is; no need to extract. Songs shared on Google Drive and the like work once downloaded.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Pick it with “Add songs”&lt;/b&gt;: choose the file from Downloads in your Files app. If you have a direct download URL, “Add from URL” works too.&lt;/li&gt;&lt;/ol&gt;&lt;p class=&quot;hlp&quot;&gt;Tip: songs at the low levels of a difficulty table are easiest to start with. Please check each download page’s terms.&lt;/p&gt;"><h3>曲の入れ方</h3><ol><li><b>曲を探す</b>：下の言葉で検索すると、配布ページや作品の一覧が見つかります。<div class="gchips"><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%85%8D%E5%B8%83" target="_blank" rel="noopener">🔍 BMS 配布</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%20%E4%BD%9C%E5%93%81%E4%B8%80%E8%A6%A7" target="_blank" rel="noopener">🔍 BMS イベント 作品一覧</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E9%9B%A3%E6%98%93%E5%BA%A6%E8%A1%A8" target="_blank" rel="noopener">🔍 BMS 難易度表</a><a class="gchip" href="https://www.google.com/search?q=BMS%20%E5%88%9D%E5%BF%83%E8%80%85%20%E3%81%8A%E3%81%99%E3%81%99%E3%82%81" target="_blank" rel="noopener">🔍 BMS 初心者 おすすめ</a></div></li><li><b>スマホにダウンロード</b>：ZIP・RAR・LZH・7zのままでOK。展開はいりません。Googleドライブなどで配布されている曲も、いったんダウンロードすれば使えます。</li><li><b>「曲を追加」で選ぶ</b>：ファイルアプリの「ダウンロード」から選びます。直接ダウンロードできるURLなら「URLから追加」でも入れられます。</li></ol><p class="hlp">コツ：はじめは難易度表の低いレベル（☆1〜5くらい）の曲が遊びやすいです。配布ページに書かれた規約も確認してください。</p></div>
     <button id="tutBtn" data-en="Learn the controls">遊び方を練習する</button>
@@ -220,6 +220,9 @@ canvas{display:block;touch-action:none}
     <button id="expBtn" data-en="Export data">データを書き出す（エクスポート）</button>
     <label class="btn" for="impIn" data-en="Import data">データを読み込む（インポート）</label>
     <input type="file" id="impIn" accept=".json,application/json" style="display:none">
+    <div class="hlp" style="margin-top:10px" data-en="Bring in clear lamps and scores from the PC players beatoraja or LR2. Copy the score file to this phone (for example via Google Drive) and choose it. beatoraja: beatoraja/player/(player)/score.db — LR2: LR2files/Database/Score/(player).db. Songs you add later are matched automatically.">PC版の beatoraja・LR2 のクリアランプとスコアを取り込めます。スコアのファイルをGoogleドライブなどでこのスマホに移して選んでください。<br>beatoraja：beatoraja/player/（プレイヤー名）/score.db<br>LR2：LR2files/Database/Score/（プレイヤー名）.db<br>あとから追加した曲にも自動で反映されます。</div>
+    <label class="btn" for="scImpIn" data-en="Import PC scores (beatoraja / LR2)">PC版のスコアを取り込む（beatoraja / LR2）</label>
+    <input type="file" id="scImpIn" accept=".db,.sqlite,application/octet-stream,application/x-sqlite3,application/vnd.sqlite3" style="display:none">
     <button class="danger" id="wipeRec" data-en="Erase all score records">スコア記録をすべて消去</button>
     <button class="danger" id="wipeLib" data-en="Delete all stored songs">保存した曲をすべて削除</button>
   </div></details>
@@ -764,7 +767,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1220)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1220)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1228)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1228)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -786,7 +789,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 <div id="bigDlg" class="overlay" style="z-index:12"><div class="box card" style="max-height:92vh;display:flex;flex-direction:column">
   <h2 data-en="Choose songs from a large pack">大きな書庫から曲を選ぶ</h2>
   <p id="bigInfo" class="hlp" style="margin:0 0 6px"></p>
-  <p id="bigRar" class="hlp" style="margin:0 0 6px" data-en="RAR packs are extracted from the start, so it can take a while even for a few songs. Keep the screen on.">RARは先頭から順に展開するため、選んだ曲が少なくても時間がかかることがあります。画面を消さずにお待ちください。</p>
+  <p id="bigRar" class="hlp" style="margin:0 0 6px" data-en="RAR / tar.gz packs are extracted from the start, so it can take a while even for a few songs. Keep the screen on.">RAR・tar.gzは先頭から順に展開するため、選んだ曲が少なくても時間がかかることがあります。画面を消さずにお待ちください。</p>
   <input id="bigQ" type="search" placeholder="曲名で絞り込み" data-en-ph="Filter by name" style="width:100%;margin:2px 0 6px">
   <div style="display:flex;gap:6px;margin-bottom:6px"><button id="bigAll" style="flex:1;margin:0" data-en="Select all">すべて選択</button><button id="bigNone" style="flex:1;margin:0" data-en="Select none">すべて解除</button></div>
   <div id="bigList" style="flex:1;min-height:120px;overflow:auto;border:1px solid var(--faint)"></div>
@@ -805,7 +808,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <h2 data-en="Add from URL">URLから追加</h2>
   <input id="urlIn" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…" style="width:100%;margin:4px 0 8px">
   <div class="hlp" id="urlHost" style="word-break:break-all"></div>
-  <div class="hlp" data-en="Paste a direct download link to a BMS archive (ZIP, RAR, LZH, 7z). GitHub and Dropbox share links are converted automatically. Hosts that block loading from other sites (Google Drive, MEGA, OneDrive, etc.) cannot be used: download the file on your phone and pick it with “Add” instead.">BMSの書庫（ZIP・RAR・LZH・7z）を直接ダウンロードできるURLを貼ってください。GitHub・Dropboxの共有リンクは自動で変換します。Googleドライブ・MEGA・OneDriveなど、他サイトからの読み込みを許可していない配布元は使えません。その場合はスマホでダウンロードして「追加」から選んでください。</div>
+  <div class="hlp" data-en="Paste a direct download link to a BMS archive (ZIP, RAR, LZH, 7z, tar.gz). GitHub and Dropbox share links are converted automatically. Hosts that block loading from other sites (Google Drive, MEGA, OneDrive, etc.) cannot be used: download the file on your phone and pick it with “Add” instead.">BMSの書庫（ZIP・RAR・LZH・7z・tar.gz）を直接ダウンロードできるURLを貼ってください。GitHub・Dropboxの共有リンクは自動で変換します。Googleドライブ・MEGA・OneDriveなど、他サイトからの読み込みを許可していない配布元は使えません。その場合はスマホでダウンロードして「追加」から選んでください。</div>
   <div class="hlp" data-en="Please follow each author’s terms. Songs are saved only on this device.">配布元の規約に従って使ってください。読み込んだ曲はこの端末の中だけに保存されます。</div>
   <div id="urlMsg" class="help" style="display:none;word-break:break-all"></div>
   <button class="pri" id="urlGo" data-en="Load">読み込む</button>
@@ -1136,10 +1139,15 @@ function makePlay(base,o){
   return Object.assign({},base,{notes,mines,laneNotes,laneMines,laneInv,arrPat:sides.map(s=>s.pat||null)});
 }
 
-function judgeWindows(rank,defex,expand){
+function judgeWindows(rank,defex,expand,basis,mode){
   const T=[[8,24,40,100],[15,30,60,150],[18,40,100,200],[21,60,120,220],[26,75,150,260]];
   let w;
-  if(defex>0){w=T[2].map(x=>x*defex/100);w[3]=Math.max(w[3],w[2]+60);}
+  if(basis==='beatoraja'){
+    /* beatoraja style: base windows scaled by judgerank (VERYHARD 25 / HARD 50 / NORMAL 75 / EASY 100 / VERYEASY 125) */
+    const B=(mode==='5k'||mode==='10k')?[20,50,100,150]:[20,60,150,220];
+    const jr=defex>0?defex*0.75:[25,50,75,100,125][Math.max(0,Math.min(4,isNaN(rank)?2:rank))];
+    w=B.map(x=>x*jr/100);
+  }else if(defex>0){w=T[2].map(x=>x*defex/100);w[3]=Math.max(w[3],w[2]+60);}
   else w=T[Math.max(0,Math.min(4,isNaN(rank)?2:rank))].slice();
   if(expand)w=w.map(x=>x*1.5);
   return {PG:w[0]/1000,GR:w[1]/1000,GD:w[2]/1000,BD:w[3]/1000,KP:w[3]/1000+0.15};
@@ -1526,6 +1534,62 @@ class RarJob{
   close(){try{this.w.terminate();}catch(e){}}
 }
 
+/* ===== TAR / TAR.GZ (read as a stream, so very large packs work too) ===== */
+function tarName(u8){let e=u8.indexOf(0);if(e<0)e=u8.length;const b=u8.subarray(0,e);
+  try{return new TextDecoder('utf-8',{fatal:true}).decode(b);}catch(x){}
+  try{return new TextDecoder(legacyCodec(b)==='euc-kr'?'euc-kr':'shift_jis').decode(b);}catch(x){return new TextDecoder().decode(b);}}
+function tarNum(u8){
+  if(u8[0]&0x80){let v=0;for(let i=1;i<u8.length;i++)v=v*256+u8[i];return v;}
+  const s=new TextDecoder().decode(u8).replace(/\0.*$/,'').trim();return s?parseInt(s,8):0;}
+/* walk a tar (optionally gzip'ed): want(name,size) → true to receive the data in got(name,ArrayBuffer); prog(readBytes,total) */
+async function tarWalk(file,want,got,prog){
+  const head=new Uint8Array(await file.slice(0,2).arrayBuffer());
+  let read=0;const total=file.size;
+  let stream=file.stream().pipeThrough(new TransformStream({transform(ch,c){read+=ch.byteLength;c.enqueue(ch);}}));
+  if(head[0]===0x1f&&head[1]===0x8b){
+    if(typeof DecompressionStream==='undefined')throw new Error('このブラウザは tar.gz の展開に未対応です（最新のChrome / iOS 16.4以降を推奨）');
+    stream=stream.pipeThrough(new DecompressionStream('gzip'));
+  }
+  const rd=stream.getReader();
+  const q=[];let qlen=0,eof=false; // queue of chunks (avoid re-copying while large entries arrive)
+  const pull=async()=>{const {value,done}=await rd.read();if(done){eof=true;return false;}q.push(value);qlen+=value.length;return true;};
+  const need=async n=>{while(qlen<n&&!eof){if(!await pull())break;}return qlen>=n;};
+  const take=n=>{n=Math.min(n,qlen);const out=new Uint8Array(n);let o=0;
+    while(o<n){const c=q[0],k=Math.min(n-o,c.length);out.set(c.subarray(0,k),o);o+=k;if(k===c.length)q.shift();else q[0]=c.subarray(k);}
+    qlen-=n;return out;};
+  const skip=async n=>{while(n>0){if(!qlen){if(!await pull())return;}const c=q[0],k=Math.min(n,c.length);if(k===c.length)q.shift();else q[0]=c.subarray(k);qlen-=k;n-=k;}};
+  let longName=null,paxPath=null,lastProg=0;
+  try{
+    while(true){
+      if(!await need(512))break;
+      const h=take(512);
+      if(h.every(b=>b===0))break;
+      const size=tarNum(h.subarray(124,136)),type=String.fromCharCode(h[156]||48);
+      const padded=Math.ceil(size/512)*512;
+      let name=tarName(h.subarray(0,100));
+      if(new TextDecoder().decode(h.subarray(257,262))==='ustar'){const pre=tarName(h.subarray(345,500));if(pre)name=pre+'/'+name;}
+      if(type==='L'){await need(padded);longName=tarName(take(padded).subarray(0,size));continue;}
+      if(type==='x'){await need(padded);const t=new TextDecoder().decode(take(padded).subarray(0,size));const m=/\d+ path=([^\n]*)\n/.exec(t);if(m)paxPath=m[1];continue;}
+      if(type==='g'){await skip(padded);continue;}
+      if(longName){name=longName;longName=null;}
+      if(paxPath){name=paxPath;paxPath=null;}
+      name=name.replace(/\\/g,'/').replace(/^\.\//,'');
+      const isFile=type==='0'||type==='\0'||type==='7';
+      if(isFile&&size>=0&&!name.endsWith('/')&&want(name,size)){
+        await need(padded);if(qlen<size)break;
+        const data=take(size);await skip(padded-size);
+        await got(name,data.buffer);
+      }else await skip(padded);
+      if(prog){const now=Date.now();if(now-lastProg>400){lastProg=now;prog(read,total);}}
+    }
+  }finally{try{rd.cancel();}catch(e){}}
+}
+async function readTar(file){
+  const out=[];
+  await tarWalk(file,(n)=>!/(^|\/)__MACOSX\//.test(n),(n,ab)=>{out.push({path:n,size:ab.byteLength,get:async()=>ab});});
+  return out;
+}
+
 /* ======================= APP ======================= */
 if(typeof document!=='undefined'){(function(){
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1537,7 +1601,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1609,6 +1673,7 @@ function SCHEMA(){return [
   {k:'ofs',t:L('判定タイミング','Audio offset'),r:[-400,400,1],f:v=>(v>0?'+':'')+v+'ms',h:L('音が遅れて聞こえる → プラス方向。出力先ごとに別々に保存されます。','Sound heard late → plus. Saved separately per audio output.')},
   {k:'vofs',t:L('表示タイミング','Visual offset'),r:[-300,300,1],f:v=>(v>0?'+':'')+v+'ms',h:L('ノーツの見た目だけをずらします（プラス＝早く表示）','Shifts only the note display (plus = drawn earlier)')},
   {k:'ksMode',t:L('キー音の鳴らし方','Keysound playback'),sel:[['input',L('押した瞬間に鳴らす','On key press')],['auto',L('譜面どおり自動で鳴らす','Auto, on chart timing')]],h:L('「自動」はBluetoothなど遅延の大きい環境向け。押さなくても音が鳴ります。','"Auto" suits high-latency outputs like Bluetooth; sounds play even if you miss.')},
+  {k:'judgeBase',t:L('判定幅の基準','Judge window basis'),sel:[['lr2',L('LR2基準（標準）','LR2 style (default)')],['beatoraja',L('beatoraja基準','beatoraja style')]],h:L('判定の幅（PGREAT・GREAT・GOOD・BADになる時間のずれ）を、どのPC版プレイヤーに合わせるかを選びます。beatoraja基準は、譜面の判定ランク（EASY〜VERY HARD）によって幅が大きく変わります。EASYではLR2基準とほぼ同じ、VERY HARDではかなり厳しくなります。','Choose which PC player the judge windows follow. beatoraja style changes a lot with the chart’s judge rank: about the same as LR2 on EASY, much stricter on VERY HARD.')},
   {k:'judgeAlg',t:L('判定アルゴリズム','Judge algorithm'),sel:[['lowest',L('LOWEST（手前のノーツを優先）','LOWEST (earliest note first)')],['combo',L('COMBO（コンボがつながる方を優先）','COMBO (keep the combo)')],['duration',L('DURATION（タイミングが近い方を優先）','DURATION (closest timing)')]],h:L('ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合、どれを判定するかを決めます。','Decides which note a press hits when several notes are within the timing window.')},
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
@@ -1843,7 +1908,7 @@ async function decodeAudio(ab){
 /* ---------- archives / file index ---------- */
 const norm=p=>p.replace(/\\/g,'/').replace(/^\.\//,'').replace(/\/+/g,'/').toLowerCase();
 const stem=p=>p.replace(/\.[^./]+$/,'');
-function kindOf(name){const n=name.toLowerCase();if(n.endsWith('.zip'))return 'zip';if(n.endsWith('.rar'))return 'rar';if(/\.(lzh|lha)$/.test(n))return 'lzh';if(n.endsWith('.7z'))return '7z';return null;}
+function kindOf(name){const n=name.toLowerCase();if(/\.(tar|tgz|tar\.gz)$/.test(n))return 'tar';if(n.endsWith('.zip'))return 'zip';if(n.endsWith('.rar'))return 'rar';if(/\.(lzh|lha)$/.test(n))return 'lzh';if(n.endsWith('.7z'))return '7z';return null;}
 function makeIndex(files){
   const ix={files,byPath:new Map(),byStem:new Map(),byBase:new Map()};
   for(const f of files){
@@ -1864,6 +1929,7 @@ async function listArchive(arch,depth){
     else if(arch.kind==='rar')list=await readRar(f);
     else if(arch.kind==='lzh')list=await readLzh(f);
     else if(arch.kind==='7z')list=await read7z(f);
+    else if(arch.kind==='tar')list=await readTar(f);
     else throw new Error('未対応の形式');
   }
   return expandNested(list,depth);
@@ -1932,7 +1998,7 @@ function tblLevels(T){
   else lv.sort((a,b)=>a.localeCompare(b,'ja',{numeric:true}));
   return lv;
 }
-const ARCH_RE=/\.(zip|rar|7z|lzh|lha)(\?|#|$)/i;
+const ARCH_RE=/\.(zip|rar|7z|lzh|lha|tar|tgz|gz)(\?|#|$)/i;
 function renderTable(T,list,frag){
   const byMd5=new Map(),bySha=new Map();
   for(const c of list){if(c.md5)byMd5.set(c.md5.toLowerCase(),c);if(c.sha256)bySha.set(c.sha256.toLowerCase(),c);}
@@ -2207,7 +2273,7 @@ function pickUnits(gr,units,isRar){
   });
 }
 async function importBig(gr,st){
-  const isRar=gr.kind==='rar';let job=null;
+  const isRar=gr.kind==='rar',isTar=gr.kind==='tar';let job=null;
   st.big=true;st.quiet=true;
   wakeOn();
   try{
@@ -2218,12 +2284,14 @@ async function importBig(gr,st){
       const heads=await job.list();
       if(heads.some(h=>h.enc))throw new Error(L('パスワード付きRARには対応していません','Password-protected RAR is not supported'));
       entries=heads.filter(h=>!h.dir).map(h=>({path:h.name.replace(/\\/g,'/'),raw:h.name,size:h.size}));
+    }else if(isTar){
+      entries=[];await tarWalk(gr.file,(n,sz)=>{entries.push({path:n,raw:n,size:sz});return false;},null,(r,t)=>toast(L(`${gr.name} の中身を確認しています… ${Math.floor(r/t*100)}%`,`Checking ${gr.name}… ${Math.floor(r/t*100)}%`),0));
     }else entries=await readZipBlob(gr.file);
     entries=entries.filter(e=>!/(^|\/)__MACOSX\//.test(e.path));
     const units=planUnits(entries,gr.name);
     if(!units.length){st.errs.push(gr.name+L('：BMSファイルが見つかりません',': no BMS files found'));return;}
     toast('',1);
-    const chosen=await pickUnits(gr,units,isRar);
+    const chosen=await pickUnits(gr,units,isRar||isTar);
     if(!chosen||!chosen.length)return;
     track('import-big','大きな書庫から追加');
     const total=chosen.length;let doneN=0;
@@ -2231,7 +2299,7 @@ async function importBig(gr,st){
       ?{kind:'files',name:u.name,files:u.entries.filter(e=>bufs.has(e.path)).map(e=>({path:e.path,blob:new Blob([bufs.get(e.path)])}))}
       :{kind:u.kind,name:u.name+'.'+u.kind,file:new File([bufs.get(u.entries[0].path)],u.name+'.'+u.kind)};
     const status=extra=>toast(L(`${gr.name} から読み込み中… ${doneN}/${total} 曲${extra||''}\n画面を消さずにお待ちください`,`Loading from ${gr.name}… ${doneN}/${total} songs${extra||''}\nKeep the screen on`),0);
-    if(!isRar){
+    if(!isRar&&!isTar){
       for(const u of chosen){
         status();
         const bufs=new Map();
@@ -2244,12 +2312,16 @@ async function importBig(gr,st){
       const owner=new Map(),left=new Map(),got=new Map();
       for(const u of chosen){left.set(u,u.entries.length);got.set(u,new Map());for(const e of u.entries)owner.set(e.raw,{u,e});}
       let pct='';status();
-      const failed=await job.extract([...owner.keys()],async(name,buf)=>{
+      const onFile=async(name,buf)=>{
         const o=owner.get(name);if(!o)return;
         got.get(o.u).set(o.e.path,buf);
         const r=left.get(o.u)-1;left.set(o.u,r);
         if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);doneN++;status(pct);if(st.quota)throw new Error('__quota');}
-      },(pos,size)=>{pct=`（${Math.floor(pos/size*100)}%）`;status(pct);});
+      };
+      const onProg=(pos,size)=>{pct=`（${Math.floor(pos/size*100)}%）`;status(pct);};
+      let failed=[];
+      if(isRar)failed=await job.extract([...owner.keys()],onFile,onProg);
+      else await tarWalk(gr.file,n=>owner.has(n),onFile,onProg);
       for(const [u,bufs] of got){if(bufs.size){await importGroup(build(u,bufs),st);}doneN++;}
       if(failed.length)st.errs.push(gr.name+L(`：${failed.length} 個のファイルを展開できませんでした`,`: ${failed.length} files could not be extracted`));
     }
@@ -2271,10 +2343,11 @@ async function importFiles(list,io){io=io||{};
   }
   const st={have:new Set(CHARTS.map(c=>c.hash)),added:0,skipped:0,errs:[],io,big:false};
   for(const gr of groups){
-    if(!io.builtin&&(gr.kind==='zip'||gr.kind==='rar')&&gr.file&&gr.file.size>BIG_BYTES()){await importBig(gr,st);continue;}
-    if(!io.builtin&&gr.file&&gr.file.size>BIG_BYTES()){st.errs.push(gr.name+L('：このサイズの7z / LZHは読み込めません。ZIPかRARにしてください',': 7z / LZH this large cannot be loaded. Please use ZIP or RAR'));continue;}
+    if(!io.builtin&&(gr.kind==='zip'||gr.kind==='rar'||gr.kind==='tar')&&gr.file&&gr.file.size>BIG_BYTES()){await importBig(gr,st);continue;}
+    if(!io.builtin&&gr.file&&gr.file.size>BIG_BYTES()){st.errs.push(gr.name+L('：このサイズの7z / LZHは読み込めません。ZIP・RAR・tar.gzにしてください',': 7z / LZH this large cannot be loaded. Please use ZIP, RAR or tar.gz'));continue;}
     await importGroup(gr,st);
   }
+  try{if(Object.keys(EXTREC).length&&st.added){await backfillHashes(false);applyExtRec();}}catch(e){}
   await refreshLibrary();
   if(st.added&&!io.builtin)track('import','曲を追加');
   if(io.silent){const nm=(io.names||['BeSmart PV Song']);if(st.added)toast(nm.length>1?L('最初から入っている曲を'+nm.length+'曲追加しました','Added '+nm.length+' built-in songs'):L('最初から入っている曲「'+nm[0]+'」を追加しました','Added the built-in song “'+nm[0]+'”'),2500);else toast('',1);return added;}
@@ -2494,6 +2567,63 @@ function mergeRecOne(a,b){
 }
 let impData=null;
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='tapReset'){S.tapOfs={};saveS();toast(L('タップ位置の補正をリセットしました','Tap correction reset'));}});
+/* ---------- PC score import (beatoraja score.db / LR2 score db) ---------- */
+let EXTREC={};try{EXTREC=JSON.parse(localStorage.getItem(LSK+'extrec')||'{}')||{};}catch(e){EXTREC={};}
+const saveExt=()=>{try{localStorage.setItem(LSK+'extrec',JSON.stringify(EXTREC));}catch(e){}};
+let SQLP=null;
+function loadSqlJs(){
+  if(SQLP)return SQLP;
+  SQLP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='vendor/sql-wasm.js';
+    sc.onload=()=>initSqlJs({locateFile:f=>'vendor/'+f}).then(res,rej);sc.onerror=()=>rej(new Error(L('読み込み用の部品を取得できませんでした','Could not load the reader')));document.head.appendChild(sc);});
+  SQLP.catch(()=>{SQLP=null;});return SQLP;
+}
+function mergeExt(key,v){const o=EXTREC[key];if(!o){EXTREC[key]=v;return;}
+  o[0]=Math.max(o[0],v[0]);o[1]=Math.max(o[1],v[1]);if(v[2]!=null)o[2]=o[2]==null?v[2]:Math.min(o[2],v[2]);o[3]=Math.max(o[3],v[3]);o[4]=Math.max(o[4],v[4]);}
+function applyExtRec(){
+  let n=0;
+  for(const c of CHARTS){
+    const vs=[c.sha256&&EXTREC['s:'+c.sha256],c.md5&&EXTREC['m:'+c.md5]].filter(Boolean);if(!vs.length)continue;
+    const r=REC[c.hash]||{lamp:0,ex:0,bp:null,combo:0,plays:0};const before=JSON.stringify(r);
+    for(const v of vs){
+      r.lamp=Math.max(r.lamp||0,v[0]);
+      r.ex=Math.max(r.ex||0,Math.min(v[1],2*(c.notesN||v[1])));
+      if(v[2]!=null&&v[1]>0)r.bp=r.bp==null?v[2]:Math.min(r.bp,v[2]);
+      r.combo=Math.max(r.combo||0,v[3]);r.plays=Math.max(r.plays||0,v[4]);
+    }
+    if(JSON.stringify(r)!==before){REC[c.hash]=r;n++;}
+  }
+  if(n)saveRec();return n;
+}
+async function importScores(file){
+  toast(L('スコアを読み込んでいます…','Reading scores…'),0);
+  const SQL=await loadSqlJs();
+  const db=new SQL.Database(new Uint8Array(await file.arrayBuffer()));
+  try{
+    const cols=new Set(((db.exec("PRAGMA table_info(score)")[0]||{}).values||[]).map(r=>String(r[1]).toLowerCase()));
+    let kind=null,rows=[];
+    if(cols.has('sha256')&&cols.has('epg')){
+      kind='beatoraja';
+      const r=db.exec("SELECT sha256,clear,epg,lpg,egr,lgr,minbp,combo,playcount FROM score")[0];
+      const CL=[0,1,2,2,3,4,5,6,7,8,9];
+      for(const v of (r?r.values:[])){if(!v[0])continue;
+        rows.push(['s:'+String(v[0]).toLowerCase(),[CL[v[1]]||0,(v[2]+v[3])*2+v[4]+v[5],v[6]>=0&&v[6]<2147483647?v[6]:null,v[7]||0,v[8]||0]]);}
+    }else if(cols.has('hash')&&cols.has('perfect')){
+      kind='LR2';
+      const r=db.exec("SELECT hash,clear,perfect,great,minbp,maxcombo,playcount FROM score")[0];
+      const CL=[0,1,3,4,5,7];
+      for(const v of (r?r.values:[])){const h=String(v[0]||'').toLowerCase();if(!/^[0-9a-f]{32}$/.test(h))continue;
+        rows.push(['m:'+h,[CL[v[1]]||0,v[2]*2+v[3],v[4]>=0?v[4]:null,v[5]||0,v[6]||0]]);}
+    }else throw new Error(L('beatoraja・LR2 のスコアのファイルではないようです','This does not look like a beatoraja / LR2 score file'));
+    for(const [k,v] of rows)mergeExt(k,v);
+    saveExt();
+    await backfillHashes(false);
+    const n=applyExtRec();
+    await refreshLibrary();
+    track('score-import','PCスコア取り込み');
+    toast(L(`${kind} のスコア ${rows.length}件を読み込み、手持ちの譜面 ${n}件に反映しました。まだ入っていない曲は、追加したときに反映されます。`,`Read ${rows.length} ${kind} scores and applied them to ${n} of your charts. Songs you add later are matched automatically.`),6000);
+  }finally{db.close();}
+}
+$('#scImpIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)importScores(f).catch(err=>toast(L('取り込めませんでした：','Could not import: ')+(err.message||err),5000));};
 $('#expBtn').onclick=()=>exportData().catch(e=>toast(L('書き出しに失敗しました','Export failed')+': '+e.message));
 $('#impIn').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
@@ -2884,7 +3014,7 @@ function startCourse(co){
 const bufCache=new Map(),imgCache=new Map();
 function setLoad(t,r){$('#loadTxt').textContent=t;$('#loadBar').style.width=Math.round(r*100)+'%';}
 let lastPlay=null,lastMode=null,lastMeta=null;
-function snapOpts(){return {arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas,gasMin:S.gasMin,judgeAlg:S.judgeAlg,reduce:S.reduce,arrPat:S.arrPat,playRate:S.playRate};}
+function snapOpts(){return {judgeBase:S.judgeBase,arr:S.arr,arr2:S.arr2,flip:S.flip,legacy:S.legacy,lnmode:S.lnmode,autoScr:S.autoScr,expand:S.expand,gauge:S.gauge,gas:S.gas,gasMin:S.gasMin,judgeAlg:S.judgeAlg,reduce:S.reduce,arrPat:S.arrPat,playRate:S.playRate};}
 async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
@@ -3036,7 +3166,7 @@ function startGame(chart,buffers,images,o){
   const T0=(startT!=null?startT:0)-2.0;
   G={chart,buffers,images,meta:o.meta,opts:o.opts,seed:o.seed,auto:o.auto,practice:o.practice,replay:o.replay,viewer:o.viewer,tut:o.tutorial,course:o.course,
     rate,T0,clock0:actx.currentTime+0.15,ofs:o.replay?o.replay.ofs:S.ofs,ksAuto:S.ksMode==='auto'&&!o.auto,
-    W:judgeWindows(chart.rank,chart.defexrank,o.opts.expand),lnmode,N,total,gain:total/Math.max(1,N),
+    W:judgeWindows(chart.rank,chart.defexrank,o.opts.expand,o.opts.judgeBase,chart.mode),lnmode,N,total,gain:total/Math.max(1,N),
     counts:{PG:0,GR:0,GD:0,BD:0,PR:0,KP:0},mineHits:0,combo:0,maxCombo:0,judged:0,
     gauges,cur,startGauge:o.course&&o.course.carry?o.course.carry.startGauge:o.opts.gauge,failed:false,
     autoLanes,laneIdx:Array(chart.M.lanes).fill(0),mineIdx:Array(chart.M.lanes).fill(0),laneLast:Array(chart.M.lanes).fill(null),

@@ -69,7 +69,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <h2>はじめ方</h2>
     <p>曲を入れて、選んで、タップするだけです。</p>
     <ol style="margin: 0; padding-left: 1.4em">
-      <li><b>曲を追加する</b>　曲一覧の「追加」から、BMSの書庫（ZIP・RAR・LZH・7z）か、BMS／bmsonと音声ファイルをまとめて選びます。iPhoneでは「ファイル」アプリに保存した書庫をそのまま選べます。最初から紹介動画の曲「BeSmart PV Song」（7鍵 NORMAL ☆6・HYPER ☆10）と、ブラウザRPG「<a href="https://u1908inter.github.io/pikon-quest2/">ピコーン・クエスト2</a>」のBGMから「草原」「砂漠」「ボス戦 1」の3曲（各 NORMAL・HYPER）が入っているので、すぐに遊べます。自分で曲を追加するまでは、曲一覧に「曲の入れ方」の案内が出ます。タップで検索できる検索ワード（「BMS 配布」「BMS 難易度表」など）も載っています。</li>
+      <li><b>曲を追加する</b>　曲一覧の「追加」から、BMSの書庫（ZIP・RAR・LZH・7z・tar.gz）か、BMS／bmsonと音声ファイルをまとめて選びます。iPhoneでは「ファイル」アプリに保存した書庫をそのまま選べます。最初から紹介動画の曲「BeSmart PV Song」（7鍵 NORMAL ☆6・HYPER ☆10）と、ブラウザRPG「<a href="https://u1908inter.github.io/pikon-quest2/">ピコーン・クエスト2</a>」のBGMから「草原」「砂漠」「ボス戦 1」の3曲（各 NORMAL・HYPER）が入っているので、すぐに遊べます。自分で曲を追加するまでは、曲一覧に「曲の入れ方」の案内が出ます。タップで検索できる検索ワード（「BMS 配布」「BMS 難易度表」など）も載っています。</li>
       <li><b>曲を選ぶ</b>　曲をタップすると詳細が開きます。プレビュー曲が流れ、ノーツ密度のグラフと自己ベストが表示されます。</li>
       <li><b>プレイする</b>　ノーツが赤い（設定によっては光る）判定ラインに重なったら、そのレーンをタップします。一番端のレーンは「皿」（スクラッチ）です。</li>
     </ol>
@@ -91,6 +91,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
         <tr><td>ZIP</td><td>無圧縮・Deflate。Shift_JIS／EUC-KR／UTF-8 のファイル名</td><td>ZIP64、暗号化</td></tr>
         <tr><td>RAR</td><td>RAR4・RAR5（公式の展開プログラムを内蔵）。日本語ファイル名</td><td>分割書庫（part1, part2…）、パスワード付き</td></tr>
         <tr><td>LZH</td><td>-lh0- -lh4- -lh5- -lh6- -lh7- -lz4-、ヘッダレベル0〜3、Shift_JIS のファイル名</td><td>-lh1- など初期の方式</td></tr>
+        <tr><td>tar / tar.gz</td><td>.tar・.tar.gz・.tgz（GNU・PAX形式の長いファイル名にも対応）</td></tr>
         <tr><td>7z</td><td>LZMA／LZMA2 など一般的な形式</td><td>パスワード付き</td></tr>
       </tbody>
     </table></div>
@@ -448,6 +449,9 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
     <h3>2026-11-14</h3>
     <ul>
       <li>曲の詳細を開くと、試聴（プレビュー）が流れるようにしました。プレビュー音源がない曲も、譜面のいちばん盛り上がる約20秒を自動で選んで、その曲の音で再生します（設定 → 曲のプレビュー で切り替え）。</li>
+      <li>PC版の beatoraja・LR2 のスコアのファイルを読み込んで、クリアランプとスコアを曲一覧に反映できるようにしました（設定 → データ）。まだ入れていない曲も、あとから追加したときに自動で反映されます。</li>
+      <li>tar・tar.gz（.tgz）形式の書庫を読み込めるようにしました。数GBの大きな tar.gz も、曲を選んで取り込めます。</li>
+      <li>判定幅の基準を「LR2基準」と「beatoraja基準」から選べるようにしました（設定 → 判定幅の基準）。</li>
     </ul>
     <h3>2026-11-13</h3>
     <ul>
