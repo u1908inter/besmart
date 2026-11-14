@@ -149,6 +149,7 @@ canvas{display:block;touch-action:none}
 .ldist .bar2 i{display:block;height:100%}
 .begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
 .advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
+.achbar{height:6px;background:var(--faint);margin:4px 0}.achbar i{display:block;height:100%;background:var(--hi)}.achcat{margin:6px 0}.achcat summary{cursor:pointer;color:var(--ink);font-size:13px;padding:4px 0}
 .achg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}.ach{display:flex;gap:6px;align-items:center;border:1px solid var(--faint);padding:5px 6px;font-size:12px;opacity:.45}.ach.on{opacity:1;border-color:var(--hi)}.ach b{font-size:18px}.ach small{display:block;color:var(--dim);font-size:10px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chips .ib{width:auto;flex:1 1 45%;margin:0;padding:8px 6px;min-height:0;font-size:13px}
 .lleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin:4px 0 8px}
@@ -178,7 +179,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0019)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0019)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0038)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -789,7 +790,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0019)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0019)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0038)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1812,38 +1813,122 @@ const totalPlays=()=>Object.values(STATS).reduce((a,q)=>a+(q.p||0),0);
 const isBeginner=()=>S.recoLv==='new'||totalPlays()<30;
 let ACH={};try{ACH=JSON.parse(localStorage.getItem(LSK+'ach')||'{}')||{};}catch(e){}
 const saveAch=()=>{try{localStorage.setItem(LSK+'ach',JSON.stringify(ACH));}catch(e){}};
-function achList(){return [
-  ['play1','🎵',L('はじめの一歩','First steps'),L('1回プレイする','Play once')],
-  ['clear1','🌱',L('はじめてのクリア','First clear'),L('どれかの曲をEASY CLEAR以上','Get EASY CLEAR or better on any chart')],
-  ['normal1','✅',L('ノーマル突破','Normal cleared'),L('CLEAR以上をとる','Get CLEAR or better')],
-  ['hard1','🔥',L('ハードクリア','Hard clear'),L('HARD CLEAR以上をとる','Get HARD CLEAR or better')],
-  ['fc1','💎',L('フルコンボ','Full combo'),L('ミスなしで最後まで','Finish without a miss')],
-  ['aa1','🅰',L('AAランク','Rank AA'),L('スコア77.8%以上','Score 77.8% or more')],
-  ['aaa1','👑',L('AAAランク','Rank AAA'),L('スコア88.9%以上','Score 88.9% or more')],
-  ['lv5','⭐',L('☆5の壁','Level 5'),L('☆5以上をクリア','Clear a ☆5+ chart')],
-  ['lv10','🌟',L('☆10の壁','Level 10'),L('☆10以上をクリア','Clear a ☆10+ chart')],
-  ['songs10','📚',L('レパートリー','Repertoire'),L('10譜面をクリア','Clear 10 charts')],
-  ['plays10','🔟',L('10回プレイ','10 plays'),L('合計10回プレイ','Play 10 times')],
-  ['plays100','💯',L('100回プレイ','100 plays'),L('合計100回プレイ','Play 100 times')],
-  ['notes10k','🥁',L('1万ノーツ','10,000 notes'),L('合計1万ノーツを叩く','Hit 10,000 notes in total')],
-  ['streak3','📅',L('3日連続','3-day streak'),L('3日続けて遊ぶ','Play 3 days in a row')],
-  ['ghost1','👻',L('過去の自分に勝つ','Beat your ghost'),L('ゴーストに勝つ','Win against the ghost')],
-  ['rival1','🤝',L('ライバルに勝つ','Beat a rival'),L('ライバルのゴーストに勝つ','Win against a rival ghost')]];}
-function checkAch(R){
-  const recs=Object.entries(REC),byHash=new Map(CHARTS.map(c=>[c.hash,c]));
-  const has=(f)=>recs.some(([h,r])=>f(r,byHash.get(h)));
-  const tp=totalPlays(),tn=Object.values(STATS).reduce((a,q)=>a+(q.n||0),0);
-  let streak=0;for(let i=0;i<400;i++){if(STATS[dayKey(Date.now()-i*86400000)]){streak++;}else if(i>0)break;else continue;}
-  const ok={play1:tp>=1,clear1:has(r=>r.lamp>=3),normal1:has(r=>r.lamp>=4),hard1:has(r=>r.lamp>=5),fc1:has(r=>r.lamp>=7),
-    aa1:has((r,c)=>c&&r.ex/(2*c.notesN)>=7/9),aaa1:has((r,c)=>c&&r.ex/(2*c.notesN)>=8/9),
-    lv5:has((r,c)=>c&&r.lamp>=3&&lvNum(c.level)>=5),lv10:has((r,c)=>c&&r.lamp>=3&&lvNum(c.level)>=10),
-    songs10:recs.filter(([h,r])=>r.lamp>=3).length>=10,plays10:tp>=10,plays100:tp>=100,notes10k:tn>=10000,streak3:streak>=3,
-    ghost1:!!(R&&R.ghost&&!R.ghost.name&&R.ghost.d>0),rival1:!!(R&&R.ghost&&R.ghost.name&&R.ghost.d>0)};
-  const got=[];for(const [id,ic,nm] of achList())if(ok[id]&&!ACH[id]){ACH[id]=Date.now();got.push(ic+' '+nm);}
+let ACHC={};try{ACHC=JSON.parse(localStorage.getItem(LSK+'achc')||'{}')||{};}catch(e){}
+const bumpC=(k,n=1)=>{ACHC[k]=(ACHC[k]||0)+n;try{localStorage.setItem(LSK+'achc',JSON.stringify(ACHC));}catch(e){}};
+/* achievements: [id, icon, name, description, category, test(ctx)] ; hidden ones show ??? until unlocked */
+function achList(){
+  const T=(id,ic,nm,ds,cat,f,hid)=>({id,ic,nm,ds,cat,f,hid});const J=L;const out=[];
+  const tier=(base,ic,nmF,dsF,cat,vals,get)=>vals.forEach((v,i)=>out.push(T(base+v,ic,nmF(v,i),dsF(v),cat,x=>get(x)>=v)));
+  // first steps
+  out.push(T('play1','🎵',J('はじめの一歩','First steps'),J('1回プレイする','Play once'),'start',x=>x.tp>=1));
+  out.push(T('clear1','🌱',J('はじめてのクリア','First clear'),J('どれかの譜面をEASY CLEAR以上','EASY CLEAR or better on any chart'),'start',x=>x.cl>=1));
+  out.push(T('normal1','✅',J('ノーマル突破','Normal cleared'),J('CLEAR以上をとる','Get a CLEAR or better'),'start',x=>x.nc>=1));
+  out.push(T('hard1','🔥',J('ハードクリア','Hard clear'),J('HARD CLEAR以上をとる','Get a HARD CLEAR or better'),'start',x=>x.hc>=1));
+  out.push(T('exh1','☄',J('エクハ','EX HARD'),J('EX HARD CLEAR以上をとる','Get an EX HARD CLEAR or better'),'start',x=>x.xc>=1));
+  out.push(T('fc1','💎',J('フルコンボ','Full combo'),J('ミスなしで最後まで','Finish without a miss'),'start',x=>x.fc>=1));
+  out.push(T('pf1','✨',J('PERFECT','PERFECT'),J('GOOD以下なしでフルコンボ','Full combo with only PERFECT/GREAT'),'start',x=>x.pf>=1));
+  out.push(T('max1','🌈',J('理論値','MAX'),J('全部PERFECT','All PERFECT'),'start',x=>x.mx>=1));
+  // ranks
+  out.push(T('aa1','🅰',J('AAランク','Rank AA'),J('スコア77.8%以上','Score 77.8%+'),'rank',x=>x.aa>=1));
+  out.push(T('aaa1','👑',J('AAAランク','Rank AAA'),J('スコア88.9%以上','Score 88.9%+'),'rank',x=>x.aaa>=1));
+  out.push(T('mxm1','🎯',J('MAX-','MAX-'),J('スコア94.4%以上','Score 94.4%+'),'rank',x=>x.mxm>=1));
+  tier('aaaN','👑',v=>J(`AAA×${v}`,`AAA ×${v}`),v=>J(`AAAを${v}譜面`,`AAA on ${v} charts`),'rank',[10,50,100],x=>x.aaa);
+  // levels
+  tier('lv','⭐',v=>J(`☆${v}の壁`,`Level ${v}`),v=>J(`☆${v}以上をクリア`,`Clear a ☆${v}+ chart`),'level',[3,5,8,10,12],x=>x.maxLvCl);
+  tier('hlv','🔥',v=>J(`☆${v}ハード`,`☆${v} hard`),v=>J(`☆${v}以上をHARD CLEAR`,`HARD CLEAR a ☆${v}+ chart`),'level',[8,10,12],x=>x.maxLvHc);
+  tier('flv','💎',v=>J(`☆${v}フルコン`,`☆${v} full combo`),v=>J(`☆${v}以上をフルコンボ`,`Full combo a ☆${v}+ chart`),'level',[5,8,10,12],x=>x.maxLvFc);
+  // collection
+  tier('cl','📚',v=>J(`クリア${v}`,`${v} clears`),v=>J(`${v}譜面をクリア`,`Clear ${v} charts`),'collect',[10,50,100,300,1000],x=>x.cl);
+  tier('hc','🔥',v=>J(`ハード${v}`,`${v} hard clears`),v=>J(`${v}譜面をHARD CLEAR以上`,`HARD CLEAR ${v} charts`),'collect',[10,50,100,300],x=>x.hc);
+  tier('fcN','💎',v=>J(`フルコン${v}`,`${v} full combos`),v=>J(`${v}譜面をフルコンボ`,`Full combo ${v} charts`),'collect',[10,50,100,300],x=>x.fc);
+  tier('lib','💿',v=>J(`ライブラリ${v}`,`Library ${v}`),v=>J(`譜面を${v}個入れる`,`Have ${v} charts`),'collect',[50,300,1000,3000],x=>x.nch);
+  // effort
+  tier('plays','🔟',v=>J(`${v}回プレイ`,`${v} plays`),v=>J(`合計${v}回プレイ`,`Play ${v} times`),'effort',[10,100,500,1000,3000,10000],x=>x.tp);
+  tier('notes','🥁',v=>J(`${v>=1e6?v/1e6+'00万':v/1e4+'万'}ノーツ`,`${v.toLocaleString()} notes`),v=>J(`合計${v.toLocaleString()}ノーツを叩く`,`Hit ${v.toLocaleString()} notes`),'effort',[10000,100000,500000,1000000,3000000],x=>x.tn);
+  tier('hours','⏱',v=>J(`${v}時間`,`${v} hours`),v=>J(`合計${v}時間プレイ`,`Play ${v} hours in total`),'effort',[1,10,50,100,300],x=>x.ts/3600);
+  tier('streak','📅',v=>J(`${v}日連続`,`${v}-day streak`),v=>J(`${v}日続けて遊ぶ`,`Play ${v} days in a row`),'effort',[3,7,30,100,365],x=>x.bestStreak);
+  tier('days','🗓',v=>J(`のべ${v}日`,`${v} days`),v=>J(`遊んだ日が合計${v}日`,`Play on ${v} different days`),'effort',[10,50,100,300],x=>x.days);
+  tier('day','⚡',v=>J(`1日${v}回`,`${v} in a day`),v=>J(`1日に${v}回プレイ`,`Play ${v} times in one day`),'effort',[20,50,100],x=>x.maxDay);
+  // challenge (from a single play)
+  out.push(T('nm_hard','🛡',J('ノーミスHARD','No-miss HARD'),J('HARDゲージでミス0のまま最後まで','Finish on HARD with 0 misses'),'skill',x=>x.c.nmHard));
+  out.push(T('acc90','🎯',J('精密打撃','Precision'),J('1回のプレイでPERFECT率90%以上（300ノーツ以上）','90%+ PERFECT in one play (300+ notes)'),'skill',x=>x.c.acc90));
+  out.push(T('fc1000','🏔',J('千ノーツの山','Thousand-note FC'),J('1000ノーツ以上の譜面をフルコンボ','Full combo a 1000+ note chart'),'skill',x=>x.c.fc1000));
+  out.push(T('bpm200','🚀',J('BPM200超え','Over BPM 200'),J('BPM200以上の譜面をクリア','Clear a BPM 200+ chart'),'skill',x=>x.c.bpm200));
+  out.push(T('long','🏃',J('長距離走者','Long runner'),J('3分以上の譜面をクリア','Clear a chart over 3 minutes'),'skill',x=>x.c.long));
+  out.push(T('combo500','🔗',J('500コンボ','500 combo'),J('1回で500コンボ','Reach a 500 combo'),'skill',x=>x.c.combo>=500));
+  out.push(T('combo1500','⛓',J('1500コンボ','1500 combo'),J('1回で1500コンボ','Reach a 1500 combo'),'skill',x=>x.c.combo>=1500));
+  out.push(T('red4','4️⃣',J('4鍵クリア','4-key clear'),J('鍵盤を4つに減らしてクリア','Clear with 4 keys'),'skill',x=>x.red4));
+  out.push(T('noscr','🎚',J('皿も自分で','Scratch myself'),J('オートスクラッチなしで7鍵をクリア','Clear a 7K chart without auto scratch'),'skill',x=>x.c.noscr));
+  out.push(T('comeback','💪',J('逆転クリア','Comeback'),J('ゲージ10%以下から持ち直してクリア','Clear after dropping to 10% or less'),'skill',x=>x.c.comeback));
+  // social / modes
+  tier('gw','👻',v=>J(v===1?'過去の自分に勝つ':`ゴーストに${v}勝`,v===1?'Beat your ghost':`${v} ghost wins`),v=>J(`ゴーストに${v}回勝つ`,`Beat the ghost ${v} times`),'mode',[1,10,50],x=>x.C.gw||0);
+  tier('rw','🤝',v=>J(v===1?'ライバルに勝つ':`ライバルに${v}勝`,v===1?'Beat a rival':`${v} rival wins`),v=>J(`ライバルに${v}回勝つ`,`Beat a rival ${v} times`),'mode',[1,10],x=>x.C.rw||0);
+  out.push(T('battle1','⚔',J('対戦デビュー','Battle debut'),J('バトルを1回遊ぶ','Play a battle'),'mode',x=>(x.C.bt||0)>=1));
+  out.push(T('battle10','🏟',J('対戦好き','Battle fan'),J('バトルを10回遊ぶ','Play 10 battles'),'mode',x=>(x.C.bt||0)>=10));
+  out.push(T('course1','🎖',J('コース完走','Course complete'),J('コースを最後までクリア','Clear a course'),'mode',x=>(x.C.co||0)>=1));
+  out.push(T('loop20','🔁',J('反復練習','Drill'),J('区間ループを合計20回','Loop sections 20 times'),'mode',x=>(x.C.lp||0)>=20));
+  out.push(T('share1','📤',J('ライバル募集','Challenger'),J('リプレイを書き出す','Export a replay'),'mode',x=>(x.C.ex||0)>=1));
+  out.push(T('table1','📋',J('表デビュー','Table user'),J('難易度表を登録する','Add a difficulty table'),'mode',x=>x.tables>=1));
+  // secret
+  out.push(T('night','🦉',J('夜ふかし','Night owl'),J('深夜2〜4時に遊ぶ','Play between 2 and 4 AM'),'secret',x=>x.c.hour>=2&&x.c.hour<4,1));
+  out.push(T('early','🐓',J('早起き','Early bird'),J('朝5〜7時に遊ぶ','Play between 5 and 7 AM'),'secret',x=>x.c.hour>=5&&x.c.hour<7,1));
+  out.push(T('close','😱',J('ギリギリ','Close call'),J('ゲージぴったりのラインでクリア','Clear right on the line'),'secret',x=>x.c.close,1));
+  out.push(T('pq2','🗡',J('勇者の証','Hero’s proof'),J('ピコーン・クエスト2の内蔵曲を全部クリア','Clear every built-in Pikon Quest 2 chart'),'secret',x=>x.pq2,1));
+  out.push(T('miss0f','🙈',J('おしい！','So close!'),J('ミス1つでフルコンボを逃す','Miss a full combo by one'),'secret',x=>x.c.miss1,1));
+  return out;
+}
+const ACH_CAT=()=>({start:L('はじめて','Firsts'),rank:L('ランク','Ranks'),level:L('レベル','Levels'),collect:L('コレクション','Collection'),effort:L('つみかさね','Dedication'),skill:L('チャレンジ','Challenges'),mode:L('モード','Modes'),secret:L('ひみつ','Secret')});
+function achCtx(cur){
+  const byHash=new Map(CHARTS.map(c=>[c.hash,c]));const x={tp:0,tn:0,ts:0,days:0,maxDay:0,cl:0,nc:0,hc:0,xc:0,fc:0,pf:0,mx:0,aa:0,aaa:0,mxm:0,maxLvCl:0,maxLvHc:0,maxLvFc:0,red4:false,nch:CHARTS.length,tables:TABLES.length,C:ACHC,c:cur||{}};
+  for(const k in STATS){const q=STATS[k];x.tp+=q.p||0;x.tn+=q.n||0;x.ts+=q.s||0;if(q.p){x.days++;x.maxDay=Math.max(x.maxDay,q.p);}}
+  const ks=Object.keys(STATS).filter(k=>STATS[k].p).sort();let run=0,prev=null;x.bestStreak=0;
+  for(const k of ks){const d=new Date(k+'T12:00:00');run=prev&&Math.round((d-prev)/86400000)===1?run+1:1;prev=d;x.bestStreak=Math.max(x.bestStreak,run);}
+  let pqAll=true,pqAny=false;
+  for(const h in REC){if(h.startsWith('course:'))continue;const r=REC[h],c=byHash.get(h);const lp=r.lamp||0,lv=c?lvNum(c.level):-1,rate=c&&c.notesN?r.ex/(2*c.notesN):0;
+    if(lp>=3){x.cl++;x.maxLvCl=Math.max(x.maxLvCl,lv);}if(lp>=4)x.nc++;if(lp>=5){x.hc++;x.maxLvHc=Math.max(x.maxLvHc,lv);}if(lp>=6)x.xc++;
+    if(lp>=7){x.fc++;x.maxLvFc=Math.max(x.maxLvFc,lv);}if(lp>=8)x.pf++;if(lp>=9)x.mx++;
+    if(rate>=7/9)x.aa++;if(rate>=8/9)x.aaa++;if(rate>=17/18)x.mxm++;
+    if(r.red&&r.red['4k']&&r.red['4k'].lamp>=3)x.red4=true;}
+  for(const c of CHARTS)if(c.builtin&&/ピコーン|Pikon/i.test(c.title)){pqAny=true;if(!((REC[c.hash]||{}).lamp>=3))pqAll=false;}
+  x.pq2=pqAny&&pqAll;return x;
+}
+function checkAch(R,cur){
+  const x=achCtx(cur);const got=[];
+  for(const a of achList()){if(ACH[a.id])continue;let ok=false;try{ok=!!a.f(x);}catch(e){}if(ok){ACH[a.id]=Date.now();got.push(a.ic+' '+a.nm);}}
   if(got.length)saveAch();return got;
 }
-function achHTML(){const L2=achList();const n=L2.filter(a=>ACH[a[0]]).length;
-  return `<div class="hlp" style="margin-top:12px">${L('実績','Achievements')}（${n} / ${L2.length}）</div><div class="achg">${L2.map(([id,ic,nm,ds])=>`<div class="ach ${ACH[id]?'on':''}"><b>${ACH[id]?ic:'🔒'}</b><span>${esc(nm)}<small>${esc(ds)}</small></span></div>`).join('')}</div>`;}
+function achHTML(){const A=achList(),n=A.filter(a=>ACH[a.id]).length,cats=ACH_CAT();
+  const recent=A.filter(a=>ACH[a.id]).sort((a,b)=>ACH[b.id]-ACH[a.id]).slice(0,3);
+  let h=`<div class="hlp" style="margin-top:12px">${L('実績','Achievements')}（${n} / ${A.length}）</div><div class="achbar"><i style="width:${n/A.length*100}%"></i></div>`;
+  if(recent.length)h+=`<div class="hlp" style="margin:4px 0">${L('最近の実績：','Recent: ')}${recent.map(a=>esc(a.ic+' '+a.nm)).join('、')}</div>`;
+  for(const k in cats){const list=A.filter(a=>a.cat===k);const m=list.filter(a=>ACH[a.id]).length;
+    h+=`<details class="achcat"><summary>${cats[k]}（${m} / ${list.length}）</summary><div class="achg">${list.map(a=>{const on=!!ACH[a.id],hide=a.hid&&!on;
+      return `<div class="ach ${on?'on':''}"><b>${on?a.ic:'🔒'}</b><span>${hide?'？？？':esc(a.nm)}<small>${hide?L('ひみつの実績','Secret'):esc(a.ds)}</small></span></div>`;}).join('')}</div></details>`;}
+  return h;}
+/* today's trend comments, compared with the last 14 days */
+function trendLines(){
+  const today=dayKey(),t=STATS[today]||{};const base={p:0,n:0,f:0,sl:0,pg:0,ms:0,ds:0,dn:0,days:0};
+  for(let i=1;i<=14;i++){const q=STATS[dayKey(Date.now()-i*86400000)];if(!q||!q.p)continue;base.days++;for(const k of ['p','n','f','sl','pg','ms','ds','dn'])base[k]+=q[k]||0;}
+  const out=[];const pct=v=>Math.round(v*100)+'%';
+  if(!t.p)return [L('今日はまだプレイしていません。1曲いきましょう！','No plays yet today — go play a song!')];
+  const enough=(t.n||0)>=200,hasB=base.n>=500&&base.days>=2;
+  const fr=(t.f+t.sl)>=20?t.f/(t.f+t.sl):null,bfr=(base.f+base.sl)>=40?base.f/(base.f+base.sl):null;
+  const md=t.dn>=50?t.ds/t.dn:null,bmd=base.dn>=100?base.ds/base.dn:null;
+  const fd=fr!=null&&bfr!=null?fr-bfr:0,mdd=md!=null&&bmd!=null&&enough?md-bmd:0;
+  if(Math.abs(fd)>=0.08||Math.abs(mdd)>=8){const early=Math.abs(fd)>=0.08?fd>0:mdd<0;
+    const det=[Math.abs(fd)>=0.08?(early?L(`FAST ${pct(fr)}、ふだん${pct(bfr)}`,`FAST ${pct(fr)} (usually ${pct(bfr)})`):L(`SLOW ${pct(1-fr)}、ふだん${pct(1-bfr)}`,`SLOW ${pct(1-fr)} (usually ${pct(1-bfr)})`)):null,Math.abs(mdd)>=8?L(`平均 ${Math.round(Math.abs(mdd))}ms ${mdd<0?'早い':'遅い'}`,`${Math.round(Math.abs(mdd))} ms ${mdd<0?'early':'late'} on average`):null].filter(Boolean).join(L('／',', '));
+    out.push(early?L(`いつもより<b>FASTが多め</b>です（${det}）。焦り気味かも。少し引きつけて押してみましょう。`,`More <b>FAST</b> than usual (${det}). Try waiting a touch longer.`):L(`いつもより<b>SLOWが多め</b>です（${det}）。疲れや眠気が出ていませんか？早めを意識してみましょう。`,`More <b>SLOW</b> than usual (${det}). Tired? Aim a little earlier.`));}
+  else if(fr!=null&&!hasB&&Math.abs(fr-0.5)>=0.15)out.push(fr>0.5?L(`今日は<b>FASTが多め</b>（${pct(fr)}）。判定タイミングの調整も試してみて。`,`Lots of <b>FAST</b> today (${pct(fr)}).`):L(`今日は<b>SLOWが多め</b>（${pct(1-fr)}）。判定タイミングの調整も試してみて。`,`Lots of <b>SLOW</b> today (${pct(1-fr)}).`));
+  if(enough&&hasB){const pr=t.pg/t.n,bpr=base.pg/base.n;if(pr-bpr>=0.04)out.push(L(`PERFECTの割合がいつもより高めです（${pct(pr)}、ふだん${pct(bpr)}）。調子がいい日！自己ベストを狙ってみては？`,`PERFECT rate is up (${pct(pr)} vs ${pct(bpr)}). Good day — chase a PB!`));
+    else if(bpr-pr>=0.04)out.push(L(`PERFECTの割合がいつもより低めです（${pct(pr)}、ふだん${pct(bpr)}）。疲れていたら休憩も大事です。`,`PERFECT rate is down (${pct(pr)} vs ${pct(bpr)}). Take a break if tired.`));
+    const mr=t.ms/t.n,bmr=base.ms/base.n;if(mr-bmr>=0.03)out.push(L(`ミスがいつもより多めです（100ノーツあたり${(mr*100).toFixed(1)}、ふだん${(bmr*100).toFixed(1)}）。少しやさしい曲で慣らすのも手です。`,`More misses than usual (${(mr*100).toFixed(1)} vs ${(bmr*100).toFixed(1)} per 100 notes).`));
+    else if(bmr-mr>=0.02)out.push(L(`ミスがいつもより少なめ（100ノーツあたり${(mr*100).toFixed(1)}）。安定しています。`,`Fewer misses than usual (${(mr*100).toFixed(1)} per 100 notes). Steady!`));}
+  if(base.days>=3){const avg=base.p/base.days;if(t.p>=Math.max(6,avg*2))out.push(L(`今日はいつもの${(t.p/avg).toFixed(1)}倍遊んでいます（${t.p}回）。手首と目を休めるのもお忘れなく。`,`You've played ${(t.p/avg).toFixed(1)}× your usual today. Rest your wrists and eyes!`));}
+  if(t.cl)out.push(L(`今日は${t.cl}回クリアしました。`,`${t.cl} clears today.`));
+  let st=0;for(let i=0;i<400;i++){if(STATS[dayKey(Date.now()-i*86400000)])st++;else break;}if(st>=2)out.push(L(`${st}日連続でプレイ中🔥`,`${st}-day streak 🔥`));
+  if(!out.length)out.push(L('いつも通りの安定した調子です。','Steady as usual.'));
+  return out.slice(0,4);
+}
 /* glossary */
 function glossTerms(){return [
   [L('判定','Judgements'),L('PERFECT（ぴったり）＞GREAT＞GOOD はコンボが続きます。BAD と POOR（見逃し）はミス。何もないところを押すと「空打ち（空POOR）」です。','PERFECT > GREAT > GOOD keep the combo. BAD and POOR (missed) break it. Pressing with no note is an empty POOR.')],
@@ -2711,7 +2796,7 @@ async function exportReplay(c,rep){
   const d={app:'BeSmart',kind:'replay',v:1,name:nm,title:c.title+(c.subtitle?' '+c.subtitle:''),md5:c.md5||'',sha256:c.sha256||'',hash:c.hash,ex:rep.ex,max:c.notesN*2,lamp:rep.lamp||0,seed:rep.seed,opts:rep.opts,ofs:rep.ofs,events:rep.events,date:rep.date||Date.now()};
   const fn=('BeSmart_'+(c.title||'replay').slice(0,40)+'_'+nm+'.json').replace(/[\\/:*?"<>|\s]+/g,'_');
   const blob=new Blob([JSON.stringify(d)],{type:'application/json'});
-  track('replay-export','リプレイ書き出し');
+  track('replay-export','リプレイ書き出し');bumpC('ex');
   try{const file=new File([blob],fn,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'BeSmart',text:`${d.title} EX ${d.ex}`});return;}}catch(e){if(e&&e.name==='AbortError')return;}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
   toast(L('リプレイのファイルを保存しました','Replay file saved'));
@@ -2876,7 +2961,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,courses:COURSES,settings:S,presets:PRESETS,replays};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,achc:ACHC,courses:COURSES,settings:S,presets:PRESETS,replays};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -2964,12 +3049,12 @@ $('#impIn').onchange=async e=>{
 $('#impCancel').onclick=()=>{impData=null;show('#impDlg',false);};
 $('#impGo').onclick=async()=>{
   const d=impData;if(!d)return;const replace=$$('input[name=impMode]')[1].checked;
-  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);FOLDERS=Array.isArray(d.folders)?d.folders:[];STATS=d.stats||{};ACH=d.ach||{};COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
+  if(replace){REC=d.rec||{};FAV=new Set(d.fav||[]);FOLDERS=Array.isArray(d.folders)?d.folders:[];STATS=d.stats||{};ACH=d.ach||{};ACHC=d.achc||{};COURSES=Array.isArray(d.courses)?d.courses:[];try{await DB.clear('replays');}catch(e){}}
   else{
     for(const k in d.rec)REC[k]=mergeRecOne(REC[k],d.rec[k]);
     (d.fav||[]).forEach(x=>FAV.add(x));
     (Array.isArray(d.folders)?d.folders:[]).forEach(F=>{if(!F||!F.name)return;const M=FOLDERS.find(x=>x.name===F.name);if(M)(F.hashes||[]).forEach(h=>{if(!M.hashes.includes(h))M.hashes.push(h);});else FOLDERS.push({name:F.name,hashes:(F.hashes||[]).slice()});});
-    Object.assign(ACH,d.ach||{});
+    Object.assign(ACH,d.ach||{});for(const k in (d.achc||{}))ACHC[k]=Math.max(ACHC[k]||0,d.achc[k]);
     for(const k in (d.stats||{})){const a=STATS[k],b=d.stats[k];if(!a||(b.p||0)>(a.p||0))STATS[k]=b;}
     const ids=new Set(COURSES.map(c=>c.id));(d.courses||[]).forEach(c=>{if(c&&!ids.has(c.id))COURSES.push(c);});
   }
@@ -2978,7 +3063,7 @@ $('#impGo').onclick=async()=>{
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
   if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
-  saveRec();saveFav();saveFolders();saveStats();saveAch();saveCourses();impData=null;show('#impDlg',false);
+  saveRec();saveFav();saveFolders();saveStats();saveAch();try{localStorage.setItem(LSK+'achc',JSON.stringify(ACHC));}catch(e){}saveCourses();impData=null;show('#impDlg',false);
   toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
   buildSettings();renderPwaBox();if(typeof applyPhosphor==='function')applyPhosphor();
 };
@@ -4047,7 +4132,7 @@ function pracLoop(){
   stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;G.curPoor=null;
   for(const k in G.counts)G.counts[k]=0;G.combo=0;G.judged=0;G.dts=[];G.fs={f:0,s:0};G.glog=[];G.judge=null;G.bombs=[];
   G.gauges=JSON.parse(JSON.stringify(G.pracG));
-  G.pracLoops++;G.T0=st-1.5;G.clock0=actx.currentTime+0.1;G.lastFrame=0;
+  G.pracLoops++;bumpC('lp');G.T0=st-1.5;G.clock0=actx.currentTime+0.1;G.lastFrame=0;
   resumeTails(st,false);
   toast(L(`${G.pracLoops}回目${clean?'（前回ノーミス）':''}　×${G.rate.toFixed(2)}`,`Loop ${G.pracLoops}${clean?' (last pass clean)':''}  ×${G.rate.toFixed(2)}`),1600);
 }
@@ -4060,7 +4145,9 @@ function renderRec(){
   const t=sum([today]),w=sum(last7),all=sum(days);
   const cell=(lb,q)=>`<div><small>${lb}</small><b>${q.p}</b><small>${L('回','plays')} ／ ${q.n.toLocaleString()}${L('ノーツ',' notes')}<br>${fmtDur(q.s)}</small></div>`;
   const src=S.recSrc||'';
-  body.innerHTML=`<div class="hlp">${L('プレイ記録（オートやリプレイは数えません）','Play stats (autoplay and replays are not counted)')}</div>
+  const newA=checkAch(null,{hour:-1});if(newA.length)toast('🏆 '+newA.join('、'),3500);
+  body.innerHTML=`<div class="advc" style="margin-top:0"><b>📝 ${L('今日の傾向','Today')}</b>${trendLines().map(x=>`<div>・${x}</div>`).join('')}</div>
+    <div class="hlp">${L('プレイ記録（オートやリプレイは数えません）','Play stats (autoplay and replays are not counted)')}</div>
     <div class="stt">${cell(L('今日','Today'),t)}${cell(L('7日間','7 days'),w)}${cell(L('累計','Total'),all)}</div>
     <canvas class="graph" id="recDays" style="height:90px"></canvas>
     <div class="hlp" style="margin-top:10px">${L('クリアランプの分布','Clear lamp distribution')}</div>
@@ -4343,7 +4430,7 @@ $('#retrySame').onclick=()=>retry(true);
 
 /* ---------- battle result ---------- */
 function battleResult(){
-  if(!BT)return;wakeOff();track('battle-finish','バトル終了');
+  if(!BT)return;wakeOff();bumpC('bt');track('battle-finish','バトル終了');
   const R=BT.P.map((P,i)=>{bAct(i);const c=G.counts,ex=c.PG*2+c.GR,max=G.N*2;
     return {ex,max,rate:max?ex/max:0,lamp:G.failed?'FAILED':LAMPS[computeLamp()],failed:G.failed,bp:c.BD+c.PR+c.KP,combo:G.maxCombo,c};});
   bAct(0);
@@ -4445,7 +4532,10 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     if(ex>q.ex){q.ex=ex;q.max=max;news.ex=1;}
     r.red[m]=q;REC[hash]=r;saveRec();G.redSaved=m;
   }
-  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){const k=dayKey(),q=STATS[k]||(STATS[k]={p:0,n:0,s:0});q.p++;q.n+=G.judged;q.s+=Math.min(3600,Math.round((performance.now()-(G.t0ms||performance.now()))/1000));saveStats();}
+  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){const k=dayKey(),q=STATS[k]||(STATS[k]={p:0,n:0,s:0});q.p++;q.n+=G.judged;q.s+=Math.min(3600,Math.round((performance.now()-(G.t0ms||performance.now()))/1000));
+    q.f=(q.f||0)+G.fs.f;q.sl=(q.sl||0)+G.fs.s;q.pg=(q.pg||0)+c.PG;q.ms=(q.ms||0)+c.BD+c.PR;
+    if(G.rate===1&&G.dts.length){q.ds=(q.ds||0)+G.dts.reduce((a,b)=>a+b,0);q.dn=(q.dn||0)+G.dts.length;}
+    if(G.record&&!G.failed&&lamp>=3)q.cl=(q.cl||0)+1;saveStats();}
   const thisReplay=G.record?{hash,ex,seed:G.seed,opts:G.opts,ofs:G.ofs,events:G.rec}:null;
   const fc=!G.failed&&c.BD===0&&c.PR===0&&N>0;
   const assist=isAssist(G.opts);
@@ -4454,7 +4544,12 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
   }
   const R={lamp,ex,max,rate,bp,news,thisReplay};
   if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx,name:GHOST.rival};}
-  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){try{R.ach=checkAch(R);}catch(e){}}
+  if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){try{
+    if(R.ghost&&R.ghost.d>0&&G.record)bumpC(R.ghost.name?'rw':'gw');
+    const ok=G.record&&!G.failed&&lamp>=3,ch=G.chart,dur=ch.endTime||0,gmin=(G.glog||[]).reduce((m,v)=>Math.min(m,Array.isArray(v)?v[1]:v),100);
+    const cur=G.record?{nmHard:!G.failed&&['hard','exhard','hazard'].includes(G.startGauge||S.gauge)&&c.BD+c.PR===0&&G.N>0,acc90:G.N>=300&&c.PG/G.N>=0.9,fc1000:G.N>=1000&&lamp>=7,bpm200:ok&&(ch.maxB||ch.bpm||0)>=200,long:ok&&dur>=180,combo:G.maxCombo,
+      noscr:ok&&ch.mode==='7k'&&!G.opts.autoScr&&(G.opts.reduce||'off')==='off',comeback:ok&&gmin<=10,hour:new Date().getHours(),close:ok&&GT[G.cur].border>0&&G.gauges[G.cur].v>=GT[G.cur].border&&G.gauges[G.cur].v<GT[G.cur].border+2,miss1:!G.failed&&c.BD+c.PR===1}:{hour:new Date().getHours()};
+    R.ach=checkAch(R,cur);}catch(e){console.warn('ach',e);}}
   const delay=G.celebrate?1900:G.failed?900:300;
   if(G.course){setTimeout(()=>courseNext(R),delay);return;}
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
@@ -4556,7 +4651,7 @@ function courseNext(R){
   // course finished
   const ex=cs.results.reduce((a,r)=>a+r.ex,0),max=cs.N*2,rate=max?ex/max:0,bp=cs.agg.BD+cs.agg.PR+cs.agg.KP;
   const failed=G.failed||cs.results.length<cs.charts.length;
-  let lamp=failed?1:computeLamp(cs.agg);
+  let lamp=failed?1:computeLamp(cs.agg);if(!failed)bumpC('co');
   const key='course:'+cs.co.id,r=REC[key]||{lamp:0,ex:0,bp:null,plays:0},news={};
   r.plays++;if(lamp>r.lamp){r.lamp=lamp;news.lamp=1;}if(ex>r.ex){r.ex=ex;news.ex=1;}if(!failed&&(r.bp==null||bp<r.bp)){r.bp=bp;news.bp=1;}
   REC[key]=r;saveRec();
