@@ -155,6 +155,8 @@ canvas{display:block;touch-action:none}
 #title{background:var(--bg)!important}
 #title .box{background:transparent!important;border:0!important}
 .bigRow{display:flex;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px dashed var(--faint);cursor:pointer}.bigRow input{flex:none;width:18px;height:18px}.bigRow .bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bigRow .bs{flex:none;opacity:.7;font-size:.85em}
+.navsel{outline:3px solid var(--hi)!important;outline-offset:2px;box-shadow:0 0 12px var(--glow)!important}
+.song.navsel{outline-offset:-3px;background:var(--bg2)}
 </style>
 </head>
 <body>
@@ -164,7 +166,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1406)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1406)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1114.1606)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1606)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -768,7 +770,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1406)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1406)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1114.1606)">スマホで遊べるBMSプレイヤー　VER 1.0 (1114.1606)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3769,8 +3771,99 @@ const up=e=>{rubSt.delete(e.pointerId);if(BT&&ptrP.has(e.pointerId)){bAct(ptrP.g
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 document.addEventListener('touchmove',e=>{if(G&&!G.ended&&e.target===cv)e.preventDefault();},{passive:false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
+/* ---------- controller / keyboard menu navigation ----------
+   Turntable or ↑↓ moves, odd keys (1/3/5/7) / Enter / A decide, even keys (2/4/6) / Backspace / B go back,
+   START pauses during play. Highlights appear only once a controller or key is used. */
+const NAV={on:false,idx:{},ctx:'',prev:{},acc:{},rep:null};
+function navVis(el){return !!(el&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');}
+function navCtx(){
+  if(navVis($('#result')))return {k:'result',root:$('#resultBox'),back:['#rBack']};
+  if(navVis($('#pause')))return {k:'pause',root:$('#pause'),back:['#resumeBtn']};
+  if(G&&!G.ended&&navVis($('#game')))return {k:'play'};
+  const ovs=[...document.querySelectorAll('.overlay')].filter(o=>o.id!=='loading'&&navVis(o));
+  if(ovs.length){const o=ovs.sort((a,b)=>(+getComputedStyle(b).zIndex||0)-(+getComputedStyle(a).zIndex||0))[0];return {k:o.id||'ov',root:o,back:['[id$="Close"]','[id$="Cancel"]','[id$="Back"]']};}
+  if(navVis($('#detail')))return {k:'detail',root:$('#detail'),back:['#dClose']};
+  if(navVis($('#settings')))return {k:'settings',root:$('#settings'),back:['#setBack']};
+  if(navVis($('#course')))return {k:'course',root:$('#course'),back:['#courseBack']};
+  if(navVis($('#lib')))return {k:'lib',root:$('#lib'),back:[]};
+  return {k:'none'};
+}
+function navItems(c){
+  if(c.k==='lib')return [...$('#lib').querySelectorAll('.acts button,.song')].filter(navVis);
+  if(!c.root)return [];
+  return [...c.root.querySelectorAll('button,select,input[type=checkbox],input[type=range],label.btn,label.gchip,a[href]')].filter(e=>navVis(e)&&!e.disabled);
+}
+function navClear(){document.querySelectorAll('.navsel').forEach(e=>e.classList.remove('navsel'));}
+function navMark(c){
+  navClear();if(!NAV.on||c.k==='play'||c.k==='none')return;
+  const it=navItems(c);if(!it.length)return;
+  if(NAV.ctx!==c.k){NAV.ctx=c.k;if(c.k!=='lib'||NAV.idx.lib==null){let i=it.findIndex(e=>e.classList.contains('pri'));if(c.k==='lib')i=it.findIndex(e=>e.classList.contains('song'));NAV.idx[c.k]=Math.max(0,i);}}
+  const i=Math.max(0,Math.min(it.length-1,NAV.idx[c.k]||0));NAV.idx[c.k]=i;
+  const el=it[i];el.classList.add('navsel');
+  const r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-10)el.scrollIntoView({block:'center'});
+}
+function navMove(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+  if(!NAV.on){NAV.on=true;navMark(c);return;}
+  if(NAV.ctx!==c.k){navMark(c);return;}
+  const it=navItems(c);if(!it.length)return;NAV.idx[c.k]=Math.max(0,Math.min(it.length-1,(NAV.idx[c.k]||0)+d));navMark(c);}
+function navCur(c){const it=navItems(c);return it[Math.max(0,Math.min(it.length-1,NAV.idx[c.k]||0))];}
+function navAdjust(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);return;}
+  const el=navCur(c);if(!el)return;
+  if(el.tagName==='SELECT'){const n=el.options.length;el.selectedIndex=(el.selectedIndex+d+n)%n;el.dispatchEvent(new Event('change',{bubbles:true}));}
+  else if(el.type==='range'){const st=+el.step||1;el.value=Math.max(+el.min,Math.min(+el.max,+el.value+d*st));el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}
+  else navMove(d);
+  setTimeout(()=>navMark(navCtx()),30);}
+function navDecide(){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+  if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);if(c.k==='lib')return;}  /* dialogs: press the main button right away */
+  const el=navCur(c);if(!el)return;
+  if(el.tagName==='SELECT'||el.type==='range'){navAdjust(1);return;}
+  el.click();setTimeout(()=>navMark(navCtx()),60);}
+function navBack(){const c=navCtx();if(c.k==='play'||c.k==='none'||c.k==='lib')return;
+  for(const s of c.back||[]){const e=(c.root&&c.root.querySelector(s))||document.querySelector(s);if(e&&navVis(e)){e.click();setTimeout(()=>navMark(navCtx()),60);return;}}}
+function navStart(){const c=navCtx();if(c.k==='play')togglePause(true);else if(c.k==='pause')togglePause(false);}
+function navPadBtn(code){
+  const c=navCtx(),lane=padMap('7k')[code];
+  if((code==='b9'||code==='b8')&&lane===undefined){navStart();return;}
+  if(c.k==='play')return;
+  if(lane!==undefined){if(lane===0)return;if(lane%2===1)navDecide();else navBack();return;}
+  if(code==='b12'){navMove(-1);NAV.rep={code,d:-1,t:performance.now()+350};}
+  else if(code==='b13'){navMove(1);NAV.rep={code,d:1,t:performance.now()+350};}
+  else if(code==='b14')navAdjust(-1);else if(code==='b15')navAdjust(1);
+  else if(code==='b0')navDecide();else if(code==='b1')navBack();
+}
+function navPoll(){
+  if(!navigator.getGamepads)return;
+  let pads;try{pads=[...navigator.getGamepads()].filter(Boolean);}catch(e){return;}
+  if(!pads.length)return;
+  const m=padMap('7k'),c=navCtx(),inPlay=c.k==='play';
+  for(const pad of pads){
+    pad.buttons.forEach((b,i)=>{const k=pad.index+'b'+i,on=b.pressed||b.value>0.5,was=!!NAV.prev[k];NAV.prev[k]=on;
+      if(on&&!was)navPadBtn('b'+i);
+      if(!on&&was&&NAV.rep&&NAV.rep.code==='b'+i)NAV.rep=null;});
+    pad.axes.forEach((v,i)=>{const k=pad.index+'a'+i;let st=NAV.acc[k];if(!st){NAV.acc[k]={v,a:0};return;}
+      let d=v-st.v;if(d>1)d-=2;else if(d<-1)d+=2;st.v=v;if(inPlay||m['a'+i]!==0){st.a=0;return;}
+      if(Math.abs(d)>=0.5){if(Math.abs(v)>0.5)navMove(v>0?1:-1);st.a=0;return;}   // digital turntable
+      st.a+=d;const step=0.05;while(st.a>=step){st.a-=step;navMove(1);}while(st.a<=-step){st.a+=step;navMove(-1);}});
+  }
+  if(NAV.rep&&!inPlay&&performance.now()>NAV.rep.t){navMove(NAV.rep.d);NAV.rep.t=performance.now()+70;}
+}
+(function navLoop(){try{navPoll();}catch(e){}requestAnimationFrame(navLoop);})();
+document.addEventListener('pointerdown',()=>{if(NAV.on){NAV.on=false;NAV.ctx='';navClear();}},true);
+function navKey(e){
+  const c=navCtx();if(c.k==='play'||c.k==='none')return false;
+  const tg=e.target,typing=tg&&(tg.tagName==='INPUT'&&!/^(checkbox|range|button)$/.test(tg.type)||tg.tagName==='TEXTAREA');
+  if(typing&&e.code!=='Escape')return false;
+  const km=keyMap('7k'),lane=km[e.code];
+  if(e.code==='ArrowUp'||e.code==='ArrowDown'){navMove(e.code==='ArrowDown'?1:-1);return true;}
+  if(e.code==='ArrowLeft'||e.code==='ArrowRight'){navAdjust(e.code==='ArrowRight'?1:-1);return true;}
+  if(e.code==='Enter'||e.code==='NumpadEnter'){if(!NAV.on&&tg&&tg!==document.body&&tg.tagName!=='CANVAS')return false;navDecide();return true;}
+  if(e.code==='Backspace'||e.code==='Escape'){if(c.k==='pause'){togglePause(false);return true;}navBack();return c.k!=='lib';}
+  if(lane!==undefined&&lane!==0&&!e.repeat&&c.k!=='settings'){if(lane%2===1)navDecide();else navBack();return true;}
+  return false;
+}
 addEventListener('keydown',e=>{
   if(kcCap!=null&&$('#keycfg').style.display==='flex'){e.preventDefault();if(e.code==='Escape'){kcCap=null;renderKC();}else assignKC('key',e.code);return;}
+  if(!(kcCap!=null)&&(!G||G.ended||G.paused)&&navKey(e)){e.preventDefault();return;}
   if(!G||G.ended)return;
   if(G.viewer){if(e.code==='Space'){e.preventDefault();viewerPause(!G.paused);}if(e.code==='Escape')toLib();if(e.code==='ArrowLeft')viewerSeek(Math.max(0,songTime()-5));if(e.code==='ArrowRight')viewerSeek(songTime()+5);return;}
   if(e.code==='Escape'||e.code==='Enter'){togglePause();return;}
