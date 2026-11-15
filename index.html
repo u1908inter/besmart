@@ -179,7 +179,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.0648)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0648)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.1635)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.1635)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -790,7 +790,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.0648)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.0648)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.1635)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.1635)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3609,7 +3609,7 @@ function layout(){
   if(M.sides.length===1&&M.scr.length&&side==='R'){order=order.filter(x=>x!==0);order.push(0);}
   const wt=x=>x==='gap'?0.5:M.scr.includes(x)?1.55:1;
   const units=order.reduce((a,x)=>a+wt(x),0);
-  let areaW=bi>=0?Math.min(VW*0.94,H*0.95*units/8.55):landscape?Math.min(W*0.96,H*0.95*units/8.55):W;
+  let areaW=bi>=0?Math.min(VW*0.94,H*0.95*units/8.55):landscape?Math.min(W*0.96,H*0.95*units/8.55):W*Math.min(1,units/8.55*1.3);
   areaW*=S.laneW;
   const bgaSide=bi<0&&landscape&&S.bga==='on'&&!G.viewer&&(W-areaW)>=190;
   let areaX=VX+(VW-areaW)/2,bga=null;
@@ -3956,7 +3956,7 @@ function draw(){
     if(J.dt!=null&&J.j!=='PG'&&(S.fsDisp==='both'||S.fsDisp==='text')){g.font=`${Math.round(fs*.42)}px ${GF()}`;g.fillStyle=J.dt<0?(NE?'#4DC3FF':CL?'#7d97ff':PP.hi):(NE?'#FF8A4D':PP.alert);g.fillText(J.dt<0?'FAST':'SLOW',cx,jy-fs*0.85);}
     if((S.fsDisp==='both'||S.fsDisp==='ms')&&J.dt!=null){g.font=`${Math.round(fs*.4)}px ${GF()}`;g.fillStyle=PP.dim;g.fillText((J.dt>0?'+':'')+Math.round(J.dt*1000)+'ms',cx,jy+fs*0.75);}
   }
-  const top=safeTop+6,hx=areaX+8,hw=areaW-16;
+  const hudFull=!BT&&W<=H&&areaW<W*0.9,top=safeTop+6,hx=hudFull?8:areaX+8,hw=hudFull?W-16:areaW-16;
   g.textAlign='left';g.textBaseline='top';
   g.font='13px '+GF();g.fillStyle=PP.dim;
   const tag=(BT?`[${BT.P.indexOf(G)+1}P] `:'')+(G.rate!==1&&!G.practice&&!G.viewer?`[×${G.rate.toFixed(2)}] `:'')+(G.reduced?`[${G.chart.mode.toUpperCase()}${L('変換','')}] `:'')+(G.viewer?'[VIEWER] ':G.replay?'[REPLAY] ':G.auto?'[AUTO] ':G.tut?'[TUTORIAL] ':G.practice?`[${L('練習','PRACTICE')} ×${G.rate.toFixed(2)}] `:G.course?`[${G.course.co.name} ${G.course.idx+1}/${G.course.charts.length}] `:'');
