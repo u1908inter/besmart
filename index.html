@@ -182,6 +182,12 @@ canvas{display:block;touch-action:none}
 .wcur{position:absolute;left:0;top:50%;margin-top:-8px;border-left:10px solid var(--hi);border-top:8px solid transparent;border-bottom:8px solid transparent;filter:drop-shadow(0 0 6px var(--hi));z-index:3}
 .wfoot{display:flex;justify-content:space-around;border-top:2px solid var(--faint);font-size:11px;color:var(--dim);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}.wfoot b{color:var(--hi);font-weight:normal}
 @media (orientation:landscape){.wbody{flex-direction:row}.winfo{width:44%;overflow:auto}.wtitle{font-size:19px;-webkit-line-clamp:1}.wtop{display:flex;align-items:center;flex-wrap:wrap}#wBarHint,.wt3,.wban{flex-basis:100%;order:3}.wt1{flex:none;order:2;padding:4px 10px}.wt1 .wlogo{display:none}.wt2{flex:1;min-width:0;padding:4px 10px}.wthumb{width:54px;height:54px}.wscore .sr{line-height:1.35;font-size:12px}}
+#qoPanel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;background:var(--bg);border:2px solid var(--hi);box-shadow:0 0 24px var(--glow);padding:10px 12px;width:min(560px,94vw);pointer-events:none}
+.qoh{font-family:"Dela";color:var(--hi);font-size:16px;margin-bottom:8px;text-shadow:0 0 8px var(--glow)}
+.qog{display:flex;gap:8px;align-items:stretch}.qok{flex:1;display:flex;flex-direction:column;gap:6px}.qor{display:flex;gap:6px}.qor.b{padding:0 6%}
+.qoc{flex:1;border:2px solid var(--faint);padding:4px 5px;text-align:center;min-width:0}.qoc small{display:block;font-size:9px;color:var(--dim)}.qoc b{display:block;font-weight:normal;font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qoc span{display:block;font-size:13px;color:var(--hi);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qoc.b{background:rgba(255,176,0,.06)}.qoc.scr{flex:none;width:22%;display:flex;flex-direction:column;justify-content:center;border-radius:50%/30%}
+.qoc.chg{border-color:var(--hi);box-shadow:0 0 12px var(--glow)}.qof{font-size:10px;color:var(--dim);margin-top:8px}
 .begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
 .advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
 .achbar{height:6px;background:var(--faint);margin:4px 0}.achbar i{display:block;height:100%;background:var(--hi)}.achcat{margin:6px 0}.achcat summary{cursor:pointer;color:var(--ink);font-size:13px;padding:4px 0}
@@ -214,7 +220,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.0946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0946)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1016)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1016)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -825,7 +831,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.0946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0946)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1016)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1016)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2470,7 +2476,7 @@ function wheelBuild(){
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
     <div class="wban" id="wBan" style="display:none"></div><div class="hlp" id="wBarHint" style="display:none;padding:0 10px 4px;margin:0">${L('メニュー操作中：←→／↑↓／皿で選ぶ・Enter／白鍵で決定・Esc／黒鍵で曲選択に戻る','Menu: ←→ / ↑↓ / turntable to move, Enter / white key to select, Esc / black key to go back')}</div></div>
    <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span></div></div>
-   <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>Esc／黒鍵</b> メニュー</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span><span><b>Esc</b> menu</span>')}</div>`;
+   <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>Esc／黒鍵</b> メニュー</span><span><b>Q・W／START</b> 押しながら設定</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span><span><b>Esc</b> menu</span><span><b>Hold Q/W</b> options</span>')}</div>`;
   const cp=(src,dst)=>{const a=$(src),b=$(dst);b.innerHTML=a.innerHTML;b.value=a.value;b.onchange=()=>{a.value=b.value;a.dispatchEvent(new Event('change',{bubbles:true}));};};
   WHL.syncSel=()=>{cp('#sort','#wSort');cp('#fmode','#wMode');const ts=$('#tblSel'),wt=$('#wTbl');
     if(TABLES.length){wt.style.display='';wt.innerHTML=`<option value="">${L('難易度表なし','No table')}</option>`+TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('');wt.value=S.table||'';
@@ -4455,6 +4461,65 @@ cv.addEventListener('contextmenu',e=>e.preventDefault());
    START pauses during play. Highlights appear only once a controller or key is used. */
 const NAV={on:false,idx:{},ctx:'',prev:{},acc:{},rep:null};
 function navVis(el){return !!(el&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');}
+/* ---------- quick options: hold START (Q / pad Start) or EFFECT (W / pad Select) on the song select, then press keys or turn the scratch ---------- */
+const QO={mode:null,src:null,t:0};
+const QO_ARR=['off','mirror','random','rrandom','srandom','hrandom'];
+const QO_COV=[['off','OFF'],['sud','SUDDEN'],['hid','HIDDEN'],['sudhid','SUD+HID'],['lift','LIFT'],['liftsud','LIFT+SUD']];
+function qoCov(){const l=S.lift>0;return l?(S.suddenOn?'liftsud':'lift'):S.suddenOn&&S.hiddenOn?'sudhid':S.suddenOn?'sud':S.hiddenOn?'hid':'off';}
+function qoSetCov(v){if(S.lift>0)S.liftQ=S.lift;S.suddenOn=v==='sud'||v==='sudhid'||v==='liftsud';S.hiddenOn=v==='hid'||v==='sudhid';S.lift=(v==='lift'||v==='liftsud')?(S.liftQ||15):0;}
+const qoCyc=(arr,cur,d=1)=>arr[(arr.indexOf(cur)+d+arr.length)%arr.length];
+function qoSpeed(d){if(S.fhs)S.green=Math.max(150,Math.min(2000,S.green-d*10));else S.hs=Math.max(0.5,Math.min(10,+(S.hs+d*0.25).toFixed(2)));}
+function qoSpeedTxt(){return S.fhs?`${S.green}ms`:S.hs.toFixed(2);}
+function qoDefs(){
+  const sel=(k)=>{const it=findItem(k);const o=it&&it.sel&&it.sel.find(x=>x[0]===S[k]);return o?o[1]:String(S[k]);};
+  const assist=()=>S.autoScr&&S.legacy?'A-SCR+LEGACY':S.autoScr?'AUTO SCRATCH':S.legacy?'LEGACY NOTE':'OFF';
+  if(QO.mode==='start')return {title:L('プレイオプション','Play options'),scr:[L('スピード','Speed'),qoSpeedTxt(),d=>qoSpeed(d)],keys:{
+    1:[L('配置','Arrange'),sel('arr'),()=>{S.arr=qoCyc(QO_ARR,QO_ARR.includes(S.arr)?S.arr:'off');}],
+    2:[L('ゲージ','Gauge'),sel('gauge'),()=>{S.gauge=qoCyc(['aeasy','easy','normal','hard','exhard'],S.gauge);}],
+    3:[L('アシスト','Assist'),assist(),()=>{const st=(S.autoScr?1:0)+(S.legacy?2:0),n=(st+1)%4;S.autoScr=!!(n&1);S.legacy=!!(n&2);}],
+    4:[L('表示エリア','Lane cover'),QO_COV.find(x=>x[0]===qoCov())[1],()=>{qoSetCov(qoCyc(QO_COV.map(x=>x[0]),qoCov()));}],
+    5:[L('鍵盤を減らす','Fewer keys'),sel('reduce'),()=>{S.reduce=qoCyc(['off','5k','4k'],S.reduce||'off');}],
+    6:[L('判定幅拡大','Wide judge'),S.expand?'ON':'OFF',()=>{S.expand=!S.expand;}],
+    7:['GAS',S.gas?'ON':'OFF',()=>{S.gas=!S.gas;}]}};
+  return {title:L('表示オプション','Display options'),scr:[L('上カバーの量','Cover'),S.suddenOn?S.sudden+'%':'OFF',d=>{S.suddenOn=true;S.sudden=Math.max(0,Math.min(80,S.sudden+d*2));}],keys:{
+    1:[L('スピード －','Speed −'),qoSpeedTxt(),()=>qoSpeed(-1)],
+    2:['FLOATING',S.fhs?'ON':'OFF',()=>{S.fhs=!S.fhs;}],
+    3:[L('スピード ＋','Speed +'),qoSpeedTxt(),()=>qoSpeed(1)],
+    4:[L('ペースメーカー','Pacemaker'),sel('pace'),()=>{S.pace=qoCyc(['off','best','max','aaa','aa','a'],S.pace);}],
+    5:[L('上カバー －','Cover −'),S.suddenOn?S.sudden+'%':'OFF',()=>{S.suddenOn=true;S.sudden=Math.max(0,S.sudden-2);}],
+    6:[L('ゴースト','Ghost'),sel('ghost'),()=>{S.ghost=qoCyc(['off','on','lane'],S.ghost);}],
+    7:[L('上カバー ＋','Cover +'),S.suddenOn?S.sudden+'%':'OFF',()=>{S.suddenOn=true;S.sudden=Math.min(80,S.sudden+2);}]}};
+}
+function qoCanOpen(){if(G&&!G.ended)return false;const c=navCtx();return c.k==='lib'||c.k==='detail';}
+function qoOpen(mode,src){if(QO.mode||!qoCanOpen())return false;QO.mode=mode;QO.src=src;qoDraw();return true;}
+function qoClose(src){if(!QO.mode||(src&&QO.src!==src))return;QO.mode=null;QO.src=null;const p=$('#qoPanel');if(p)p.remove();}
+function qoKeyName(l){const km=keyMap('7k');for(const k in km)if(km[k]===l)return String(k).replace(/^Key/,'').replace(/^Digit/,'').replace(/Left$|Right$/,'').replace('Space','␣').replace('Shift','⇧');return '';}
+function qoDraw(changed){
+  let p=$('#qoPanel');if(!p){p=document.createElement('div');p.id='qoPanel';document.body.appendChild(p);}
+  const D=qoDefs(),cell=(l)=>{const [nm,v]=D.keys[l];return `<div class="qoc ${l%2?'w':'b'}${changed===l?' chg':''}"><small>${l} ${qoKeyName(l)?'・'+esc(qoKeyName(l)):''}</small><b>${esc(nm)}</b><span>${esc(v)}</span></div>`;};
+  p.innerHTML=`<div class="qoh">${QO.mode==='start'?'START':'EFFECT'}　${esc(D.title)}</div>
+   <div class="qog"><div class="qoc scr${changed==='scr'?' chg':''}"><small>${L('皿','SCR')} ${qoKeyName(0)?'・'+esc(qoKeyName(0)):''} / ↑↓</small><b>${esc(D.scr[0])}</b><span>${esc(D.scr[1])}</span></div>
+    <div class="qok"><div class="qor b">${[2,4,6].map(cell).join('')}</div><div class="qor w">${[1,3,5,7].map(cell).join('')}</div></div></div>
+   <div class="qof">${L('押したまま、鍵盤で切り替え・皿で調整。離すと閉じます','Keep holding; press keys to change, turn the scratch to adjust. Release to close.')}</div>`;
+}
+function qoApply(l){if(!QO.mode)return;const D=qoDefs();
+  if(l==='scr+'||l==='scr-'){D.scr[2](l==='scr+'?1:-1);}else{const k=D.keys[l];if(!k)return;k[2]();}
+  saveS();try{syncSettings();$$('#dOpts .row').forEach(r=>r._sync&&r._sync());}catch(e){}
+  if(S.preset){S.preset='';saveS();}
+  qoDraw(typeof l==='number'?l:'scr');
+}
+addEventListener('keydown',e=>{
+  if(e.repeat&&(e.code==='KeyQ'||e.code==='KeyW'))return e.preventDefault();
+  const tg=e.target;if(tg&&(tg.tagName==='INPUT'&&!/^(checkbox|range|button)$/.test(tg.type)||tg.tagName==='TEXTAREA'))return;
+  if(!QO.mode&&(e.code==='KeyQ'||e.code==='KeyW')){if(qoOpen(e.code==='KeyQ'?'start':'effect','k'+e.code)){e.preventDefault();e.stopImmediatePropagation();}return;}
+  if(!QO.mode)return;
+  e.preventDefault();e.stopImmediatePropagation();if(e.repeat&&!/Arrow/.test(e.code))return;
+  const l=keyMap('7k')[e.code];
+  if(e.code==='ArrowUp'||e.code==='ArrowRight')qoApply('scr+');else if(e.code==='ArrowDown'||e.code==='ArrowLeft')qoApply('scr-');
+  else if(l===0)qoApply('scr+');else if(l!=null)qoApply(l);
+},true);
+addEventListener('keyup',e=>{if(QO.mode&&(e.code==='KeyQ'||e.code==='KeyW'))qoClose('k'+e.code);},true);
+addEventListener('blur',()=>qoClose());
 function navCtx(){
   if(navVis($('#result')))return {k:'result',root:$('#resultBox'),back:['#rBack']};
   if(navVis($('#pause')))return {k:'pause',root:$('#pause'),back:['#resumeBtn']};
@@ -4481,7 +4546,7 @@ function navMark(c){
   const el=it[i];el.classList.add('navsel');
   const r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-10)el.scrollIntoView({block:'center'});
 }
-function navMove(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+function navMove(d){if(QO.mode){qoApply(d>0?'scr+':'scr-');return;}const c=navCtx();if(c.k==='play'||c.k==='none')return;
   if(c.k==='lib'&&wheelVisible()){if(WHL.bar!=null)wBarMove(d);else wheelStep(d);return;}
   if(!NAV.on){NAV.on=true;navMark(c);return;}
   if(NAV.ctx!==c.k){navMark(c);return;}
@@ -4505,8 +4570,9 @@ function navBack(){const c=navCtx();if(c.k==='lib'&&wheelVisible()){wBarToggle()
 function navStart(){const c=navCtx();if(c.k==='play')togglePause(true);else if(c.k==='pause')togglePause(false);}
 function navPadBtn(code){
   const c=navCtx(),lane=padMap('7k')[code];
-  if((code==='b9'||code==='b8')&&lane===undefined){navStart();return;}
+  if((code==='b9'||code==='b8')&&lane===undefined){if(c.k==='play'||c.k==='pause'){navStart();return;}qoOpen(code==='b9'?'start':'effect','p'+code);return;}
   if(c.k==='play')return;
+  if(QO.mode){if(lane!==undefined){qoApply(lane===0?'scr+':lane);}else if(code==='b12'||code==='b15')qoApply('scr+');else if(code==='b13'||code==='b14')qoApply('scr-');return;}
   if(lane!==undefined){if(lane===0)return;if(lane%2===1)navDecide();else navBack();return;}
   if(code==='b12'){navMove(-1);NAV.rep={code,d:-1,t:performance.now()+350};}
   else if(code==='b13'){navMove(1);NAV.rep={code,d:1,t:performance.now()+350};}
@@ -4521,7 +4587,8 @@ function navPoll(){
   for(const pad of pads){
     pad.buttons.forEach((b,i)=>{const k=pad.index+'b'+i,on=b.pressed||b.value>0.5,was=!!NAV.prev[k];NAV.prev[k]=on;
       if(on&&!was)navPadBtn('b'+i);
-      if(!on&&was&&NAV.rep&&NAV.rep.code==='b'+i)NAV.rep=null;});
+      if(!on&&was&&NAV.rep&&NAV.rep.code==='b'+i)NAV.rep=null;
+      if(!on&&was&&QO.mode&&QO.src==='pb'+i)qoClose('pb'+i);});
     pad.axes.forEach((v,i)=>{const k=pad.index+'a'+i;let st=NAV.acc[k];if(!st){NAV.acc[k]={v,a:0};return;}
       let d=v-st.v;if(d>1)d-=2;else if(d<-1)d+=2;st.v=v;if(inPlay||m['a'+i]!==0){st.a=0;return;}
       if(Math.abs(d)>=0.5){if(Math.abs(v)>0.5)navMove(v>0?1:-1);st.a=0;return;}   // digital turntable
