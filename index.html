@@ -177,6 +177,7 @@ canvas{display:block;touch-action:none}
 .wrow .lv{background:none!important;font-family:"Dela";min-width:30px;padding:0 3px;text-align:center;border:1px solid;margin-right:8px;font-size:14px;line-height:20px;flex:none}
 .wrow .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wrow .t small{color:var(--dim);font-size:11px}
 .wrow.fold{background:linear-gradient(90deg,rgba(255,212,102,.16),var(--bg))}.wrow .fcnt{color:var(--dim);font-size:11px;margin-left:6px}.wrow .lv.fold{border-color:var(--hi);color:var(--hi)}
+.wrow .wbd{display:flex;gap:3px;flex:none;align-items:center;margin-left:4px}.wrow .wbd .redb{border:1px solid;padding:0 3px;font-size:10px;line-height:1.3}.wrow .wbd .begb{margin:0;font-size:9px;line-height:13px;padding:0 4px}
 .wrow .dn{font-family:"Dela";font-size:12px;margin-left:6px;flex:none}.wrow .fv{color:#fd3;margin-left:4px}
 .wrow.sel{font-size:16px;border:2px solid var(--hi);border-right:none;background:linear-gradient(90deg,rgba(255,212,102,.32),rgba(255,176,0,.06));color:#fff;box-shadow:0 0 18px var(--glow);z-index:2}
 .wrow.sel .lv{font-size:18px;line-height:26px;min-width:36px}
@@ -231,7 +232,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1200)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1200)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1223)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1223)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -842,7 +843,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1200)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1200)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1223)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1223)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2621,6 +2622,7 @@ function openWMenu(){
   NAV.ctx='';if(NAV.on)setTimeout(()=>navMark(navCtx()),30);
 }
 function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
+function wRowSig(c){const r=REC[c.hash]||{};return (r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'');}
 function wheelPaint(){
   const wh=$('#wWheel');if(!wh||!WHL.built)return;
   {const idx=wheelIdx();if(idx!==WHL.lastIdx){WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;wheelInfo();}}
@@ -2639,8 +2641,8 @@ function wheelPaint(){
       if(c.back)r.innerHTML=`<span class="lv fold">◀</span><span class="t">${L('戻る','Back')}　<small>${esc(c.name)}</small></span>`;
       else{const cs=c.sub?null:c.charts,cl=cs?cs.filter(x=>((REC[x.hash]||{}).lamp||0)>=3).length:0;
         r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}</span>`:''}`;}}}
-    else if(r._h!==c.hash){r._h=c.hash;r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
-      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
+    else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
+      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
   });
 }
 function wheelAnim(t){WHL.target=t;cancelAnimationFrame(WHL.raf);stopPreview();
