@@ -181,7 +181,7 @@ canvas{display:block;touch-action:none}
 .wrow.sel .lv{font-size:18px;line-height:26px;min-width:36px}
 .wcur{position:absolute;left:0;top:50%;margin-top:-8px;border-left:10px solid var(--hi);border-top:8px solid transparent;border-bottom:8px solid transparent;filter:drop-shadow(0 0 6px var(--hi));z-index:3}
 .wfoot{display:flex;justify-content:space-around;border-top:2px solid var(--faint);font-size:11px;color:var(--dim);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}.wfoot b{color:var(--hi);font-weight:normal}
-@media (orientation:landscape){.wbody{flex-direction:row}.winfo{width:44%;overflow:auto}.wtitle{font-size:19px;-webkit-line-clamp:1}.wtop{display:flex;align-items:center}.wt1{flex:none;order:2;padding:4px 10px}.wt1 .wlogo{display:none}.wt2{flex:1;min-width:0;padding:4px 10px}.wthumb{width:54px;height:54px}.wscore .sr{line-height:1.35;font-size:12px}}
+@media (orientation:landscape){.wbody{flex-direction:row}.winfo{width:44%;overflow:auto}.wtitle{font-size:19px;-webkit-line-clamp:1}.wtop{display:flex;align-items:center;flex-wrap:wrap}#wBarHint,.wt3,.wban{flex-basis:100%;order:3}.wt1{flex:none;order:2;padding:4px 10px}.wt1 .wlogo{display:none}.wt2{flex:1;min-width:0;padding:4px 10px}.wthumb{width:54px;height:54px}.wscore .sr{line-height:1.35;font-size:12px}}
 .begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
 .advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
 .achbar{height:6px;background:var(--faint);margin:4px 0}.achbar i{display:block;height:100%;background:var(--hi)}.achcat{margin:6px 0}.achcat summary{cursor:pointer;color:var(--ink);font-size:13px;padding:4px 0}
@@ -214,7 +214,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.0924)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0924)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.0946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0946)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -825,7 +825,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.0924)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0924)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.0946)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0946)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2452,6 +2452,14 @@ const WHL={pos:0,vel:0,target:null,drag:null,raf:0,rows:[],n:0,list:[],cur:null,
 const DIFF_SLOTS=[[1,'BEGINNER','#7d7'],[2,'NORMAL','#4fc3ff'],[3,'HYPER','#ffcc33'],[4,'ANOTHER','#ff5050'],[5,'INSANE','#c070ff']];
 const diffCol=d=>(DIFF_SLOTS.find(x=>x[0]===d)||[0,'',''])[2]||'var(--ink)';
 function wheelOn(){return S.libView==='wheel';}
+/* keyboard / controller access to the wheel's top bar: Esc, Tab or a black key toggles it */
+function wBarItems(){return [...document.querySelectorAll('#wheel .wt2>*'),...document.querySelectorAll('#wheel .wt1 button')].filter(e=>e.offsetParent!==null&&getComputedStyle(e).display!=='none');}
+function wBarMark(){navClear();const it=wBarItems();if(WHL.bar==null||!it.length){show('#wBarHint',false);return;}WHL.bar=Math.max(0,Math.min(it.length-1,WHL.bar));const el=it[WHL.bar];el.classList.add('navsel');try{el.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}show('#wBarHint',true,'block');}
+function wBarToggle(){WHL.bar=WHL.bar==null?0:null;NAV.on=true;wBarMark();}
+function wBarMove(d){const n=wBarItems().length;if(!n)return;WHL.bar=((WHL.bar||0)+d+n)%n;wBarMark();}
+function wBarDecide(){const el=wBarItems()[WHL.bar||0];if(!el)return;
+  if(el.tagName==='SELECT'){const n=el.options.length;el.selectedIndex=(el.selectedIndex+1)%n;el.dispatchEvent(new Event('change',{bubbles:true}));toast(el.options[el.selectedIndex].text,900);setTimeout(wBarMark,60);return;}
+  WHL.bar=null;navClear();show('#wBarHint',false);el.click();setTimeout(()=>{const c=navCtx();if(c.k!=='lib')navMark(c);},80);}
 function wheelVisible(){return wheelOn()&&$('#lib').style.display!=='none'&&$('#wheel').style.display!=='none';}
 function wheelRH(){return innerWidth>innerHeight?30:40;}
 function wheelBuild(){
@@ -2460,9 +2468,9 @@ function wheelBuild(){
     <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
     <select id="wSort"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
-    <div class="wban" id="wBan" style="display:none"></div></div>
+    <div class="wban" id="wBan" style="display:none"></div><div class="hlp" id="wBarHint" style="display:none;padding:0 10px 4px;margin:0">${L('メニュー操作中：←→／↑↓／皿で選ぶ・Enter／白鍵で決定・Esc／黒鍵で曲選択に戻る','Menu: ←→ / ↑↓ / turntable to move, Enter / white key to select, Esc / black key to go back')}</div></div>
    <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span></div></div>
-   <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>ホイール</b> スクロール</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span>')}</div>`;
+   <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>Esc／黒鍵</b> メニュー</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span><span><b>Esc</b> menu</span>')}</div>`;
   const cp=(src,dst)=>{const a=$(src),b=$(dst);b.innerHTML=a.innerHTML;b.value=a.value;b.onchange=()=>{a.value=b.value;a.dispatchEvent(new Event('change',{bubbles:true}));};};
   WHL.syncSel=()=>{cp('#sort','#wSort');cp('#fmode','#wMode');const ts=$('#tblSel'),wt=$('#wTbl');
     if(TABLES.length){wt.style.display='';wt.innerHTML=`<option value="">${L('難易度表なし','No table')}</option>`+TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('');wt.value=S.table||'';
@@ -2496,7 +2504,7 @@ function wheelBuild(){
   addEventListener('resize',()=>{if(wheelVisible())wheelPaint();});
 }
 function wheelSync(){
-  const on=wheelOn();$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
+  const on=wheelOn();if(!on)WHL.bar=null;$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
   if(!on){return;}
   wheelBuild();WHL.syncSel();
   let list=LIBLIST.slice();const T=S.table&&TABLES.find(t=>t.url===S.table);WHL.tlv=null;
@@ -4474,25 +4482,25 @@ function navMark(c){
   const r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-10)el.scrollIntoView({block:'center'});
 }
 function navMove(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
-  if(c.k==='lib'&&wheelVisible()){wheelStep(d);return;}
+  if(c.k==='lib'&&wheelVisible()){if(WHL.bar!=null)wBarMove(d);else wheelStep(d);return;}
   if(!NAV.on){NAV.on=true;navMark(c);return;}
   if(NAV.ctx!==c.k){navMark(c);return;}
   const it=navItems(c);if(!it.length)return;NAV.idx[c.k]=Math.max(0,Math.min(it.length-1,(NAV.idx[c.k]||0)+d));navMark(c);}
 function navCur(c){const it=navItems(c);return it[Math.max(0,Math.min(it.length-1,NAV.idx[c.k]||0))];}
 function navAdjust(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
-  if(c.k==='lib'&&wheelVisible()){wheelDiff(d);return;}if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);return;}
+  if(c.k==='lib'&&wheelVisible()){if(WHL.bar!=null)wBarMove(d);else wheelDiff(d);return;}if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);return;}
   const el=navCur(c);if(!el)return;
   if(el.tagName==='SELECT'){const n=el.options.length;el.selectedIndex=(el.selectedIndex+d+n)%n;el.dispatchEvent(new Event('change',{bubbles:true}));}
   else if(el.type==='range'){const st=+el.step||1;el.value=Math.max(+el.min,Math.min(+el.max,+el.value+d*st));el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}
   else navMove(d);
   setTimeout(()=>navMark(navCtx()),30);}
 function navDecide(){const c=navCtx();if(c.k==='play'||c.k==='none')return;
-  if(c.k==='lib'&&wheelVisible()){if(WHL.cur)openDetail(WHL.cur);return;}
+  if(c.k==='lib'&&wheelVisible()){if(WHL.bar!=null)wBarDecide();else if(WHL.cur)openDetail(WHL.cur);return;}
   if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);if(c.k==='lib')return;}  /* dialogs: press the main button right away */
   const el=navCur(c);if(!el)return;
   if(el.tagName==='SELECT'||el.type==='range'){navAdjust(1);return;}
   el.click();setTimeout(()=>navMark(navCtx()),60);}
-function navBack(){const c=navCtx();if(c.k==='play'||c.k==='none'||c.k==='lib')return;
+function navBack(){const c=navCtx();if(c.k==='lib'&&wheelVisible()){wBarToggle();return;}if(c.k==='play'||c.k==='none'||c.k==='lib')return;
   for(const s of c.back||[]){const e=(c.root&&c.root.querySelector(s))||document.querySelector(s);if(e&&navVis(e)){e.click();setTimeout(()=>navMark(navCtx()),60);return;}}}
 function navStart(){const c=navCtx();if(c.k==='play')togglePause(true);else if(c.k==='pause')togglePause(false);}
 function navPadBtn(code){
@@ -4522,7 +4530,7 @@ function navPoll(){
   if(NAV.rep&&!inPlay&&performance.now()>NAV.rep.t){navMove(NAV.rep.d);NAV.rep.t=performance.now()+70;}
 }
 (function navLoop(){try{navPoll();}catch(e){}requestAnimationFrame(navLoop);})();
-document.addEventListener('pointerdown',()=>{if(NAV.on){NAV.on=false;NAV.ctx='';navClear();}},true);
+document.addEventListener('pointerdown',()=>{if(WHL.bar!=null){WHL.bar=null;show('#wBarHint',false);}if(NAV.on){NAV.on=false;NAV.ctx='';navClear();}},true);
 function navKey(e){
   const c=navCtx();if(c.k==='play'||c.k==='none')return false;
   const tg=e.target,typing=tg&&(tg.tagName==='INPUT'&&!/^(checkbox|range|button)$/.test(tg.type)||tg.tagName==='TEXTAREA');
@@ -4531,7 +4539,7 @@ function navKey(e){
   if(e.code==='ArrowUp'||e.code==='ArrowDown'){navMove(e.code==='ArrowDown'?1:-1);return true;}
   if(e.code==='ArrowLeft'||e.code==='ArrowRight'){navAdjust(e.code==='ArrowRight'?1:-1);return true;}
   if(e.code==='Enter'||e.code==='NumpadEnter'){if(!(c.k==='lib'&&wheelVisible())&&!NAV.on&&tg&&tg!==document.body&&tg.tagName!=='CANVAS')return false;navDecide();return true;}
-  if(e.code==='Backspace'||e.code==='Escape'){if(c.k==='pause'){togglePause(false);return true;}navBack();return c.k!=='lib';}
+  if(e.code==='Backspace'||e.code==='Escape'||(e.code==='Tab'&&c.k==='lib'&&wheelVisible())){if(c.k==='pause'){togglePause(false);return true;}navBack();return c.k!=='lib'||wheelVisible();}
   if(lane!==undefined&&lane!==0&&!e.repeat&&c.k!=='settings'){if(lane%2===1)navDecide();else navBack();return true;}
   return false;
 }
