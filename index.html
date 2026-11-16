@@ -230,7 +230,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1029)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1029)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1142)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1142)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -841,7 +841,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1029)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1029)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1142)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1142)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1748,6 +1748,11 @@ function SCHEMA(){return [
   {k:'reduce',t:L('鍵盤を減らす','Fewer keys'),sel:[['off','OFF'],['5k',L('7鍵→5鍵','7K → 5K')],['4k',L('4鍵にする（7鍵・5鍵）','4 keys (from 7K/5K)')]],h:L('7鍵・5鍵の譜面を少ない鍵盤に変換して遊びます。置けないノーツは音だけ鳴ります。変換したプレイは、通常の記録とは別に「4K」「5K」のランプとして記録され、曲一覧に表示されます。','Converts 7K/5K charts to fewer keys. Notes that cannot be placed only play their sound. Converted plays are saved separately as “4K” / “5K” lamps shown in the song list.')},
   {k:'playRate',t:L('再生速度','Playback speed'),r:[0.5,2,0.05],f:v=>'×'+v.toFixed(2),h:L('曲全体の速さを変えます（音の高さも変わります）。×1.00以外のプレイはスコア・ランプを記録しません。','Changes the speed of the whole song (pitch changes too). Plays at a speed other than ×1.00 are not recorded.')},
  ]},
+ {sec:L('曲選択','Song select'),items:[
+  {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
+  {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['bar',L('上のバーに並べる（標準）','Top bar (standard)')],['menu',L('メニューボタンにまとめる','One menu button')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
+  {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
+ ]},
  {sec:L('アシスト','Assist'),items:[
   {k:'autoScr',t:L('オートスクラッチ','Auto scratch'),b:1},{k:'legacy',t:L('ロングノートを通常ノーツに','Long notes as normal notes'),b:1},{k:'expand',t:L('判定幅拡大','Wider timing window'),b:1},
   {hint:L('アシストや、配置の H-RANDOM・ALL-SCRATCH・SPIRAL・RANDOM-EX を使うと、クリアランプは ASSIST CLEAR になります。','Assists, and the H-RANDOM / ALL-SCRATCH / SPIRAL / RANDOM-EX arrangements, limit the clear lamp to ASSIST CLEAR.')}
@@ -1802,9 +1807,6 @@ function SCHEMA(){return [
   {k:'volM',t:L('音量（全体）','Volume (master)'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volK',t:L('キー音','Keysounds'),r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volB',t:'BGM',r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
-  {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['bar',L('上のバーに並べる（標準）','Top bar (standard)')],['menu',L('メニューボタンにまとめる','One menu button')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
-  {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
-  {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
  ]},
  {sec:L('画面の色・言語','Colour & language'),items:[
   {k:'playSkin',t:L('プレイ画面のデザイン','Play screen style'),sel:[['crt',L('デフォルト','Default')],['classic',L('ポップ','Pop')],['neon',L('ネオン','Neon')]],h:L('デフォルト：テーマカラーのドット文字。ポップ：白と青の鍵盤にピンクの判定ライン、太い文字。ネオン：黒地に青緑とピンクが光る、くっきりした表示。','Default: pixel text in the theme colour. Pop: white/blue keys, pink judge line, bold type. Neon: black background with glowing cyan and pink.')},
@@ -1812,7 +1814,7 @@ function SCHEMA(){return [
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
-const QUICK=['hs','suddenOn','sudden','gauge','arr','side','ofs','vofs','playSkin','volM','edge'];
+const QUICK=['libView','hs','suddenOn','sudden','gauge','arr','side','ofs','vofs','playSkin','volM','edge'];
 let setQ='';
 function findItem(k){for(const sec of SCHEMA())for(const it of sec.items)if(it.k===k)return it;return null;}
 function isChanged(k){return k in DEF&&JSON.stringify(S[k])!==JSON.stringify(DEF[k]);}
