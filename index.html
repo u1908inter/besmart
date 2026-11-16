@@ -180,7 +180,7 @@ canvas{display:block;touch-action:none}
 .wrow.sel{font-size:16px;border:2px solid var(--hi);border-right:none;background:linear-gradient(90deg,rgba(255,212,102,.32),rgba(255,176,0,.06));color:#fff;box-shadow:0 0 18px var(--glow);z-index:2}
 .wrow.sel .lv{font-size:18px;line-height:26px;min-width:36px}
 .wcur{position:absolute;left:0;top:50%;margin-top:-8px;border-left:10px solid var(--hi);border-top:8px solid transparent;border-bottom:8px solid transparent;filter:drop-shadow(0 0 6px var(--hi));z-index:3}
-.wfoot{display:flex;justify-content:space-around;border-top:2px solid var(--faint);font-size:11px;color:var(--dim);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}.wfoot b{color:var(--hi);font-weight:normal}
+.wfoot{display:flex;flex-wrap:wrap;gap:2px 12px;justify-content:center;border-top:2px solid var(--faint);font-size:11px;color:var(--dim);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}.wfoot b{color:var(--hi);font-weight:normal}
 @media (orientation:landscape){.wbody{flex-direction:row}.winfo{width:44%;overflow:auto}.wtitle{font-size:19px;-webkit-line-clamp:1}.wtop{display:flex;align-items:center;flex-wrap:wrap}#wBarHint,.wt3,.wban{flex-basis:100%;order:3}.wt1{flex:none;order:2;padding:4px 10px}.wt1 .wlogo{display:none}.wt2{flex:1;min-width:0;padding:4px 10px}.wthumb{width:54px;height:54px}.wscore .sr{line-height:1.35;font-size:12px}}
 #qoPanel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;background:var(--bg);border:2px solid var(--hi);box-shadow:0 0 24px var(--glow);padding:10px 12px;width:min(560px,94vw);pointer-events:none}
 .qoh{font-family:"Dela";color:var(--hi);font-size:16px;margin-bottom:8px;text-shadow:0 0 8px var(--glow)}
@@ -188,6 +188,16 @@ canvas{display:block;touch-action:none}
 .qoc{flex:1;border:2px solid var(--faint);padding:4px 5px;text-align:center;min-width:0}.qoc small{display:block;font-size:9px;color:var(--dim)}.qoc b{display:block;font-weight:normal;font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qoc span{display:block;font-size:13px;color:var(--hi);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qoc.b{background:rgba(255,176,0,.06)}.qoc.scr{flex:none;width:22%;display:flex;flex-direction:column;justify-content:center;border-radius:50%/30%}
 .qoc.chg{border-color:var(--hi);box-shadow:0 0 12px var(--glow)}.qof{font-size:10px;color:var(--dim);margin-top:8px}
+#wheel.menuMode .wt2,#wheel.menuMode #wList,#wheel.menuMode #wSet{display:none!important}#wheel:not(.menuMode) #wSearch2,#wheel:not(.menuMode) #wMenu{display:none}
+.overlay.wmenu{justify-content:flex-end;align-items:stretch;padding:0;background:rgba(0,0,0,.55)}
+.wmbox{width:min(82vw,380px);height:100%;overflow:auto;background:var(--bg);border-left:2px solid var(--hi);box-shadow:-6px 0 24px var(--glow);padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
+.wmhd{display:flex;align-items:center;justify-content:space-between}.wmhd b{font-family:"Dela";font-weight:normal;color:var(--hi);font-size:18px}.wmhd .ib{width:auto;margin:0;padding:0 12px;min-height:30px}
+.wmsec{color:var(--dim);font-size:11px;letter-spacing:2px;margin:12px 0 4px}
+.wmgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}.wmgrid label,.wmf{display:block;border:2px solid var(--faint);padding:5px 8px;text-align:left;background:none;color:var(--hi);font:inherit;margin:0;width:auto;min-height:0}
+.wmgrid small{display:block;color:var(--dim);font-size:10px}.wmgrid select{width:100%;border:none;padding:2px 0;background:transparent;color:var(--hi)}.wmf span{display:block;color:var(--hi)}
+.wmi{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:2px solid var(--faint);margin:0 0 6px;background:none;color:var(--ink);font:inherit;text-align:left;min-height:0;cursor:pointer}
+.wmi.hl{border-color:var(--hi);background:rgba(255,212,102,.15);box-shadow:0 0 10px var(--glow);color:var(--ink)}
+.wmi .ic{font-size:18px;width:24px;text-align:center;flex:none}.wmi .tx{flex:1;min-width:0}.wmi b{display:block;font-weight:normal;color:var(--hi)}.wmi small{display:block;color:var(--dim);font-size:10px}.wmi .ar{color:var(--dim)}
 .begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
 .advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
 .achbar{height:6px;background:var(--faint);margin:4px 0}.achbar i{display:block;height:100%;background:var(--hi)}.achcat{margin:6px 0}.achcat summary{cursor:pointer;color:var(--ink);font-size:13px;padding:4px 0}
@@ -220,7 +230,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1016)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1016)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1029)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1029)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -831,7 +841,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1016)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1016)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1029)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1029)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1678,7 +1688,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1792,6 +1802,7 @@ function SCHEMA(){return [
   {k:'volM',t:L('音量（全体）','Volume (master)'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volK',t:L('キー音','Keysounds'),r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volB',t:'BGM',r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
+  {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['bar',L('上のバーに並べる（標準）','Top bar (standard)')],['menu',L('メニューボタンにまとめる','One menu button')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
   {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
   {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
  ]},
@@ -2470,7 +2481,7 @@ function wheelVisible(){return wheelOn()&&$('#lib').style.display!=='none'&&$('#
 function wheelRH(){return innerWidth>innerHeight?30:40;}
 function wheelBuild(){
   if(WHL.built)return;WHL.built=true;const w=$('#wheel');
-  w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button></div>
+  w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button><button class="ib" id="wSearch2">🔍</button><button class="ib pri" id="wMenu">☰ ${L('メニュー','Menu')}</button></div>
     <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
     <select id="wSort"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
@@ -2488,6 +2499,7 @@ function wheelBuild(){
   $('#wRndC').onclick=()=>$('#rndCfg').click();
   $('#wSearch').onclick=()=>{const b=$('#wQbar'),on=b.style.display==='none';show('#wQbar',on,'block');if(on){$('#wQ').value=$('#q').value;$('#wQ').focus();}};
   $('#wQ').oninput=()=>{$('#q').value=$('#wQ').value;renderLibrary();};
+  $('#wSearch2').onclick=()=>$('#wSearch').click();$('#wMenu').onclick=openWMenu;
   $('#wFlt').onclick=()=>{const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=13;ov.style.display='flex';
     ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto"><h2>${L('絞り込み','Filter')}</h2><div id="wFltHost"></div><button class="pri" data-x>${L('閉じる','Close')}</button></div>`;
     const fb=$('#fltBox'),home=fb.parentNode,next=fb.nextSibling;renderFlt();ov.querySelector('#wFltHost').appendChild(fb);fb.style.display='block';
@@ -2512,7 +2524,7 @@ function wheelBuild(){
 function wheelSync(){
   const on=wheelOn();if(!on)WHL.bar=null;$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
   if(!on){return;}
-  wheelBuild();WHL.syncSel();
+  wheelBuild();WHL.syncSel();$('#wheel').classList.toggle('menuMode',S.wheelMenu==='menu');
   let list=LIBLIST.slice();const T=S.table&&TABLES.find(t=>t.url===S.table);WHL.tlv=null;
   if(T){const lv=tblLevels(T),pos=new Map(lv.map((x,i)=>[x,i])),bm=new Map();
     for(const e of T.data){const k=(e.sha256||'').toLowerCase()||(e.md5||'').toLowerCase();if(k&&!bm.has(k))bm.set(k,String(e.level));}
@@ -2529,6 +2541,40 @@ function wheelSync(){
   else if(sh&&sh.style.display!=='none'){ban.innerHTML=`<span>${L('iPhoneはホーム画面に追加すると曲と記録が消えにくくなります','Add to Home Screen to keep your songs safe')}</span><button class="ib" id="wBanX">×</button>`;show('#wBan',true,'flex');$('#wBanX').onclick=()=>{$('#safeHintX').click();show('#wBan',false);};}
   else show('#wBan',false);
   wheelPaint();
+}
+function openWMenu(){
+  const ov=document.createElement('div');ov.className='overlay wmenu';ov.id='wMenuDlg';ov.style.zIndex=13;ov.style.display='flex';
+  const it=(id,ic,t,d,pri)=>`<button class="wmi${pri?' hl':''}" id="${id}"><span class="ic">${ic}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="ar">›</span></button>`;
+  const opt=id=>$(id).innerHTML;const fn=condCount(S.flt||{}),rn=condCount(S.rnd||{});
+  ov.innerHTML=`<div class="wmbox"><div class="wmhd"><b>MENU</b><button class="ib" id="wmClose">×</button></div>
+   <div class="wmsec">${L('曲をえらぶ','Choose songs')}</div>
+   <div class="wmgrid"><label><small>${L('ソート','Sort')}</small><select id="wmSort">${opt('#sort')}</select></label><label><small>${L('鍵盤','Keys')}</small><select id="wmMode">${opt('#fmode')}</select></label>
+    ${TABLES.length?`<label><small>${L('難易度表','Table')}</small><select id="wmTbl"><option value="">${L('なし','None')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select></label>`:''}
+    <button class="wmf" id="wmFlt"><small>${L('絞り込み','Filter')}</small><span>${fn?L(`${fn}件`,`${fn} set`):L('なし','None')} ›</span></button></div>
+   ${it('wmRnd','🎲',L('おまかせ選曲','Random pick'),rn?L(`条件 ${rn}件で選ぶ`,`${rn} conditions`):L('すべての曲から','From all songs'),1)}
+   ${it('wmRndC','⚙',L('おまかせの条件','Random conditions'),L('鍵盤・レベル・クリア状況など','Keys, level, clear status…'))}
+   <div class="wmsec">${L('あそぶ','Play')}</div>
+   ${it('wmCourse','🎖',L('コース','Courses'),L('何曲か続けて遊ぶ','Play several songs in a row'))}
+   ${it('wmRec','📊',L('記録','Records'),L('今日の傾向・実績・ランプ分布','Today, achievements, lamps'))}
+   <div class="wmsec">${L('曲を増やす','Add songs')}</div>
+   <label class="wmi hl" for="fileIn" id="wmAdd"><span class="ic">＋</span><span class="tx"><b>${L('曲を追加','Add songs')}</b><small>zip・rar・7z・tar</small></span><span class="ar">›</span></label>
+   ${it('wmGuide','🧭',L('曲の探し方ガイド','Finding songs'),L('配布イベント・難易度表','Events and tables'))}
+   <div class="wmsec">${L('せってい','Settings')}</div>
+   ${it('wmOut','🔊',L('タイミング調整','Timing'),esc($('#outBtn').textContent))}
+   ${it('wmSet','⚙',L('設定','Settings'),L('おすすめ設定・キー・表示など','Recommended, keys, display…'))}
+   ${it('wmList','≡',L('リスト表示に切り替え','Switch to list view'),L('従来の曲一覧へ','Back to the classic list'))}</div>`;
+  document.body.appendChild(ov);
+  const close=()=>ov.remove(),q=id=>ov.querySelector(id);
+  ov.onclick=e=>{if(e.target===ov)close();};q('#wmClose').onclick=close;
+  const bindSel=(id,src)=>{const el=q(id);if(!el)return;el.value=$(src).value;el.onchange=()=>{$(src).value=el.value;$(src).dispatchEvent(new Event('change',{bubbles:true}));};};
+  bindSel('#wmSort','#sort');bindSel('#wmMode','#fmode');
+  if(q('#wmTbl')){q('#wmTbl').value=S.table||'';q('#wmTbl').onchange=()=>{$('#wTbl').value=q('#wmTbl').value;$('#wTbl').onchange();};}
+  const go=(id,f)=>{const el=q(id);if(el)el.onclick=()=>{close();setTimeout(f,30);};};
+  go('#wmFlt',()=>$('#wFlt').click());go('#wmRnd',()=>$('#wRnd').click());go('#wmRndC',()=>$('#rndCfg').click());
+  go('#wmCourse',()=>$('#courseBtn').click());go('#wmRec',()=>$('#recBtn').click());go('#wmGuide',openSongGuide);
+  go('#wmOut',()=>$('#outBtn').click());go('#wmSet',()=>$('#setBtn').click());go('#wmList',()=>{S.libView='list';saveS();renderLibrary();});
+  q('#wmAdd').addEventListener('click',()=>setTimeout(close,50));
+  NAV.ctx='';if(NAV.on)setTimeout(()=>navMark(navCtx()),30);
 }
 function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
 function wheelPaint(){
