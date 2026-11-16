@@ -147,6 +147,41 @@ canvas{display:block;touch-action:none}
 .ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
 .ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
 .ldist .bar2 i{display:block;height:100%}
+#lib.wheelMode{overflow:hidden}#lib.wheelMode>.wrap,#lib.wheelMode #fsc{display:none!important}
+#wheel{position:fixed;inset:0;z-index:2;flex-direction:column;background:var(--bg);padding-top:env(safe-area-inset-top)}
+.wtop{border-bottom:2px solid var(--faint);background:linear-gradient(90deg,rgba(255,176,0,.10),transparent)}
+.wt1{display:flex;align-items:center;gap:8px;padding:6px 10px 2px}.wlogo{font-family:"Dela";font-size:18px;color:var(--hi);text-shadow:0 0 10px var(--glow);white-space:nowrap}
+.wcnt{flex:1;font-size:11px;color:var(--dim);text-align:right}.wt1 .ib{width:auto;margin:0;padding:0 10px;min-height:30px;flex:none}
+.wt2{display:flex;gap:6px;overflow-x:auto;padding:4px 10px 6px;scrollbar-width:none}.wt2::-webkit-scrollbar{display:none}
+.wt2 .ib,.wt2 select{flex:none;width:auto;margin:0;padding:0 10px;min-height:30px;font-size:12px;white-space:nowrap}.wt2 select{max-width:9em}
+.wt3{padding:0 10px 6px}.wt3 input{width:100%}
+.wban{align-items:center;gap:8px;padding:4px 10px 6px;font-size:12px;color:var(--hi)}.wban span{flex:1}.wban .ib{width:auto;margin:0;padding:0 10px;min-height:28px;flex:none}
+.wbody{flex:1;min-height:0;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none}
+.winfo{padding:8px 12px 4px}.wwheel{flex:1;min-height:0;position:relative;overflow:hidden}
+.whead{display:flex;gap:10px;align-items:flex-start}.wthumb{width:70px;height:70px;object-fit:cover;border:2px solid var(--faint);flex:none}
+.wgenre{font-size:11px;color:var(--dim);letter-spacing:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wtitle{font-family:"Dela";font-size:26px;color:var(--hi);text-shadow:0 0 12px var(--glow);line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all}
+.wsub{font-size:13px;color:var(--hi)}.wart{font-size:12px;color:var(--ink);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wart span{color:var(--hi)}
+.wdfs{display:flex;gap:5px;margin:8px 0 6px}.wdf{flex:1;position:relative;border:2px solid var(--faint);text-align:center;padding:2px 0 1px;opacity:.5;cursor:pointer}
+.wdf small{display:block;font-size:8px;letter-spacing:1px}.wdf b{font-family:"Dela";font-size:20px;font-weight:normal;line-height:1.2}
+.wdf i{position:absolute;left:3px;right:3px;bottom:2px;height:3px}
+.wdf.on{opacity:1;border-color:currentColor;box-shadow:0 0 12px currentColor}.wdf.off{opacity:.2;cursor:default}
+.wscore{border:2px solid var(--faint);padding:4px 10px;background:rgba(255,176,0,.04)}
+.wscore .sr{display:flex;justify-content:space-between;font-size:13px;line-height:1.5}.wscore .sr span:first-child{color:var(--dim)}.wscore small{color:var(--dim)}
+.wrank{position:relative;display:flex;justify-content:space-between;font-size:10px;color:var(--faint);margin-top:4px;padding-top:5px;border-top:1px solid var(--faint)}
+.wrank .on{color:var(--hi)}.wrank i{position:absolute;top:-4px;width:2px;height:8px;background:var(--hi);box-shadow:0 0 6px var(--hi)}
+.wtags{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;font-size:11px;min-height:16px;align-items:center}.wpv{font-size:11px;color:var(--dim);min-height:14px}
+.wrow{position:absolute;left:12px;right:0;top:0;display:flex;align-items:center;border:1px solid var(--faint);border-right:none;background:linear-gradient(90deg,rgba(255,176,0,.08),var(--bg));font-size:14px;padding-right:8px;clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);will-change:transform}
+.wrow .lamp{width:6px;align-self:stretch;margin-right:8px;flex:none}
+.wrow .mode{font-size:9px;color:var(--dim);border:1px solid var(--faint);padding:0 3px;margin-right:6px;flex:none}
+.wrow .lv{background:none!important;font-family:"Dela";min-width:30px;padding:0 3px;text-align:center;border:1px solid;margin-right:8px;font-size:14px;line-height:20px;flex:none}
+.wrow .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wrow .t small{color:var(--dim);font-size:11px}
+.wrow .dn{font-family:"Dela";font-size:12px;margin-left:6px;flex:none}.wrow .fv{color:#fd3;margin-left:4px}
+.wrow.sel{font-size:16px;border:2px solid var(--hi);border-right:none;background:linear-gradient(90deg,rgba(255,212,102,.32),rgba(255,176,0,.06));color:#fff;box-shadow:0 0 18px var(--glow);z-index:2}
+.wrow.sel .lv{font-size:18px;line-height:26px;min-width:36px}
+.wcur{position:absolute;left:0;top:50%;margin-top:-8px;border-left:10px solid var(--hi);border-top:8px solid transparent;border-bottom:8px solid transparent;filter:drop-shadow(0 0 6px var(--hi));z-index:3}
+.wfoot{display:flex;justify-content:space-around;border-top:2px solid var(--faint);font-size:11px;color:var(--dim);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}.wfoot b{color:var(--hi);font-weight:normal}
+@media (orientation:landscape){.wbody{flex-direction:row}.winfo{width:44%;overflow:auto}.wtitle{font-size:19px;-webkit-line-clamp:1}.wtop{display:flex;align-items:center}.wt1{flex:none;order:2;padding:4px 10px}.wt1 .wlogo{display:none}.wt2{flex:1;min-width:0;padding:4px 10px}.wthumb{width:54px;height:54px}.wscore .sr{line-height:1.35;font-size:12px}}
 .begb{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:6px;border:1px solid #7d7;color:#7d7}.begb.first{border-color:var(--hi);color:var(--bg);background:var(--hi)}
 .advc{border:2px solid var(--faint);padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.6}.advc b{color:var(--hi)}
 .achbar{height:6px;background:var(--faint);margin:4px 0}.achbar i{display:block;height:100%;background:var(--hi)}.achcat{margin:6px 0}.achcat summary{cursor:pointer;color:var(--ink);font-size:13px;padding:4px 0}
@@ -176,10 +211,10 @@ canvas{display:block;touch-action:none}
 <div id="safe"></div>
 
 <!-- ===== LIBRARY ===== -->
-<div id="lib" class="screen"><div class="wrap">
+<div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1115.1635)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.1635)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.0924)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0924)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -790,7 +825,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1115.1635)">スマホで遊べるBMSプレイヤー　VER 1.0 (1115.1635)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.0924)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.0924)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1637,7 +1672,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1751,6 +1786,7 @@ function SCHEMA(){return [
   {k:'volM',t:L('音量（全体）','Volume (master)'),r:[0,1,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volK',t:L('キー音','Keysounds'),r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volB',t:'BGM',r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
+  {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
   {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
  ]},
  {sec:L('画面の色・言語','Colour & language'),items:[
@@ -2405,11 +2441,130 @@ function renderLibrary(){
   show('#empty',onlyBuiltin,'block');show('#libFoot',!onlyBuiltin,'block');
   const frag=document.createDocumentFragment();
   const T=S.table&&TABLES.find(t=>t.url===S.table);
-  if(T){renderTable(T,list,frag);box.appendChild(frag);fscRefresh();return;}
+  if(T){renderTable(T,list,frag);box.appendChild(frag);fscRefresh();wheelSync();return;}
   const kf={title:c=>(c.title||'?').trim().charAt(0).toUpperCase(),artist:c=>(c.artist||'?').trim().charAt(0).toUpperCase(),level:c=>String(c.level??'?'),lamp:c=>LAMPS[(REC[c.hash]||{}).lamp||0]||'',added:c=>{const d=new Date(c.added||0);return `${d.getMonth()+1}/${d.getDate()}`;}}[so];
   for(const c of list){const r=songRow(c);if(kf)try{r.dataset.k=kf(c);}catch(e){}frag.appendChild(r);}
   box.appendChild(frag);
-  fscRefresh();
+  fscRefresh();wheelSync();
+}
+/* ---------- wheel-style song select (optional; Settings → 曲選択の画面) ---------- */
+const WHL={pos:0,vel:0,target:null,drag:null,raf:0,rows:[],n:0,list:[],cur:null,pvT:0,built:false,lastIdx:-1};
+const DIFF_SLOTS=[[1,'BEGINNER','#7d7'],[2,'NORMAL','#4fc3ff'],[3,'HYPER','#ffcc33'],[4,'ANOTHER','#ff5050'],[5,'INSANE','#c070ff']];
+const diffCol=d=>(DIFF_SLOTS.find(x=>x[0]===d)||[0,'',''])[2]||'var(--ink)';
+function wheelOn(){return S.libView==='wheel';}
+function wheelVisible(){return wheelOn()&&$('#lib').style.display!=='none'&&$('#wheel').style.display!=='none';}
+function wheelRH(){return innerWidth>innerHeight?30:40;}
+function wheelBuild(){
+  if(WHL.built)return;WHL.built=true;const w=$('#wheel');
+  w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button></div>
+    <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
+    <select id="wSort"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
+    <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
+    <div class="wban" id="wBan" style="display:none"></div></div>
+   <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span></div></div>
+   <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>ホイール</b> スクロール</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span>')}</div>`;
+  const cp=(src,dst)=>{const a=$(src),b=$(dst);b.innerHTML=a.innerHTML;b.value=a.value;b.onchange=()=>{a.value=b.value;a.dispatchEvent(new Event('change',{bubbles:true}));};};
+  WHL.syncSel=()=>{cp('#sort','#wSort');cp('#fmode','#wMode');const ts=$('#tblSel'),wt=$('#wTbl');
+    if(TABLES.length){wt.style.display='';wt.innerHTML=`<option value="">${L('難易度表なし','No table')}</option>`+TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('');wt.value=S.table||'';
+      wt.onchange=()=>{if(ts&&[...ts.options].some(o=>o.value===wt.value)){ts.value=wt.value;ts.dispatchEvent(new Event('change',{bubbles:true}));}else{S.table=wt.value;saveS();renderLibrary();}};}else wt.style.display='none';
+    $('#wOut').textContent=$('#outBtn').textContent;};
+  $('#wList').onclick=()=>{S.libView='list';saveS();renderLibrary();};
+  $('#wSet').onclick=()=>$('#setBtn').click();$('#wCourse').onclick=()=>$('#courseBtn').click();$('#wRec').onclick=()=>$('#recBtn').click();
+  $('#wOut').onclick=()=>$('#outBtn').click();$('#wGuide').onclick=openSongGuide;$('#wRnd').onclick=()=>{const p=rndPool();if(!p.length){toast(L('条件に合う譜面がありません','No chart matches'));return;}const c=p[Math.floor(Math.random()*p.length)];wheelGoto(c,true);};
+  $('#wRndC').onclick=()=>$('#rndCfg').click();
+  $('#wSearch').onclick=()=>{const b=$('#wQbar'),on=b.style.display==='none';show('#wQbar',on,'block');if(on){$('#wQ').value=$('#q').value;$('#wQ').focus();}};
+  $('#wQ').oninput=()=>{$('#q').value=$('#wQ').value;renderLibrary();};
+  $('#wFlt').onclick=()=>{const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=13;ov.style.display='flex';
+    ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto"><h2>${L('絞り込み','Filter')}</h2><div id="wFltHost"></div><button class="pri" data-x>${L('閉じる','Close')}</button></div>`;
+    const fb=$('#fltBox'),home=fb.parentNode,next=fb.nextSibling;renderFlt();ov.querySelector('#wFltHost').appendChild(fb);fb.style.display='block';
+    ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-x')){fb.style.display='none';home.insertBefore(fb,next);ov.remove();}};document.body.appendChild(ov);};
+  const wh=$('#wWheel');
+  for(let i=0;i<15;i++){const r=document.createElement('div');r.className='wrow';wh.appendChild(r);WHL.rows.push(r);}
+  // pointer: drag to scroll, flick, tap; horizontal swipe = difficulty
+  const body=$('#wheel .wbody');let pd=null;
+  body.addEventListener('pointerdown',e=>{if(e.target.closest('button,select,input,.wdf'))return;pd={x:e.clientX,y:e.clientY,t:performance.now(),pos:WHL.pos,lastY:e.clientY,lastT:performance.now(),moved:false,inWheel:!!e.target.closest('#wWheel'),axis:null};WHL.target=null;WHL.vel=0;try{body.setPointerCapture(e.pointerId);}catch(_){}});
+  body.addEventListener('pointermove',e=>{if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y;
+    if(!pd.axis&&(Math.abs(dx)>10||Math.abs(dy)>10))pd.axis=Math.abs(dx)>Math.abs(dy)*1.3?'x':'y';
+    if(pd.axis==='y'){pd.moved=true;const now=performance.now();const v=-(e.clientY-pd.lastY)/wheelRH()/Math.max(1,now-pd.lastT)*1000;WHL.vel=WHL.vel*0.6+v*0.4;pd.lastY=e.clientY;pd.lastT=now;WHL.pos=pd.pos-dy/wheelRH();wheelPaint();}});
+  const end=e=>{if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y,dt=performance.now()-pd.t,p=pd;pd=null;
+    if(p.axis==='x'&&Math.abs(dx)>40){wheelDiff(dx<0?1:-1);return;}
+    if(p.axis==='y'){const go=Math.round(WHL.pos+Math.max(-20,Math.min(20,WHL.vel*0.22)));wheelAnim(go);return;}
+    if(Math.abs(dx)<10&&Math.abs(dy)<10&&dt<500&&p.inWheel){const r=$('#wWheel').getBoundingClientRect(),cy=r.top+r.height/2,k=Math.round((e.clientY-cy)/wheelRH());
+      if(k===0){if(WHL.cur)openDetail(WHL.cur);}else wheelAnim(Math.round(WHL.pos)+k);}};
+  body.addEventListener('pointerup',end);body.addEventListener('pointercancel',()=>{pd=null;wheelAnim(Math.round(WHL.pos));});
+  body.addEventListener('wheel',e=>{e.preventDefault();wheelAnim(Math.round(WHL.target??WHL.pos)+(e.deltaY>0?1:-1));},{passive:false});
+  addEventListener('resize',()=>{if(wheelVisible())wheelPaint();});
+}
+function wheelSync(){
+  const on=wheelOn();$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
+  if(!on){return;}
+  wheelBuild();WHL.syncSel();
+  let list=LIBLIST.slice();const T=S.table&&TABLES.find(t=>t.url===S.table);WHL.tlv=null;
+  if(T){const lv=tblLevels(T),pos=new Map(lv.map((x,i)=>[x,i])),bm=new Map();
+    for(const e of T.data){const k=(e.sha256||'').toLowerCase()||(e.md5||'').toLowerCase();if(k&&!bm.has(k))bm.set(k,String(e.level));}
+    const key=c=>bm.get((c.sha256||'').toLowerCase())||bm.get((c.md5||'').toLowerCase());
+    WHL.tlv=new Map();list=list.filter(c=>{const k=key(c);if(k!=null){WHL.tlv.set(c.hash,T.symbol+k);return true;}return false;});
+    list.sort((a,b)=>(pos.get(key(a))??999)-(pos.get(key(b))??999)||lvNum(a.level)-lvNum(b.level));}
+  const prev=WHL.cur&&WHL.cur.hash;WHL.list=list;WHL.n=list.length;
+  $('#wCnt').textContent=L(`${list.length} 譜面`,`${list.length} charts`);
+  let i=prev?list.findIndex(c=>c.hash===prev):-1;
+  if(i<0){let sv=null;try{sv=localStorage.getItem(LSK+'wheelSel');}catch(e){}i=sv?list.findIndex(c=>c.hash===sv):-1;}
+  if(i<0)i=0;WHL.pos=i;WHL.target=null;WHL.lastIdx=-1;
+  const ban=$('#wBan'),rh=$('#recoHint'),sh=$('#safeHint');
+  if(rh&&rh.style.display!=='none'){ban.innerHTML=`<span>${L('はじめての方へ：遊び方と腕前を選ぶだけで遊びやすい設定に','New? Pick how you play for easy settings')}</span><button class="ib pri" id="wBanGo">${L('おすすめ設定','Set up')}</button>`;show('#wBan',true,'flex');$('#wBanGo').onclick=openReco;}
+  else if(sh&&sh.style.display!=='none'){ban.innerHTML=`<span>${L('iPhoneはホーム画面に追加すると曲と記録が消えにくくなります','Add to Home Screen to keep your songs safe')}</span><button class="ib" id="wBanX">×</button>`;show('#wBan',true,'flex');$('#wBanX').onclick=()=>{$('#safeHintX').click();show('#wBan',false);};}
+  else show('#wBan',false);
+  wheelPaint();
+}
+function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
+function wheelPaint(){
+  const wh=$('#wWheel');if(!wh||!WHL.built)return;
+  {const idx=wheelIdx();if(idx!==WHL.lastIdx){WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;wheelInfo();}}
+  const n=WHL.n,RH=wheelRH(),H=wh.clientHeight,cy=H/2,land=innerWidth>innerHeight;
+  const base=Math.round(WHL.pos),frac=WHL.pos-base,K=(WHL.rows.length-1)/2;
+  WHL.rows.forEach((r,j)=>{const k=j-K,i=base+k;
+    if(!n){r.style.display='none';return;}
+    const c=WHL.list[((i%n)+n)%n],d=k-frac,ad=Math.abs(d);
+    if(ad>K+0.5||(n<WHL.rows.length&&(k<-Math.floor((n-1)/2)||k>Math.floor(n/2)))){r.style.display='none';return;}
+    r.style.display='flex';
+    const sel=Math.round(d)===0&&ad<0.5,y=cy+d*RH+(d>0?(RH*0.3):d<0?-(RH*0.3):0)*Math.min(1,ad);
+    r.style.transform=`translate(${ad*ad*(land?8:5)}px,${y-RH/2}px)`;r.style.opacity=Math.max(0.2,1-ad*0.12);
+    r.classList.toggle('sel',sel);r.style.height=(sel?RH*1.3:RH)+'px';if(sel)r.style.transform=`translate(${ad*ad*(land?8:5)}px,${y-RH*0.65}px)`;
+    if(r._h!==c.hash){r._h=c.hash;const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
+      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
+  });
+}
+function wheelAnim(t){WHL.target=t;cancelAnimationFrame(WHL.raf);stopPreview();
+  const step=()=>{const d=WHL.target-WHL.pos;if(Math.abs(d)<0.002){WHL.pos=WHL.target;WHL.target=null;if(WHL.n)WHL.pos=((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n;wheelPaint();wheelSettle();return;}
+    WHL.pos+=d*0.25;wheelPaint();WHL.raf=requestAnimationFrame(step);};WHL.raf=requestAnimationFrame(step);}
+function wheelStep(d){if(!WHL.n)return;wheelAnim(Math.round(WHL.target??WHL.pos)+d);}
+function wheelGoto(c,open){const i=WHL.list.findIndex(x=>x.hash===c.hash);if(i<0)return;const cur=Math.round(WHL.pos),n=WHL.n;let d=((i-cur)%n+n)%n;if(d>n/2)d-=n;wheelAnim(cur+d);if(open)setTimeout(()=>{if(WHL.cur&&WHL.cur.hash===c.hash)openDetail(c);},450);}
+function wheelSibs(c){if(!c)return [];return WHL.list.filter(x=>x.archiveId===c.archiveId&&x.dir===c.dir&&x.mode===c.mode).sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level));}
+function wheelDiff(d){const c=WHL.cur;const sb=wheelSibs(c);if(sb.length<2)return;const i=sb.findIndex(x=>x.hash===c.hash);const nx=sb[Math.max(0,Math.min(sb.length-1,i+d))];if(nx&&nx!==c)wheelGoto(nx);}
+function wheelSettle(){clearTimeout(WHL.pvT);const c=WHL.cur;if(!c)return;try{localStorage.setItem(LSK+'wheelSel',c.hash);}catch(e){}
+  WHL.pvT=setTimeout(()=>{if(wheelVisible()&&WHL.cur===c&&$('#detail').style.display==='none')playPreview(c);},450);
+  DB.get('replays',RIV(c.hash)).then(rv=>{const t=$('#wRiv');if(t&&WHL.cur===c)t.innerHTML=rv?`🎯 ${L('ライバル','Rival')}: ${esc(rv.rname)} ${rv.ex}`:'';}).catch(()=>{});}
+function wheelInfo(){
+  const box=$('#wInfo'),c=WHL.cur;if(!box)return;
+  if(!c){box.innerHTML=`<div class="wtitle" style="font-size:20px">${L('曲がありません','No songs')}</div><div class="hlp">${L('「＋追加」から曲を入れるか、絞り込みを解除してください','Add songs with “+ Add”, or clear the filter')}</div>`;return;}
+  const r=REC[c.hash]||{},N=c.notesN||1,rate=r.ex?r.ex/(2*N):0,sb=wheelSibs(c);
+  const bpm=c.minB&&c.maxB&&Math.round(c.minB)!==Math.round(c.maxB)?`${Math.round(c.minB)}-${Math.round(c.maxB)}`:Math.round(c.bpm||c.mainB||0);
+  const slots=DIFF_SLOTS.filter(([d])=>d!==1||sb.some(x=>x.difficulty===1));
+  const df=slots.map(([d,nm,col])=>{const x=sb.find(y=>y.difficulty===d);const on=x&&x.hash===c.hash;const rc=x?REC[x.hash]||{}:{};
+    return `<div class="wdf${on?' on':''}${x?'':' off'}" style="color:${col}" data-h="${x?x.hash:''}"><small>${nm}</small><b>${x?esc(String(x.level??'?')):'-'}</b>${x&&rc.lamp?`<i style="background:${LAMPC[rc.lamp]}"></i>`:''}</div>`;}).join('');
+  const unk=!sb.some(x=>x.hash===c.hash&&x.difficulty>=1&&x.difficulty<=5);
+  const ranks=['F','E','D','C','B','A','AA','AAA'],ri=rate>=8/9?7:rate>=7/9?6:rate>=6/9?5:rate>=5/9?4:rate>=4/9?3:rate>=3/9?2:rate>=2/9?1:0;
+  const lampN=LAMPS[r.lamp||0]||'NO PLAY';
+  box.innerHTML=`<div class="whead"><div style="flex:1;min-width:0"><div class="wgenre">${esc(c.genre||'')}&nbsp;</div><div class="wtitle">${esc(c.title)}</div>${c.subtitle?`<div class="wsub">${esc(c.subtitle)}</div>`:''}
+     <div class="wart">${esc(c.artist||'')}　<span>BPM ${bpm}</span>　<span>${c.notesN} notes</span></div></div>${c.thumb?`<img class="wthumb" src="${c.thumb}" alt="">`:''}</div>
+   <div class="wdfs">${df}</div>${unk?`<div class="hlp" style="margin:-4px 0 6px">${L('この譜面は難易度名なし','No difficulty name')}：☆${esc(String(c.level??'?'))}</div>`:''}
+   <div class="wscore"><div class="sr"><span>CLEAR</span><span style="color:${r.lamp?LAMPC[r.lamp]:'var(--dim)'};text-shadow:0 0 8px ${r.lamp?LAMPC[r.lamp]:'transparent'}">${esc(lampN)}</span></div>
+    <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
+    <div class="sr"><span>MISS COUNT</span><span>${r.bp!=null?r.bp:'----'}</span></div>
+    <div class="sr"><span>PLAY</span><span>${r.plays||0}</span></div>
+    <div class="wrank">${ranks.map((x,i)=>`<span class="${r.ex&&i===ri?'on':''}">${x}</span>`).join('')}${r.ex?`<i style="left:${Math.min(99,rate*100)}%"></i>`:''}</div></div>
+   <div class="wtags">${redBadges(r)}${begTag(c,r)}<span id="wRiv"></span></div><div class="wpv" id="wPv"></div>`;
+  box.querySelectorAll('.wdf[data-h]').forEach(el=>{if(!el.dataset.h)return;el.onclick=()=>{const x=WHL.list.find(y=>y.hash===el.dataset.h);if(x)wheelGoto(x);};});
 }
 /* ---------- fast scroller: drag the handle on the right edge to jump through a long list ---------- */
 const FSC={el:null,rows:null,drag:false,hide:0};
@@ -2713,8 +2868,8 @@ function stopPreview(){pvTok++;
   if(previewSrc){try{previewSrc.stop();}catch(e){}previewSrc=null;}
   if(pvGain){const g=pvGain;try{g.gain.cancelScheduledValues(actx.currentTime);g.gain.setValueAtTime(g.gain.value,actx.currentTime);g.gain.linearRampToValueAtTime(0,actx.currentTime+0.15);}catch(e){}
     const ss=pvSrcs;setTimeout(()=>{ss.forEach(x=>{try{x.stop();}catch(e){}});try{g.disconnect();}catch(e){}},200);}
-  pvSrcs=[];pvGain=null;const l=$('#dPv');if(l)l.textContent='';}
-function pvLabel(t){const l=$('#dPv');if(l)l.textContent=t;}
+  pvSrcs=[];pvGain=null;const l=$('#dPv');if(l)l.textContent='';const w=$('#wPv');if(w)w.textContent='';}
+function pvLabel(t){const l=$('#dPv');if(l&&$('#detail').style.display.includes('flex'))l.textContent=t;const w=$('#wPv');if(w&&wheelVisible()&&!$('#detail').style.display.includes('flex'))w.textContent=t;}
 function peakStart(times,end,win){
   if(!times.length)return 0;times=times.slice().sort((x,y)=>x-y);
   let best=0,bt=0,j=0;
@@ -2723,7 +2878,7 @@ function peakStart(times,end,win){
 }
 async function playPreview(c){
   stopPreview();if(c.demo||S.preview==='off')return;
-  const tok=++pvTok;const alive=()=>tok===pvTok&&$('#detail').style.display.includes('flex');
+  const tok=++pvTok;const alive=()=>tok===pvTok&&($('#detail').style.display.includes('flex')||(wheelVisible()&&WHL.cur&&WHL.cur.hash===c.hash));
   try{
     const arch=await DB.get('archives',c.archiveId);if(!arch||!alive())return;
     ensureAudio();
@@ -2888,7 +3043,7 @@ async function openDetail(c){
   if(riv){$('#dGvs').value=S.ghostVs==='rival'?'rival':'best';$('#dGvs').onchange=e=>{S.ghostVs=e.target.value;saveS();};
     $('#dRivDel').onclick=async()=>{await DB.del('replays',RIV(c.hash));toast(L('ライバルを削除しました','Rival removed'));openDetail(c);};
     $('#dRivWatch').onclick=()=>{close();startPlay(c,{replay:riv});};}
-  const close=()=>{stopPreview();show('#detail',false);};
+  const close=()=>{stopPreview();show('#detail',false);if(wheelVisible()){WHL.lastIdx=-1;wheelPaint();wheelSettle();}};
   $('#dClose').onclick=close;
   $('#detail').onclick=e=>{if(e.target.id==='detail')close();};
   $('#dFav').onclick=()=>{if(FAV.has(c.hash))FAV.delete(c.hash);else FAV.add(c.hash);saveFav();const f=FAV.has(c.hash);$('#dFav').textContent=f?'★':'☆';$('#dFav').style.color=f?'#fd3':'#889';renderLibrary();};
@@ -4319,17 +4474,20 @@ function navMark(c){
   const r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-10)el.scrollIntoView({block:'center'});
 }
 function navMove(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+  if(c.k==='lib'&&wheelVisible()){wheelStep(d);return;}
   if(!NAV.on){NAV.on=true;navMark(c);return;}
   if(NAV.ctx!==c.k){navMark(c);return;}
   const it=navItems(c);if(!it.length)return;NAV.idx[c.k]=Math.max(0,Math.min(it.length-1,(NAV.idx[c.k]||0)+d));navMark(c);}
 function navCur(c){const it=navItems(c);return it[Math.max(0,Math.min(it.length-1,NAV.idx[c.k]||0))];}
-function navAdjust(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);return;}
+function navAdjust(d){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+  if(c.k==='lib'&&wheelVisible()){wheelDiff(d);return;}if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);return;}
   const el=navCur(c);if(!el)return;
   if(el.tagName==='SELECT'){const n=el.options.length;el.selectedIndex=(el.selectedIndex+d+n)%n;el.dispatchEvent(new Event('change',{bubbles:true}));}
   else if(el.type==='range'){const st=+el.step||1;el.value=Math.max(+el.min,Math.min(+el.max,+el.value+d*st));el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}
   else navMove(d);
   setTimeout(()=>navMark(navCtx()),30);}
 function navDecide(){const c=navCtx();if(c.k==='play'||c.k==='none')return;
+  if(c.k==='lib'&&wheelVisible()){if(WHL.cur)openDetail(WHL.cur);return;}
   if(!NAV.on||NAV.ctx!==c.k){NAV.on=true;navMark(c);if(c.k==='lib')return;}  /* dialogs: press the main button right away */
   const el=navCur(c);if(!el)return;
   if(el.tagName==='SELECT'||el.type==='range'){navAdjust(1);return;}
@@ -4372,7 +4530,7 @@ function navKey(e){
   const km=keyMap('7k'),lane=km[e.code];
   if(e.code==='ArrowUp'||e.code==='ArrowDown'){navMove(e.code==='ArrowDown'?1:-1);return true;}
   if(e.code==='ArrowLeft'||e.code==='ArrowRight'){navAdjust(e.code==='ArrowRight'?1:-1);return true;}
-  if(e.code==='Enter'||e.code==='NumpadEnter'){if(!NAV.on&&tg&&tg!==document.body&&tg.tagName!=='CANVAS')return false;navDecide();return true;}
+  if(e.code==='Enter'||e.code==='NumpadEnter'){if(!(c.k==='lib'&&wheelVisible())&&!NAV.on&&tg&&tg!==document.body&&tg.tagName!=='CANVAS')return false;navDecide();return true;}
   if(e.code==='Backspace'||e.code==='Escape'){if(c.k==='pause'){togglePause(false);return true;}navBack();return c.k!=='lib';}
   if(lane!==undefined&&lane!==0&&!e.repeat&&c.k!=='settings'){if(lane%2===1)navDecide();else navBack();return true;}
   return false;
