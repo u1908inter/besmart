@@ -178,6 +178,10 @@ canvas{display:block;touch-action:none}
 .wrow .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wrow .t small{color:var(--dim);font-size:11px}
 .wrow.fold{background:linear-gradient(90deg,rgba(255,212,102,.16),var(--bg))}.wrow .fcnt{color:var(--dim);font-size:11px;margin-left:6px}.wrow .lv.fold{border-color:var(--hi);color:var(--hi)}
 .wrow .wbd{display:flex;gap:3px;flex:none;align-items:center;margin-left:4px}.wrow .wbd .redb{border:1px solid;padding:0 3px;font-size:10px;line-height:1.3}.wrow .wbd .begb{margin:0;font-size:9px;line-height:13px;padding:0 4px}
+.wrow .pips{display:flex;gap:2px;margin-left:3px}.wrow .pips i{width:7px;height:7px;border:1px solid}
+.widx{position:absolute;right:0;top:6px;bottom:6px;width:30px;z-index:4;flex-direction:column;justify-content:space-around;align-items:center;background:rgba(0,0,0,.45);border-left:1px solid var(--faint);font-size:10px;color:var(--hi);touch-action:none}
+.widx span{display:block;width:100%;text-align:center;padding:2px 0;white-space:nowrap;overflow:hidden}
+.winfo{position:relative}.winfo.hasbg::before{content:"";position:absolute;inset:0;background:var(--wbg) center/cover no-repeat;opacity:.16;filter:blur(3px) saturate(.6);pointer-events:none;z-index:-1}.winfo{z-index:0;isolation:isolate}
 .wrow .dn{font-family:"Dela";font-size:12px;margin-left:6px;flex:none}.wrow .fv{color:#fd3;margin-left:4px}
 .wrow.sel{font-size:16px;border:2px solid var(--hi);border-right:none;background:linear-gradient(90deg,rgba(255,212,102,.32),rgba(255,176,0,.06));color:#fff;box-shadow:0 0 18px var(--glow);z-index:2}
 .wrow.sel .lv{font-size:18px;line-height:26px;min-width:36px}
@@ -232,7 +236,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1223)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1223)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.1257)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1257)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -843,7 +847,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1223)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1223)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.1257)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.1257)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1690,7 +1694,7 @@ function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='blo
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',wheelFold:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
@@ -1753,6 +1757,8 @@ function SCHEMA(){return [
  {sec:L('曲選択','Song select'),items:[
   {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
   {k:'wheelFold',t:L('ホイールをフォルダで分ける','Wheel folders'),b:1,h:L('ONにすると、ホイールの最初に「未プレイ」「クリア済み」「☆レベル別」「難易度表のレベル別」などのフォルダが並び、選ぶと中の曲が出ます。','Shows folders such as Not played, Cleared, by level and by table level at the top of the wheel.')},
+  {k:'wheelGroup',t:L('ホイールで1曲を1行にまとめる','One row per song'),b:1,h:L('同じ曲の難易度違い（NORMAL・HYPERなど）を1行にまとめ、左右で切り替えます。選んだ難易度は次の曲にも引き継がれます。','Groups difficulties of the same song into one row; switch with left/right. Your difficulty carries over to the next song.')},
+  {k:'wheelSe',t:L('曲選択の効果音','Song select sounds'),b:1,h:L('ホイールを回したときの「カチッ」という音と、決定したときの音です。','Tick when the wheel moves and a sound when you decide.')},
   {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['bar',L('上のバーに並べる（標準）','Top bar (standard)')],['menu',L('メニューボタンにまとめる','One menu button')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
   {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
  ]},
@@ -2488,23 +2494,23 @@ function wheelBuild(){
   if(WHL.built)return;WHL.built=true;const w=$('#wheel');
   w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button><button class="ib" id="wSearch2">🔍</button><button class="ib pri" id="wMenu">☰ ${L('メニュー','Menu')}</button></div>
     <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
-    <select id="wSort"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
+    <button class="ib" id="wFav">☆</button><button class="ib" id="wSortC"></button><select id="wSort" style="display:none"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
     <div class="wban" id="wBan" style="display:none"></div><div class="hlp" id="wBarHint" style="display:none;padding:0 10px 4px;margin:0">${L('メニュー操作中：←→／↑↓／皿で選ぶ・Enter／白鍵で決定・Esc／黒鍵で曲選択に戻る','Menu: ←→ / ↑↓ / turntable to move, Enter / white key to select, Esc / black key to go back')}</div></div>
-   <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span></div></div>
+   <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span><div class="widx" id="wIdx" style="display:none"></div></div></div>
    <div class="wfoot">${matchMedia('(pointer:coarse)').matches?L('<span><b>↑↓</b> スワイプで選曲</span><span><b>タップ</b> 決定</span><span><b>←→</b> 難易度</span>','<span><b>↑↓</b> swipe</span><span><b>Tap</b> select</span><span><b>←→</b> difficulty</span>'):L('<span><b>↑↓</b> 選曲／皿</span><span><b>Enter</b> 決定</span><span><b>←→</b> 難易度</span><span><b>Esc／黒鍵</b> メニュー</span><span><b>Q・W／START</b> 押しながら設定</span>','<span><b>↑↓</b> select</span><span><b>Enter</b> open</span><span><b>←→</b> difficulty</span><span><b>Esc</b> menu</span><span><b>Hold Q/W</b> options</span>')}</div>`;
   const cp=(src,dst)=>{const a=$(src),b=$(dst);b.innerHTML=a.innerHTML;b.value=a.value;b.onchange=()=>{a.value=b.value;a.dispatchEvent(new Event('change',{bubbles:true}));};};
   WHL.syncSel=()=>{cp('#sort','#wSort');cp('#fmode','#wMode');const ts=$('#tblSel'),wt=$('#wTbl');
     if(TABLES.length){wt.style.display='';wt.innerHTML=`<option value="">${L('難易度表なし','No table')}</option>`+TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('');wt.value=S.table||'';
       wt.onchange=()=>{if(ts&&[...ts.options].some(o=>o.value===wt.value)){ts.value=wt.value;ts.dispatchEvent(new Event('change',{bubbles:true}));}else{S.table=wt.value;saveS();renderLibrary();}};}else wt.style.display='none';
-    $('#wOut').textContent=$('#outBtn').textContent;};
+    $('#wOut').textContent=$('#outBtn').textContent;const sc=WSORTS.find(x=>x[0]===$('#sort').value);$('#wSortC').textContent=L('並び：','Sort: ')+(sc?sc[1]:'');};
   $('#wList').onclick=()=>{S.libView='list';saveS();renderLibrary();};
   $('#wSet').onclick=()=>$('#setBtn').click();$('#wCourse').onclick=()=>$('#courseBtn').click();$('#wRec').onclick=()=>$('#recBtn').click();
   $('#wOut').onclick=()=>$('#outBtn').click();$('#wGuide').onclick=openSongGuide;$('#wRnd').onclick=()=>{const p=rndPool();if(!p.length){toast(L('条件に合う譜面がありません','No chart matches'));return;}const c=p[Math.floor(Math.random()*p.length)];wheelGoto(c,true);};
   $('#wRndC').onclick=()=>$('#rndCfg').click();
   $('#wSearch').onclick=()=>{const b=$('#wQbar'),on=b.style.display==='none';show('#wQbar',on,'block');if(on){$('#wQ').value=$('#q').value;$('#wQ').focus();}};
   $('#wQ').oninput=()=>{$('#q').value=$('#wQ').value;renderLibrary();};
-  $('#wSearch2').onclick=()=>$('#wSearch').click();$('#wMenu').onclick=openWMenu;
+  $('#wSearch2').onclick=()=>$('#wSearch').click();$('#wMenu').onclick=openWMenu;$('#wFav').onclick=wheelFav;$('#wSortC').onclick=wheelSortCycle;
   $('#wFlt').onclick=()=>{const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=13;ov.style.display='flex';
     ov.innerHTML=`<div class="box card" style="max-height:92vh;overflow:auto"><h2>${L('絞り込み','Filter')}</h2><div id="wFltHost"></div><button class="pri" data-x>${L('閉じる','Close')}</button></div>`;
     const fb=$('#fltBox'),home=fb.parentNode,next=fb.nextSibling;renderFlt();ov.querySelector('#wFltHost').appendChild(fb);fb.style.display='block';
@@ -2513,11 +2519,11 @@ function wheelBuild(){
   for(let i=0;i<15;i++){const r=document.createElement('div');r.className='wrow';wh.appendChild(r);WHL.rows.push(r);}
   // pointer: drag to scroll, flick, tap; horizontal swipe = difficulty
   const body=$('#wheel .wbody');let pd=null;
-  body.addEventListener('pointerdown',e=>{if(e.target.closest('button,select,input,.wdf'))return;pd={x:e.clientX,y:e.clientY,t:performance.now(),pos:WHL.pos,lastY:e.clientY,lastT:performance.now(),moved:false,inWheel:!!e.target.closest('#wWheel'),axis:null};WHL.target=null;WHL.vel=0;try{body.setPointerCapture(e.pointerId);}catch(_){}});
+  body.addEventListener('pointerdown',e=>{if(e.target.closest('button,select,input,.wdf,.widx'))return;clearTimeout(WHL.lpT);WHL.lpT=setTimeout(()=>{if(pd&&!pd.axis&&pd.inWheel){const r=$('#wWheel').getBoundingClientRect(),k=Math.round((pd.y-(r.top+r.height/2))/wheelRH());if(k===0&&WHL.cur&&WHL.cur.hash){pd=null;wheelQuickPop(WHL.cur);}}},550);pd={x:e.clientX,y:e.clientY,t:performance.now(),pos:WHL.pos,lastY:e.clientY,lastT:performance.now(),moved:false,inWheel:!!e.target.closest('#wWheel'),axis:null};WHL.target=null;WHL.vel=0;try{body.setPointerCapture(e.pointerId);}catch(_){}});
   body.addEventListener('pointermove',e=>{if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y;
     if(!pd.axis&&(Math.abs(dx)>10||Math.abs(dy)>10))pd.axis=Math.abs(dx)>Math.abs(dy)*1.3?'x':'y';
     if(pd.axis==='y'){pd.moved=true;const now=performance.now();const v=-(e.clientY-pd.lastY)/wheelRH()/Math.max(1,now-pd.lastT)*1000;WHL.vel=WHL.vel*0.6+v*0.4;pd.lastY=e.clientY;pd.lastT=now;WHL.pos=pd.pos-dy/wheelRH();wheelPaint();}});
-  const end=e=>{if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y,dt=performance.now()-pd.t,p=pd;pd=null;
+  const end=e=>{clearTimeout(WHL.lpT);if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y,dt=performance.now()-pd.t,p=pd;pd=null;
     if(p.axis==='x'&&Math.abs(dx)>40){wheelDiff(dx<0?1:-1);return;}
     if(p.axis==='y'){const go=Math.round(WHL.pos+Math.max(-20,Math.min(20,WHL.vel*0.22)));wheelAnim(go);return;}
     if(Math.abs(dx)<10&&Math.abs(dy)<10&&dt<500&&p.inWheel){const r=$('#wWheel').getBoundingClientRect(),cy=r.top+r.height/2,k=Math.round((e.clientY-cy)/wheelRH());
@@ -2537,7 +2543,8 @@ function wheelRootFolders(){
   FOLDERS.forEach(f=>add('u:'+f.name,'📁',f.name,all.filter(c=>f.hashes.includes(c.hash))));
   const rec=all.filter(c=>(REC[c.hash]||{}).last).sort((a,b)=>REC[b.hash].last-REC[a.hash].last).slice(0,50);
   add('recent','🕘',L('最近遊んだ曲','Recently played'),rec);
-  add('np','🆕',L('未プレイ','Not played'),all.filter(c=>!lp(c)));
+  {const nw=all.filter(c=>!c.builtin&&c.added).sort((a,b)=>b.added-a.added);const cut=Date.now()-14*86400000;let pick=nw.filter(c=>c.added>=cut);if(!pick.length)pick=nw.slice(0,50);add('new','🆕',L('新着（最近追加）','New (recently added)'),pick);}
+  add('np','⬜',L('未プレイ','Not played'),all.filter(c=>!lp(c)));
   add('nc','🔁',L('未クリア','Not cleared'),all.filter(c=>{const l=lp(c);return l>0&&l<3;}));
   add('cl','✅',L('クリア済み','Cleared'),all.filter(c=>lp(c)>=3));
   add('hc','🔥',L('ハードクリア以上','Hard clear+'),all.filter(c=>lp(c)>=5));
@@ -2550,25 +2557,67 @@ function wheelRootFolders(){
   const modes=[...new Set(all.map(c=>c.mode))];if(modes.length>1)modes.sort().forEach(m=>add('m:'+m,'🎹',m.toUpperCase(),all.filter(c=>c.mode===m)));
   return F;
 }
+const wGk=c=>c.archiveId+'|'+c.dir+'|'+c.mode;WHL.gsel={};WHL.prefDiff=(()=>{try{const v=localStorage.getItem(LSK+'wheelDiff');return v?+v:null;}catch(e){return null;}})();WHL.gmap=new Map();
+function wheelGroup(charts){
+  WHL.fcharts=charts;WHL.gmap=new Map();
+  if(!S.wheelGroup)return charts.slice();
+  const order=[];for(const c of charts){const k=wGk(c);if(!WHL.gmap.has(k)){WHL.gmap.set(k,[]);order.push(k);}WHL.gmap.get(k).push(c);}
+  return order.map(k=>wPick(WHL.gmap.get(k)));
+}
+function wPick(g){if(g.length===1)return g[0];
+    const pd=WHL.prefDiff;if(pd!=null){const ex=g.find(x=>x.difficulty===pd);if(ex)return ex;
+      return g.slice().sort((a,b)=>Math.abs((a.difficulty||3)-pd)-Math.abs((b.difficulty||3)-pd)||lvNum(a.level)-lvNum(b.level))[0];}
+    return g.slice().sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level))[0];
+}
+function wSe(kind){if(!S.wheelSe)return;try{if(!actx)return;const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+  const v=Math.max(0,Math.min(1,S.volM??1))*(kind==='tick'?0.05:0.09);o.type=kind==='tick'?'square':'triangle';o.frequency.setValueAtTime(kind==='tick'?1900:kind==='back'?520:880,t);
+  if(kind==='ok')o.frequency.exponentialRampToValueAtTime(1500,t+0.08);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.0001,t+(kind==='tick'?0.025:0.12));
+  o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+0.15);}catch(e){}}
+function wSecKey(e){if(!e||!e.hash)return 'F';const so=$('#sort').value;
+  return so==='level'?String(Math.floor(lvNum(e.level))):so==='lamp'?String((REC[e.hash]||{}).lamp||0):so==='artist'?(e.artist||'?').trim().charAt(0).toUpperCase():so==='added'?dayKey(e.added||0):so==='score'?String(Math.floor(((REC[e.hash]||{}).ex||0)/(2*(e.notesN||1))*9)):(e.title||'?').trim().charAt(0).toUpperCase();}
+function wSecLabel(e){const so=$('#sort').value;if(!e||!e.hash)return '';return so==='level'?'☆'+Math.floor(lvNum(e.level)):so==='lamp'?(LAMPS[(REC[e.hash]||{}).lamp||0]||'').split(' ')[0]:so==='added'?(()=>{const d=new Date(e.added||0);return `${d.getMonth()+1}/${d.getDate()}`;})():so==='score'?['F','E','D','C','B','A','AA','AAA','AAA'][Math.floor(((REC[e.hash]||{}).ex||0)/(2*(e.notesN||1))*9)]||'':wSecKey(e);}
+function wheelJump(d){const n=WHL.n;if(n<2)return;if(!WHL.list.some(e=>e.hash)){wheelStep(d*5);return;}const i0=wheelIdx(),k0=wSecKey(WHL.list[i0]);let i=i0;
+  if(d>0){for(let s=1;s<n;s++){const j=(i0+s)%n;if(WHL.list[j].hash&&wSecKey(WHL.list[j])!==k0){i=j;break;}}}
+  else{let j=i0;let s=0;while(s<n&&wSecKey(WHL.list[(j-1+n)%n])===k0){j=(j-1+n)%n;s++;}if(j!==i0)i=j;else{const pk=wSecKey(WHL.list[(i0-1+n)%n]);j=(i0-1+n)%n;s=0;while(s<n&&wSecKey(WHL.list[(j-1+n)%n])===pk){j=(j-1+n)%n;s++;}i=j;}}
+  const cur=Math.round(WHL.pos);let dd=((i-cur)%n+n)%n;if(d<0&&dd>0)dd-=n;wheelAnim(cur+dd);toast(wSecLabel(WHL.list[i])||'',700);}
+function wheelIndexStrip(){const st=$('#wIdx');if(!st)return;const n=WHL.n,secs=[];let last=null;
+  for(let i=0;i<n;i++){const e=WHL.list[i];if(!e.hash)continue;const k=wSecKey(e);if(k!==last){secs.push([i,wSecLabel(e)]);last=k;}}
+  if(secs.length<3||n<20){st.style.display='none';return;}
+  const max=Math.max(4,Math.floor(($('#wWheel').clientHeight-20)/22)),stp=Math.max(1,Math.ceil(secs.length/max));
+  st.innerHTML=secs.filter((x,i)=>i%stp===0).map(([i,l])=>`<span data-i="${i}">${esc(String(l)).slice(0,4)}</span>`).join('');st.style.display='flex';
+  const go=y=>{const el=document.elementFromPoint(st.getBoundingClientRect().left+8,y);if(el&&el.dataset.i!=null){const i=+el.dataset.i;if(i!==wheelIdx()){WHL.pos=i;WHL.target=null;WHL.lastIdx=-2;wheelPaint();wSe('tick');}}};
+  st.onpointerdown=e=>{e.stopPropagation();e.preventDefault();try{st.setPointerCapture(e.pointerId);}catch(_){}st._d=1;go(e.clientY);};
+  st.onpointermove=e=>{if(st._d)go(e.clientY);};st.onpointerup=st.onpointercancel=e=>{st._d=0;wheelSettle();};}
+function wheelFav(){const c=WHL.cur;if(!c||!c.hash)return;if(FAV.has(c.hash))FAV.delete(c.hash);else FAV.add(c.hash);saveFav();toast(FAV.has(c.hash)?L('★ お気に入りに追加しました','★ Added to favourites'):L('お気に入りから外しました','Removed from favourites'),1200);wheelFavBtn();WHL.lastIdx=-1;wheelPaint();}
+function wheelFavBtn(){const b=$('#wFav');if(b){const on=WHL.cur&&WHL.cur.hash&&FAV.has(WHL.cur.hash);b.textContent=on?'★':'☆';b.style.color=on?'#fd3':'';}}
+function wheelQuickPop(c){const ov=document.createElement('div');ov.className='overlay';ov.style.zIndex=14;ov.style.display='flex';
+  ov.innerHTML=`<div class="box card"><h2 style="font-size:16px">${esc(c.title)}</h2><button class="pri" id="qpFav">${FAV.has(c.hash)?L('★ お気に入りから外す','★ Remove from favourites'):L('☆ お気に入りに追加','☆ Add to favourites')}</button><div class="hlp" style="margin:8px 0 2px">${L('フォルダに入れる','Add to a folder')}</div><div id="qpFld"></div><button data-x>${L('閉じる','Close')}</button></div>`;
+  document.body.appendChild(ov);renderDFld(ov.querySelector('#qpFld'),c);
+  ov.querySelector('#qpFav').onclick=()=>{wheelFav();ov.remove();};ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-x')){ov.remove();WHL.lastIdx=-1;wheelPaint();}};}
+const WSORTS=[['title',L('曲名','Title')],['level',L('レベル','Level')],['lamp',L('ランプ','Clear')],['score',L('スコア','Score')],['added',L('追加日','Added')],['artist',L('アーティスト','Artist')]];
+function wheelSortCycle(){const so=$('#sort'),i=WSORTS.findIndex(x=>x[0]===so.value),nx=WSORTS[(i+1)%WSORTS.length];so.value=nx[0];so.dispatchEvent(new Event('change',{bubbles:true}));toast(L('並び：','Sort: ')+nx[1],900);}
 function wheelFolderList(){
   let level=wheelRootFolders(),names=[],charts=null,tlv=null,ok=[];
   for(const id of WHL.path){const f=level&&level.find(x=>x.fid===id);if(!f)break;ok.push(id);names.push(f.name);
     if(f.sub){level=f.sub();charts=null;}else{charts=f.charts;tlv=f.tlv||null;level=null;break;}}
   WHL.path=ok;WHL.pathNames=names;WHL.tlv=null;
   if(tlv){WHL.tlv=new Map(charts.map(c=>[c.hash,tlv]));}
-  if(!WHL.path.length)return level;
+  const q=($('#q').value||'').trim();WHL.searchMode=false;
+  if(q){WHL.searchMode=true;WHL.pathNames=[L(`検索「${q}」`,`Search “${q}”`)];return [{fid:'back',back:true,search:true,name:L(`検索「${q}」`,`Search “${q}”`)}].concat(wheelGroup(LIBLIST));}
+  if(!WHL.path.length){WHL.fcharts=null;return level;}
   const back={fid:'back',back:true,name:names[names.length-1]};
-  return [back].concat(charts?charts:level);
+  return [back].concat(charts?wheelGroup(charts):level);
 }
 function wheelEnter(f){WHL.path.push(f.fid);try{localStorage.setItem(LSK+'wheelPath',JSON.stringify(WHL.path));}catch(e){}stopPreview();wheelSync();}
-function wheelUp(){if(!WHL.path.length)return false;const id=WHL.path.pop();WHL.keepKey=id;try{localStorage.setItem(LSK+'wheelPath',JSON.stringify(WHL.path));}catch(e){}stopPreview();wheelSync();return true;}
-function wheelDecide(){const e=WHL.cur;if(!e)return;if(e.back){wheelUp();return;}if(e.fold){wheelEnter(e);return;}openDetail(e);}
+function wheelUp(){if(WHL.searchMode){$('#q').value='';const w=$('#wQ');if(w)w.value='';show('#wQbar',false);wSe('back');renderLibrary();return true;}if(!WHL.path.length)return false;wSe('back');const id=WHL.path.pop();WHL.keepKey=id;try{localStorage.setItem(LSK+'wheelPath',JSON.stringify(WHL.path));}catch(e){}stopPreview();wheelSync();return true;}
+function wheelDecide(){const e=WHL.cur;if(!e)return;if(e.back){wheelUp();return;}wSe('ok');if(e.fold){wheelEnter(e);return;}openDetail(e);}
 function wheelSync(){
   const on=wheelOn();if(!on)WHL.bar=null;$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
   if(!on){return;}
   wheelBuild();WHL.syncSel();$('#wheel').classList.toggle('menuMode',S.wheelMenu==='menu');
   let list=LIBLIST.slice();const T=!S.wheelFold&&S.table&&TABLES.find(t=>t.url===S.table);WHL.tlv=null;
   if(S.wheelFold){list=wheelFolderList();}
+  else if(!S.table||!TABLES.find(t=>t.url===S.table)){list=wheelGroup(list);}
   else if(T){const lv=tblLevels(T),pos=new Map(lv.map((x,i)=>[x,i])),bm=new Map();
     for(const e of T.data){const k=(e.sha256||'').toLowerCase()||(e.md5||'').toLowerCase();if(k&&!bm.has(k))bm.set(k,String(e.level));}
     const key=c=>bm.get((c.sha256||'').toLowerCase())||bm.get((c.md5||'').toLowerCase());
@@ -2585,7 +2634,7 @@ function wheelSync(){
   if(rh&&rh.style.display!=='none'){ban.innerHTML=`<span>${L('はじめての方へ：遊び方と腕前を選ぶだけで遊びやすい設定に','New? Pick how you play for easy settings')}</span><button class="ib pri" id="wBanGo">${L('おすすめ設定','Set up')}</button>`;show('#wBan',true,'flex');$('#wBanGo').onclick=openReco;}
   else if(sh&&sh.style.display!=='none'){ban.innerHTML=`<span>${L('iPhoneはホーム画面に追加すると曲と記録が消えにくくなります','Add to Home Screen to keep your songs safe')}</span><button class="ib" id="wBanX">×</button>`;show('#wBan',true,'flex');$('#wBanX').onclick=()=>{$('#safeHintX').click();show('#wBan',false);};}
   else show('#wBan',false);
-  wheelPaint();
+  wheelPaint();wheelIndexStrip();
 }
 function openWMenu(){
   const ov=document.createElement('div');ov.className='overlay wmenu';ov.id='wMenuDlg';ov.style.zIndex=13;ov.style.display='flex';
@@ -2596,6 +2645,7 @@ function openWMenu(){
    <div class="wmgrid"><label><small>${L('ソート','Sort')}</small><select id="wmSort">${opt('#sort')}</select></label><label><small>${L('鍵盤','Keys')}</small><select id="wmMode">${opt('#fmode')}</select></label>
     ${TABLES.length?`<label><small>${L('難易度表','Table')}</small><select id="wmTbl"><option value="">${L('なし','None')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select></label>`:''}
     <button class="wmf" id="wmFlt"><small>${L('絞り込み','Filter')}</small><span>${fn?L(`${fn}件`,`${fn} set`):L('なし','None')} ›</span></button></div>
+   ${it('wmFav','★',L('この曲をお気に入りに','Favourite this song'),L('長押しでフォルダにも入れられます','Long-press a row to add to folders'))}
    ${it('wmRnd','🎲',L('おまかせ選曲','Random pick'),rn?L(`条件 ${rn}件で選ぶ`,`${rn} conditions`):L('すべての曲から','From all songs'),1)}
    ${it('wmRndC','⚙',L('おまかせの条件','Random conditions'),L('鍵盤・レベル・クリア状況など','Keys, level, clear status…'))}
    <div class="wmsec">${L('あそぶ','Play')}</div>
@@ -2615,17 +2665,19 @@ function openWMenu(){
   bindSel('#wmSort','#sort');bindSel('#wmMode','#fmode');
   if(q('#wmTbl')){q('#wmTbl').value=S.table||'';q('#wmTbl').onchange=()=>{$('#wTbl').value=q('#wmTbl').value;$('#wTbl').onchange();};}
   const go=(id,f)=>{const el=q(id);if(el)el.onclick=()=>{close();setTimeout(f,30);};};
-  go('#wmFlt',()=>$('#wFlt').click());go('#wmRnd',()=>$('#wRnd').click());go('#wmRndC',()=>$('#rndCfg').click());
+  go('#wmFav',wheelFav);go('#wmFlt',()=>$('#wFlt').click());go('#wmRnd',()=>$('#wRnd').click());go('#wmRndC',()=>$('#rndCfg').click());
   go('#wmCourse',()=>$('#courseBtn').click());go('#wmRec',()=>$('#recBtn').click());go('#wmGuide',openSongGuide);
   go('#wmOut',()=>$('#outBtn').click());go('#wmSet',()=>$('#setBtn').click());go('#wmList',()=>{S.libView='list';saveS();renderLibrary();});
   q('#wmAdd').addEventListener('click',()=>setTimeout(close,50));
   NAV.ctx='';if(NAV.on)setTimeout(()=>navMark(navCtx()),30);
 }
 function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
-function wRowSig(c){const r=REC[c.hash]||{};return (r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'');}
+function wPips(c){if(!S.wheelGroup)return '';const g=WHL.gmap.get(wGk(c));if(!g||g.length<2)return '';
+  return '<span class="pips">'+g.slice().sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level)).map(x=>{const l=(REC[x.hash]||{}).lamp||0,dc=diffCol(x.difficulty);return `<i style="border-color:${dc};background:${l?LAMPC[l]:'transparent'}${x.hash===c.hash?';outline:1px solid #fff':''}"></i>`;}).join('')+'</span>';}
+function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'');}
 function wheelPaint(){
   const wh=$('#wWheel');if(!wh||!WHL.built)return;
-  {const idx=wheelIdx();if(idx!==WHL.lastIdx){WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;wheelInfo();}}
+  {const idx=wheelIdx();if(idx!==WHL.lastIdx){if(WHL.lastIdx>=0&&performance.now()-(WHL.tickT||0)>25){WHL.tickT=performance.now();wSe('tick');}WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;wheelInfo();wheelFavBtn();}}
   const n=WHL.n,RH=wheelRH(),H=wh.clientHeight,cy=H/2,land=innerWidth>innerHeight;
   const base=Math.round(WHL.pos),frac=WHL.pos-base,K=(WHL.rows.length-1)/2;
   WHL.rows.forEach((r,j)=>{const k=j-K,i=base+k;
@@ -2642,21 +2694,25 @@ function wheelPaint(){
       else{const cs=c.sub?null:c.charts,cl=cs?cs.filter(x=>((REC[x.hash]||{}).lamp||0)>=3).length:0;
         r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}</span>`:''}`;}}}
     else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
-      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
+      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
   });
 }
 function wheelAnim(t){WHL.target=t;cancelAnimationFrame(WHL.raf);stopPreview();
   const step=()=>{const d=WHL.target-WHL.pos;if(Math.abs(d)<0.002){WHL.pos=WHL.target;WHL.target=null;if(WHL.n)WHL.pos=((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n;wheelPaint();wheelSettle();return;}
-    WHL.pos+=d*0.25;wheelPaint();WHL.raf=requestAnimationFrame(step);};WHL.raf=requestAnimationFrame(step);}
-function wheelStep(d){if(!WHL.n)return;wheelAnim(Math.round(WHL.target??WHL.pos)+d);}
-function wheelGoto(c,open){let i=WHL.list.findIndex(x=>x.hash===c.hash);if(i<0&&S.wheelFold){WHL.path=['all'];WHL.keepKey=c.hash;try{localStorage.setItem(LSK+'wheelPath','["all"]');}catch(e){}wheelSync();if(open)setTimeout(()=>openDetail(c),300);return;}if(i<0)return;const cur=Math.round(WHL.pos),n=WHL.n;let d=((i-cur)%n+n)%n;if(d>n/2)d-=n;wheelAnim(cur+d);if(open)setTimeout(()=>{if(WHL.cur&&WHL.cur.hash===c.hash)openDetail(c);},450);}
-function wheelSibs(c){if(!c||!c.hash)return [];return WHL.list.filter(x=>x.hash&&x.archiveId===c.archiveId&&x.dir===c.dir&&x.mode===c.mode).sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level));}
-function wheelDiff(d){const c=WHL.cur;if(!c||!c.hash)return;const sb=wheelSibs(c);if(sb.length<2)return;const i=sb.findIndex(x=>x.hash===c.hash);const nx=sb[Math.max(0,Math.min(sb.length-1,i+d))];if(nx&&nx!==c)wheelGoto(nx);}
+    WHL.pos+=d*((WHL.streak||0)>10?0.4:0.25);wheelPaint();WHL.raf=requestAnimationFrame(step);};WHL.raf=requestAnimationFrame(step);}
+function wheelStep(d){if(!WHL.n)return;const now=performance.now();WHL.streak=now-(WHL.lastStep||0)<160?(WHL.streak||0)+1:0;WHL.lastStep=now;const m=WHL.streak>24?4:WHL.streak>10?2:1;wheelAnim(Math.round(WHL.target??WHL.pos)+d*m);}
+function wheelGoto(c,open){let i=WHL.list.findIndex(x=>x.hash===c.hash);
+  if(i<0&&S.wheelGroup){const k=wGk(c),j=WHL.list.findIndex(x=>x.hash&&wGk(x)===k);if(j>=0){if(j===wheelIdx()){wheelSwap(c);if(open)setTimeout(()=>openDetail(c),200);return;}WHL.list[j]=c;i=j;WHL.rows.forEach(r=>r._h=null);}}if(i<0&&S.wheelFold){WHL.path=['all'];WHL.keepKey=c.hash;try{localStorage.setItem(LSK+'wheelPath','["all"]');}catch(e){}wheelSync();if(open)setTimeout(()=>openDetail(c),300);return;}if(i<0)return;const cur=Math.round(WHL.pos),n=WHL.n;let d=((i-cur)%n+n)%n;if(d>n/2)d-=n;wheelAnim(cur+d);if(open)setTimeout(()=>{if(WHL.cur&&WHL.cur.hash===c.hash)openDetail(c);},450);}
+function wheelSibs(c){if(!c||!c.hash)return [];if(S.wheelGroup&&WHL.gmap.has(wGk(c)))return WHL.gmap.get(wGk(c)).slice().sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level));return (WHL.fcharts||WHL.list).filter(x=>x.hash&&x.archiveId===c.archiveId&&x.dir===c.dir&&x.mode===c.mode).sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level));}
+function wheelDiff(d){const c=WHL.cur;if(!c||!c.hash)return;const sb=wheelSibs(c);if(sb.length<2)return;const i=sb.findIndex(x=>x.hash===c.hash);const nx=sb[Math.max(0,Math.min(sb.length-1,i+d))];if(nx&&nx!==c){if(S.wheelGroup)wheelSwap(nx);else wheelGoto(nx);}}
+function wheelSwap(nx){const i=wheelIdx();if(i<0)return;WHL.prefDiff=nx.difficulty||null;try{localStorage.setItem(LSK+'wheelDiff',String(WHL.prefDiff||''));}catch(e){}
+  WHL.list=WHL.list.map(e=>e.hash&&WHL.gmap.has(wGk(e))?wPick(WHL.gmap.get(wGk(e))):e);WHL.list[i]=nx;stopPreview();wSe('tick');WHL.lastIdx=-1;WHL.rows.forEach(r=>r._h=null);wheelPaint();wheelSettle();}
 function wheelSettle(){clearTimeout(WHL.pvT);const c=WHL.cur;if(!c)return;try{localStorage.setItem(LSK+'wheelSel',c.hash||c.fid);}catch(e){}if(!c.hash)return;
   WHL.pvT=setTimeout(()=>{if(wheelVisible()&&WHL.cur===c&&$('#detail').style.display==='none')playPreview(c);},450);
   DB.get('replays',RIV(c.hash)).then(rv=>{const t=$('#wRiv');if(t&&WHL.cur===c)t.innerHTML=rv?`🎯 ${L('ライバル','Rival')}: ${esc(rv.rname)} ${rv.ex}`:'';}).catch(()=>{});}
 function wheelInfo(){
   const box=$('#wInfo'),c=WHL.cur;if(!box)return;
+  box.classList.remove('hasbg');
   if(c&&(c.fold||c.back)){
     if(c.back){box.innerHTML=`<div class="wgenre">FOLDER</div><div class="wtitle">◀ ${L('戻る','Back')}</div><div class="hlp">${L(`「${esc(c.name)}」を閉じて、ひとつ上のフォルダに戻ります（Esc・黒鍵でも戻れます）`,`Close “${esc(c.name)}” and go up (Esc / black key also work)`)}</div>`;return;}
     const cs=c.sub?null:c.charts;let body='';
@@ -2680,9 +2736,11 @@ function wheelInfo(){
    <div class="wscore"><div class="sr"><span>CLEAR</span><span style="color:${r.lamp?LAMPC[r.lamp]:'var(--dim)'};text-shadow:0 0 8px ${r.lamp?LAMPC[r.lamp]:'transparent'}">${esc(lampN)}</span></div>
     <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
     <div class="sr"><span>MISS COUNT</span><span>${r.bp!=null?r.bp:'----'}</span></div>
-    <div class="sr"><span>PLAY</span><span>${r.plays||0}</span></div>
+    <div class="sr"><span>PLAY</span><span>${r.plays||0}${r.last?`<small>　${L('最終','last')} ${(()=>{const d=new Date(r.last);return `${d.getMonth()+1}/${d.getDate()}`;})()}</small>`:''}</span></div>
+    ${(()=>{if(!r.ex)return '';const th=[[2/9,'E'],[3/9,'D'],[4/9,'C'],[5/9,'B'],[6/9,'A'],[7/9,'AA'],[8/9,'AAA'],[17/18,'MAX-'],[1,'MAX']];const nx=th.find(([v])=>r.ex<Math.ceil(v*2*N));return nx?`<div class="sr"><span>NEXT</span><span>${L(`${nx[1]}まで あと ${Math.ceil(nx[0]*2*N)-r.ex}`,`${Math.ceil(nx[0]*2*N)-r.ex} to ${nx[1]}`)}</span></div>`:'';})()}
     <div class="wrank">${ranks.map((x,i)=>`<span class="${r.ex&&i===ri?'on':''}">${x}</span>`).join('')}${r.ex?`<i style="left:${Math.min(99,rate*100)}%"></i>`:''}</div></div>
    <div class="wtags">${redBadges(r)}${begTag(c,r)}<span id="wRiv"></span></div><div class="wpv" id="wPv"></div>`;
+  box.style.setProperty('--wbg',c.thumb?`url(${c.thumb})`:'none');box.classList.toggle('hasbg',!!c.thumb);
   box.querySelectorAll('.wdf[data-h]').forEach(el=>{if(!el.dataset.h)return;el.onclick=()=>{const x=WHL.list.find(y=>y.hash===el.dataset.h);if(x)wheelGoto(x);};});
 }
 /* ---------- fast scroller: drag the handle on the right edge to jump through a long list ---------- */
@@ -4704,6 +4762,10 @@ function navPoll(){
 (function navLoop(){try{navPoll();}catch(e){}requestAnimationFrame(navLoop);})();
 document.addEventListener('pointerdown',()=>{if(WHL.bar!=null){WHL.bar=null;show('#wBarHint',false);}if(NAV.on){NAV.on=false;NAV.ctx='';navClear();}},true);
 function navKey(e){
+  if(wheelVisible()&&navCtx().k==='lib'&&!(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))){
+    if(e.code==='PageDown'||e.code==='PageUp'){wheelJump(e.code==='PageDown'?1:-1);return true;}
+    if(e.code==='KeyV'&&!keyMap('7k').KeyV){wheelFav();return true;}
+    if(e.code==='KeyR'&&!keyMap('7k').KeyR){wheelSortCycle();return true;}}
   const c=navCtx();if(c.k==='play'||c.k==='none')return false;
   const tg=e.target,typing=tg&&(tg.tagName==='INPUT'&&!/^(checkbox|range|button)$/.test(tg.type)||tg.tagName==='TEXTAREA');
   if(typing&&e.code!=='Escape')return false;
