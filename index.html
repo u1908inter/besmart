@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0838)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0838)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0848)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0838)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0838)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0848)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3376,7 +3376,7 @@ $('#setQ').oninput=e=>{setQ=e.target.value;buildSettings();};
 $('#setMode').onclick=()=>{S.setAll=!S.setAll;saveS();setQ='';$('#setQ').value='';buildSettings();};
 $('#setBtn').onclick=async()=>{buildSettings();renderPwaBox();show('#lib',false);show('#settings',true,'block');applyI18n();
   measureHz().then(hz=>{const el=$('#hzInfo');if(!el)return;const ios=/iPhone|iPad/.test(navigator.userAgent);
-    el.innerHTML=L(`この画面の描画は 約<b>${hz}fps</b> です。`,`This screen renders at about <b>${hz}fps</b>. `)+(hz<=65?(ios?L('ProMotion（120Hz）対応のiPhone/iPadで120fpsにするには、<b>Safari</b>でこのページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてSafariを再起動してください。アプリ内の表示では60fpsに制限される場合があります。','For 120fps on ProMotion iPhone/iPad, open this page in <b>Safari</b>, turn off "Prefer Page Rendering Updates near 60fps" in Settings → Apps → Safari → Advanced → Feature Flags, then restart Safari. In-app viewers may be limited to 60fps.'):L('画面が60Hzのため、60fpsが上限です。','The display is 60Hz, so 60fps is the maximum.')):'');});
+    el.innerHTML=L(`この画面の描画は 約<b>${hz}fps</b> です。`,`This screen renders at about <b>${hz}fps</b>. `)+(hz<=65?(ios?L('ProMotion（120Hz）対応のiPhone/iPadで120fpsにするには、<b>Safari</b>でこのページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてSafariを再起動してください。アプリ内の表示では60fpsに制限される場合があります。','For 120fps on ProMotion iPhone/iPad, open this page in <b>Safari</b>, turn off "Prefer Page Rendering Updates near 60fps" in Settings → Apps → Safari → Advanced → Feature Flags, then restart Safari. In-app viewers may be limited to 60fps.'):/Android/i.test(navigator.userAgent)?L('Androidでは、画面が120Hz対応でも、機種の設定や省電力のためにブラウザの描画が60Hzに抑えられることがあります。120fpsにならないときは、次を試してください：<br>・省電力モード（バッテリーセーバー）をオフにする<br>・Galaxy：設定 → ディスプレイ → 動きの滑らかさ →「アダプティブ」<br>・開発者向けオプションの「ピーク リフレッシュ レートを強制」をオン（項目がある機種のみ）<br>・別のブラウザ（Samsung Internetなど）で開く<br>判定はタップした瞬間の時刻で行うので、60fpsのままでも判定の精度はほとんど変わりません。','On Android, even with a 120Hz screen, the browser may be held to 60Hz by device settings or power saving. If you do not get 120fps, try:<br>・turning off battery saver<br>・Galaxy: Settings → Display → Motion smoothness → Adaptive<br>・Developer options → “Force peak refresh rate” (on some devices)<br>・another browser (e.g. Samsung Internet)<br>Judgement uses the moment you tap, so 60fps barely affects accuracy.'):L('画面が60Hzのため、60fpsが上限です。','The display is 60Hz, so 60fps is the maximum.')):'');});
   $('#storeInfo').textContent=(await DB.isMem())?L('このブラウザでは曲の保存ができません（閉じると消えます）。','This browser cannot store songs (they are lost when closed).'):L(`保存中の譜面：${CHARTS.length}`,`Stored charts: ${CHARTS.length}`);
   try{const e=await navigator.storage.estimate();$('#storeInfo').textContent+=L(` ／ 使用量 約${Math.round(e.usage/1048576)}MB`,` / about ${Math.round(e.usage/1048576)}MB used`);}catch(e){}};
 $('#setBack').onclick=()=>{show('#settings',false);show('#lib',true,'block');renderLibrary();};
@@ -4740,8 +4740,11 @@ $('#vClose').onclick=()=>toLib();
 
 /* ---------- input ---------- */
 let hold=new Map();
-function grab(l,src){let s=hold.get(l);if(!s){s=new Set();hold.set(l,s);}const was=s.size;s.add(src);if(was===0)press(l);}
-function drop(l,src){const s=hold.get(l);if(!s)return;s.delete(src);if(s.size===0){hold.delete(l);release(l);}}
+/* the time the finger / key actually went down: input can reach us up to a frame late (browsers often deliver it with the next frame) */
+let EVT=null;const clrEVT=()=>{EVT=null;};
+function evT(e){try{if(!G||!e||!e.timeStamp)return null;const lag=(performance.now()-e.timeStamp)/1000;if(!(lag>0.001&&lag<0.08))return null;return songTime()-lag*G.rate;}catch(x){return null;}}
+function grab(l,src){let s=hold.get(l);if(!s){s=new Set();hold.set(l,s);}const was=s.size;s.add(src);if(was===0)press(l,undefined,EVT==null?undefined:EVT);}
+function drop(l,src){const s=hold.get(l);if(!s)return;s.delete(src);if(s.size===0){hold.delete(l);release(l,undefined,EVT==null?undefined:EVT);}}
 const ptr=new Map(),ptrP=new Map();let ctrlPtr=null;let vDrag=null;
 function tapKey(){return G.chart.mode+'|'+(G.side||S.side)+'|'+(innerWidth>innerHeight?'L':'P');}
 function lanesAt(x){
@@ -4773,7 +4776,7 @@ function holdingLN(l){const A=G.chart.laneNotes[l];for(let i=G.laneIdx[l];i<A.le
 function ctrlZone(y){return !G.viewer&&y<Math.max(safeTop+70,S.suddenOn?L_.len*S.sudden/100:0);}
 const msgHS=()=>S.fhs?L(`表示時間 ${S.green}ms`,`Visible ${S.green}ms`):L(`スピード ${S.hs.toFixed(2)}`,`Speed ${S.hs.toFixed(2)}`);
 cv.addEventListener('pointerdown',e=>{
-  e.preventDefault();if(!G)return;
+  e.preventDefault();if(!G)return;EVT=evT(e);queueMicrotask(clrEVT);
   try{cv.setPointerCapture(e.pointerId);}catch(_){}
   if(BT){const pi=e.clientX<W/2?0:1;bAct(pi);ptrP.set(e.pointerId,pi);}
   if(G.viewer&&G.paused){if(!vDrag)vDrag={id:e.pointerId,y0:ipj(e.clientY),b0:timeToBeat(G.chart.segs,songTime())};return;}
@@ -4782,7 +4785,7 @@ cv.addEventListener('pointerdown',e=>{
   if(S.tapAdj&&G.record&&G.lastHit&&ls.length===1&&ls[0]===G.lastHit.lane)learnTap(G.lastHit.lane,e.clientX);
   rubSt.set(e.pointerId,{y:e.clientY,acc:0,dir:0,armed:false});
 },{passive:false});
-cv.addEventListener('pointermove',e=>{
+cv.addEventListener('pointermove',e=>{if(G)EVT=evT(e);queueMicrotask(clrEVT);
   if(!G)return;
   if(vDrag&&vDrag.id===e.pointerId){
     // finger down = chart moves down = later notes come into view
@@ -4808,7 +4811,7 @@ cv.addEventListener('pointermove',e=>{
   os.filter(l=>!ns.includes(l)).forEach(l=>drop(l,'t'+e.pointerId));
   ns.filter(l=>!os.includes(l)).forEach(l=>grab(l,'t'+e.pointerId));
 });
-const up=e=>{rubSt.delete(e.pointerId);if(BT&&ptrP.has(e.pointerId)){bAct(ptrP.get(e.pointerId));ptrP.delete(e.pointerId);}if(vDrag&&vDrag.id===e.pointerId){vDrag=null;return;}if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
+const up=e=>{if(G)EVT=evT(e);queueMicrotask(clrEVT);rubSt.delete(e.pointerId);if(BT&&ptrP.has(e.pointerId)){bAct(ptrP.get(e.pointerId));ptrP.delete(e.pointerId);}if(vDrag&&vDrag.id===e.pointerId){vDrag=null;return;}if(ctrlPtr&&ctrlPtr.id===e.pointerId){ctrlPtr=null;return;}if(!ptr.has(e.pointerId))return;const os=ptr.get(e.pointerId);ptr.delete(e.pointerId);os.forEach(l=>drop(l,'t'+e.pointerId));};
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 document.addEventListener('touchmove',e=>{if(G&&!G.ended&&e.target===cv)e.preventDefault();},{passive:false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -4970,7 +4973,7 @@ function navKey(e){
   if(lane!==undefined&&lane!==0&&!e.repeat&&c.k!=='settings'){if(lane%2===1)navDecide();else navBack();return true;}
   return false;
 }
-addEventListener('keydown',e=>{
+addEventListener('keydown',e=>{if(G)EVT=evT(e);queueMicrotask(clrEVT);
   if(kcCap!=null&&$('#keycfg').style.display==='flex'){e.preventDefault();if(e.code==='Escape'){kcCap=null;renderKC();}else assignKC('key',e.code);return;}
   if(!(kcCap!=null)&&(!G||G.ended||G.paused)&&navKey(e)){e.preventDefault();return;}
   if(!G||G.ended)return;
@@ -4983,7 +4986,7 @@ addEventListener('keydown',e=>{
   if(e.code==='ArrowDown'){S.hs=Math.max(.5,S.hs-.25);saveS();G.ctrlMsg={s:msgHS(),t:performance.now()};}
   if(e.code==='ArrowRight'||e.code==='ArrowLeft'){S.suddenOn=true;S.sudden=Math.max(0,Math.min(80,S.sudden+(e.code==='ArrowRight'?2:-2)));saveS();G.ctrlMsg={s:L(`上カバー ${S.sudden}%`,`Top cover ${S.sudden}%`),t:performance.now()};}
 });
-addEventListener('keyup',e=>{if(!G)return;
+addEventListener('keyup',e=>{if(!G)return;EVT=evT(e);queueMicrotask(clrEVT);
   if(BT){const bm=BKEYS[G.chart.mode]||[];for(let i=0;i<bm.length;i++){if(bm[i][e.code]!==undefined){bAct(i);drop(bm[i][e.code],'k'+e.code);return;}}}
   const m=keyMap(G.chart.mode);if(m[e.code]!==undefined)drop(m[e.code],'k'+e.code);});
 function padHandler(code,on,pi){if(BT)bAct(pi>=1?1:0);if(!G||G.ended)return;const m=padMap(G.chart.mode);if(m[code]===undefined)return;if(on)grab(m[code],'p'+code);else drop(m[code],'p'+code);}
