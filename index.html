@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1116.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.2115)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2055)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2055)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -848,7 +848,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1116.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1116.2115)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2055)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2055)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1690,7 +1690,14 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const show=(el,on,disp)=>{if(typeof el==='string')el=$(el);el.style.display=on?(disp||'flex'):'none';};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let toastT=0;
-function toast(t,ms){const el=$('#toast');el.textContent=t;el.style.display='block';clearTimeout(toastT);if(ms!==0)toastT=setTimeout(()=>el.style.display='none',ms||2600);}
+let TMSG=null;
+let IMPORTING=false;
+function inPlay(){const e=document.getElementById('game');return !!(G&&!G.ended&&e&&e.style.display==='block');}
+function toastRestore(){if(TMSG&&TMSG.until===Infinity&&TMSG.full){const el=$('#toast');el.textContent=TMSG.full;el.style.display='block';}}
+function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=String(t).split('\n')[0];
+  if(inPlay()){el.style.display='none';TMSG={s:first,full:String(t),until:ms===0?Infinity:performance.now()+(ms||2600)};return;}
+  TMSG=ms===0?{s:first,full:String(t),until:Infinity}:null;
+  el.textContent=t;el.style.display='block';if(ms!==0)toastT=setTimeout(()=>el.style.display='none',ms||2600);}
 
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
@@ -2953,7 +2960,7 @@ function pickUnits(gr,units,isRar){
 }
 async function importBig(gr,st){
   const isRar=gr.kind==='rar',isTar=gr.kind==='tar';let job=null;
-  st.big=true;st.quiet=true;
+  st.big=true;st.quiet=true;IMPORTING=true;
   wakeOn();
   try{
     toast(L(`${gr.name}（${fmtSize(gr.file.size)}）の中身を確認しています…`,`Checking ${gr.name} (${fmtSize(gr.file.size)})…`),0);
@@ -2977,7 +2984,7 @@ async function importBig(gr,st){
     const build=(u,bufs)=>u.kind==='files'
       ?{kind:'files',name:u.name,files:u.entries.filter(e=>bufs.has(e.path)).map(e=>({path:e.path,blob:new Blob([bufs.get(e.path)])}))}
       :{kind:u.kind,name:u.name+'.'+u.kind,file:new File([bufs.get(u.entries[0].path)],u.name+'.'+u.kind)};
-    const status=extra=>toast(L(`${gr.name} から読み込み中… ${doneN}/${total} 曲${extra||''}\n画面を消さずにお待ちください`,`Loading from ${gr.name}… ${doneN}/${total} songs${extra||''}\nKeep the screen on`),0);
+    const status=extra=>toast(L(`曲を追加中… ${doneN}/${total} 曲${extra||''}\n${gr.name}\n読み込み中も、追加済みの曲を選んで遊べます\n画面を消さずにお待ちください`,`Adding songs… ${doneN}/${total}${extra||''}\n${gr.name}\nYou can play added songs while loading\nKeep the screen on`),0);
     if(!isRar&&!isTar){
       for(const u of chosen){
         status();
@@ -3010,7 +3017,7 @@ async function importBig(gr,st){
     if(st.quota)st.errs.push(L('ブラウザの保存容量の上限に達したため、途中で止めました。ここまでの曲は保存されています。いらない曲を削除してから、残りの曲を選び直してください。','Stopped because the browser storage limit was reached. Songs saved so far are kept. Delete songs you do not need, then choose the rest again.'));
     st.quota=false;
     if(job)job.close();
-    wakeOff();st.big=false;st.quiet=false;
+    IMPORTING=false;wakeOff();st.big=false;st.quiet=false;
   }
 }
 async function importFiles(list,io){io=io||{};
@@ -3994,7 +4001,7 @@ function startGame(chart,buffers,images,o){
   if(o.practice&&o.practice.end!=null){const mE=chart.measures[o.practice.end+1];G.pracEnd=mE?mE.time:null;G.pracSt=startT;G.pracLoops=1;G.pracG=JSON.parse(JSON.stringify(gauges));}
   hold.clear();ptr.clear();ctrlPtr=null;
   ['#lib','#settings','#course','#result','#pause','#title','#cnext'].forEach(s=>show(s,false));
-  show('#game',true,'block');show('#pauseBtn',!o.viewer,'block');document.body.classList.toggle('noscan',FLAT()||S.eco);show('#vbar',!!o.viewer,'flex');wakeOn();
+  $('#toast').style.display='none';show('#game',true,'block');show('#pauseBtn',!o.viewer,'block');document.body.classList.toggle('noscan',FLAT()||S.eco);show('#vbar',!!o.viewer,'flex');wakeOn();
   if(o.viewer){$('#vSeek').max=Math.ceil(chart.endTime+2);$('#vPlay').textContent='❚❚';}
   applyVol();layout();
   G.ppbFix=refBpm(chart);
@@ -4345,6 +4352,7 @@ function draw(){
   {const pr=Math.max(0,Math.min(1,t/Math.max(1,c.endTime)));
    g.fillStyle=hexA(PP.ink,.18);g.fillRect(areaX,H-5,areaW,5);
    g.fillStyle=G.viewer?hexA(PP.ink,.6):PP.hi;g.fillRect(areaX,H-5,areaW*pr,5);}
+  if(TMSG){if(performance.now()>TMSG.until)TMSG=null;else{g.textAlign='left';g.textBaseline='bottom';let fs=12;g.font=fs+'px '+GF();const mw=areaW*(S.showFps?0.55:0.92),w=g.measureText(TMSG.s).width;if(w>mw){fs=Math.max(8,Math.floor(fs*mw/w));g.font=fs+'px '+GF();}g.fillStyle=PP.hi;g.fillText(TMSG.s,areaX+6,judgeY-12);}}
   if(S.showFps){g.textAlign='right';g.textBaseline='bottom';g.font='12px '+GF();g.fillStyle=PP.hi;g.fillText(`${G.drawT.length}fps / ${G.rafT.length}Hz`,areaX+areaW-6,judgeY-12);}
   if(t<(G.practice?G.T0+2:0)&&!G.viewer){g.textAlign='center';g.textBaseline='middle';g.font='22px '+GF();g.fillStyle=PP.ink;g.fillText('READY',cx,len*0.38);}
   if(G.ctrlMsg&&nowMs-G.ctrlMsg.t<900){g.textAlign='center';g.textBaseline='middle';g.font='16px '+GF();g.fillStyle=PP.hi;g.fillText(G.ctrlMsg.s,cx,len*0.3);}
@@ -4822,7 +4830,7 @@ $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
 function stopAll(){if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
-function toLib(){GHOST=null;wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');if(actx)actx.resume();renderLibrary();}
+function toLib(){GHOST=null;wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');toastRestore();if(actx)actx.resume();renderLibrary();}
 function retry(same){const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
   actx.resume().then(()=>{if(!lastMeta)return;startPlay(lastMeta,Object.assign({},lastMode,{seed:same?seed:undefined,replay:null}));});}
@@ -4858,7 +4866,7 @@ function isAssist(o){return !!(o.autoScr||o.legacy||o.expand||ASSIST_ARR.include
 /* ---------- screen wake lock ---------- */
 let wakeLk=null;
 async function wakeOn(){if(!S.wake||!('wakeLock' in navigator))return;try{if(!wakeLk){wakeLk=await navigator.wakeLock.request('screen');wakeLk.addEventListener('release',()=>{wakeLk=null;});}}catch(e){}}
-function wakeOff(){try{if(wakeLk)wakeLk.release();}catch(e){}wakeLk=null;}
+function wakeOff(){if(IMPORTING)return;try{if(wakeLk)wakeLk.release();}catch(e){}wakeLk=null;}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G&&!G.ended)wakeOn();});
 function vib(p){if(S.vib==='off'||!navigator.vibrate)return;try{navigator.vibrate(p);}catch(e){}}
 function patLine(){
