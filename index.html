@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2055)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2055)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2137)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2137)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -848,7 +848,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2055)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2055)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2137)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2137)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1003,6 +1003,7 @@ function parseRaw(text,rng){
         case 'TOTAL':P.total=parseFloat(v)||0;break;case 'LNOBJ':P.lnobj=v.toUpperCase();break;
         case 'LNMODE':P.lnmode=parseInt(v)||0;break;case 'PLAYER':P.player=parseInt(v)||1;break;
         case 'VOLWAV':P.volwav=parseFloat(v)||100;break;
+        case 'COMMENT':{const c=v.replace(/^"(.*)"$/,'$1').trim();if(c)P.comment=P.comment?P.comment+' '+c:c;break;}
         case 'STAGEFILE':P.stagefile=v;break;case 'BANNER':P.banner=v;break;case 'BACKBMP':P.backbmp=v;break;case 'PREVIEW':P.preview=v;break;
       }
     }
@@ -1053,6 +1054,10 @@ function compileBase(text,ext,rng){
       if(id==='00')continue;
       evs.push({beat:mBeat[r.m]+4*lenOf(r.m)*i/n,ch:r.ch,id});
     }
+  }
+  // several lines for the same bar and channel merge into one: a later object at the same position wins (BGM lines stay separate)
+  {const seen=new Map();for(let k=0;k<evs.length;k++){const e=evs[k];if(e.ch==='01')continue;const key=e.ch+'@'+Math.round(e.beat*1e6);if(seen.has(key))evs[seen.get(key)]=null;seen.set(key,k);}
+   for(let k=evs.length-1;k>=0;k--)if(!evs[k])evs.splice(k,1);
   }
   const pri=ch=>(ch==='03'||ch==='08'||ch==='SC')?0:ch==='09'?2:1;
   evs.sort((a,b)=>a.beat-b.beat||pri(a.ch)-pri(b.ch));
@@ -1123,7 +1128,7 @@ function compileBase(text,ext,rng){
   if(!diff){const s=(P.title+' '+P.subtitle).toUpperCase();
     diff=/BEGINNER|\bBEG|\[B\]/.test(s)?1:/INSANE|LEGGENDARIA|★/.test(s)?5:/ANOTHER|\[A\]|EX\b/.test(s)?4:/HYPER|\[H\]/.test(s)?3:/NORMAL|\[N\]/.test(s)?2:0;}
   return {P,mode,M,notes,mines,inv,bgm,bga,poor,layer,segs,sc,measures,endTime,minB,maxB,mainB,
-    title:P.title||'(no title)',subtitle:P.subtitle,artist:P.artist,subartist:P.subartist,genre:P.genre,level:P.playlevel,difficulty:diff,
+    title:P.title||'(no title)',subtitle:P.subtitle,artist:P.artist,subartist:P.subartist,genre:P.genre,comment:P.comment||'',level:P.playlevel,difficulty:diff,
     bpm:P.bpm,total:P.total,rank:P.rank,defexrank:P.defexrank,lnmode:P.lnmode,lnCount,density:dens,hash:fnv(text)};
 }
 
@@ -2740,7 +2745,7 @@ function wheelInfo(){
   const ranks=['F','E','D','C','B','A','AA','AAA'],ri=rate>=8/9?7:rate>=7/9?6:rate>=6/9?5:rate>=5/9?4:rate>=4/9?3:rate>=3/9?2:rate>=2/9?1:0;
   const lampN=LAMPS[r.lamp||0]||'NO PLAY';
   box.innerHTML=`<div class="whead"><div style="flex:1;min-width:0"><div class="wgenre">${esc(c.genre||'')}&nbsp;</div><div class="wtitle">${esc(c.title)}</div>${c.subtitle?`<div class="wsub">${esc(c.subtitle)}</div>`:''}
-     <div class="wart">${esc(c.artist||'')}　<span>BPM ${bpm}</span>　<span>${c.notesN} notes</span></div></div>${c.thumb?`<img class="wthumb" src="${c.thumb}" alt="">`:''}</div>
+     <div class="wart">${esc(c.artist||'')}　<span>BPM ${bpm}</span>　<span>${c.notesN} notes</span></div>${c.comment?`<div class="wart" style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💬 ${esc(c.comment)}</div>`:''}</div>${c.thumb?`<img class="wthumb" src="${c.thumb}" alt="">`:''}</div>
    <div class="wdfs">${df}</div>${unk?`<div class="hlp" style="margin:-4px 0 6px">${L('この譜面は難易度名なし','No difficulty name')}：☆${esc(String(c.level??'?'))}</div>`:''}
    <div class="wscore"><div class="sr"><span>CLEAR</span><span style="color:${r.lamp?LAMPC[r.lamp]:'var(--dim)'};text-shadow:0 0 8px ${r.lamp?LAMPC[r.lamp]:'transparent'}">${esc(lampN)}</span></div>
     <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
@@ -2892,7 +2897,7 @@ async function importGroup(gr,st){
       const tk=dir+'|'+b.P.stagefile+'|'+b.P.banner+'|'+b.P.backbmp;
       if(!thumbs.has(tk))thumbs.set(tk,await makeThumb(ix,dir,[b.P.stagefile,b.P.banner,b.P.backbmp]));
       const N=b.notes.length;
-      metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,
+      metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,comment:b.comment||'',
         level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
         total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
         preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!st.io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
@@ -3181,7 +3186,7 @@ async function openDetail(c){
     <div style="display:flex;gap:8px;align-items:flex-start"><div class="dt" style="flex:1"><span class="lv d${c.difficulty||0}">${DIFN()[c.difficulty]||''} ☆${esc(c.level||'?')}</span><br>${esc(c.title)} ${esc(c.subtitle||'')}</div>
       <button class="ib" id="dFld" style="width:auto;margin:0;font-size:18px" title="${L('フォルダ','Folder')}">📁</button><button class="ib" id="dFav" style="width:auto;margin:0;font-size:20px;color:${fav?'#fd3':'#889'}">${fav?'★':'☆'}</button></div>
     <div id="dFldBox" class="card" style="display:none;padding:8px 10px;margin:6px 0"></div>
-    <div class="ds">${esc(c.artist||'')} ${esc(c.subartist||'')}${c.genre?' ／ '+esc(c.genre):''}</div>
+    <div class="ds">${esc(c.artist||'')} ${esc(c.subartist||'')}${c.genre?' ／ '+esc(c.genre):''}</div>${c.comment?`<div class="ds" style="opacity:.8">💬 ${esc(c.comment)}</div>`:''}
     <div class="grid"><span class="k">${L('鍵盤','Keys')}</span><span>${c.mode.toUpperCase()}</span><span class="k">BPM</span><span>${bpm}</span>
       <span class="k">${L('ノーツ','Notes')}</span><span>${c.notesN}${c.ln?`（LN ${c.ln}）`:''}${c.mines?` ${L('地雷','mines ')}${c.mines}`:''}</span><span class="k">${L('判定','Judge')}</span><span>${c.defexrank?'RANK '+c.defexrank+'%':rk}</span>
       <span class="k">TOTAL</span><span>${c.total||L('自動','auto')}</span><span class="k">${L('長さ','Length')}</span><span>${Math.floor(c.endTime/60)}:${String(Math.floor(c.endTime%60)).padStart(2,'0')}</span></div>
@@ -3849,6 +3854,7 @@ async function startPlay(meta,mode){
           const key=meta.archiveId+'|'+f.n;
           if(!imgCache.has(key))imgCache.set(key,f.get().then(ab=>new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=URL.createObjectURL(new Blob([ab]));})).catch(()=>null));
           const im=await imgCache.get(key);if(im)images[id]=im;}
+        for(const b of base.layer){const im=images[b.id];if(im&&!im._isVideo)layerKey(im);}
         if(imgCache.size>400)imgCache.clear();
       }
       setLoad(fail?L(`準備完了（読めなかった音声 ${fail}件）`,`Ready (${fail} sounds could not be read)`):L('準備完了','Ready'),1);
@@ -4180,6 +4186,12 @@ function effHS(){if(!S.fhs)return S.hs;return Math.max(0.25,(1-coverFrac())*4000
 function ppb(){const f=G.ppbFix;return effHS()*L_.len*0.1*(f?150/f:1);}
 function greenNum(t){const b=timeToBeat(G.chart.segs,t),s=Math.abs(curScroll(G.chart.sc,b))||1;return Math.round((1-coverFrac())*L_.len/(ppb()*curBpmAt(G.chart.segs,t)/60*s)*1000);}
 function trunc(s,maxW){let o=s;while(o.length>1&&g.measureText(o).width>maxW)o=o.slice(0,-1);return o===s?s:o+'…';}
+/* BMS layer images use pure black as the transparent colour: make a keyed copy once per image */
+function layerKey(im){if(!im||im._isVideo)return null;if(im._key!==undefined)return im._key;
+  try{const w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;if(!w||!h)return im._key=null;
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);
+    const d=x.getImageData(0,0,w,h),a=d.data;for(let i=0;i<a.length;i+=4)if(a[i]<=4&&a[i+1]<=4&&a[i+2]<=4)a[i+3]=0;x.putImageData(d,0,0);im._key=cv;}
+  catch(e){im._key=null;}return im._key;}
 function drawImg(im,x,y,w,h,alpha){if(im._isVideo){if(im.readyState<2)return;im={_v:im,width:im.videoWidth||16,height:im.videoHeight||9};}const src=im._v||im;g.globalAlpha=alpha;
   if(S.bgaFit==='full'){g.drawImage(src,x,y,w,h);}
   else{let s=Math.min(w/im.width,h/im.height);if(S.bgaFit==='int'){s=s>=1?Math.floor(s):s;g.imageSmoothingEnabled=false;}g.drawImage(src,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);g.imageSmoothingEnabled=true;}
@@ -4207,7 +4219,7 @@ function draw(){
     const poor=nowMs<G.poorUntil?(G.curPoor||G.images['00']||null):null;
     const im=poor||G.curBga;
     if(L_.bga){g.fillStyle='#0a0a10';g.fillRect(L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h);if(im)drawImg(im,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);
-      if(G.curLayer&&!poor){g.globalCompositeOperation='lighter';drawImg(G.curLayer,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);g.globalCompositeOperation='source-over';}}
+      if(G.curLayer&&!poor){const lk=layerKey(G.curLayer);if(lk)drawImg(lk,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);else{g.globalCompositeOperation='lighter';drawImg(G.curLayer,L_.bga.x,L_.bga.y,L_.bga.w,L_.bga.h,1);g.globalCompositeOperation='source-over';}}}
     else if(im){drawImg(im,0,0,W,H,S.bgaA);}
   }
   g.fillStyle=PP.bg;g.globalAlpha=(S.bga==='on'&&!L_.bga&&!G.viewer)?S.laneA:1;quad(areaX,0,areaW,judgeY);g.fillRect(areaX,judgeY,areaW,H-judgeY);g.globalAlpha=1;
