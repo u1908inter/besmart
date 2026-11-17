@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2304)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2304)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2310)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2310)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -855,7 +855,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2304)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2304)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2310)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2310)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -5343,9 +5343,7 @@ const NOV20=(()=>{const d=new Date();let f=d.getMonth()===10&&d.getDate()===20;t
 function nov20Title(){
   const box=$('#title .box');if(!box||$('#nov20'))return;
   const el=document.createElement('div');el.id='nov20';
-  el.innerHTML=`<canvas id="nov20cv"></canvas><div class="n20t">11.20</div>
-    <div class="n20s">${L('今日は音ゲーマーにとって特別な日','A special day for rhythm-game players')}</div>
-    <div class="hlp" style="margin:6px 0 0;line-height:1.6">${L('初代beatmaniaの名曲「20,november」（dj nagureo）にちなんで、11月20日は音ゲーマーが思い思いに遊ぶ日です。今日はいつもより1曲多く遊んでみませんか？','20 November is the day players celebrate “20,november” by dj nagureo, a classic from the very first beatmania. Why not play one more song than usual today?')}</div>`;
+  el.innerHTML=`<canvas id="nov20cv"></canvas><div class="n20t">11.20</div>`;
   box.insertBefore(el,box.firstChild);$('#title').classList.add('nov20');
   const cv=$('#nov20cv'),x=cv.getContext('2d'),t0=performance.now(),BPM=130,beat=60/BPM;
   const conf=[];for(let i=0;i<46;i++)conf.push({x:Math.random(),y:-Math.random(),v:0.08+Math.random()*0.12,w:(Math.random()-0.5)*2,h:Math.random()*360,s:2+Math.random()*3});
@@ -5374,7 +5372,7 @@ function nov20Title(){
   requestAnimationFrame(draw);
 }
 if(!seenTitle){show('#title',true);if(NOV20)nov20Title();}
-else if(NOV20){let dk='';try{dk=localStorage.getItem(LSK+'nov20')||'';}catch(e){}if(dk!==dayKey()){try{localStorage.setItem(LSK+'nov20',dayKey());}catch(e){}setTimeout(()=>toast(L('🎂 今日は11月20日。音ゲーマーにとって特別な日です','🎂 It’s 20 November: a special day for rhythm-game players'),4500),900);}}
+else if(NOV20){let dk='';try{dk=localStorage.getItem(LSK+'nov20')||'';}catch(e){}if(dk!==dayKey()){try{localStorage.setItem(LSK+'nov20',dayKey());}catch(e){}setTimeout(()=>toast('🎂 11.20',3500),900);}}
 window.__bmsp={get actx(){return actx;},autoProfile,setProfile,S,DB,get G(){return G;},importFiles,refreshLibrary,openDemo,startPlay,startCourse,startTutorial,viewerSeek,get CHARTS(){return CHARTS;},get COURSES(){return COURSES;},set COURSES(v){COURSES=v;saveCourses();}};
 })();}
 if(typeof module!=='undefined')module.exports={parseRaw,compileBase,makePlay,timeToBeat,judgeWindows,compileBmson};
