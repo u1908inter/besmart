@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2155)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2155)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2304)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2304)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -844,11 +844,18 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <button class="ib" id="vClose" style="width:auto;margin:0">✕</button>
 </div>
 
+<style>
+#nov20{margin:0 0 14px;text-align:center}
+#nov20cv{width:100%;height:120px;display:block;border:2px solid var(--hi);background:rgba(0,0,0,.35)}
+#nov20 .n20t{font-family:var(--disp,inherit);font-size:min(16vw,64px);font-weight:900;color:var(--hi);margin-top:8px;letter-spacing:.06em;text-shadow:0 0 14px var(--hi)}
+#nov20 .n20s{font-size:17px;font-weight:700;margin-top:2px}
+#title.nov20 .box{max-height:96vh;overflow:auto}
+</style>
 <div id="title" class="overlay" style="z-index:20">
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2155)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2155)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2304)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2304)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1977,12 +1984,14 @@ function achList(){
   out.push(T('early','🐓',J('早起き','Early bird'),J('朝5〜7時に遊ぶ','Play between 5 and 7 AM'),'secret',x=>x.c.hour>=5&&x.c.hour<7,1));
   out.push(T('close','😱',J('ギリギリ','Close call'),J('ゲージぴったりのラインでクリア','Clear right on the line'),'secret',x=>x.c.close,1));
   out.push(T('pq2','🗡',J('勇者の証','Hero’s proof'),J('ピコーン・クエスト2の内蔵曲を全部クリア','Clear every built-in Pikon Quest 2 chart'),'secret',x=>x.pq2,1));
+  out.push(T('nov20','🎂',J('11月20日','20, November'),J('11月20日に遊ぶ','Play on 20 November'),'secret',x=>x.nov20,1));
   out.push(T('miss0f','🙈',J('おしい！','So close!'),J('ミス1つでフルコンボを逃す','Miss a full combo by one'),'secret',x=>x.c.miss1,1));
   return out;
 }
 const ACH_CAT=()=>({start:L('はじめて','Firsts'),rank:L('ランク','Ranks'),level:L('レベル','Levels'),collect:L('コレクション','Collection'),effort:L('つみかさね','Dedication'),skill:L('チャレンジ','Challenges'),mode:L('モード','Modes'),secret:L('ひみつ','Secret')});
 function achCtx(cur){
   const byHash=new Map(CHARTS.map(c=>[c.hash,c]));const x={tp:0,tn:0,ts:0,days:0,maxDay:0,cl:0,nc:0,hc:0,xc:0,fc:0,pf:0,mx:0,aa:0,aaa:0,mxm:0,maxLvCl:0,maxLvHc:0,maxLvFc:0,red4:false,nch:CHARTS.length,tables:TABLES.length,C:ACHC,c:cur||{}};
+  x.nov20=Object.keys(STATS).some(k=>k.endsWith('-11-20')&&STATS[k].p>0);
   for(const k in STATS){const q=STATS[k];x.tp+=q.p||0;x.tn+=q.n||0;x.ts+=q.s||0;if(q.p){x.days++;x.maxDay=Math.max(x.maxDay,q.p);}}
   const ks=Object.keys(STATS).filter(k=>STATS[k].p).sort();let run=0,prev=null;x.bestStreak=0;
   for(const k of ks){const d=new Date(k+'T12:00:00');run=prev&&Math.round((d-prev)/86400000)===1?run+1:1;prev=d;x.bestStreak=Math.max(x.bestStreak,run);}
@@ -5329,7 +5338,43 @@ async function addBuiltinSongs(){
 }
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 let seenTitle=false;try{seenTitle=!!sessionStorage.getItem('bmsp-title');}catch(e){}
-if(!seenTitle)show('#title',true);
+/* 20 November: the day rhythm-game players celebrate the first beatmania's "20,november" (dj nagureo's birthday) */
+const NOV20=(()=>{const d=new Date();let f=d.getMonth()===10&&d.getDate()===20;try{if(/[?&]nov20\b/.test(location.search))f=true;}catch(e){}return f;})();
+function nov20Title(){
+  const box=$('#title .box');if(!box||$('#nov20'))return;
+  const el=document.createElement('div');el.id='nov20';
+  el.innerHTML=`<canvas id="nov20cv"></canvas><div class="n20t">11.20</div>
+    <div class="n20s">${L('今日は音ゲーマーにとって特別な日','A special day for rhythm-game players')}</div>
+    <div class="hlp" style="margin:6px 0 0;line-height:1.6">${L('初代beatmaniaの名曲「20,november」（dj nagureo）にちなんで、11月20日は音ゲーマーが思い思いに遊ぶ日です。今日はいつもより1曲多く遊んでみませんか？','20 November is the day players celebrate “20,november” by dj nagureo, a classic from the very first beatmania. Why not play one more song than usual today?')}</div>`;
+  box.insertBefore(el,box.firstChild);$('#title').classList.add('nov20');
+  const cv=$('#nov20cv'),x=cv.getContext('2d'),t0=performance.now(),BPM=130,beat=60/BPM;
+  const conf=[];for(let i=0;i<46;i++)conf.push({x:Math.random(),y:-Math.random(),v:0.08+Math.random()*0.12,w:(Math.random()-0.5)*2,h:Math.random()*360,s:2+Math.random()*3});
+  // four-on-the-floor pattern for the falling notes: lane per 8th note
+  const pat=[0,3,5,1,6,2,4,3,0,5,2,6,1,4,3,5];
+  const draw=now=>{
+    if($('#title').style.display==='none'||!cv.isConnected)return;
+    const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;if(cv.width!==Math.round(r.width*d)){cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);}
+    const W=r.width,H=r.height,t=(now-t0)/1000,cs=getComputedStyle(document.body),hi=(cs.getPropertyValue('--hi')||'#fc3').trim(),ink=(cs.getPropertyValue('--ink')||'#fc3').trim();
+    x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,W,H);
+    const lanes=7,lw=W/lanes,jy=H-14,spd=H*0.9,ph=(t/beat)%1,pulse=Math.pow(1-ph,3);
+    x.globalAlpha=0.12+0.25*pulse;x.fillStyle=hi;x.fillRect(0,jy-2,W,4);x.globalAlpha=1;
+    for(let i=1;i<lanes;i++){x.fillStyle=ink;x.globalAlpha=0.12;x.fillRect(i*lw,0,1,H);}x.globalAlpha=1;
+    // notes on every 8th, hitting the line on the beat grid
+    const step=beat/2,cur=Math.floor(t/step);
+    for(let k=cur-1;k<cur+6;k++){const dt=k*step-t,y=jy-dt*spd;if(y<-8||y>H)continue;const ln=pat[((k%16)+16)%16];
+      x.fillStyle=ln%2?'#9cf':'#fff';x.fillRect(ln*lw+3,y-4,lw-6,7);}
+    // flash where the latest note landed
+    const last=cur,lp=pat[((last%16)+16)%16],fa=1-(t-last*step)/step;
+    if(fa>0){x.globalAlpha=fa*0.6;x.fillStyle=hi;x.fillRect(lp*lw,jy-24,lw,26);x.globalAlpha=1;}
+    for(const c of conf){c.y+=c.v/60;c.x+=c.w*0.0015;if(c.y>1.05){c.y=-0.05;c.x=Math.random();}
+      x.fillStyle=`hsl(${(c.h+t*40)%360} 90% 65%)`;x.fillRect(c.x*W,c.y*H,c.s,c.s*1.6);}
+    const tt=$('#nov20 .n20t');if(tt)tt.style.transform=`scale(${1+0.06*pulse})`;
+    requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+}
+if(!seenTitle){show('#title',true);if(NOV20)nov20Title();}
+else if(NOV20){let dk='';try{dk=localStorage.getItem(LSK+'nov20')||'';}catch(e){}if(dk!==dayKey()){try{localStorage.setItem(LSK+'nov20',dayKey());}catch(e){}setTimeout(()=>toast(L('🎂 今日は11月20日。音ゲーマーにとって特別な日です','🎂 It’s 20 November: a special day for rhythm-game players'),4500),900);}}
 window.__bmsp={get actx(){return actx;},autoProfile,setProfile,S,DB,get G(){return G;},importFiles,refreshLibrary,openDemo,startPlay,startCourse,startTutorial,viewerSeek,get CHARTS(){return CHARTS;},get COURSES(){return COURSES;},set COURSES(v){COURSES=v;saveCourses();}};
 })();}
 if(typeof module!=='undefined')module.exports={parseRaw,compileBase,makePlay,timeToBeat,judgeWindows,compileBmson};
