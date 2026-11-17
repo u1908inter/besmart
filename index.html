@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2310)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2310)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0030)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0030)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -855,7 +855,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2310)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2310)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0030)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0030)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -5371,6 +5371,9 @@ function nov20Title(){
   };
   requestAnimationFrame(draw);
 }
+/* count the 11.20 effect once per device per day (not for ?nov20 previews) */
+function nov20Track(){try{const d=new Date();if(!(d.getMonth()===10&&d.getDate()===20))return;const k=LSK+'nov20gc';if(localStorage.getItem(k)===dayKey())return;localStorage.setItem(k,dayKey());setTimeout(()=>track('nov20-'+d.getFullYear(),'11.20演出 '+d.getFullYear()),2500);}catch(e){}}
+if(NOV20)nov20Track();
 if(!seenTitle){show('#title',true);if(NOV20)nov20Title();}
 else if(NOV20){let dk='';try{dk=localStorage.getItem(LSK+'nov20')||'';}catch(e){}if(dk!==dayKey()){try{localStorage.setItem(LSK+'nov20',dayKey());}catch(e){}setTimeout(()=>toast('🎂 11.20',3500),900);}}
 window.__bmsp={get actx(){return actx;},autoProfile,setProfile,S,DB,get G(){return G;},importFiles,refreshLibrary,openDemo,startPlay,startCourse,startTutorial,viewerSeek,get CHARTS(){return CHARTS;},get COURSES(){return COURSES;},set COURSES(v){COURSES=v;saveCourses();}};
