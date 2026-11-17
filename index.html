@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0802)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0802)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0834)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0834)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0802)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0802)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0834)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0834)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1637,7 +1637,19 @@ async function readZipBlob(file){
     name=name.replace(/\\/g,'/');
     if(name.endsWith('/')||/(^|\/)__MACOSX\//.test(name))continue;
     if(flag&1)throw new Error('パスワード付きZIPには対応していません');
-    out.push({path:name,size:usize,get:async()=>{
+    const inflate=async data=>{
+      if(method===0)return await data.arrayBuffer();
+      if(method===8){
+        if(typeof DecompressionStream==='undefined')throw new Error('このブラウザはZIP展開に未対応です（iOS 16.4以降 / 最新Chrome推奨）');
+        return await new Response(data.stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+      }
+      throw new Error('未対応の圧縮形式です');};
+    out.push({path:name,size:usize,loff,csize,
+      // read this entry out of a block already in memory (block starts at file offset `base`)
+      getFrom:async(blk,base)=>{const o=loff-base,hv=new DataView(blk.buffer,blk.byteOffset+o,30);
+        const st=o+30+hv.getUint16(26,true)+hv.getUint16(28,true);if(st+csize>blk.length)throw new Error('range');
+        return await inflate(new Blob([blk.subarray(st,st+csize)]));},
+      get:async()=>{
       const h=await rd(loff,loff+30),hv=new DataView(h.buffer);
       const st=loff+30+hv.getUint16(26,true)+hv.getUint16(28,true);
       const data=file.slice(st,st+csize);
@@ -3054,13 +3066,29 @@ async function importBig(gr,st){
       :{kind:u.kind,name:u.name+'.'+u.kind,file:new File([bufs.get(u.entries[0].path)],u.name+'.'+u.kind)};
     const status=extra=>toast(L(`曲を追加中… ${doneN}/${total} 曲${extra||''}\n${gr.name}\n読み込み中も、追加済みの曲を選んで遊べます\n画面を消さずにお待ちください`,`Adding songs… ${doneN}/${total}${extra||''}\n${gr.name}\nYou can play added songs while loading\nKeep the screen on`),0);
     if(!isRar&&!isTar){
-      for(const u of chosen){
+      // read several files of a song at once, and read the next song while the current one is being saved
+      const readUnit=async u=>{const bufs=new Map(),es=u.entries;
+        // files of one song usually sit next to each other in the ZIP: read them as one block, then unpack from memory
+        if(es.length>1&&es.every(e=>e.getFrom&&e.loff!=null)){
+          let lo=Infinity,hi=0,sum=0;for(const e of es){lo=Math.min(lo,e.loff);hi=Math.max(hi,e.loff+e.csize+30+1024);sum+=e.csize;}
+          hi=Math.min(hi,gr.file.size);
+          if(hi-lo<=48*1048576&&hi-lo<=sum*2+4*1048576){
+            try{const blk=new Uint8Array(await gr.file.slice(lo,hi).arrayBuffer());const q=es.slice();
+              await Promise.all(Array.from({length:Math.min(4,q.length)},async()=>{while(q.length){const e=q.shift();
+                try{bufs.set(e.path,await e.getFrom(blk,lo));}catch(err){try{bufs.set(e.path,await e.get());}catch(er2){console.warn(er2);}}}}));
+              return bufs;}catch(err){console.warn(err);bufs.clear();}
+          }
+        }
+        const q=es.slice();
+        await Promise.all(Array.from({length:Math.min(6,q.length)},async()=>{while(q.length){const e=q.shift();try{bufs.set(e.path,await e.get());}catch(err){console.warn(err);}}}));
+        return bufs;};
+      let next=chosen.length?readUnit(chosen[0]):null;
+      for(let ui=0;ui<chosen.length;ui++){const u=chosen[ui];
         status();
-        const bufs=new Map();
-        for(const e of u.entries){try{bufs.set(e.path,await e.get());}catch(err){console.warn(err);}}
+        const bufs=await (next||readUnit(u));next=null;
         if(bufs.size)await importGroup(build(u,bufs),st);
         if(!st.quota)impMark(gr,u);doneN++;
-        if(st.quota)break;
+        if(st.quota){next=null;break;}
       }
       completed=!st.quota;
     }else{
