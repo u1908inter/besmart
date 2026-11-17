@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0834)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0834)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0838)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0838)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0834)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0834)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0838)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0838)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2361,10 +2361,15 @@ async function expandNested(files,depth){
   }
   return out;
 }
-const archCache=new Map();
+const archCache=new Map(),archKind=new Map();
 function getArchive(arch){
   if(!archCache.has(arch.id)){
-    if(archCache.size>=2)archCache.delete(archCache.keys().next().value);
+    // keep a few recent songs ready (helps previews when moving back and forth); fully-unpacked formats use more memory, so keep at most 2 of them
+    const heavy=k=>k==='rar'||k==='7z'||k==='lzh'||k==='tar';
+    archKind.set(arch.id,arch.kind);
+    while(archCache.size>=5||(heavy(arch.kind)&&[...archCache.keys()].filter(k=>heavy(archKind.get(k))).length>=2)){
+      const old=heavy(arch.kind)?[...archCache.keys()].find(k=>heavy(archKind.get(k))):archCache.keys().next().value;
+      archCache.delete(old===undefined?archCache.keys().next().value:old);}
     const p=listArchive(arch).then(makeIndex);p.catch(()=>archCache.delete(arch.id));archCache.set(arch.id,p);
   }
   return archCache.get(arch.id);
@@ -3190,30 +3195,41 @@ async function playPreview(c){
     const cnt=new Map();for(const e of evs)cnt.set(e.id,(cnt.get(e.id)||0)+1);
     // sounds in the window, plus rarely-used earlier sounds that may still be ringing (e.g. one long BGM file)
     const pick=evs.filter(e=>(e.time>=t0&&e.time<t1)||(e.time<t0&&cnt.get(e.id)<=4));
-    const ids=[...new Set(pick.map(e=>e.id))].slice(0,400);
-    const bufs={};
-    if(base.slices){
-      const names=[...new Set(ids.map(id=>base.slices[id]&&base.slices[id].name).filter(Boolean))],byName={};
-      await Promise.all(names.map(async nm=>{const ff=ix.resolve(c.dir,nm);if(!ff)return;const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).catch(()=>null));const bb=await bufCache.get(key);if(bb)byName[nm]=bb;}));
-      for(const id of ids){const sl=base.slices[id];if(sl&&byName[sl.name])bufs[id]={b:byName[sl.name],off:sl.off,dur:sl.dur};}
-    }else{
-      const q=ids.filter(id=>base.P.wav[id]);
-      const worker=async()=>{while(q.length){const id=q.shift();const ff=ix.resolve(c.dir,base.P.wav[id]);if(!ff)continue;
-        const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).catch(()=>null));const bb=await bufCache.get(key);if(bb)bufs[id]={b:bb,off:0,dur:bb.duration};if(!alive())return;}};
-      await Promise.all([1,2,3,4,5,6].map(worker));
-    }
+    // load sounds in the order they are heard, and start as soon as the opening is ready:
+    // sounds that finish loading later are added while the preview is already playing
+    const first=new Map();for(const e of pick){const k=e.time<t0?-1:e.time;if(!first.has(e.id)||k<first.get(e.id))first.set(e.id,k);}
+    const ids=[...first.keys()].sort((a,b)=>first.get(a)-first.get(b)).slice(0,400);
+    const byId=new Map();for(const e of pick){if(!byId.has(e.id))byId.set(e.id,[]);byId.get(e.id).push(e);}
+    const bufs={},byName=new Map();
+    const loadFile=ff=>{const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).catch(()=>null));return bufCache.get(key);};
+    const loadId=async id=>{
+      if(base.slices){const sl=base.slices[id];if(!sl)return null;if(!byName.has(sl.name)){const ff=ix.resolve(c.dir,sl.name);byName.set(sl.name,ff?loadFile(ff):Promise.resolve(null));}
+        const bb=await byName.get(sl.name);return bb?{b:bb,off:sl.off,dur:sl.dur}:null;}
+      if(!base.P.wav[id])return null;const ff=ix.resolve(c.dir,base.P.wav[id]);if(!ff)return null;
+      const bb=await loadFile(ff);return bb?{b:bb,off:0,dur:bb.duration}:null;};
+    let g=null,now=0;const srcs=[];
+    const sched=id=>{const bf=bufs[id];if(!bf||!g)return;
+      for(const e of byId.get(id)||[]){let when=now+(e.time-t0),skip=0;
+        if(e.time<t0){skip=t0-e.time;when=now;}
+        const late=actx.currentTime+0.03-when;if(late>0){if(bf.dur-skip-late<0.3)continue;skip+=late;when=actx.currentTime+0.03;}
+        if(skip>=bf.dur||when>=now+PV_DUR)continue;
+        const sr=actx.createBufferSource();sr.buffer=bf.b;sr.connect(g);
+        try{sr.start(when,bf.off+skip,Math.max(0.01,Math.min(bf.dur-skip,now+PV_DUR-when)));srcs.push(sr);}catch(err){}}};
+    const opening=new Set(ids.filter(id=>first.get(id)<t0+2));
+    let openLeft=opening.size,openDone;const openP=new Promise(r=>{openDone=r;if(!openLeft)r();});
+    const q=ids.slice();
+    const worker=async()=>{while(q.length&&alive()){const id=q.shift();let bf=null;try{bf=await loadId(id);}catch(e){}
+      if(bf){bufs[id]=bf;if(g&&alive())sched(id);}
+      if(opening.has(id)&&--openLeft<=0)openDone();}};
+    const all=Promise.all([1,2,3,4,5,6].map(worker));
+    // wait for the opening sounds (at most 1.5 s), then start
+    await Promise.race([openP,all,new Promise(r=>setTimeout(r,1500))]);
     if(!alive())return;
-    const g=actx.createGain(),now=actx.currentTime+0.1,vol=S.volM*0.8*((base.P.volwav||100)/100);
+    g=actx.createGain();now=actx.currentTime+0.1;const vol=S.volM*0.8*((base.P.volwav||100)/100);
     g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.6);
     g.gain.setValueAtTime(vol,now+PV_DUR-2.5);g.gain.linearRampToValueAtTime(0,now+PV_DUR);
     g.connect(actx.destination);
-    const srcs=[];
-    for(const e of pick){const bf=bufs[e.id];if(!bf)continue;
-      let when=now+(e.time-t0),skip=0;
-      if(e.time<t0){skip=t0-e.time;if(skip>=bf.dur)continue;when=now;}
-      const sr=actx.createBufferSource();sr.buffer=bf.b;sr.connect(g);
-      try{sr.start(when,bf.off+skip,Math.max(0.01,Math.min(bf.dur-skip,now+PV_DUR-when)));srcs.push(sr);}catch(err){}
-    }
+    for(const id of Object.keys(bufs))sched(id);
     pvSrcs=srcs;pvGain=g;
     const mm=Math.floor(t0/60),ss=String(Math.floor(t0%60)).padStart(2,'0');
     pvLabel(L(`♪ 自動プレビュー（${mm}:${ss}〜）`,`♪ Auto preview (from ${mm}:${ss})`));
