@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0030)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0030)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0802)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0802)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -264,6 +264,7 @@ canvas{display:block;touch-action:none}
     <button id="rndCfg" class="ib" style="flex:0 0 auto;width:auto;padding:0 12px" data-en="Conditions">条件</button>
   </div>
   <div id="fltBox" class="card" style="display:none;padding:10px;margin:0 0 10px"></div>
+  <div id="resumeHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="Continue loading">取り込みの続き</b><div class="hlp" id="resumeTxt" style="margin:2px 0 0"></div></div><button class="ib pri" id="resumeGo" style="flex:none;width:auto;margin:0;padding:0 10px" data-en="Choose file">ファイルを選ぶ</button><button class="ib" id="resumeX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="safeHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="Keep your songs safe">曲と記録を消さないために</b><div class="hlp" style="margin:2px 0 0" data-en="On iPhone, Safari may delete site data after a while unless the app is on your home screen. Add it via Share → Add to Home Screen, and make a backup in Settings → Data.">iPhoneのSafariは、ホーム画面に追加していないサイトのデータを、しばらく使わないと消すことがあります。共有ボタン→「ホーム画面に追加」から開くと消えにくくなります。念のため 設定 → データ からバックアップもできます。</div></div><button class="ib pri" id="safeHintGo" style="flex:none;width:auto;margin:0;padding:0 10px" data-en="Settings">設定へ</button><button class="ib" id="safeHintX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="recoHint" class="card" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin:0 0 10px"><div style="flex:1;min-width:0"><b style="color:var(--hi)" data-en="New to BMS?">はじめての方へ</b><div class="hlp" style="margin:2px 0 0" data-en="Pick how you play and your level to get easy settings.">遊び方と腕前を選ぶだけで、遊びやすい設定にできます。</div></div><button class="ib pri" id="recoHintGo" style="flex:none;width:auto;margin:0;padding:0 12px" data-en="Set up">おすすめ設定</button><button class="ib" id="recoHintX" style="flex:none;width:auto;margin:0;padding:0 10px" aria-label="close">×</button></div>
   <div id="songs"></div>
@@ -855,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0030)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0030)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0802)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0802)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -879,7 +880,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <p id="bigInfo" class="hlp" style="margin:0 0 6px"></p>
   <p id="bigRar" class="hlp" style="margin:0 0 6px" data-en="RAR / tar.gz packs are extracted from the start, so it can take a while even for a few songs. Keep the screen on.">RAR・tar.gzは先頭から順に展開するため、選んだ曲が少なくても時間がかかることがあります。画面を消さずにお待ちください。</p>
   <input id="bigQ" type="search" placeholder="曲名で絞り込み" data-en-ph="Filter by name" style="width:100%;margin:2px 0 6px">
-  <div style="display:flex;gap:6px;margin-bottom:6px"><button id="bigAll" style="flex:1;margin:0" data-en="Select all">すべて選択</button><button id="bigNone" style="flex:1;margin:0" data-en="Select none">すべて解除</button></div>
+  <div style="display:flex;gap:6px;margin-bottom:6px"><button id="bigNew" style="flex:1;margin:0;display:none" data-en="Only new">未追加だけ</button><button id="bigAll" style="flex:1;margin:0" data-en="Select all">すべて選択</button><button id="bigNone" style="flex:1;margin:0" data-en="Select none">すべて解除</button></div>
   <div id="bigList" style="flex:1;min-height:120px;overflow:auto;border:1px solid var(--faint)"></div>
   <p id="bigSum" class="hlp" style="margin:6px 0"></p>
   <button class="pri" id="bigGo" data-en="Load">読み込む</button>
@@ -2511,7 +2512,7 @@ function renderLibrary(){
     score:(a,b)=>((rec(b).ex||0)/(2*b.notesN||1))-((rec(a).ex||0)/(2*a.notesN||1)),
     added:(a,b)=>b.added-a.added,artist:(a,b)=>(a.artist||'').localeCompare(b.artist||'','ja')||a.title.localeCompare(b.title,'ja')}[so]||(()=>0);
   list.sort(cmp);
-  BEG_FIRST=null;LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();renderRecoHint();renderSafeHint();
+  BEG_FIRST=null;LIBLIST=list;show('#rndBar',!!CHARTS.length,'flex');fltSync();renderRecoHint();renderSafeHint();renderResumeHint();
   const box=$('#songs');box.innerHTML='';
   $('#count').textContent=CHARTS.length?L(`${list.length} / ${CHARTS.length} 譜面`,`${list.length} / ${CHARTS.length} charts`):'';
   const onlyBuiltin=CHARTS.every(c=>c.builtin);
@@ -2681,6 +2682,7 @@ function wheelSync(){
   if(i<0)i=list[0]&&list[0].back&&list.length>1?1:0;cancelAnimationFrame(WHL.raf);WHL.pos=i;WHL.target=null;WHL.lastIdx=-1;
   const ban=$('#wBan'),rh=$('#recoHint'),sh=$('#safeHint');
   if(rh&&rh.style.display!=='none'){ban.innerHTML=`<span>${L('はじめての方へ：遊び方と腕前を選ぶだけで遊びやすい設定に','New? Pick how you play for easy settings')}</span><button class="ib pri" id="wBanGo">${L('おすすめ設定','Set up')}</button>`;show('#wBan',true,'flex');$('#wBanGo').onclick=openReco;}
+  else if($('#resumeHint')&&$('#resumeHint').style.display!=='none'){ban.innerHTML=`<span>${L('取り込みが途中で止まっています。同じファイルを選ぶと続きから','Loading stopped part-way: choose the same file to continue')}</span><button class="ib pri" id="wBanGo">${L('ファイルを選ぶ','Choose')}</button><button class="ib" id="wBanX">×</button>`;show('#wBan',true,'flex');$('#wBanGo').onclick=()=>$('#fileIn').click();$('#wBanX').onclick=()=>{$('#resumeX').click();show('#wBan',false);};}
   else if(sh&&sh.style.display!=='none'){ban.innerHTML=`<span>${L('iPhoneはホーム画面に追加すると曲と記録が消えにくくなります','Add to Home Screen to keep your songs safe')}</span><button class="ib" id="wBanX">×</button>`;show('#wBan',true,'flex');$('#wBanX').onclick=()=>{$('#safeHintX').click();show('#wBan',false);};}
   else show('#wBan',false);
   wheelPaint();wheelIndexStrip();
@@ -2876,6 +2878,7 @@ function renderFoldMgr(b){
   b.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>{const F=FOLDERS[+x.dataset.rn];const nm=(prompt(L('新しいフォルダ名','New folder name'),F.name)||'').trim();if(!nm||FOLDERS.some(G=>G!==F&&G.name===nm))return;if(S.flt.fd==='f:'+F.name)S.flt.fd='f:'+nm;if(S.rnd.fd==='f:'+F.name)S.rnd.fd='f:'+nm;F.name=nm;saveFolders();saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
   b.querySelectorAll('[data-dl]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dl;if(x.dataset.ok!=='1'){x.dataset.ok='1';x.textContent=L('本当に削除','Really delete');return;}const F=FOLDERS[i];FOLDERS.splice(i,1);saveFolders();if(S.flt.fd==='f:'+F.name)S.flt.fd='';if(S.rnd.fd==='f:'+F.name)S.rnd.fd='';saveS();renderFlt();renderLibrary();renderFoldMgr($('#fltFoldBox'));});
 }
+$('#resumeGo').onclick=()=>$('#fileIn').click();$('#resumeX').onclick=()=>{const o=impLoad();for(const k in o)o[k].active=false;impSave(o);renderResumeHint();};
 $('#recoHintGo').onclick=openReco;$('#safeHintX').onclick=()=>{try{localStorage.setItem(LSK+'safeSeen','1');}catch(e){}renderSafeHint();};$('#safeHintGo').onclick=()=>{try{localStorage.setItem(LSK+'safeSeen','1');}catch(e){}renderSafeHint();$('#setBtn').click();};
 $('#guideBtn').onclick=openSongGuide;$('#guideBtn2').onclick=openSongGuide;$('#recoHintX').onclick=()=>{try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
 $('#fltBtn').onclick=()=>{const b=$('#fltBox'),on=b.style.display==='none';if(on)renderFlt();show('#fltBox',on,'block');};
@@ -2973,8 +2976,13 @@ function planUnits(entries,packName){
 function pickUnits(gr,units,isRar){
   return new Promise(async resolve=>{
     let free=null;try{const e=await navigator.storage.estimate();free=Math.max(0,e.quota-e.usage);}catch(e){}
-    const sel=new Set(units.map(u=>u.key));
-    $('#bigInfo').textContent=L(`${gr.name}（${fmtSize(gr.file.size)}）には ${units.length} 曲分のフォルダが入っています。読み込む曲を選んでください。`,`${gr.name} (${fmtSize(gr.file.size)}) contains ${units.length} song folders. Choose the songs to load.`);
+    const prev=new Set((impLoad()[impId(gr)]||{done:[]}).done),names=new Set(CHARTS.map(c=>c.archName));
+    for(const u of units)u.done=prev.has(u.key)||names.has(unitArchName(u));
+    const nDone=units.filter(u=>u.done).length;
+    const sel=new Set(units.filter(u=>!u.done).map(u=>u.key));
+    $('#bigInfo').textContent=L(`${gr.name}（${fmtSize(gr.file.size)}）には ${units.length} 曲分のフォルダが入っています。読み込む曲を選んでください。`,`${gr.name} (${fmtSize(gr.file.size)}) contains ${units.length} song folders. Choose the songs to load.`)
+      +(nDone?L(`\nうち ${nDone} 曲は追加済みなので、残りの ${units.length-nDone} 曲だけを選んでいます。`,`\n${nDone} are already in your library, so only the other ${units.length-nDone} are selected.`):'');
+    $('#bigInfo').style.whiteSpace='pre-line';
     $('#bigRar').style.display=isRar?'':'none';
     $('#bigQ').value='';
     const sum=()=>{let n=0,b=0;for(const u of units)if(sel.has(u.key)){n++;b+=u.size;}
@@ -2984,12 +2992,15 @@ function pickUnits(gr,units,isRar){
     const render=()=>{const q=$('#bigQ').value.trim().toLowerCase();const box=$('#bigList');box.innerHTML='';
       for(const u of units){if(q&&!u.name.toLowerCase().includes(q))continue;
         const row=document.createElement('label');row.className='bigRow';
-        row.innerHTML=`<input type="checkbox" ${sel.has(u.key)?'checked':''}><span class="bn"></span><span class="bs">${u.charts==null?L('書庫','archive'):u.charts+L('譜面',' charts')} · ${fmtSize(u.size)}</span>`;
+        row.innerHTML=`<input type="checkbox" ${sel.has(u.key)?'checked':''}><span class="bn"></span><span class="bs">${u.done?`<b style="color:var(--hi)">${L('追加済み','Added')}</b> · `:''}${u.charts==null?L('書庫','archive'):u.charts+L('譜面',' charts')} · ${fmtSize(u.size)}</span>`;
+        if(u.done)row.style.opacity='.55';
         row.querySelector('.bn').textContent=u.name;
         row.querySelector('input').onchange=e=>{if(e.target.checked)sel.add(u.key);else sel.delete(u.key);sum();};
         box.appendChild(row);}
       sum();};
     $('#bigQ').oninput=render;
+    $('#bigNew').onclick=()=>{units.forEach(u=>{if(u.done)sel.delete(u.key);else sel.add(u.key);});render();};
+    show('#bigNew',nDone>0);
     $('#bigAll').onclick=()=>{const q=$('#bigQ').value.trim().toLowerCase();units.forEach(u=>{if(!q||u.name.toLowerCase().includes(q))sel.add(u.key);});render();};
     $('#bigNone').onclick=()=>{const q=$('#bigQ').value.trim().toLowerCase();units.forEach(u=>{if(!q||u.name.toLowerCase().includes(q))sel.delete(u.key);});render();};
     const fin=v=>{show('#bigDlg',false);resolve(v);};
@@ -2998,8 +3009,24 @@ function pickUnits(gr,units,isRar){
     render();show('#bigDlg',true);
   });
 }
+/* ---------- resume for large packs ----------
+   The browser cannot reopen the user's file by itself, so progress is kept per pack (name + size):
+   when the same pack is chosen again, songs already added are skipped and the rest are preselected. */
+const IMPK=LSK+'impProg';
+function impLoad(){try{return JSON.parse(localStorage.getItem(IMPK)||'{}')||{};}catch(e){return {};}}
+function impSave(o){try{const ks=Object.keys(o).sort((a,b)=>(o[b].t||0)-(o[a].t||0));for(const k of ks.slice(12))delete o[k];localStorage.setItem(IMPK,JSON.stringify(o));}catch(e){}}
+const impId=gr=>gr.name+'|'+(gr.file?gr.file.size:0);
+const unitArchName=u=>u.kind==='files'?u.name:u.name+'.'+u.kind;
+function impMark(gr,u){const o=impLoad(),id=impId(gr),r=o[id]||(o[id]={name:gr.name,size:gr.file?gr.file.size:0,done:[]});if(!r.done.includes(u.key))r.done.push(u.key);r.t=Date.now();impSave(o);}
+function impBegin(gr,total,units){const o=impLoad(),id=impId(gr),r=o[id]||(o[id]={name:gr.name,size:gr.file?gr.file.size:0,done:[]});r.active=true;r.total=total;r.units=units;r.t=Date.now();impSave(o);}
+function impEnd(gr,stopped){const o=impLoad(),r=o[impId(gr)];if(!r)return;r.active=!!stopped;r.t=Date.now();impSave(o);}
+function impPending(){const o=impLoad();return Object.values(o).filter(r=>r.active&&r.units&&r.done.length<r.units).sort((a,b)=>b.t-a.t)[0]||null;}
+function renderResumeHint(){const b=$('#resumeHint');if(!b)return;const r=impPending();
+  if(!r||IMPORTING){show('#resumeHint',false);return;}
+  $('#resumeTxt').textContent=L(`「${r.name}」の取り込みが途中で止まっています（${r.done.length} / ${r.units} 曲）。同じファイルをもう一度選ぶと、追加済みの曲を飛ばして続きから読み込みます。`,`Loading “${r.name}” stopped part-way (${r.done.length} / ${r.units} songs). Choose the same file again to continue: songs already added are skipped.`);
+  show('#resumeHint',true,'flex');}
 async function importBig(gr,st){
-  const isRar=gr.kind==='rar',isTar=gr.kind==='tar';let job=null;
+  const isRar=gr.kind==='rar',isTar=gr.kind==='tar';let job=null,completed=false,began=false;
   st.big=true;st.quiet=true;IMPORTING=true;
   wakeOn();
   try{
@@ -3020,7 +3047,8 @@ async function importBig(gr,st){
     const chosen=await pickUnits(gr,units,isRar||isTar);
     if(!chosen||!chosen.length)return;
     track('import-big','大きな書庫から追加');
-    const total=chosen.length;let doneN=0;
+    const total=chosen.length;let doneN=0;impBegin(gr,total,units.length);began=true;renderResumeHint();
+    const prevDone=new Set((impLoad()[impId(gr)]||{done:[]}).done);for(const u of units)if(u.done&&!prevDone.has(u.key))impMark(gr,u);
     const build=(u,bufs)=>u.kind==='files'
       ?{kind:'files',name:u.name,files:u.entries.filter(e=>bufs.has(e.path)).map(e=>({path:e.path,blob:new Blob([bufs.get(e.path)])}))}
       :{kind:u.kind,name:u.name+'.'+u.kind,file:new File([bufs.get(u.entries[0].path)],u.name+'.'+u.kind)};
@@ -3031,9 +3059,10 @@ async function importBig(gr,st){
         const bufs=new Map();
         for(const e of u.entries){try{bufs.set(e.path,await e.get());}catch(err){console.warn(err);}}
         if(bufs.size)await importGroup(build(u,bufs),st);
-        doneN++;
+        if(!st.quota)impMark(gr,u);doneN++;
         if(st.quota)break;
       }
+      completed=!st.quota;
     }else{
       const owner=new Map(),left=new Map(),got=new Map();
       for(const u of chosen){left.set(u,u.entries.length);got.set(u,new Map());for(const e of u.entries)owner.set(e.raw,{u,e});}
@@ -3042,13 +3071,14 @@ async function importBig(gr,st){
         const o=owner.get(name);if(!o)return;
         got.get(o.u).set(o.e.path,buf);
         const r=left.get(o.u)-1;left.set(o.u,r);
-        if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);doneN++;status(pct);if(st.quota)throw new Error('__quota');}
+        if(r===0){await importGroup(build(o.u,got.get(o.u)),st);got.delete(o.u);if(!st.quota)impMark(gr,o.u);doneN++;status(pct);if(st.quota)throw new Error('__quota');}
       };
       const onProg=(pos,size)=>{pct=`（${Math.floor(pos/size*100)}%）`;status(pct);};
       let failed=[];
       if(isRar)failed=await job.extract([...owner.keys()],onFile,onProg);
       else await tarWalk(gr.file,n=>owner.has(n),onFile,onProg);
       for(const [u,bufs] of got){if(bufs.size){await importGroup(build(u,bufs),st);}doneN++;}
+      completed=true;
       if(failed.length)st.errs.push(gr.name+L(`：${failed.length} 個のファイルを展開できませんでした`,`: ${failed.length} files could not be extracted`));
     }
   }catch(e){
@@ -3058,6 +3088,8 @@ async function importBig(gr,st){
     st.quota=false;
     if(job)job.close();
     IMPORTING=false;wakeOff();st.big=false;st.quiet=false;
+    if(began){const o=impLoad(),r=o[impId(gr)];impEnd(gr,!(r&&r.done.length>=r.units)&&!completed);}
+    renderResumeHint();
   }
 }
 async function importFiles(list,io){io=io||{};
