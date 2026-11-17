@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2137)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2137)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1117.2155)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2155)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -848,7 +848,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2137)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2137)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1117.2155)">スマホで遊べるBMSプレイヤー　VER 1.0 (1117.2155)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1130,6 +1130,32 @@ function compileBase(text,ext,rng){
   return {P,mode,M,notes,mines,inv,bgm,bga,poor,layer,segs,sc,measures,endTime,minB,maxB,mainB,
     title:P.title||'(no title)',subtitle:P.subtitle,artist:P.artist,subartist:P.subartist,genre:P.genre,comment:P.comment||'',level:P.playlevel,difficulty:diff,
     bpm:P.bpm,total:P.total,rank:P.rank,defexrank:P.defexrank,lnmode:P.lnmode,lnCount,density:dens,hash:fnv(text)};
+}
+
+/* notes radar of one chart (like the arcade game): six axes, about 0-200 */
+function chartRadar(c){
+  const z={notes:0,chord:0,peak:0,charge:0,scratch:0,soflan:0};
+  const ns=(c.notes||[]).filter(n=>!n.mine);const N=ns.length;if(!N)return z;
+  const t0=ns[0].time;let t1=t0;for(const n of ns)t1=Math.max(t1,n.et!=null?n.et:n.time);
+  const T=Math.max(1,t1-t0),cl=v=>Math.round(Math.max(0,Math.min(200,v))*100)/100;
+  // NOTES: average density, PEAK: busiest 2 seconds
+  let pk=0,j=0;const ts=ns.map(n=>n.time).sort((a,b)=>a-b);
+  for(let i=0;i<ts.length;i++){while(ts[i]-ts[j]>2)j++;pk=Math.max(pk,i-j+1);}
+  // CHORD: notes that sound together with another note
+  const grp=new Map();for(const n of ns){const k=Math.round(n.time*1000);grp.set(k,(grp.get(k)||0)+1);}
+  let ch=0;for(const v of grp.values())if(v>=2)ch+=v;
+  // CHARGE: long notes, SCRATCH: notes on the turntable
+  const scr=new Set((c.M&&c.M.scr)||[]);let ln=0,hold=0,sc=0;
+  for(const n of ns){if(n.et!=null){ln++;hold+=n.et-n.time;}if(scr.has(n.lane))sc++;}
+  // SOFLAN: time spent away from the main BPM, stops and scroll changes
+  const segs=c.segs||[],mb=c.mainB||c.bpm||120;let off=0,chg=0,prev=null;
+  for(let i=0;i<segs.length;i++){const a=Math.max(t0,segs[i].t),b=Math.min(t1,i+1<segs.length?segs[i+1].t:t1);
+    const bpm=segs[i].r*60,isOff=bpm<=0||Math.abs(bpm/mb-1)>0.15;
+    if(b>a&&isOff)off+=b-a;
+    if(segs[i].t>t0&&segs[i].t<t1&&prev!=null&&(bpm<=0||prev<=0||Math.abs(bpm/prev-1)>0.15))chg++;prev=bpm;}
+  const sc2=c.sc||[];for(let i=1;i<sc2.length;i++){if(Math.abs(sc2[i].s-sc2[i-1].s)>0.15)chg++;if(Math.abs(sc2[i].s-1)>0.15){const a=beatToTime(segs,sc2[i].b),b=i+1<sc2.length?beatToTime(segs,sc2[i+1].b):t1;off+=Math.max(0,Math.min(t1,b)-Math.max(t0,a));}}
+  return {notes:cl(N/T/8*100),chord:cl(ch/T/4*100),peak:cl(pk/2/16*100),charge:cl(ln/T/1.5*100*0.7+hold/T*30),
+    scratch:cl(sc/T/1.5*100),soflan:cl(Math.min(1,off/T)*120+Math.min(80,chg*4))};
 }
 
 /* key reduction (7K->5K, 7K/5K->4K): notes that cannot be placed become BGM so their sound still plays */
@@ -1710,7 +1736,7 @@ const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'char
   ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
-  lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt'};
+  lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:''};
 const S=Object.assign({},DEF);
 try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['hs','ofs','edge','side'])if(o[k]!==undefined)S[k]=o[k];}catch(e){}
 /* PLiCy build: own storage names (shared origin), no service worker */
@@ -2899,7 +2925,7 @@ async function importGroup(gr,st){
       const N=b.notes.length;
       metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,comment:b.comment||'',
         level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
-        total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,
+        total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,radar:chartRadar(b),
         preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!st.io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
     }catch(e){console.warn(e);}
   }
@@ -3190,7 +3216,7 @@ async function openDetail(c){
     <div class="grid"><span class="k">${L('鍵盤','Keys')}</span><span>${c.mode.toUpperCase()}</span><span class="k">BPM</span><span>${bpm}</span>
       <span class="k">${L('ノーツ','Notes')}</span><span>${c.notesN}${c.ln?`（LN ${c.ln}）`:''}${c.mines?` ${L('地雷','mines ')}${c.mines}`:''}</span><span class="k">${L('判定','Judge')}</span><span>${c.defexrank?'RANK '+c.defexrank+'%':rk}</span>
       <span class="k">TOTAL</span><span>${c.total||L('自動','auto')}</span><span class="k">${L('長さ','Length')}</span><span>${Math.floor(c.endTime/60)}:${String(Math.floor(c.endTime%60)).padStart(2,'0')}</span></div>
-    <div id="dens"></div>
+    <div id="dens"></div>${c.radar?`<details style="margin:6px 0"><summary class="hlp" style="cursor:pointer">${L('譜面のノーツレーダー','Chart notes radar')}</summary>${radarSVG(c.radar,Math.max(100,Math.ceil(Math.max(...RAX.map(([k])=>c.radar[k]))/50)*50),200)}</details>`:''}
     <div class="card" style="margin:8px 0;padding:10px"><div class="grid" style="margin:0">
       <span class="k">${L('ランプ','Clear')}</span><span style="color:${LAMPC[r.lamp||0]};font-weight:800">${LAMPS[r.lamp||0]}</span><span class="k">${L('ランク','Rank')}</span><span>${r.ex?rankOf(rate):'-'}</span>
       <span class="k">SCORE</span><span>${r.ex?`${r.ex}（${(rate*100).toFixed(2)}%）`:'-'}</span><span class="k">BP</span><span>${r.bp??'-'}</span>
@@ -3587,7 +3613,7 @@ const DEMO_META={demo:true,title:'テストプレイ — ドレミファソラ�
 function openDemo(){
   ensureAudio();
   const D=buildDemo();const b=compileBase(D.text,'bme',mulberry32(1));
-  Object.assign(DEMO_META,{hash:b.hash,notesN:b.notes.length,ln:b.lnCount,mines:0,total:b.total,rank:b.rank,endTime:b.endTime,density:b.density,measures:b.measures.length,_demo:D});
+  Object.assign(DEMO_META,{hash:b.hash,notesN:b.notes.length,ln:b.lnCount,mines:0,total:b.total,rank:b.rank,endTime:b.endTime,density:b.density,measures:b.measures.length,radar:chartRadar(b),_demo:D});
   openDetail(DEMO_META);
 }
 $('#demoBtn').onclick=openDemo;$('#demoBtn2').onclick=openDemo;
@@ -3822,6 +3848,7 @@ async function startPlay(meta,mode){
       text=decodeText(await f.get());ext=meta.ext;
     }
     const base=compileBase(text,ext,mulberry32(seed^0x5bd1e995));
+    if(!meta.demo&&!meta.radar&&meta.key){try{meta.radar=chartRadar(base);DB.put('charts',meta);}catch(e){}}
     if(!meta.demo){
       let fail=0;
       if(base.slices){
@@ -4492,6 +4519,63 @@ function pracLoop(){
 }
 /* ---------- records: play stats and lamp distribution ---------- */
 function fmtDur(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?L(`${h}時間${m}分`,`${h}h ${m}m`):L(`${m}分`,`${m}m`);}
+/* ---------- notes radar ---------- */
+const RAX=[['notes','NOTES','#ff5fa2'],['chord','CHORD','#7ddc5a'],['peak','PEAK','#ff9b30'],['charge','CHARGE','#b07aff'],['scratch','SCRATCH','#ff4b4b'],['soflan','SOFLAN','#47b5ff']];
+function radarSVG(v,max,size){
+  const S2=size||240,cx=S2/2,cy=S2/2+4,R=S2*0.33,pt=(i,f)=>{const a=-Math.PI/2+i*Math.PI/3;return [cx+Math.cos(a)*R*f,cy+Math.sin(a)*R*f];};
+  const poly=f=>RAX.map((_,i)=>pt(i,f).map(x=>x.toFixed(1)).join(',')).join(' ');
+  let g='';for(const f of [0.25,0.5,0.75,1])g+=`<polygon points="${poly(f)}" fill="none" stroke="currentColor" stroke-opacity="${f===1?.5:.18}" stroke-width="1"/>`;
+  RAX.forEach((_,i)=>{const [x,y]=pt(i,1);g+=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" stroke-opacity=".18"/>`;});
+  const vp=RAX.map(([k],i)=>pt(i,Math.min(1,(v[k]||0)/max)).map(x=>x.toFixed(1)).join(',')).join(' ');
+  g+=`<polygon points="${vp}" fill="var(--hi)" fill-opacity=".28" stroke="var(--hi)" stroke-width="2"/>`;
+  RAX.forEach(([k,nm,col],i)=>{const [x,y]=pt(i,1.28);g+=`<text x="${x.toFixed(1)}" y="${(y-3).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${col}">${nm}</text><text x="${x.toFixed(1)}" y="${(y+10).toFixed(1)}" text-anchor="middle" font-size="11" fill="currentColor">${(v[k]||0).toFixed(2)}</text>`;});
+  return `<svg viewBox="0 0 ${S2} ${S2+8}" width="100%" style="max-width:${S2+40}px;display:block;margin:0 auto;color:var(--ink)">${g}</svg>`;
+}
+function recRate(c){const r=REC[c.hash];return r&&r.ex&&c.notesN?Math.min(1,r.ex/(2*c.notesN)):0;}
+function playerRadar(mode){
+  const cs=CHARTS.filter(c=>c.mode===mode&&c.radar&&recRate(c)>0),v={},top={},tenth={};
+  for(const [k] of RAX){const arr=cs.map(c=>({c,x:c.radar[k]*recRate(c)})).sort((a,b)=>b.x-a.x).slice(0,10);
+    v[k]=arr.length?Math.round(arr.reduce((a,b)=>a+b.x,0)/10*100)/100:0;top[k]=arr;tenth[k]=arr.length>=10?arr[9].x:0;}
+  return {v,top,tenth,n:cs.length,total:Math.round(RAX.reduce((a,[k])=>a+v[k],0)*100)/100};
+}
+async function backfillRadar(){
+  const need=CHARTS.filter(c=>!c.radar&&REC[c.hash]&&c.archiveId);if(!need.length)return 0;
+  const byA=new Map();need.forEach(c=>{if(!byA.has(c.archiveId))byA.set(c.archiveId,[]);byA.get(c.archiveId).push(c);});
+  let done=0;
+  for(const [aid,cs] of byA){
+    try{const arch=await DB.get('archives',aid);if(!arch)continue;const ix=await getArchive(arch);
+      for(const c of cs){const f=ix.byPath.get(c.path);if(!f)continue;
+        try{c.radar=chartRadar(compileBase(decodeText(await f.get()),c.ext,mulberry32(1)));await DB.put('charts',c);done++;}catch(e){}
+        toast(L(`譜面を分析中… ${done} / ${need.length}`,`Analysing charts… ${done} / ${need.length}`),0);}}catch(e){console.error(e);}
+  }
+  toast(L(`${done} 譜面を分析しました`,`Analysed ${done} charts`),2200);return done;
+}
+function renderRadar(){
+  const box=$('#recRadar');if(!box)return;
+  const modes=[...new Set(CHARTS.filter(c=>recRate(c)>0).map(c=>c.mode))];
+  if(!modes.length){box.innerHTML=`<div class="hlp">${L('プレイすると、あなたの得意・苦手がレーダーで表示されます。','Play some songs to see your strengths on the radar.')}</div>`;return;}
+  const order=['7k','5k','14k','10k','9k','5p','4k','24k'];modes.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  const m=S.radarMode&&modes.includes(S.radarMode)?S.radarMode:(modes.includes('7k')?'7k':modes[0]);
+  const P=playerRadar(m),miss=CHARTS.filter(c=>c.mode===m&&!c.radar&&REC[c.hash]).length;
+  const mx=Math.max(100,Math.ceil(Math.max(...RAX.map(([k])=>P.v[k]))/50)*50);
+  const ranked=RAX.filter(([k])=>k!=='scratch'||MODES[m].scr.length).sort((a,b)=>P.v[b[0]]-P.v[a[0]]),best=ranked[0];
+  // charts that would raise an axis: the easiest ones that still beat your 10th best on it
+  const cand=k=>CHARTS.filter(c=>c.mode===m&&c.radar&&c.radar[k]*0.9>P.tenth[k]&&c.radar[k]*0.9-c.radar[k]*recRate(c)>0.5).sort((a,b)=>a.radar[k]-b.radar[k]).slice(0,3);
+  // the weakest axis that your songs can actually raise
+  let weak=ranked[ranked.length-1],rec=[];
+  for(let i=ranked.length-1;i>0;i--){const r=cand(ranked[i][0]);if(r.length){weak=ranked[i];rec=r;break;}}
+  box.innerHTML=`${modes.length>1?`<div class="chips" id="radMode">${modes.map(x=>`<button class="ib${x===m?' on':''}" data-m="${x}">${x.toUpperCase()}</button>`).join('')}</div>`:''}
+    ${radarSVG(P.v,mx)}
+    <div style="text-align:center;font-weight:700">TOTAL ${P.total.toFixed(2)}</div>
+    ${P.n?`<div class="advc"><div>・${L('得意','Strongest')}：<b style="color:${best[2]}">${best[1]}</b>　${L('伸ばしどころ','Room to grow')}：<b style="color:${weak[2]}">${weak[1]}</b></div>
+      ${rec.length?`<div>・${L(`${weak[1]}を伸ばすなら`,`To raise ${weak[1]}`)}：${rec.map(c=>`<a href="#" class="radGo" data-h="${c.hash}" style="color:var(--hi)">${esc(c.title)} ☆${esc(c.level||'?')}</a>`).join('、')}</div>`:''}</div>`:''}
+    <div class="hlp">${L('NOTES：全体の密度　CHORD：同時押し　PEAK：いちばん忙しい所　CHARGE：ロングノーツ　SCRATCH：皿　SOFLAN：速さの変化','NOTES: overall density　CHORD: chords　PEAK: busiest part　CHARGE: long notes　SCRATCH: turntable　SOFLAN: speed changes')}</div>
+    <div class="hlp">${L('その要素が強い譜面で高いスコアを出すほど伸びます。各項目の上位10譜面の平均です。','Each axis grows with high scores on charts strong in that element: the average of your top 10 charts per axis.')}</div>
+    ${miss?`<button class="ib" id="radFill">${L(`まだ分析していない ${miss} 譜面を分析する`,`Analyse ${miss} more charts`)}</button>`:''}`;
+  box.querySelectorAll('#radMode button').forEach(b=>b.onclick=()=>{S.radarMode=b.dataset.m;saveS();renderRadar();});
+  box.querySelectorAll('.radGo').forEach(a=>a.onclick=e=>{e.preventDefault();const c=CHARTS.find(x=>x.hash===a.dataset.h);if(c){show('#recDlg',false);openDetail(c);}});
+  const fb=box.querySelector('#radFill');if(fb)fb.onclick=async()=>{fb.disabled=true;await backfillRadar();renderRadar();};
+}
 function renderRec(){
   const body=$('#recBody'),days=Object.keys(STATS).sort(),today=dayKey();
   const sum=ks=>ks.reduce((a,k)=>{const q=STATS[k]||{};a.p+=q.p||0;a.n+=q.n||0;a.s+=q.s||0;return a;},{p:0,n:0,s:0});
@@ -4504,6 +4588,8 @@ function renderRec(){
     <div class="hlp">${L('プレイ記録（オートやリプレイは数えません）','Play stats (autoplay and replays are not counted)')}</div>
     <div class="stt">${cell(L('今日','Today'),t)}${cell(L('7日間','7 days'),w)}${cell(L('累計','Total'),all)}</div>
     <canvas class="graph" id="recDays" style="height:90px"></canvas>
+    <div class="hlp" style="margin-top:10px">${L('ノーツレーダー（得意・苦手）','Notes radar (strengths)')}</div>
+    <div id="recRadar"></div>
     <div class="hlp" style="margin-top:10px">${L('クリアランプの分布','Clear lamp distribution')}</div>
     <select id="recSrc"><option value="">${L('すべての曲（☆レベル別）','All songs (by ☆ level)')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select>
     <div class="lleg">${[9,8,7,6,5,4,3,2,1,0].map(i=>`<span><i style="background:${LAMPC[i]}"></i>${LAMPS[i]}</span>`).join('')}</div>
@@ -4511,7 +4597,7 @@ function renderRec(){
   $('#recGloss').onclick=openGloss;
   const sel=$('#recSrc');sel.value=TABLES.some(T=>T.url===src)?src:'';
   sel.onchange=()=>{S.recSrc=sel.value;saveS();renderDist();};
-  renderDist();
+  renderDist();renderRadar();
   requestAnimationFrame(()=>{
     const cv=$('#recDays');if(!cv)return;const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;const x=cv.getContext('2d');x.scale(d,d);
     const ks=[];for(let i=13;i>=0;i--)ks.push(dayKey(Date.now()-i*86400000));const v=ks.map(k=>(STATS[k]||{}).p||0),mx=Math.max(1,...v);
