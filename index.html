@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1442)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1442)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1703)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1703)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1442)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1442)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1703)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1703)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2613,16 +2613,22 @@ function wheelBuild(){
   for(let i=0;i<15;i++){const r=document.createElement('div');r.className='wrow';wh.appendChild(r);WHL.rows.push(r);}
   // pointer: drag to scroll, flick, tap; horizontal swipe = difficulty
   const body=$('#wheel .wbody');let pd=null;
-  body.addEventListener('pointerdown',e=>{if(e.target.closest('button,select,input,.wdf,.widx'))return;clearTimeout(WHL.lpT);WHL.lpT=setTimeout(()=>{if(pd&&!pd.axis&&pd.inWheel){const r=$('#wWheel').getBoundingClientRect(),k=Math.round((pd.y-(r.top+r.height/2))/wheelRH());if(k===0&&WHL.cur&&WHL.cur.hash){pd=null;wheelQuickPop(WHL.cur);}}},550);pd={x:e.clientX,y:e.clientY,t:performance.now(),pos:WHL.pos,lastY:e.clientY,lastT:performance.now(),moved:false,inWheel:!!e.target.closest('#wWheel'),axis:null};WHL.target=null;WHL.vel=0;try{body.setPointerCapture(e.pointerId);}catch(_){}});
+  body.addEventListener('pointerdown',e=>{if(e.target.closest('button,select,input,.wdf,.widx'))return;clearTimeout(WHL.lpT);WHL.lpT=setTimeout(()=>{if(pd&&!pd.axis&&pd.inWheel){const r=$('#wWheel').getBoundingClientRect(),k=Math.round((pd.y-(r.top+r.height/2))/wheelRH());if(k===0&&WHL.cur&&WHL.cur.hash){pd=null;wheelQuickPop(WHL.cur);}}},550);cancelAnimationFrame(WHL.raf);WHL.target=null;WHL.vel=0;pd={x:e.clientX,y:e.clientY,t:performance.now(),pos:WHL.pos,smp:[[performance.now(),WHL.pos]],moved:false,inWheel:!!e.target.closest('#wWheel'),axis:null};try{body.setPointerCapture(e.pointerId);}catch(_){}});
   body.addEventListener('pointermove',e=>{if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y;
     if(!pd.axis&&(Math.abs(dx)>10||Math.abs(dy)>10))pd.axis=Math.abs(dx)>Math.abs(dy)*1.3?'x':'y';
-    if(pd.axis==='y'){pd.moved=true;const now=performance.now();const v=-(e.clientY-pd.lastY)/wheelRH()/Math.max(1,now-pd.lastT)*1000;WHL.vel=WHL.vel*0.6+v*0.4;pd.lastY=e.clientY;pd.lastT=now;WHL.pos=pd.pos-dy/wheelRH();wheelPaint();}});
+    if(pd.axis==='y'){pd.moved=true;WHL.moving=true;const now=performance.now();WHL.pos=pd.pos-dy/wheelRH();
+      pd.smp.push([now,WHL.pos]);while(pd.smp.length>2&&now-pd.smp[0][0]>120)pd.smp.shift();wheelPaintSoon();}});
   const end=e=>{clearTimeout(WHL.lpT);if(!pd)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y,dt=performance.now()-pd.t,p=pd;pd=null;
     if(p.axis==='x'&&Math.abs(dx)>40){wheelDiff(dx<0?1:-1);return;}
-    if(p.axis==='y'){const go=Math.round(WHL.pos+Math.max(-20,Math.min(20,WHL.vel*0.22)));wheelAnim(go);return;}
+    if(p.axis==='y'){const now=performance.now(),sm=p.smp.filter(q=>now-q[0]<=120);let v=0;
+      // flick speed from the last ~0.1 s of movement (no flick if the finger stopped before lifting)
+      if(sm.length>=2&&now-sm[sm.length-1][0]<80){const a=sm[0],b=sm[sm.length-1];if(b[0]-a[0]>8)v=(b[1]-a[1])/((b[0]-a[0])/1000);}
+      wheelFling(v);return;}
+    // touching a moving wheel just stops it on the nearest song
+    if(Math.abs(WHL.pos-Math.round(WHL.pos))>0.05){wheelAnim(Math.round(WHL.pos));return;}
     if(Math.abs(dx)<10&&Math.abs(dy)<10&&dt<500&&p.inWheel){const r=$('#wWheel').getBoundingClientRect(),cy=r.top+r.height/2,k=Math.round((e.clientY-cy)/wheelRH());
       if(k===0){wheelDecide();}else wheelAnim(Math.round(WHL.pos)+k);}};
-  body.addEventListener('pointerup',end);body.addEventListener('pointercancel',()=>{pd=null;wheelAnim(Math.round(WHL.pos));});
+  body.addEventListener('pointerup',end);body.addEventListener('pointercancel',()=>{clearTimeout(WHL.lpT);pd=null;wheelAnim(Math.round(WHL.pos));});
   body.addEventListener('wheel',e=>{e.preventDefault();wheelAnim(Math.round(WHL.target??WHL.pos)+(e.deltaY>0?1:-1));},{passive:false});
   addEventListener('resize',()=>{if(wheelVisible())wheelPaint();});
 }
@@ -2772,17 +2778,20 @@ function wPips(c){if(!S.wheelGroup)return '';const g=WHL.gmap.get(wGk(c));if(!g|
 function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'');}
 function wheelPaint(){
   const wh=$('#wWheel');if(!wh||!WHL.built)return;
-  {const idx=wheelIdx();if(idx!==WHL.lastIdx){if(WHL.lastIdx>=0&&performance.now()-(WHL.tickT||0)>25){WHL.tickT=performance.now();wSe('tick');}WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;wheelInfo();wheelFavBtn();}}
+  {const idx=wheelIdx();if(idx!==WHL.lastIdx){if(WHL.lastIdx>=0&&performance.now()-(WHL.tickT||0)>25){WHL.tickT=performance.now();wSe('tick');}WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;
+    const now=performance.now();clearTimeout(WHL.infoT);
+    if(!WHL.moving||now-(WHL.infoAt||0)>120){WHL.infoAt=now;wheelInfo();wheelFavBtn();}else WHL.infoT=setTimeout(()=>{WHL.infoAt=performance.now();wheelInfo();wheelFavBtn();},130);}}
   const n=WHL.n,RH=wheelRH(),H=wh.clientHeight,cy=H/2,land=innerWidth>innerHeight;
   const base=Math.round(WHL.pos),frac=WHL.pos-base,K=(WHL.rows.length-1)/2;
-  WHL.rows.forEach((r,j)=>{const k=j-K,i=base+k;
+  const R=WHL.rows.length,used=new Set();
+  for(let k=-K;k<=K;k++){const i=base+k,r=WHL.rows[((i%R)+R)%R];used.add(r);(()=>{
     if(!n){r.style.display='none';return;}
     const c=WHL.list[((i%n)+n)%n],d=k-frac,ad=Math.abs(d);
     if(ad>K+0.5||(n<WHL.rows.length&&(k<-Math.floor((n-1)/2)||k>Math.floor(n/2)))){r.style.display='none';return;}
     r.style.display='flex';
-    const sel=Math.round(d)===0&&ad<0.5,y=cy+d*RH+(d>0?(RH*0.3):d<0?-(RH*0.3):0)*Math.min(1,ad);
-    r.style.left=(12+ad*ad*(land?8:5))+'px';r.style.transform=`translateY(${y-(sel?RH*0.65:RH/2)}px)`;r.style.opacity=Math.max(0.2,1-ad*0.12);
-    r.classList.toggle('sel',sel);r.style.height=(sel?RH*1.3:RH)+'px';
+    const sel=ad<0.5,em=Math.max(0,1-ad),hh=RH*(1+0.3*em),y=cy+d*RH+(d>0?(RH*0.3):d<0?-(RH*0.3):0)*Math.min(1,ad);
+    r.style.left=(12+ad*ad*(land?8:5))+'px';r.style.transform=`translateY(${(y-hh/2).toFixed(1)}px)`;r.style.opacity=Math.max(0.2,1-ad*0.12);
+    if(r.classList.contains('sel')!==sel)r.classList.toggle('sel',sel);r.style.height=hh.toFixed(1)+'px';
     const rk=c.hash||('F'+c.fid+'|'+(c.charts?c.charts.length:''));
     if(c.fold||c.back){if(r._h!==rk){r._h=rk;r.classList.add('fold');
       if(c.back)r.innerHTML=`<span class="lv fold">◀</span><span class="t">${L('戻る','Back')}　<small>${esc(c.name)}</small></span>`;
@@ -2790,10 +2799,19 @@ function wheelPaint(){
         r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}</span>`:''}`;}}}
     else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
       r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
-  });
+  })();}
+  for(const r of WHL.rows)if(!used.has(r))r.style.display='none';
 }
-function wheelAnim(t){WHL.target=t;cancelAnimationFrame(WHL.raf);stopPreview();
-  const step=()=>{const d=WHL.target-WHL.pos;if(Math.abs(d)<0.002){WHL.pos=WHL.target;WHL.target=null;if(WHL.n)WHL.pos=((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n;wheelPaint();wheelSettle();return;}
+function wheelPaintSoon(){if(WHL.pr)return;WHL.pr=requestAnimationFrame(()=>{WHL.pr=0;wheelPaint();});}
+/* inertial scroll after a flick: slows down smoothly, then snaps to the nearest song */
+function wheelFling(v){cancelAnimationFrame(WHL.raf);stopPreview();v=Math.max(-40,Math.min(40,v||0));
+  if(Math.abs(v)<3){wheelAnim(Math.round(WHL.pos));return;}
+  WHL.moving=true;let last=performance.now();
+  const step=now=>{const dt=Math.min(0.05,(now-last)/1000);last=now;WHL.pos+=v*dt;v*=Math.exp(-dt*4.5);wheelPaint();
+    if(Math.abs(v)<3){wheelAnim(Math.round(WHL.pos+v*0.12));return;}WHL.raf=requestAnimationFrame(step);};
+  WHL.raf=requestAnimationFrame(step);}
+function wheelAnim(t){WHL.target=t;cancelAnimationFrame(WHL.raf);stopPreview();WHL.moving=true;
+  const step=()=>{if(WHL.target==null){WHL.moving=false;return;}const d=WHL.target-WHL.pos;if(Math.abs(d)<0.002){WHL.pos=WHL.target;WHL.target=null;WHL.moving=false;if(WHL.n)WHL.pos=((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n;clearTimeout(WHL.infoT);WHL.lastIdx=-2;wheelPaint();wheelSettle();return;}
     WHL.pos+=d*((WHL.streak||0)>10?0.4:0.25);wheelPaint();WHL.raf=requestAnimationFrame(step);};WHL.raf=requestAnimationFrame(step);}
 function wheelStep(d){if(!WHL.n)return;const now=performance.now();WHL.streak=now-(WHL.lastStep||0)<160?(WHL.streak||0)+1:0;WHL.lastStep=now;const m=WHL.streak>24?4:WHL.streak>10?2:1;wheelAnim(Math.round(WHL.target??WHL.pos)+d*m);}
 function wheelGoto(c,open){let i=WHL.list.findIndex(x=>x.hash===c.hash);
