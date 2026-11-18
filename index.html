@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2004)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2004)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2036)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2036)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2004)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2004)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2036)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2036)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3457,6 +3457,10 @@ function drawHist(cv,hist,notes){
   pts.forEach((v,i)=>{x.fillStyle=LAMPC[hist[i][3]||0];x.fillRect(xOf(i)-2.5,yOf(v)-2.5,5,5);});
   x.fillStyle=ink;x.textAlign='right';x.fillText(`${(pts[pts.length-1]*100).toFixed(1)}%`,W-4,10);
 }
+/* quick options on the song screen; key reduction only for 7-key / 5-key charts */
+function dOptItems(c){const its=['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean);
+  const rd=findItem('reduce');if(rd&&c&&(c.mode==='7k'||c.mode==='5k')){its.splice(2,0,c.mode==='5k'?Object.assign({},rd,{sel:rd.sel.filter(x=>x[0]!=='5k'),h:L('5鍵の譜面を4鍵に変換して遊びます。変換したプレイは「4K」のランプとして別に記録されます。','Plays a 5K chart on 4 keys. Recorded separately as a 4K lamp.')}):rd);}
+  return its;}
 async function openDetail(c){
   const r=REC[c.hash]||{};
   const rate=r.ex?r.ex/(2*c.notesN):0;
@@ -3525,8 +3529,8 @@ async function openDetail(c){
    if(PRESETS.length){const r=document.createElement('div');r.className='row';
      r.innerHTML=`<span>${L('設定セット','Preset')}</span><select id="dPs" style="max-width:60%"><option value="">${L('（今の設定のまま）','(keep current)')}</option>${PRESETS.map((p,i)=>`<option value="${i}" ${p.name===S.preset?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
      box.appendChild(r);
-     r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));};}
-   ['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean).forEach(it=>renderItem(it,box,true));}
+     r.querySelector('select').onchange=e=>{const p=PRESETS[+e.target.value];if(e.target.value===''||!p)return;applyPreset(p);box.innerHTML='';box.appendChild(r);dOptItems(c).forEach(it=>renderItem(it,box,true));};}
+   dOptItems(c).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();rateGuard(()=>firstCal(()=>startPlay(c,{})));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
