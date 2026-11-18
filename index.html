@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0848)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0901)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0901)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0848)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0901)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0901)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3376,7 +3376,7 @@ $('#setQ').oninput=e=>{setQ=e.target.value;buildSettings();};
 $('#setMode').onclick=()=>{S.setAll=!S.setAll;saveS();setQ='';$('#setQ').value='';buildSettings();};
 $('#setBtn').onclick=async()=>{buildSettings();renderPwaBox();show('#lib',false);show('#settings',true,'block');applyI18n();
   measureHz().then(hz=>{const el=$('#hzInfo');if(!el)return;const ios=/iPhone|iPad/.test(navigator.userAgent);
-    el.innerHTML=L(`この画面の描画は 約<b>${hz}fps</b> です。`,`This screen renders at about <b>${hz}fps</b>. `)+(hz<=65?(ios?L('ProMotion（120Hz）対応のiPhone/iPadで120fpsにするには、<b>Safari</b>でこのページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてSafariを再起動してください。アプリ内の表示では60fpsに制限される場合があります。','For 120fps on ProMotion iPhone/iPad, open this page in <b>Safari</b>, turn off "Prefer Page Rendering Updates near 60fps" in Settings → Apps → Safari → Advanced → Feature Flags, then restart Safari. In-app viewers may be limited to 60fps.'):/Android/i.test(navigator.userAgent)?L('Androidでは、画面が120Hz対応でも、機種の設定や省電力のためにブラウザの描画が60Hzに抑えられることがあります。120fpsにならないときは、次を試してください：<br>・省電力モード（バッテリーセーバー）をオフにする<br>・Galaxy：設定 → ディスプレイ → 動きの滑らかさ →「アダプティブ」<br>・開発者向けオプションの「ピーク リフレッシュ レートを強制」をオン（項目がある機種のみ）<br>・別のブラウザ（Samsung Internetなど）で開く<br>判定はタップした瞬間の時刻で行うので、60fpsのままでも判定の精度はほとんど変わりません。','On Android, even with a 120Hz screen, the browser may be held to 60Hz by device settings or power saving. If you do not get 120fps, try:<br>・turning off battery saver<br>・Galaxy: Settings → Display → Motion smoothness → Adaptive<br>・Developer options → “Force peak refresh rate” (on some devices)<br>・another browser (e.g. Samsung Internet)<br>Judgement uses the moment you tap, so 60fps barely affects accuracy.'):L('画面が60Hzのため、60fpsが上限です。','The display is 60Hz, so 60fps is the maximum.')):'');});
+    el.innerHTML=L(`この画面の描画は 約<b>${hz}fps</b> です。`,`This screen renders at about <b>${hz}fps</b>. `)+(hz<=65?(ios?L('ProMotion（120Hz）対応のiPhone/iPadで120fpsにするには、<b>Safari</b>でこのページを開き、設定 → アプリ → Safari → 詳細 → Feature Flags の「Prefer Page Rendering Updates near 60fps」をオフにしてSafariを再起動してください。アプリ内の表示では60fpsに制限される場合があります。','For 120fps on ProMotion iPhone/iPad, open this page in <b>Safari</b>, turn off "Prefer Page Rendering Updates near 60fps" in Settings → Apps → Safari → Advanced → Feature Flags, then restart Safari. In-app viewers may be limited to 60fps.'):/Android/i.test(navigator.userAgent)?L('Androidでは、画面が120Hz対応でも、機種の設定や省電力のためにブラウザの描画が60Hzに抑えられることがあります。120fpsにならないときは、次を試してください：<br>・省電力モード（バッテリーセーバー）をオフにする<br>・Galaxy：設定 → ディスプレイ → 動きの滑らかさ →「アダプティブ」<br>・Pixelなど：開発者向けオプションの「ピーク リフレッシュ レートを強制」をオン（Galaxyにはこの項目はありません）<br>・別のブラウザ（Samsung Internetなど）で開く<br>判定はタップした瞬間の時刻で行うので、60fpsのままでも判定の精度はほとんど変わりません。','On Android, even with a 120Hz screen, the browser may be held to 60Hz by device settings or power saving. If you do not get 120fps, try:<br>・turning off battery saver<br>・Galaxy: Settings → Display → Motion smoothness → Adaptive<br>・Pixel and others: Developer options → “Force peak refresh rate” (not on Galaxy)<br>・another browser (e.g. Samsung Internet)<br>Judgement uses the moment you tap, so 60fps barely affects accuracy.'):L('画面が60Hzのため、60fpsが上限です。','The display is 60Hz, so 60fps is the maximum.')):'');});
   $('#storeInfo').textContent=(await DB.isMem())?L('このブラウザでは曲の保存ができません（閉じると消えます）。','This browser cannot store songs (they are lost when closed).'):L(`保存中の譜面：${CHARTS.length}`,`Stored charts: ${CHARTS.length}`);
   try{const e=await navigator.storage.estimate();$('#storeInfo').textContent+=L(` ／ 使用量 約${Math.round(e.usage/1048576)}MB`,` / about ${Math.round(e.usage/1048576)}MB used`);}catch(e){}};
 $('#setBack').onclick=()=>{show('#settings',false);show('#lib',true,'block');renderLibrary();};
