@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1932)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1932)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1940)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1940)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1932)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1932)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1940)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1940)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2370,7 +2370,9 @@ async function listArchive(arch,depth){
     else if(arch.kind==='tar')list=await readTar(f);
     else throw new Error('未対応の形式');
   }
-  return expandNested(list,depth);
+  const out=await expandNested(list,depth);
+  if(!depth&&arch.extra)for(const x of arch.extra)out.push({path:x.path,get:()=>x.blob.arrayBuffer()});
+  return out;
 }
 // 書庫の中の書庫（zip in zip など）を最下層まで展開する
 async function expandNested(files,depth){
@@ -2466,6 +2468,8 @@ function renderTable(T,list,frag){
           <div class="b"><div class="t">${esc(e.title||'')}</div><div class="m"><span>${esc(e.artist||'')}</span>${e.comment?`<span>${esc(String(e.comment).slice(0,40))}</span>`:''}</div>
           <div class="ml">${links.join('')}</div></div>`;
         d.querySelectorAll('button[data-u]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openUrlDlg(b.dataset.u);});
+        d.querySelectorAll('a').forEach(a=>a.addEventListener('click',ev=>ev.stopPropagation()));
+        d.style.cursor='pointer';d.onclick=()=>openGetDlg(e,T,lv);
         rows.push(d);
       }
     }
@@ -2477,6 +2481,33 @@ function renderTable(T,list,frag){
   LIBLIST=owned;
   $('#count').textContent=L(`${T.name}：所持 ${have} / ${T.data.length} 譜面`,`${T.name}: ${have} / ${T.data.length} charts owned`);
   if(!T.data.length)frag.appendChild(Object.assign(document.createElement('div'),{className:'hlp',textContent:L('この表には譜面がありません','This table is empty')}));
+}
+/* how to get a missing table song: open the download page, then pick the downloaded file */
+function openGetDlg(e,T,lv){
+  const old=document.getElementById('getDlg');if(old)old.remove();
+  const ov=document.createElement('div');ov.id='getDlg';ov.className='overlay';ov.style.display='flex';
+  const isArch=u=>ARCH_RE.test(u),and=/Android/i.test(navigator.userAgent),ios=/iP(hone|ad|od)/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const pwa=matchMedia('(display-mode: standalone)').matches;
+  const q=encodeURIComponent(`${e.title||''} ${e.artist||''} BMS`.trim());
+  const where=ios?L('（iPhoneでは「ファイル」アプリの「ダウンロード」フォルダにあります）','(on iPhone: Files app → Downloads)'):and?L('（Androidでは「ダウンロード」フォルダにあります）','(on Android: the Downloads folder)'):'';
+  const main=e.url?(isArch(e.url)?`<button class="ib pri" data-gu="${esc(e.url)}">${L('URLから直接追加する','Add from the URL')}</button>`:`<a class="ib pri" href="${esc(e.url)}" target="_blank" rel="noopener">${L('配布ページを開く','Open download page')}</a>`)
+    :`<a class="ib" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">${L('配布ページを検索する','Search for the download page')}</a>`;
+  const diff=e.url_diff?(isArch(e.url_diff)?`<button class="ib pri" data-gu="${esc(e.url_diff)}">${L('差分をURLから直接追加する','Add the chart from the URL')}</button>`:`<a class="ib pri" href="${esc(e.url_diff)}" target="_blank" rel="noopener">${L('差分のページを開く','Open chart page')}</a>`):'';
+  const step=(n,t,body)=>`<div style="display:flex;gap:10px;margin:10px 0"><b style="flex:none;width:26px;height:26px;border:2px solid var(--hi);color:var(--hi);display:flex;align-items:center;justify-content:center">${n}</b><div style="flex:1;min-width:0"><b>${t}</b><div class="hlp" style="margin:2px 0 6px">${body[0]}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${body[1]}</div></div></div>`;
+  const pick=`<label class="ib pri" for="fileIn">${L('ダウンロードしたファイルを選ぶ','Choose the downloaded file')}</label>`;
+  ov.innerHTML=`<div class="box card" style="padding:14px">
+    <div class="hlp" style="margin:0">${esc(T.name)}　${esc(T.symbol+lv)}</div>
+    <div style="font-size:18px;font-weight:700;line-height:1.4">${esc(e.title||'')}</div><div class="hlp" style="margin:0 0 4px">${esc(e.artist||'')}</div>
+    ${step(1,L('本体の曲をダウンロードする','Download the song'),[L('配布ページでダウンロードします。zip・rar・7zのまま保存してかまいません。','Download it on the distribution page. Keep the zip / rar / 7z as it is.'),main])}
+    ${step(2,L('ダウンロードしたファイルをBeSmartに追加する','Add the downloaded file to BeSmart'),[L('下のボタンで、保存したファイルを選びます','Pick the saved file with the button below')+where+(and&&pwa?L('。ファイルを「共有 → BeSmart」で渡しても追加できます。','. You can also share the file to BeSmart.'):'。'),pick])}
+    ${diff?step(3,L('差分（この譜面）を追加する','Add the chart (sabun)'),[L('この譜面は本体とは別に配られています。差分をダウンロードして、同じように「ファイルを選ぶ」で追加してください。本体を先に追加しておけば、自動で本体の曲と合体します。','This chart is distributed separately. Download it and add it the same way; if the song is already added, it is joined to it automatically.'),diff+pick.replace('for="fileIn">','for="fileIn" style="margin:0">')]):''}
+    <div class="hlp">${L('追加すると表と自動で照合され、「未所持」が「所持」に変わります。','Once added, it is matched with the table and shown as owned.')}</div>
+    <button class="ib" data-x style="margin-top:8px;width:100%">${L('閉じる','Close')}</button></div>`;
+  document.body.appendChild(ov);
+  const close=()=>{ov.remove();$('#fileIn').removeEventListener('change',close);};
+  ov.onclick=ev=>{if(ev.target===ov||ev.target.hasAttribute('data-x'))close();};
+  ov.querySelectorAll('[data-gu]').forEach(b=>b.onclick=()=>{close();openUrlDlg(b.dataset.gu);});
+  $('#fileIn').addEventListener('change',close);
 }
 function renderTblSel(){
   const sel=$('#tblSel');if(!sel)return;
@@ -3025,6 +3056,27 @@ async function makeThumb(ix,dir,names){
   return null;
 }
 /* import one archive / folder group into the library */
+/* ---------- separately distributed charts (sabun) ---------- */
+const normTitle=t=>{let x=String(t||'').toLowerCase();for(let i=0;i<4;i++)x=x.replace(/\s*(\[[^\]]*\]|\([^)]*\)|【[^】]*】|<[^>]*>|（[^）]*）|「[^」]*」|-[^-]*-)\s*$/,'');return x.replace(/[\s　]+/g,'');};
+async function findDiffHost(b,wavs){
+  const nt=normTitle(b.title);if(!nt)return null;
+  const seen=new Set(),cands=CHARTS.filter(c=>c.archiveId&&!c.demo&&normTitle(c.title)===nt);
+  for(const c of cands){const k=c.archiveId+'|'+c.dir;if(seen.has(k))continue;seen.add(k);
+    try{const arch=await DB.get('archives',c.archiveId);if(!arch)continue;const ix=await getArchive(arch);
+      const hit=wavs.filter(w=>ix.resolve(c.dir,w)).length;if(hit/wavs.length>=0.5)return {arch,c};}catch(e){}}
+  return null;
+}
+async function attachDiff(host,name,rawU,b,ext,st){
+  const {arch,c}=host,base=name.split('/').pop(),path=c.dir+base;
+  arch.extra=(arch.extra||[]).filter(x=>x.path!==path).concat([{path,blob:new Blob([rawU])}]);
+  await DB.put('archives',arch);archCache.delete(arch.id);
+  const N=b.notes.length;
+  await DB.put('charts',{key:arch.id+'|'+path,archiveId:arch.id,path,ext,dir:c.dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,comment:b.comment||'',
+    level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
+    total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,radar:chartRadar(b),
+    preview:b.P.preview||c.preview,thumb:c.thumb,added:Date.now(),archName:c.archName,md5:md5hex(rawU),sha256:await sha256hex(rawU),diff:1});
+  st.added++;(st.attached||(st.attached=[])).push(b.title+' → '+c.archName);
+}
 async function importGroup(gr,st){
   if(!st.quiet)toast(L(`${gr.name} を読み込み中…`,`Loading ${gr.name}…`),0);
   const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -3042,6 +3094,13 @@ async function importGroup(gr,st){
       if(st.have.has(b.hash)){st.skipped++;continue;}
       st.have.add(b.hash);
       const dir=f.n.includes('/')?f.n.slice(0,f.n.lastIndexOf('/')+1):'';
+      // a separately distributed chart (sabun) has no sounds of its own: put it into the song folder that has them
+      const wavs=[...new Set(Object.values(b.P.wav||{}))];
+      if(wavs.length>=3&&wavs.filter(w=>ix.resolve(dir,w)).length/wavs.length<0.3){
+        const host=await findDiffHost(b,wavs);
+        if(host){try{await attachDiff(host,f.n,rawU,b,ext,st);continue;}catch(err){console.warn('attach',err);}}
+        else st.errs.push(L(`${b.title}：音声ファイルが入っていない譜面（差分）でした。本体の曲を先に追加してから、もう一度この差分を追加してください`,`${b.title}: this chart has no sound files (a separate chart). Add the main song first, then add this chart again`));
+      }
       const tk=dir+'|'+b.P.stagefile+'|'+b.P.banner+'|'+b.P.backbmp;
       if(!thumbs.has(tk))thumbs.set(tk,await makeThumb(ix,dir,[b.P.stagefile,b.P.banner,b.P.backbmp]));
       const N=b.notes.length;
@@ -3238,7 +3297,7 @@ async function importFiles(list,io){io=io||{};
   await refreshLibrary();
   if(st.added&&!io.builtin)track('import','曲を追加');
   if(io.silent){const nm=(io.names||['BeSmart PV Song']);if(st.added)toast(nm.length>1?L('最初から入っている曲を'+nm.length+'曲追加しました','Added '+nm.length+' built-in songs'):L('最初から入っている曲「'+nm[0]+'」を追加しました','Added the built-in song “'+nm[0]+'”'),2500);else toast('',1);return added;}
-  toast([st.added?L(`${st.added} 譜面を追加しました`,`Added ${st.added} charts`):'',st.skipped?L(`${st.skipped} 譜面は追加済みのためスキップ`,`Skipped ${st.skipped} charts already in the library`):'',...st.errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
+  toast([st.added?L(`${st.added} 譜面を追加しました`,`Added ${st.added} charts`):'',st.skipped?L(`${st.skipped} 譜面は追加済みのためスキップ`,`Skipped ${st.skipped} charts already in the library`):'',...(st.attached||[]).slice(0,3).map(x=>L('差分を曲に合体：','Chart joined to its song: ')+x),...st.errs].filter(Boolean).join('\n')||L('追加できる譜面がありませんでした','No charts could be added'),4000);
 }
 $('#fileIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};
 $('#dirIn').onchange=e=>{if(e.target.files.length)importFiles([...e.target.files]);e.target.value='';};
