@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2036)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2036)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2052)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2052)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2036)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2036)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2052)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2052)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1755,7 +1755,7 @@ function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=Strin
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:''};
@@ -1816,7 +1816,7 @@ function SCHEMA(){return [
   {k:'playRate',t:L('再生速度','Playback speed'),r:[0.5,2,0.05],f:v=>'×'+v.toFixed(2),h:L('曲全体の速さを変えます（音の高さも変わります）。×1.00以外のプレイはスコア・ランプを記録しません。','Changes the speed of the whole song (pitch changes too). Plays at a speed other than ×1.00 are not recorded.')},
  ]},
  {sec:L('曲選択','Song select'),items:[
-  {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['list',L('リスト（標準）','List (standard)')],['wheel',L('ホイール（本家風）','Wheel (arcade style)')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
+  {k:'libView',t:L('曲選択の画面','Song select style'),sel:[['wheel',L('ホイール（本家風・標準）','Wheel (arcade style, default)')],['list',L('リスト','List')]],h:L('「ホイール」は、選んだ曲の情報を大きく表示し、曲名の帯を上下に回して選ぶ、アーケードの音ゲー風の画面です。上下で曲、左右で同じ曲の難易度を切り替えます。','“Wheel” shows the selected song large and scrolls a wheel of titles, like arcade rhythm games. Up/down picks a song; left/right switches difficulty.')},
   {k:'wheelFold',t:L('ホイールをフォルダで分ける','Wheel folders'),b:1,h:L('ONにすると、ホイールの最初に「未プレイ」「クリア済み」「☆レベル別」「難易度表のレベル別」などのフォルダが並び、選ぶと中の曲が出ます。','Shows folders such as Not played, Cleared, by level and by table level at the top of the wheel.')},
   {k:'wheelGroup',t:L('ホイールで1曲を1行にまとめる','One row per song'),b:1,h:L('同じ曲の難易度違い（NORMAL・HYPERなど）を1行にまとめ、左右で切り替えます。選んだ難易度は次の曲にも引き継がれます。','Groups difficulties of the same song into one row; switch with left/right. Your difficulty carries over to the next song.')},
   {k:'wheelSe',t:L('曲選択の効果音','Song select sounds'),b:1,h:L('ホイールを回したときの「カチッ」という音と、決定したときの音です。','Tick when the wheel moves and a sound when you decide.')},
