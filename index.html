@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1714)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1714)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1736)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1736)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1714)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1714)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1736)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1736)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1757,7 +1757,7 @@ const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'char
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
   ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'list',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
-  preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,
+  preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:''};
 const S=Object.assign({},DEF);
 try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['hs','ofs','edge','side'])if(o[k]!==undefined)S[k]=o[k];}catch(e){}
@@ -1845,6 +1845,7 @@ function SCHEMA(){return [
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
   {k:'ghost',t:L('ゴースト','Ghost'),sel:[['off','OFF'],['on',L('スコア差','Score gap')],['lane',L('スコア差＋レーン','Gap + lanes')]],h:L('自己ベストのリプレイと同時に競います。スコア差を判定の下に表示し、リザルトで勝敗を出します。「＋レーン」はゴーストが押したレーンを判定ラインの上に半透明で表示します（通常プレイで、自己ベストのリプレイがある曲のみ）','Race your best replay: the score gap shows under the judgement and the result says WIN or LOSE. Gap + lanes also marks where the ghost pressed (normal plays with a saved best replay only)')},
+  {k:'earlyGhost',t:L('早押しで消えたノーツを薄く残す','Keep early-hit notes faintly'),b:1,h:L('早く押しすぎてBAD・GOODになったノーツを、判定ラインに届くまで薄く表示します。判定は変わりません。リズムの目印が急になくならないので、立て直しやすくなります。','Notes hit too early (BAD/GOOD) stay faintly visible until they reach the line. Judgement is unchanged.')},
   {k:'celebrate',t:L('フルコンボ演出','Full combo effect'),b:1},
   {k:'fps',t:L('フレームレート','Frame rate'),sel:[['auto',L('自動（画面の最大）','Auto (display max)')],['120','120fps'],['60','60fps'],['30',L('30fps（省電力）','30fps (battery saver)')]],h:L('判定は音の時計とタッチの瞬間で行うので、fpsを下げても判定の精度は変わりません。','Judging uses the audio clock and touch time, so lowering fps does not affect accuracy.')},
   {k:'showFps',t:L('FPSを表示','Show FPS'),b:1},
@@ -4259,7 +4260,7 @@ function press(lane,src,tOv){
   const dt=(t-n.time)/G.rate;
   if(Math.abs(dt)<=G.W.BD){G.lastHit={lane,t:performance.now()};
     const j=judgeOf(Math.abs(dt));applyJudge(j,dt,lane);
-    if(n.et!=null){n.state=1;n.hj=j;}else n.state=2;
+    if(n.et!=null){n.state=1;n.hj=j;}else{n.state=2;n.ej=dt<0&&(j==='BD'||j==='GD')?1:0;}
     G.laneLast[lane]=n.id;
   }else if(dt<-G.W.BD&&dt>=-G.W.KP)applyJudge('KP',null,null);
 }
@@ -4400,9 +4401,10 @@ function draw(){
   for(let i=G.drawIdx;i<notes.length;i++){
     const n=notes[i];
     if(n.beat>beat+64)break;
-    if(n.state===2&&n.et==null)continue;
+    if(n.state===2&&n.et==null&&!(n.ej&&S.earlyGhost))continue;
     const col=colors[n.lane],x=xs[n.lane]+1,w=ws[n.lane]-2;
     const y=yOf(n.disp);
+    if(n.state===2&&n.et==null){if(y<judgeY&&vis(y)){g.globalAlpha=0.28;g.fillStyle=col;quad(x,y-nh/2,w,nh);g.globalAlpha=1;}continue;}
     if(n.et!=null){
       if(n.state===2&&n.et<=t)continue;
       const y2=yOf(n.ed);
@@ -4639,7 +4641,7 @@ function pracLoop(){
   const c=G.chart,st=G.pracSt,P=G.practice,clean=G.counts.BD+G.counts.PR===0&&G.judged>0;
   for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}G.playing={};
   if(clean&&P.step>0&&G.rate<2-1e-6)G.rate=Math.min(2,+(G.rate+P.step).toFixed(2));
-  for(const n of c.notes)if(n.time>=st-0.001)n.state=0;
+  for(const n of c.notes)if(n.time>=st-0.001){n.state=0;n.ej=0;}
   for(const m of c.mines)if(m.time>=st-0.001)m.state=0;
   G.laneIdx.fill(0);G.mineIdx.fill(0);G.drawIdx=0;G.pressed.fill(false);hold.clear();
   const idx=(arr,f)=>{const i=arr.findIndex(f);return i<0?arr.length:i;};
@@ -4764,7 +4766,7 @@ function viewerSeek(t){
   if(!G||!G.viewer)return;
   for(const k in G.playing){try{G.playing[k].stop();}catch(e){}}G.playing={};
   const c=G.chart;let combo=0;
-  for(const n of c.notes){if(n.time<t-0.001){n.state=2;combo++;}else n.state=0;}
+  for(const n of c.notes){n.ej=0;if(n.time<t-0.001){n.state=2;combo++;}else n.state=0;}
   c.mines.forEach(m=>m.state=m.time<t?2:0);
   G.laneIdx.fill(0);G.mineIdx.fill(0);G.drawIdx=0;
   const idx=(arr,f)=>{const i=arr.findIndex(f);return i<0?arr.length:i;};
