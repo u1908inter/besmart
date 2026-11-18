@@ -1,0 +1,76 @@
+{
+ "tables": [
+  {
+   "id": "normal2",
+   "src": "https://rattoto10.jounin.jp/table.html",
+   "name": "NEW GENERATION 通常難易度表",
+   "symbol": "▽",
+   "count": 4776,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "insane2",
+   "src": "https://rattoto10.jounin.jp/table_insane.html",
+   "name": "NEW GENERATION 発狂難易度表",
+   "symbol": "▼",
+   "count": 2192,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "sl",
+   "src": "https://stellabms.xyz/sl/table.html",
+   "name": "Satellite",
+   "symbol": "sl",
+   "count": 2568,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "st",
+   "src": "https://stellabms.xyz/st/table.html",
+   "name": "Stella",
+   "symbol": "st",
+   "count": 2406,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "sr",
+   "src": "https://djkuroakari.github.io/starlighttable.html",
+   "name": "Starlight",
+   "symbol": "sr",
+   "count": 2186,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "stardust",
+   "src": "https://mqppppp.neocities.org/ChartView.html",
+   "name": "Stardust",
+   "symbol": "ξ",
+   "count": 931,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "ln",
+   "src": "http://flowermaster.web.fc2.com/lrnanido/gla/LN.html",
+   "name": "LN難易度",
+   "symbol": "◆",
+   "count": 485,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "scramble",
+   "src": "https://egret9.github.io/Scramble/",
+   "name": "Scramble難易度表",
+   "symbol": "SB",
+   "count": 488,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "sara",
+   "src": "http://minddnim.web.fc2.com/sara/3rd_hard/bms_sara_3rd_hard.html",
+   "name": "皿難易度表(3rd)",
+   "symbol": "h◎",
+   "count": 368,
+   "updated": "2026-11-18"
+  }
+ ]
+}
