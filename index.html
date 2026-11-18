@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1736)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1736)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1741)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1741)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1736)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1736)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1741)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1741)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2587,7 +2587,7 @@ function wheelVisible(){return wheelOn()&&$('#lib').style.display!=='none'&&$('#
 function wheelRH(){return innerWidth>innerHeight?30:40;}
 function wheelBuild(){
   if(WHL.built)return;WHL.built=true;const w=$('#wheel');
-  w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button><button class="ib" id="wSearch2">🔍</button><button class="ib pri" id="wMenu">☰ ${L('メニュー','Menu')}</button></div>
+  w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button><button class="ib" id="wBackBtn" style="display:none" title="${L('戻るの位置へ（もう一度押すと戻る）','Jump to Back (press again to go up)')}">◀ ${L('戻る','Back')}</button><button class="ib" id="wSearch2">🔍</button><button class="ib pri" id="wMenu">☰ ${L('メニュー','Menu')}</button></div>
     <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
     <button class="ib" id="wFav">☆</button><button class="ib" id="wSortC"></button><select id="wSort" style="display:none"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
@@ -2631,7 +2631,9 @@ function wheelBuild(){
       if(k===0){wheelDecide();}else wheelAnim(Math.round(WHL.pos)+k);}};
   body.addEventListener('pointerup',end);body.addEventListener('pointercancel',()=>{clearTimeout(WHL.lpT);pd=null;wheelAnim(Math.round(WHL.pos));});
   body.addEventListener('wheel',e=>{e.preventDefault();wheelAnim(Math.round(WHL.target??WHL.pos)+(e.deltaY>0?1:-1));},{passive:false});
-  addEventListener('resize',()=>{if(wheelVisible())wheelPaint();});
+  addEventListener('resize',()=>{WHL.infoMin=0;if(wheelVisible()){wInfoFix();wheelPaint();}});
+  $('#wBackBtn').onclick=()=>{const n=WHL.n,i=WHL.list.findIndex(x=>x.back);if(i<0||!n){wheelUp();return;}
+    if(wheelIdx()===i){wheelUp();return;}const cur=Math.round(WHL.target??WHL.pos);let d=((i-cur)%n+n)%n;if(d>n/2)d-=n;wheelAnim(cur+d);};
 }
 /* folders on the wheel: [{fid,fold:true,name,ic,charts|sub}] ; first row inside a folder is a back row */
 WHL.path=(()=>{try{return JSON.parse(localStorage.getItem(LSK+'wheelPath')||'[]');}catch(e){return [];}})();WHL.pathNames=[];
@@ -2824,7 +2826,19 @@ function wheelSwap(nx){const i=wheelIdx();if(i<0)return;WHL.prefDiff=nx.difficul
 function wheelSettle(){clearTimeout(WHL.pvT);const c=WHL.cur;if(!c)return;try{localStorage.setItem(LSK+'wheelSel',c.hash||c.fid);}catch(e){}if(!c.hash)return;
   WHL.pvT=setTimeout(()=>{if(wheelVisible()&&WHL.cur===c&&$('#detail').style.display==='none')playPreview(c);},450);
   DB.get('replays',RIV(c.hash)).then(rv=>{const t=$('#wRiv');if(t&&WHL.cur===c)t.innerHTML=rv?`🎯 ${L('ライバル','Rival')}: ${esc(rv.rname)} ${rv.ex}`:'';}).catch(()=>{});}
-function wheelInfo(){
+/* keep the info panel at one height in portrait, so the wheel does not move when switching between Back / folders and songs */
+function wheelInfo(){wheelInfo0();try{wInfoFix();}catch(e){}}
+function wInfoFix(){
+  show('#wBackBtn',!!(WHL.path.length||WHL.searchMode),'');
+  const el=$('#wInfo');if(!el)return;
+  if(innerWidth>innerHeight){el.style.minHeight='';return;}
+  // first time: measure a few songs with long titles, so the height rarely has to grow later
+  if(!WHL.infoMin){const smp=CHARTS.filter(x=>x.hash&&!x.demo).sort((a,b)=>((b.title||'').length+(b.subtitle||'').length)-((a.title||'').length+(a.subtitle||'').length)).slice(0,3);
+    if(smp.length){const save=WHL.cur;let m=0;el.style.minHeight='';for(const x of smp){WHL.cur=x;wheelInfo0();m=Math.max(m,el.offsetHeight);}WHL.infoMin=m;WHL.cur=save;wheelInfo0();}}
+  el.style.minHeight='';const h=el.offsetHeight,body=$('#wheel .wbody'),cap=body?body.clientHeight*0.55:9999;
+  WHL.infoMin=Math.min(cap,Math.max(WHL.infoMin||0,h));el.style.minHeight=WHL.infoMin+'px';
+}
+function wheelInfo0(){
   const box=$('#wInfo'),c=WHL.cur;if(!box)return;
   box.classList.remove('hasbg');
   if(c&&(c.fold||c.back)){
