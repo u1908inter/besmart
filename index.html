@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1907)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1907)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1921)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1921)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1907)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1907)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1921)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1921)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2496,6 +2496,11 @@ function normTable(url,header,data){
     data:data.filter(e=>e&&(e.md5||e.sha256)).map(e=>({md5:e.md5||'',sha256:e.sha256||'',level:String(e.level??'?'),title:e.title||'',artist:e.artist||'',url:e.url||'',url_diff:e.url_diff||'',comment:e.comment||''}))};
 }
 async function addTableUrl(raw){
+  const pr=presetOf(String(raw).trim());
+  if(pr){try{return await addTableMirror(pr[4],pr[3]);}catch(e){console.warn('mirror',e);}}
+  return addTableDirect(raw);
+}
+async function addTableDirect(raw){
   let u=String(raw).trim();if(location.protocol==='https:'&&/^http:\/\//i.test(u))u=u.replace(/^http:/i,'https:');
   const base=new URL(u);let text=await fetchText(base.href),header,hUrl=base;
   if(/^\s*\{/.test(text))header=JSON.parse(text);
@@ -2527,28 +2532,33 @@ async function backfillHashes(force){
 /* well-known tables: added straight from their own sites (only works when the site allows reading from other sites) */
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true;}catch(e){}
   try{const a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,t.length);const ok=document.execCommand('copy');a.remove();return ok;}catch(e){return false;}}
+/* copies of the popular tables, refreshed daily by GitHub Actions (tools/fetch_tables.py) */
+const TBL_MIRROR='https://u1908inter.github.io/besmart/tables/';
+async function addTableMirror(id,url){const hd=JSON.parse(await fetchText(TBL_MIRROR+id+'/header.json')),dt=JSON.parse(await fetchText(TBL_MIRROR+id+'/data.json'));
+  const T=normTable(url,hd,dt);await DB.put('tables',T);return T;}
+const presetOf=u=>TBL_PRESETS.find(p=>p[3]===u||p[3].replace(/^http:/,'https:')===u);
 const TBL_PRESETS=[
-  ['7鍵','通常難易度表','☆','https://darksabun.github.io/table/archive/normal1/'],
-  ['7鍵','発狂BMS難易度表','★','https://darksabun.github.io/table/archive/insane1/'],
-  ['7鍵','第2通常難易度表','▽','https://rattoto10.jounin.jp/table.html'],
-  ['7鍵','第2発狂難易度表','▼','https://rattoto10.jounin.jp/table_insane.html'],
-  ['7鍵','Satellite','sl','https://stellabms.xyz/sl/table.html'],
-  ['7鍵','Stella','st','https://stellabms.xyz/st/table.html'],
-  ['7鍵','Starlight','sr','https://djkuroakari.github.io/starlighttable.html'],
-  ['7鍵','Stardust','ξ','https://mqppppp.neocities.org/ChartView.html'],
-  ['7鍵','Overjoy','★★','http://lr2.sakura.ne.jp/overjoy.php'],
-  ['LN','LN難易度表','◆','http://flowermaster.web.fc2.com/lrnanido/gla/LN.html'],
-  ['LN','Luminous（ミラー）','','https://wcko87.github.io/luminous-mirror/'],
-  ['皿','Scramble','','https://egret9.github.io/Scramble/',1],
-  ['皿','皿難易度表','◎','http://minddnim.web.fc2.com/sara/3rd_hard/bms_sara_3rd_hard.html']];
+  ['7鍵','通常難易度表','☆','https://darksabun.github.io/table/archive/normal1/','normal1'],
+  ['7鍵','発狂BMS難易度表','★','https://darksabun.github.io/table/archive/insane1/','insane1'],
+  ['7鍵','第2通常難易度表','▽','https://rattoto10.jounin.jp/table.html','normal2'],
+  ['7鍵','第2発狂難易度表','▼','https://rattoto10.jounin.jp/table_insane.html','insane2'],
+  ['7鍵','Satellite','sl','https://stellabms.xyz/sl/table.html','sl'],
+  ['7鍵','Stella','st','https://stellabms.xyz/st/table.html','st'],
+  ['7鍵','Starlight','sr','https://djkuroakari.github.io/starlighttable.html','sr'],
+  ['7鍵','Stardust','ξ','https://mqppppp.neocities.org/ChartView.html','stardust'],
+  ['7鍵','Overjoy','★★','http://lr2.sakura.ne.jp/overjoy.php','overjoy'],
+  ['LN','LN難易度表','◆','http://flowermaster.web.fc2.com/lrnanido/gla/LN.html','ln'],
+  ['LN','Luminous（ミラー）','','https://wcko87.github.io/luminous-mirror/','luminous'],
+  ['皿','Scramble','','https://egret9.github.io/Scramble/','scramble'],
+  ['皿','皿難易度表','◎','http://minddnim.web.fc2.com/sara/3rd_hard/bms_sara_3rd_hard.html','sara']];
 function renderTblBox(){
   const b=document.getElementById('tblBox');if(!b)return;
   b.innerHTML=`<b>${L('難易度表','Difficulty tables')}</b><br>${L('難易度表のURL（表のページ、または header.json）を入力して追加します。表の譜面と手持ちの曲を照合して、曲一覧に表ごとのレベル別フォルダを作ります。','Enter a difficulty table URL (its page or header.json). Your charts are matched against it and shown by level in the song list.')}
     <div style="display:flex;gap:6px;margin:6px 0"><input id="tblUrl" type="url" inputmode="url" placeholder="https://…" style="flex:1;min-width:0"><button class="ib" id="tblAdd">${L('追加','Add')}</button></div>
     <div class="hlp" style="margin:4px 0 2px">${L('よく使われる表','Popular tables')}</div>
-    <div id="tblPre" style="margin:0 0 6px">${TBL_PRESETS.map(([g,nm,sym,u,ok])=>{const have=TABLES.some(t=>t.url===u||t.url===u.replace(/^http:/,'https:'));
+    <div id="tblPre" style="margin:0 0 6px">${TBL_PRESETS.map(([g,nm,sym,u,tid])=>{const ok=1;const have=TABLES.some(t=>t.url===u||t.url===u.replace(/^http:/,'https:'));
       return `<div class="row" style="gap:6px;align-items:center;padding:3px 0"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${sym?esc(sym)+' ':''}${esc(nm)} <small style="opacity:.6">${esc(g)}</small></span>${ok?`<button class="ib${have?' on':''}" data-pre="${esc(u)}" style="width:auto;padding:0 10px;margin:0">${have?'✓ '+L('追加済み','Added'):L('追加','Add')}</button>`:''}<button class="ib" data-copy="${esc(u)}" style="width:auto;padding:0 10px;margin:0">📋 ${L('URLをコピー','Copy URL')}</button></div>`;}).join('')}
-      <div class="hlp" style="margin-top:2px">${L('「追加」がない表は、表のサイトが他サイトからの読み込みを許可していないため、ここから直接は追加できません。URLをコピーしてブラウザで表のページを開き、header.json とデータのJSONを保存して「ファイルから読み込む」で追加してください。','Tables without “Add” do not allow reading from other sites. Copy the URL, open the table in your browser, save its header.json and data JSON, then use “Load from files”.')}</div></div>
+      <div class="hlp" style="margin-top:2px">${L('これらの表は、BeSmartが毎日取り込んでいる写しから追加します（表のサイトの更新は、翌日までに反映されます）。','These are added from copies BeSmart refreshes daily (changes on the table sites appear by the next day).')}</div></div>
     <label class="btn" for="tblFile" style="margin:0 0 6px">${L('ファイルから読み込む（header.json と データのJSON）','Load from files (header.json and data JSON)')}</label><input type="file" id="tblFile" accept=".json,application/json" multiple style="display:none">
     <div id="tblList">${TABLES.map(t=>`<div class="row" style="gap:6px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(t.name)} <small>(${t.data.length})</small></span>${t.url.startsWith('file:')?'':`<button class="ib" data-up="${esc(t.url)}">${L('更新','Update')}</button>`}<button class="ib" data-del="${esc(t.url)}">${L('削除','Delete')}</button></div>`).join('')||`<div class="hlp">${L('まだ表はありません','No tables yet')}</div>`}</div>
     <button class="ib" id="tblRehash" style="margin-top:6px">${L('手持ちの譜面を照合し直す','Re-match my charts')}</button>

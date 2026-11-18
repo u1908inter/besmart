@@ -30,7 +30,7 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (req.method !== 'GET' || url.origin !== location.origin) return;
-  if (url.pathname.includes('/media/')) return; // the promo video is not cached
+  if (url.pathname.includes('/media/') || url.pathname.includes('/tables/')) return; // promo video and table mirrors: always from the network
   // pages: network first, fall back to cache (so updates arrive quickly)
   if (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
     e.respondWith(fetch(req, { cache: 'no-cache' }).then(r => { const cp = r.clone(); if (r.ok) caches.open(CACHE).then(c => c.put(req, cp)); return r; })
