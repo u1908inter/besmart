@@ -1,6 +1,22 @@
 {
  "tables": [
   {
+   "id": "normal1",
+   "src": "https://darksabun.github.io/table/archive/normal1/",
+   "name": "通常難易度表",
+   "symbol": "☆",
+   "count": 634,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "insane1",
+   "src": "https://darksabun.github.io/table/archive/insane1/",
+   "name": "発狂BMS難易度表",
+   "symbol": "★",
+   "count": 1035,
+   "updated": "2026-11-18"
+  },
+  {
    "id": "normal2",
    "src": "https://rattoto10.jounin.jp/table.html",
    "name": "NEW GENERATION 通常難易度表",
@@ -54,6 +70,14 @@
    "name": "LN難易度",
    "symbol": "◆",
    "count": 485,
+   "updated": "2026-11-18"
+  },
+  {
+   "id": "luminous",
+   "src": "https://ladymade-star.github.io/luminous/table.html",
+   "name": "Luminous",
+   "symbol": "ln",
+   "count": 604,
    "updated": "2026-11-18"
   },
   {
