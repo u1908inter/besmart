@@ -18,9 +18,8 @@ TABLES = [
     ("st", "https://stellabms.xyz/st/table.html"),
     ("sr", "https://djkuroakari.github.io/starlighttable.html"),
     ("stardust", "https://mqppppp.neocities.org/ChartView.html"),
-    ("overjoy", "http://lr2.sakura.ne.jp/overjoy.php|https://lr2.sakura.ne.jp/overjoy.php|http://www.ribbit.xyz/bms/tables/overjoy.html"),
     ("ln", "http://flowermaster.web.fc2.com/lrnanido/gla/LN.html"),
-    ("luminous", "https://wcko87.github.io/luminous-mirror/|https://wcko87.github.io/luminous-mirror/table.html|https://ladymade-star.github.io/luminous/table.html"),
+    ("luminous", "https://ladymade-star.github.io/luminous/table.html|https://wcko87.github.io/luminous-mirror/"),
     ("scramble", "https://egret9.github.io/Scramble/"),
     ("sara", "http://minddnim.web.fc2.com/sara/3rd_hard/bms_sara_3rd_hard.html"),
 ]
