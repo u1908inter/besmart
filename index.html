@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1021)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1021)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1442)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1442)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1021)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1021)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1442)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1442)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1939,7 +1939,9 @@ const isBeginner=()=>S.recoLv==='new'||totalPlays()<30;
 let ACH={};try{ACH=JSON.parse(localStorage.getItem(LSK+'ach')||'{}')||{};}catch(e){}
 const saveAch=()=>{try{localStorage.setItem(LSK+'ach',JSON.stringify(ACH));}catch(e){}};
 let ACHC={};try{ACHC=JSON.parse(localStorage.getItem(LSK+'achc')||'{}')||{};}catch(e){}
-const bumpC=(k,n=1)=>{ACHC[k]=(ACHC[k]||0)+n;try{localStorage.setItem(LSK+'achc',JSON.stringify(ACHC));}catch(e){}};
+const saveC=()=>{try{localStorage.setItem(LSK+'achc',JSON.stringify(ACHC));}catch(e){}};
+const bumpC=(k,n=1)=>{ACHC[k]=(ACHC[k]||0)+n;saveC();};
+let RND_HASH=null;
 /* achievements: [id, icon, name, description, category, test(ctx)] ; hidden ones show ??? until unlocked */
 function achList(){
   const T=(id,ic,nm,ds,cat,f,hid)=>({id,ic,nm,ds,cat,f,hid});const J=L;const out=[];
@@ -2001,6 +2003,27 @@ function achList(){
   out.push(T('pq2','🗡',J('勇者の証','Hero’s proof'),J('ピコーン・クエスト2の内蔵曲を全部クリア','Clear every built-in Pikon Quest 2 chart'),'secret',x=>x.pq2,1));
   out.push(T('nov20','🎂',J('11月20日','20, November'),J('11月20日に遊ぶ','Play on 20 November'),'secret',x=>x.nov20,1));
   out.push(T('miss0f','🙈',J('おしい！','So close!'),J('ミス1つでフルコンボを逃す','Miss a full combo by one'),'secret',x=>x.c.miss1,1));
+  // luck in the numbers
+  out.push(T('lucky7','🎰',J('ラッキーセブン','Lucky seven'),J('EXスコアがちょうど777','EX score of exactly 777'),'secret',x=>x.c.lucky7,1));
+  out.push(T('onegr','🤏',J('あと1つ','One away'),J('GREAT 1つだけで理論値を逃す','Miss MAX by a single GREAT'),'secret',x=>x.c.oneGr,1));
+  out.push(T('grmaster','🟨',J('GREATの達人','GREAT master'),J('PERFECTが0のままフルコンボ','Full combo without a single PERFECT'),'secret',x=>x.c.grMaster,1));
+  out.push(T('even','⚖',J('ど真ん中','Dead centre'),J('FASTとSLOWが同じ数（どちらも20以上）','Same number of FAST and SLOW (20+ each)'),'secret',x=>x.c.even,1));
+  out.push(T('clock','🎯',J('体内時計','Inner clock'),J('300ノーツ以上で、ずれの平均が±1ミリ秒以内','Average timing within ±1 ms over 300+ notes'),'secret',x=>x.c.clock,1));
+  out.push(T('draw','🤝',J('引き分け','Dead heat'),J('ゴーストかライバルとまったく同じスコア','Exactly the same score as the ghost or rival'),'secret',x=>x.c.draw,1));
+  // ways to play
+  out.push(T('ko','💥',J('秒殺','Knocked out'),J('開始から5秒以内にHARD以上で落ちる','Fail on HARD or above within 5 seconds'),'secret',x=>x.c.ko,1));
+  out.push(T('tank','🔋',J('満タン維持','Full tank'),J('NORMALゲージで100%になってから、最後まで100%のまま','On NORMAL, stay at 100% from the moment you reach it to the end'),'secret',x=>x.c.tank,1));
+  out.push(T('hazard','☠',J('一撃必殺','One-hit'),J('HAZARDでクリア','Clear on HAZARD'),'secret',x=>x.c.hazard,1));
+  out.push(T('mash','🥁',J('連打の嵐','Button storm'),J('空打ち100回以上なのにクリア','Clear with 100+ empty presses'),'secret',x=>x.c.mash,1));
+  out.push(T('frank','🅵',J('スコアは気にしない','Who needs score'),J('ランクFなのにクリア','Clear with rank F'),'secret',x=>x.c.frank,1));
+  out.push(T('pause10','☕',J('休憩しすぎ','Too many breaks'),J('1曲の中で10回以上ポーズする','Pause 10+ times in one song'),'secret',x=>x.c.pause10,1));
+  out.push(T('same10','💘',J('これしか勝たん','The one and only'),J('同じ譜面を1日に10回遊ぶ','Play the same chart 10 times in a day'),'secret',x=>x.c.same10,1));
+  // range
+  out.push(T('chameleon','🦎',J('カメレオン','Chameleon'),J('テーマカラーを7色すべてで遊ぶ','Play with all 7 theme colours'),'secret',x=>(x.C.ph||[]).length>=7,1));
+  out.push(T('restyle','🛋',J('模様替え','Redecorated'),J('プレイ画面のデザイン3種類すべてで遊ぶ','Play with all 3 play-screen styles'),'secret',x=>(x.C.sk||[]).length>=3,1));
+  out.push(T('multi','🎹',J('マルチプレイヤー','Multi-player'),J('4鍵・5鍵・7鍵のすべてでクリア','Clear in 4-key, 5-key and 7-key'),'secret',x=>x.cl4&&x.cl5&&x.cl7,1));
+  out.push(T('watch','📺',J('観戦者','Spectator'),J('オート再生を最後まで見る','Watch an auto play to the end'),'secret',x=>(x.C.watch||0)>=1,1));
+  out.push(T('fate','🎲',J('運命に任せる','Leave it to fate'),J('おまかせ選曲で選んだ曲を5回続けてクリア','Clear 5 random picks in a row'),'secret',x=>(x.C.rs||0)>=5,1));
   return out;
 }
 const ACH_CAT=()=>({start:L('はじめて','Firsts'),rank:L('ランク','Ranks'),level:L('レベル','Levels'),collect:L('コレクション','Collection'),effort:L('つみかさね','Dedication'),skill:L('チャレンジ','Challenges'),mode:L('モード','Modes'),secret:L('ひみつ','Secret')});
@@ -2015,7 +2038,9 @@ function achCtx(cur){
     if(lp>=3){x.cl++;x.maxLvCl=Math.max(x.maxLvCl,lv);}if(lp>=4)x.nc++;if(lp>=5){x.hc++;x.maxLvHc=Math.max(x.maxLvHc,lv);}if(lp>=6)x.xc++;
     if(lp>=7){x.fc++;x.maxLvFc=Math.max(x.maxLvFc,lv);}if(lp>=8)x.pf++;if(lp>=9)x.mx++;
     if(rate>=7/9)x.aa++;if(rate>=8/9)x.aaa++;if(rate>=17/18)x.mxm++;
-    if(r.red&&r.red['4k']&&r.red['4k'].lamp>=3)x.red4=true;}
+    if(r.red&&r.red['4k']&&r.red['4k'].lamp>=3)x.red4=true;
+    if(lp>=3&&c){if(c.mode==='4k')x.cl4=true;if(c.mode==='5k')x.cl5=true;if(c.mode==='7k')x.cl7=true;}}
+  if(x.red4)x.cl4=true;
   for(const c of CHARTS)if(c.builtin&&/ピコーン|Pikon/i.test(c.title)){pqAny=true;if(!((REC[c.hash]||{}).lamp>=3))pqAll=false;}
   x.pq2=pqAny&&pqAll;return x;
 }
@@ -2902,7 +2927,7 @@ $('#recoHintGo').onclick=openReco;$('#safeHintX').onclick=()=>{try{localStorage.
 $('#guideBtn').onclick=openSongGuide;$('#guideBtn2').onclick=openSongGuide;$('#recoHintX').onclick=()=>{try{localStorage.setItem(LSK+'recoSeen','1');}catch(e){}renderRecoHint();};
 $('#fltBtn').onclick=()=>{const b=$('#fltBox'),on=b.style.display==='none';if(on)renderFlt();show('#fltBox',on,'block');};
 function rndPool(){const f=S.rnd||{};return (f.src==='list'?LIBLIST:CHARTS).filter(c=>condOk(c,f));}
-function rndPick(){const pool=rndPool();if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return false;}openDetail(pool[Math.floor(Math.random()*pool.length)]);return true;}
+function rndPick(){const pool=rndPool();if(!pool.length){toast(L('条件に合う譜面がありません','No chart matches'));return false;}const pk=pool[Math.floor(Math.random()*pool.length)];RND_HASH=pk.hash;openDetail(pk);return true;}
 $('#rndBtn').onclick=rndPick;
 $('#rndCfg').onclick=()=>{
   const box=$('#rndBody');S.rnd=S.rnd||{src:'all'};box.innerHTML=condHTML({src:1,km:1,rec:1});
@@ -3513,7 +3538,7 @@ $('#impGo').onclick=async()=>{
     for(const k in d.rec)REC[k]=mergeRecOne(REC[k],d.rec[k]);
     (d.fav||[]).forEach(x=>FAV.add(x));
     (Array.isArray(d.folders)?d.folders:[]).forEach(F=>{if(!F||!F.name)return;const M=FOLDERS.find(x=>x.name===F.name);if(M)(F.hashes||[]).forEach(h=>{if(!M.hashes.includes(h))M.hashes.push(h);});else FOLDERS.push({name:F.name,hashes:(F.hashes||[]).slice()});});
-    Object.assign(ACH,d.ach||{});for(const k in (d.achc||{}))ACHC[k]=Math.max(ACHC[k]||0,d.achc[k]);
+    Object.assign(ACH,d.ach||{});for(const k in (d.achc||{})){const v=d.achc[k];if(typeof v==='number')ACHC[k]=Math.max(+ACHC[k]||0,v);else if(Array.isArray(v))ACHC[k]=[...new Set([...(Array.isArray(ACHC[k])?ACHC[k]:[]),...v])];else if(ACHC[k]==null)ACHC[k]=v;}
     for(const k in (d.stats||{})){const a=STATS[k],b=d.stats[k];if(!a||(b.p||0)>(a.p||0))STATS[k]=b;}
     const ids=new Set(COURSES.map(c=>c.id));(d.courses||[]).forEach(c=>{if(c&&!ids.has(c.id))COURSES.push(c);});
   }
@@ -4158,6 +4183,7 @@ function gaugeApply(j,factor){
     else{d=t[j.toLowerCase()];if(t.low&&s.v<30)d*=0.6;}
     s.v=Math.min(100,Math.max(t.surv?0:2,s.v+d));
     if(t.surv&&s.v<=0){s.v=0;s.dead=true;}
+    if(k==='normal'){if(s.v>=100)s.full=1;else if(s.full)s.drop=1;}
   }
   checkFail();
 }
@@ -5004,6 +5030,7 @@ function togglePause(force){
   if(!G||G.ended||G.viewer)return;
   const p=force!==undefined?force:!G.paused;if(p===G.paused)return;
   G.paused=p;
+  if(p)G.pauses=(G.pauses||0)+1;
   if(p){actx.suspend();for(const l of [...hold.keys()])release(l);hold.clear();ptr.clear();ctrlPtr=null;syncPause();show('#pause',true);show('#retrySame',!G.replay&&!G.tut,'block');}
   else{show('#pause',false);G.lastFrame=0;actx.resume();}
 }
@@ -5146,8 +5173,20 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     if(R.ghost&&R.ghost.d>0&&G.record)bumpC(R.ghost.name?'rw':'gw');
     const ok=G.record&&!G.failed&&lamp>=3,ch=G.chart,dur=ch.endTime||0,gmin=(G.glog||[]).reduce((m,v)=>Math.min(m,Array.isArray(v)?v[1]:v),100);
     const cur=G.record?{nmHard:!G.failed&&['hard','exhard','hazard'].includes(G.startGauge||S.gauge)&&c.BD+c.PR===0&&G.N>0,acc90:G.N>=300&&c.PG/G.N>=0.9,fc1000:G.N>=1000&&lamp>=7,bpm200:ok&&(ch.maxB||ch.bpm||0)>=200,long:ok&&dur>=180,combo:G.maxCombo,
-      noscr:ok&&ch.mode==='7k'&&!G.opts.autoScr&&(G.opts.reduce||'off')==='off',comeback:ok&&gmin<=10,hour:new Date().getHours(),close:ok&&GT[G.cur].border>0&&G.gauges[G.cur].v>=GT[G.cur].border&&G.gauges[G.cur].v<GT[G.cur].border+2,miss1:!G.failed&&c.BD+c.PR===1}:{hour:new Date().getHours()};
+      noscr:ok&&ch.mode==='7k'&&!G.opts.autoScr&&(G.opts.reduce||'off')==='off',comeback:ok&&gmin<=10,hour:new Date().getHours(),close:ok&&GT[G.cur].border>0&&G.gauges[G.cur].v>=GT[G.cur].border&&G.gauges[G.cur].v<GT[G.cur].border+2,miss1:!G.failed&&c.BD+c.PR===1,
+      lucky7:ex===777,oneGr:!G.failed&&c.GR===1&&c.GD+c.BD+c.PR===0&&c.PG===N-1,grMaster:!G.failed&&N>=50&&c.PG===0&&c.BD+c.PR===0,
+      even:G.fs.f>=20&&G.fs.f===G.fs.s,clock:N>=300&&G.dts.length>=300&&Math.abs(G.dts.reduce((a,b)=>a+b,0)/G.dts.length)<=1,
+      draw:!!(R.ghost&&R.ghost.d===0&&ex>0),
+      ko:G.failed&&!!GT[G.cur].surv&&G.failAt!=null&&G.failAt-((G.chart.notes[0]||{time:0}).time)<=5,
+      tank:ok&&(G.startGauge||S.gauge)==='normal'&&G.cur==='normal'&&!!G.gauges.normal.full&&!G.gauges.normal.drop,
+      hazard:ok&&G.cur==='hazard'&&!G.gauges.hazard.dead,mash:ok&&c.KP>=100,frank:ok&&rankOf(rate)==='F',pause10:(G.pauses||0)>=10,
+      same10:(()=>{const d=dayKey();if(!ACHC.sd||ACHC.sd.d!==d)ACHC.sd={d,h:{}};ACHC.sd.h[hash]=(ACHC.sd.h[hash]||0)+1;return ACHC.sd.h[hash]>=10;})()}:{hour:new Date().getHours()};
+    // colours and styles used, and the random-pick streak
+    {const ph=ACHC.ph||(ACHC.ph=[]),sk=ACHC.sk||(ACHC.sk=[]);if(!ph.includes(S.phosphor))ph.push(S.phosphor);if(!sk.includes(S.playSkin))sk.push(S.playSkin);}
+    if(G.record){if(RND_HASH&&hash===RND_HASH)ACHC.rs=ok?(ACHC.rs||0)+1:0;else ACHC.rs=0;RND_HASH=null;}
+    saveC();
     R.ach=checkAch(R,cur);}catch(e){console.warn('ach',e);}}
+  if(G.auto&&!G.viewer&&!G.replay&&!G.tut&&!G.practice&&!G.failed){try{ACHC.watch=(ACHC.watch||0)+1;saveC();const got=checkAch(R,{hour:new Date().getHours()});if(got.length)R.ach=got;}catch(e){}}
   const delay=G.celebrate?1900:G.failed?900:300;
   if(G.course){setTimeout(()=>courseNext(R),delay);return;}
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
