@@ -62,7 +62,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       <figcaption style="font-family: 'DotGothic16', monospace; font-size: 14px; color: #B57A00; margin-top: 6px">紹介動画（55秒）</figcaption>
     </figure>
     <nav aria-label="ページ内の目次" style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; border-top: 2px dashed #6E4800; padding-top: 14px">
-      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#phone">スマホ向け機能</a><a href="#pc">PCでも遊べる</a><a href="#play">遊び方の幅</a><a href="#tables">難易度表</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a><a href="#history">アップデート履歴</a>
+      <a href="#howto">はじめ方</a><a href="#formats">読み込める形式</a><a href="#modes">鍵盤モード</a><a href="#chart">譜面の仕様</a><a href="#judge">判定</a><a href="#gauge">ゲージ</a><a href="#score">スコアとランプ</a><a href="#options">オプション</a><a href="#display">表示</a><a href="#detail">細かい仕様</a><a href="#phone">スマホ向け機能</a><a href="#pc">PCでも遊べる</a><a href="#play">遊び方の幅</a><a href="#tables">難易度表</a><a href="#records">記録と共有</a><a href="#input">操作</a><a href="#latency">音の遅延</a><a href="#env">動作環境</a><a href="#privacy">プライバシー</a><a href="#faq">よくある質問</a><a href="#history">アップデート履歴</a>
     </nav>
   </header>
 
@@ -155,6 +155,7 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       </tbody>
     </table></div>
     <p><code>#DIFFICULTY</code> がない譜面は、タイトルやサブタイトルに含まれる語から難易度（入門／標準／上級／最上級／発狂）を推定します。</p>
+    <p>62進数の譜面（<code>#BASE 62</code>）、作者コメント（<code>#COMMENT</code>）にも対応しています。読み込みの細かい決まりや、対応していない命令は <a href="#detail">細かい仕様</a> にまとめています。</p>
   </section>
 
   <section id="judge">
@@ -172,12 +173,24 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       </tbody>
     </table></div>
     <ul>
-      <li><code>#DEFEXRANK</code> がある場合は、NORMAL の幅をその割合（100 = NORMAL）で広げ・狭めします。</li>
+      <li><code>#DEFEXRANK</code> がある場合は、NORMAL の幅をその割合（100 = NORMAL）で広げ・狭めします（BAD は GOOD＋60ミリ秒より狭くしません）。</li>
       <li>BADの幅を過ぎても押さなかったノーツは MISS になります。</li>
       <li>ノーツより早すぎる空打ち（BADの幅より前、さらに150ミリ秒以内）は「空打ち」として数えます。コンボは切れませんが、ゲージは減ります。</li>
       <li>PERFECT 以外の判定では、早かったか（FAST）遅かったか（SLOW）を表示し、回数も記録します。ずれをミリ秒で表示することもできます。</li>
       <li>アシストの「判定幅拡大」を使うと、すべての幅が1.5倍になります。</li>
     </ul>
+    <p>上の表は「判定幅の基準」が <b>LR2基準</b>（初期値）のときの値です。設定で <b>beatoraja基準</b> に切り替えると、次の幅になります（7鍵・14鍵・9ボタンなど。5鍵・10鍵は PERFECT 20／GREAT 50／GOOD 100／BAD 150 を同じ割合で増減）。</p>
+    <div class="tw"><table>
+      <thead><tr><th>#RANK</th><th>PERFECT</th><th>GREAT</th><th>GOOD</th><th>BAD</th></tr></thead>
+      <tbody>
+        <tr><td>0：VERY HARD（25%）</td><td class="n">5</td><td class="n">15</td><td class="n">37.5</td><td class="n">55</td></tr>
+        <tr><td>1：HARD（50%）</td><td class="n">10</td><td class="n">30</td><td class="n">75</td><td class="n">110</td></tr>
+        <tr><td>2：NORMAL（75%）</td><td class="n">15</td><td class="n">45</td><td class="n">112.5</td><td class="n">165</td></tr>
+        <tr><td>3：EASY（100%）</td><td class="n">20</td><td class="n">60</td><td class="n">150</td><td class="n">220</td></tr>
+        <tr><td>4：VERY EASY（125%）</td><td class="n">25</td><td class="n">75</td><td class="n">187.5</td><td class="n">275</td></tr>
+      </tbody>
+    </table></div>
+    <p>beatoraja基準で <code>#DEFEXRANK</code> がある場合は、その値×0.75 を割合として使います。</p>
     <h3>判定アルゴリズム</h3>
     <p>ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合に、どれを判定するかを選べます。</p>
     <ul>
@@ -306,6 +319,82 @@ code{font-family:'DotGothic16',monospace;color:#FFD466;font-size:.95em}
       </tbody>
     </table></div>
     <p>ヒット時にはボム（光の輪）が出て、MISS時はミス用のBGAに切り替わります。</p>
+  </section>
+
+
+  <section id="detail">
+    <h2>細かい仕様（上級者向け）</h2>
+    <p>BMSの解釈や内部の計算を、確かめたい方向けにまとめています。</p>
+
+    <h3>譜面の読み込み</h3>
+    <ul>
+      <li><b>同じ小節・同じチャンネルの行が複数ある場合</b>：1本にまとめます。同じ位置に別のオブジェが書かれていたら、後の行を使います。BGM（チャンネル01）は重ねて、すべて鳴らします。小節の長さ（02）は後の行を使います。</li>
+      <li><b>オブジェ番号</b>：通常は36進数（00〜ZZ）で、大文字・小文字を区別しません。<code>#BASE 62</code> があるときだけ62進数（00〜zz）として、大文字・小文字を区別します。</li>
+      <li><b>ロングノート</b>：<code>#LNTYPE 1</code>（チャンネル51〜69で始点と終点を交互に書く方式）と <code>#LNOBJ</code> に対応しています。終点がないロングノートは通常ノーツとして扱います。</li>
+      <li><b>鍵盤モードの判定</b>：2P側（21〜29）にノーツがあればダブル（10鍵／14鍵）、6・7番目のレーン（18・19／28・29）にノーツがあれば7鍵系、なければ5鍵系です。<code>.pms</code> は9ボタンです。チャンネル17・27（フリーゾーン）は読み飛ばします。</li>
+      <li><b>一時停止</b>：<code>#STOPxx</code> の値は 1/192小節単位です。</li>
+      <li><b>地雷</b>：受けるダメージは、オブジェ番号を36進数として読んだ値の1/2（%）です。</li>
+      <li><b>BGA</b>：レイヤー（07）は黒（RGBが各4以下）を透明として重ねます。動画のレイヤーだけは明るさを足して重ねます。ミス時の画像は、チャンネル06がなければ <code>#BMP00</code> を使います。</li>
+      <li><b>動画</b>：mp4・webm・m4v・mov・ogv を再生します。mpg・wmv などは、同じ名前の mp4／webm が曲に入っていればそれを使います。</li>
+      <li><b>ファイルの探し方</b>：譜面に書かれた名前で見つからないときは、大文字・小文字の違いや拡張子の違い（.wav → .ogg など）を無視して探します。</li>
+      <li><b>同じ譜面の判定</b>：記録は譜面の本文から作る識別子に結びつけます。難易度表との照合には MD5・SHA-256 を使います。</li>
+    </ul>
+
+    <h3>対応していない命令</h3>
+    <div class="tw"><table>
+      <thead><tr><th>命令・チャンネル</th><th>扱い</th></tr></thead>
+      <tbody>
+        <tr><td><code>#LNTYPE 2</code></td><td>古い形式のロングノート。#LNTYPE 1 として読みます</td></tr>
+        <tr><td>チャンネル0A（2枚目のレイヤー）、<code>#POORBGA</code></td><td>読み飛ばします</td></tr>
+        <tr><td><code>#EXRANKxx</code>・チャンネルA0（途中で判定幅を変える）</td><td>読み飛ばします（判定幅は #RANK／#DEFEXRANK のまま）</td></tr>
+        <tr><td><code>#SPEEDxx</code>・チャンネルSP</td><td>読み飛ばします（スクロール速度の変化は #SCROLL に対応）</td></tr>
+        <tr><td><code>#BGA</code>（画像の切り抜き）、<code>#ARGB</code>、<code>#SEEK</code>・チャンネル05、<code>#EXWAV</code>、<code>#WAVCMD</code>、<code>#CHARFILE</code>、<code>#MIDIFILE</code></td><td>読み飛ばします</td></tr>
+        <tr><td>チャンネル17・27（フリーゾーン）、DXモード</td><td>読み飛ばします</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>入力と判定のタイミング</h3>
+    <ul>
+      <li>判定に使う時刻は、音声の再生位置から計算した「曲の時刻」です。画面の描画とは独立しています。</li>
+      <li>タッチとキーボードは、ブラウザが記録した「実際に押した瞬間」の時刻を使います（届くまでの遅れが1〜80ミリ秒のときに補正）。コントローラーは毎フレーム読み取ります。</li>
+      <li>空打ちは、ノーツの BAD の幅より前、さらに150ミリ秒以内に押したときに数えます。</li>
+      <li>押し続け必須のロングノートで離している間は、ゲージが1秒あたり HARD 以上で6%、それ以外で3% 減ります。</li>
+    </ul>
+
+    <h3>プレビュー</h3>
+    <ul>
+      <li>次の順で探します：<code>#PREVIEW</code> のファイル → 曲のフォルダにある <code>preview</code> で始まる音声ファイル → 自動プレビュー。</li>
+      <li>自動プレビューは、ノーツがいちばん密な20秒を、その譜面のキー音で鳴らします。冒頭の音がそろったら鳴らし始め、残りは再生しながら読み込みます。</li>
+    </ul>
+
+    <h3>ノーツレーダー</h3>
+    <p>譜面ごとに、最初のノーツから最後のノーツまでの時間（T秒）を使って計算します（0〜200で打ち切り）。</p>
+    <div class="tw"><table>
+      <thead><tr><th>項目</th><th>計算</th></tr></thead>
+      <tbody>
+        <tr><td>NOTES</td><td>ノーツ数 ÷ T が 8個/秒 で 100</td></tr>
+        <tr><td>CHORD</td><td>同時に押すノーツ（同じ時刻に2つ以上）の数 ÷ T が 4個/秒 で 100</td></tr>
+        <tr><td>PEAK</td><td>いちばん忙しい2秒間のノーツ数 ÷ 2 が 16個/秒 で 100</td></tr>
+        <tr><td>CHARGE</td><td>ロングノート数 ÷ T ÷ 1.5 × 70 ＋ 押している時間の割合 × 30</td></tr>
+        <tr><td>SCRATCH</td><td>皿のノーツ数 ÷ T が 1.5個/秒 で 100</td></tr>
+        <tr><td>SOFLAN</td><td>主なBPMから15%以上ずれている時間の割合 × 120 ＋ BPM変化・停止・スクロール変化の回数 × 4（最大80）</td></tr>
+      </tbody>
+    </table></div>
+    <p>プレイヤーの値は、各項目について「譜面の値 × EXスコア率」の上位10譜面の平均です（10譜面に満たないときも10で割ります）。鍵盤モードごとに別々に計算します。</p>
+
+    <h3>大きな書庫の読み込み</h3>
+    <ul>
+      <li>400MBを超える ZIP・RAR・tar.gz は、中の曲フォルダを一覧にして、選んだ曲だけを読み込みます。</li>
+      <li>ZIP は1曲分のファイルをまとめて読み出してから展開します（1曲48MBまで。それより大きい曲は1ファイルずつ）。</li>
+      <li>進み具合は書庫ごと（ファイル名とサイズ）に保存します。同じ書庫を選び直すと、追加済みの曲を飛ばして続きから読み込めます。</li>
+    </ul>
+
+    <h3>保存されるデータ</h3>
+    <ul>
+      <li>曲・記録・設定は、すべてこの端末のブラウザの中（IndexedDB・localStorage）に保存します。どこにも送信しません。</li>
+      <li>記録は譜面ごとに、最高のクリアランプ・EXスコア・ミスカウント・最大コンボ・プレイ回数と、更新した日の履歴を残します。</li>
+      <li>設定 → データ から、記録と設定のバックアップ（JSON）を書き出し・読み込みできます。</li>
+    </ul>
   </section>
 
   <section id="phone">
