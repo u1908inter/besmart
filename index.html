@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1703)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1703)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1714)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1714)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1703)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1703)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1714)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1714)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3214,7 +3214,8 @@ function peakStart(times,end,win){
 }
 async function playPreview(c){
   stopPreview();if(c.demo||S.preview==='off')return;
-  const tok=++pvTok;const alive=()=>tok===pvTok&&($('#detail').style.display.includes('flex')||(wheelVisible()&&WHL.cur&&WHL.cur.hash===c.hash));
+  const tok=++pvTok;const busy=()=>{const ld=$('#loading'),gm=$('#game');return (ld&&ld.style.display&&ld.style.display!=='none')||(gm&&gm.style.display==='block');};
+  const alive=()=>tok===pvTok&&!busy()&&($('#detail').style.display.includes('flex')||(wheelVisible()&&WHL.cur&&WHL.cur.hash===c.hash));
   try{
     const arch=await DB.get('archives',c.archiveId);if(!arch||!alive())return;
     ensureAudio();
@@ -3962,6 +3963,8 @@ async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
   GHOST=null;
+  // a preview that is playing or still loading must not carry over into the game
+  clearTimeout(WHL.pvT);stopPreview();
   if(BT){bAct(0);BT=null;hold=new Map();}
   ensureAudio();lastMeta=meta;lastMode=mode;lastPlay=()=>startPlay(meta,Object.assign({},mode,{seed:undefined}));
   if(!mode.replay)autoProfile();
