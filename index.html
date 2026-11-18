@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1940)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1940)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1957)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1957)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1940)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1940)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1957)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1957)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2701,6 +2701,13 @@ function wheelBuild(){
 }
 /* folders on the wheel: [{fid,fold:true,name,ic,charts|sub}] ; first row inside a folder is a back row */
 WHL.path=(()=>{try{return JSON.parse(localStorage.getItem(LSK+'wheelPath')||'[]');}catch(e){return [];}})();WHL.pathNames=[];
+/* songs of a table that are not in the library, as wheel rows (shown when "show missing" is on) */
+function wMissing(T,lvOnly){if(!S.tblMissing)return [];
+  const have=new Set();for(const c of CHARTS){if(c.sha256)have.add('s'+c.sha256.toLowerCase());if(c.md5)have.add('m'+c.md5.toLowerCase());}
+  const out=[];for(const e of T.data){const lv=String(e.level);if(lvOnly!=null&&lv!==lvOnly)continue;
+    if((e.sha256&&have.has('s'+String(e.sha256).toLowerCase()))||(e.md5&&have.has('m'+String(e.md5).toLowerCase())))continue;
+    out.push({fid:'m:'+(e.sha256||e.md5),miss:true,e,T,lv,title:e.title||'',artist:e.artist||'',tl:T.symbol+lv});}
+  return out;}
 function wTableKeyMap(T){const bm=new Map();for(const e of T.data){const lv=String(e.level);if(e.sha256)bm.set('s'+String(e.sha256).toLowerCase(),lv);if(e.md5)bm.set('m'+String(e.md5).toLowerCase(),lv);}return c=>bm.get('s'+(c.sha256||'').toLowerCase())||bm.get('m'+(c.md5||'').toLowerCase());}
 function wheelRootFolders(){
   const all=LIBLIST,lp=c=>(REC[c.hash]||{}).lamp||0,F=[];
@@ -2718,7 +2725,8 @@ function wheelRootFolders(){
   add('fc','💎',L('フルコンボ','Full combo'),all.filter(c=>lp(c)>=7));
   for(const T of TABLES){F.push({fid:'t:'+T.url,fold:true,ic:'📋',name:T.name,charts:[],tbl:T,sub:()=>{const key=wTableKeyMap(T),by=new Map();
     for(const c of all){const k=key(c);if(k==null)continue;if(!by.has(k))by.set(k,[]);by.get(k).push(c);}
-    return tblLevels(T).filter(lv=>by.has(lv)).map(lv=>({fid:'t:'+T.url+'|'+lv,fold:true,ic:'',name:T.symbol+lv,charts:by.get(lv),tlv:T.symbol+lv}));}});}
+    const ms=new Map();for(const m of wMissing(T)){if(!ms.has(m.lv))ms.set(m.lv,[]);ms.get(m.lv).push(m);}
+    return tblLevels(T).filter(lv=>by.has(lv)||ms.has(lv)).map(lv=>({fid:'t:'+T.url+'|'+lv,fold:true,ic:'',name:T.symbol+lv,charts:by.get(lv)||[],mlist:ms.get(lv)||[],tlv:T.symbol+lv}));}});}
   const lvs=new Map();for(const c of all){const n=lvNum(c.level);const k=n<0?'?':n>=13?'13+':String(Math.floor(n));if(!lvs.has(k))lvs.set(k,[]);lvs.get(k).push(c);}
   [...lvs.keys()].sort((a,b)=>(a==='?')-(b==='?')||parseFloat(a)-parseFloat(b)).forEach(k=>add('lv:'+k,'☆',L(`レベル ${k}`,`Level ${k}`),lvs.get(k)));
   const modes=[...new Set(all.map(c=>c.mode))];if(modes.length>1)modes.sort().forEach(m=>add('m:'+m,'🎹',m.toUpperCase(),all.filter(c=>c.mode===m)));
@@ -2764,20 +2772,20 @@ function wheelQuickPop(c){const ov=document.createElement('div');ov.className='o
 const WSORTS=[['title',L('曲名','Title')],['level',L('レベル','Level')],['lamp',L('ランプ','Clear')],['score',L('スコア','Score')],['added',L('追加日','Added')],['artist',L('アーティスト','Artist')]];
 function wheelSortCycle(){const so=$('#sort'),i=WSORTS.findIndex(x=>x[0]===so.value),nx=WSORTS[(i+1)%WSORTS.length];so.value=nx[0];so.dispatchEvent(new Event('change',{bubbles:true}));toast(L('並び：','Sort: ')+nx[1],900);}
 function wheelFolderList(){
-  let level=wheelRootFolders(),names=[],charts=null,tlv=null,ok=[];
+  let level=wheelRootFolders(),names=[],charts=null,tlv=null,ok=[];WHL.fmiss=[];
   for(const id of WHL.path){const f=level&&level.find(x=>x.fid===id);if(!f)break;ok.push(id);names.push(f.name);
-    if(f.sub){level=f.sub();charts=null;}else{charts=f.charts;tlv=f.tlv||null;level=null;break;}}
+    if(f.sub){level=f.sub();charts=null;}else{charts=f.charts;tlv=f.tlv||null;WHL.fmiss=f.mlist||[];level=null;break;}}
   WHL.path=ok;WHL.pathNames=names;WHL.tlv=null;
   if(tlv){WHL.tlv=new Map(charts.map(c=>[c.hash,tlv]));}
   const q=($('#q').value||'').trim();WHL.searchMode=false;
   if(q){WHL.searchMode=true;WHL.pathNames=[L(`検索「${q}」`,`Search “${q}”`)];return [{fid:'back',back:true,search:true,name:L(`検索「${q}」`,`Search “${q}”`)}].concat(wheelGroup(LIBLIST));}
   if(!WHL.path.length){WHL.fcharts=null;return level;}
   const back={fid:'back',back:true,name:names[names.length-1]};
-  return [back].concat(charts?wheelGroup(charts):level);
+  return [back].concat(charts?wheelGroup(charts).concat(WHL.fmiss||[]):level);
 }
 function wheelEnter(f){WHL.path.push(f.fid);try{localStorage.setItem(LSK+'wheelPath',JSON.stringify(WHL.path));}catch(e){}stopPreview();wheelSync();}
 function wheelUp(){if(WHL.searchMode){$('#q').value='';const w=$('#wQ');if(w)w.value='';show('#wQbar',false);wSe('back');renderLibrary();return true;}if(!WHL.path.length)return false;wSe('back');const id=WHL.path.pop();WHL.keepKey=id;try{localStorage.setItem(LSK+'wheelPath',JSON.stringify(WHL.path));}catch(e){}stopPreview();wheelSync();return true;}
-function wheelDecide(){const e=WHL.cur;if(!e)return;if(e.back){wheelUp();return;}wSe('ok');if(e.fold){wheelEnter(e);return;}openDetail(e);}
+function wheelDecide(){const e=WHL.cur;if(!e)return;if(e.back){wheelUp();return;}if(e.miss){wSe('ok');openGetDlg(e.e,e.T,e.lv);return;}wSe('ok');if(e.fold){wheelEnter(e);return;}openDetail(e);}
 function wheelSync(){
   const on=wheelOn();if(!on)WHL.bar=null;$('#lib').classList.toggle('wheelMode',on);show('#wheel',on,'flex');
   if(!on){return;}
@@ -2789,11 +2797,12 @@ function wheelSync(){
     for(const e of T.data){const k=(e.sha256||'').toLowerCase()||(e.md5||'').toLowerCase();if(k&&!bm.has(k))bm.set(k,String(e.level));}
     const key=c=>bm.get((c.sha256||'').toLowerCase())||bm.get((c.md5||'').toLowerCase());
     WHL.tlv=new Map();list=list.filter(c=>{const k=key(c);if(k!=null){WHL.tlv.set(c.hash,T.symbol+k);return true;}return false;});
-    list.sort((a,b)=>(pos.get(key(a))??999)-(pos.get(key(b))??999)||lvNum(a.level)-lvNum(b.level));}
+    list.sort((a,b)=>(pos.get(key(a))??999)-(pos.get(key(b))??999)||lvNum(a.level)-lvNum(b.level));
+    const ms=wMissing(T);if(ms.length){const all=list.map(c=>({c,p:pos.get(key(c))??999})).concat(ms.map(m=>({c:m,p:pos.get(m.lv)??999})));all.sort((a,b)=>a.p-b.p);list=all.map(x=>x.c);}}
   const ekey=e=>e?(e.hash||e.fid):null;
   const prev=WHL.keepKey||ekey(WHL.cur);WHL.keepKey=null;WHL.list=list;WHL.n=list.length;
   const nc=list.filter(e=>e.hash).length;
-  $('#wCnt').textContent=S.wheelFold&&WHL.path.length?WHL.pathNames.join(' › ')+'　'+L(`${nc} 譜面`,`${nc} charts`):S.wheelFold?L(`${LIBLIST.length} 譜面`,`${LIBLIST.length} charts`):L(`${list.length} 譜面`,`${list.length} charts`);
+  $('#wCnt').textContent=S.wheelFold&&WHL.path.length?WHL.pathNames.join(' › ')+'　'+L(`${nc} 譜面`,`${nc} charts`):S.wheelFold?L(`${LIBLIST.length} 譜面`,`${LIBLIST.length} charts`):(()=>{const n=list.filter(x=>!x.miss).length,m=list.length-n;return L(`${n} 譜面`,`${n} charts`)+(m?L(`＋未所持 ${m}`,` + ${m} missing`):'');})();
   let i=prev?list.findIndex(e=>ekey(e)===prev):-1;
   if(i<0){let sv=null;try{sv=localStorage.getItem(LSK+'wheelSel');}catch(e){}i=sv?list.findIndex(e=>ekey(e)===sv):-1;}
   if(i<0)i=list[0]&&list[0].back&&list.length>1?1:0;cancelAnimationFrame(WHL.raf);WHL.pos=i;WHL.target=null;WHL.lastIdx=-1;
@@ -2860,10 +2869,12 @@ function wheelPaint(){
     r.style.left=(12+ad*ad*(land?8:5))+'px';r.style.transform=`translateY(${(y-hh/2).toFixed(1)}px)`;r.style.opacity=Math.max(0.2,1-ad*0.12);
     if(r.classList.contains('sel')!==sel)r.classList.toggle('sel',sel);r.style.height=hh.toFixed(1)+'px';
     const rk=c.hash||('F'+c.fid+'|'+(c.charts?c.charts.length:''));
-    if(c.fold||c.back){if(r._h!==rk){r._h=rk;r.classList.add('fold');
+    if(c.miss){if(r._h!==rk){r._h=rk;r.classList.remove('fold');
+      r.innerHTML=`<i class="lamp" style="background:transparent"></i><span class="mode">${L('未所持','MISSING')}</span><span class="lv" style="color:var(--dim);border-color:var(--faint)">${esc(c.tl)}</span><span class="t" style="opacity:.55">${esc(c.title)}</span>`;}}
+    else if(c.fold||c.back){if(r._h!==rk){r._h=rk;r.classList.add('fold');
       if(c.back)r.innerHTML=`<span class="lv fold">◀</span><span class="t">${L('戻る','Back')}　<small>${esc(c.name)}</small></span>`;
       else{const cs=c.sub?null:c.charts,cl=cs?cs.filter(x=>((REC[x.hash]||{}).lamp||0)>=3).length:0;
-        r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}</span>`:''}`;}}}
+        r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}${c.mlist&&c.mlist.length?' ＋'+L('未所持','missing')+c.mlist.length:''}</span>`:''}`;}}}
     else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
       r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
   })();}
@@ -2905,6 +2916,10 @@ function wInfoFix(){
 function wheelInfo0(){
   const box=$('#wInfo'),c=WHL.cur;if(!box)return;
   box.classList.remove('hasbg');
+  if(c&&c.miss){box.innerHTML=`<div class="wgenre">${esc(c.T.name)}　${esc(c.tl)}</div><div class="wtitle">${esc(c.title)}</div><div class="hlp" style="margin:0 0 6px">${esc(c.artist)}</div>
+    <div class="hlp">${L('この曲はまだ追加されていません。タップ（決定）で、配布ページを開いて追加する手順を案内します。','This song is not in your library yet. Tap (select) for steps to download and add it.')}</div>
+    <button class="ib pri" id="wMissGo" style="width:auto;padding:0 12px">${L('追加のしかた','How to add')}</button>`;
+    $('#wMissGo').onclick=()=>openGetDlg(c.e,c.T,c.lv);return;}
   if(c&&(c.fold||c.back)){
     if(c.back){box.innerHTML=`<div class="wgenre">FOLDER</div><div class="wtitle">◀ ${L('戻る','Back')}</div><div class="hlp">${L(`「${esc(c.name)}」を閉じて、ひとつ上のフォルダに戻ります（Esc・黒鍵でも戻れます）`,`Close “${esc(c.name)}” and go up (Esc / black key also work)`)}</div>`;return;}
     const cs=c.sub?null:c.charts;let body='';
