@@ -9,18 +9,18 @@ keeps its previous copy.
 import json, os, re, sys, time, urllib.request, urllib.parse
 
 TABLES = [
-    # id, page URL
-    ("normal1", "https://darksabun.github.io/table/archive/normal1/"),
-    ("insane1", "https://darksabun.github.io/table/archive/insane1/"),
+    # id, page URL (alternatives after "|")
+    ("normal1", "https://darksabun.github.io/table/archive/normal1/|https://darksabun.club/table/archive/normal1/|http://www.ribbit.xyz/bms/tables/normal.html"),
+    ("insane1", "https://darksabun.github.io/table/archive/insane1/|https://darksabun.club/table/archive/insane1/|http://www.ribbit.xyz/bms/tables/insane.html"),
     ("normal2", "https://rattoto10.jounin.jp/table.html"),
     ("insane2", "https://rattoto10.jounin.jp/table_insane.html"),
     ("sl", "https://stellabms.xyz/sl/table.html"),
     ("st", "https://stellabms.xyz/st/table.html"),
     ("sr", "https://djkuroakari.github.io/starlighttable.html"),
     ("stardust", "https://mqppppp.neocities.org/ChartView.html"),
-    ("overjoy", "http://lr2.sakura.ne.jp/overjoy.php"),
+    ("overjoy", "http://lr2.sakura.ne.jp/overjoy.php|https://lr2.sakura.ne.jp/overjoy.php|http://www.ribbit.xyz/bms/tables/overjoy.html"),
     ("ln", "http://flowermaster.web.fc2.com/lrnanido/gla/LN.html"),
-    ("luminous", "https://wcko87.github.io/luminous-mirror/"),
+    ("luminous", "https://wcko87.github.io/luminous-mirror/|https://wcko87.github.io/luminous-mirror/table.html|https://ladymade-star.github.io/luminous/table.html"),
     ("scramble", "https://egret9.github.io/Scramble/"),
     ("sara", "http://minddnim.web.fc2.com/sara/3rd_hard/bms_sara_3rd_hard.html"),
 ]
@@ -54,10 +54,19 @@ def fetch_table(page):
     else:
         m = re.search(r"<meta[^>]+name\s*=\s*[\"']bmstable[\"'][^>]*>", text, re.I)
         c = m and re.search(r"content\s*=\s*[\"']([^\"']+)[\"']", m.group(0), re.I)
-        if not c:
-            raise RuntimeError("no bmstable meta")
-        header_url = urllib.parse.urljoin(page, c.group(1))
-        header = load_json(get(header_url))
+        cands = [c.group(1)] if c else []
+        cands += re.findall(r"[\"']([^\"'<>\s]*header[^\"'<>\s]*\.json)[\"']", text, re.I) + ["header.json"]
+        header = None
+        for h in cands:
+            try:
+                header_url = urllib.parse.urljoin(page, h)
+                header = load_json(get(header_url))
+                break
+            except Exception:
+                continue
+        if header is None:
+            snippet = re.sub(r"\s+", " ", text[:400])
+            raise RuntimeError(f"no bmstable meta / header.json (page starts: {snippet})")
     if not header.get("data_url"):
         raise RuntimeError("header has no data_url")
     data = load_json(get(urllib.parse.urljoin(header_url, header["data_url"])))
@@ -75,10 +84,16 @@ def main():
         index = {}
     failed = []
     for tid, page in TABLES:
-        try:
-            header, data = fetch_table(page)
-        except Exception as e:  # keep the previous copy
-            print(f"[skip] {tid}: {e}", file=sys.stderr)
+        header = data = None
+        for url in page.split("|"):
+            try:
+                header, data = fetch_table(url)
+                page = url
+                break
+            except Exception as e:
+                print(f"[try] {tid} {url}: {e}", file=sys.stderr)
+        if header is None:  # keep the previous copy
+            print(f"[skip] {tid}", file=sys.stderr)
             failed.append(tid)
             continue
         d = os.path.join(ROOT, tid)
