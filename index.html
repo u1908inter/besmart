@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1957)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1957)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2004)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2004)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1957)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1957)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2004)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2004)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2653,7 +2653,7 @@ function wheelBuild(){
   if(WHL.built)return;WHL.built=true;const w=$('#wheel');
   w.innerHTML=`<div class="wtop"><div class="wt1"><div class="wlogo">SONG SELECT</div><div class="wcnt" id="wCnt"></div><button class="ib" id="wList" title="${L('リスト表示','List view')}">≡</button><button class="ib" id="wSet">⚙</button><button class="ib" id="wBackBtn" style="display:none" title="${L('戻るの位置へ（もう一度押すと戻る）','Jump to Back (press again to go up)')}">◀ ${L('戻る','Back')}</button><button class="ib" id="wSearch2">🔍</button><button class="ib pri" id="wMenu">☰ ${L('メニュー','Menu')}</button></div>
     <div class="wt2"><label class="ib pri" for="fileIn">${L('＋追加','+ Add')}</label><button class="ib" id="wSearch">🔍</button><button class="ib" id="wFlt">${L('絞り込み','Filter')}</button><button class="ib" id="wRnd">🎲 ${L('おまかせ','Random')}</button><button class="ib" id="wRndC">${L('条件','Cond.')}</button>
-    <button class="ib" id="wFav">☆</button><button class="ib" id="wSortC"></button><select id="wSort" style="display:none"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
+    <button class="ib" id="wFav">☆</button><button class="ib" id="wSortC"></button><select id="wSort" style="display:none"></select><select id="wMode"></select><select id="wTbl"></select><button class="ib" id="wMiss" style="display:none"></button><button class="ib" id="wCourse">${L('コース','Course')}</button><button class="ib" id="wRec">${L('記録','Records')}</button><button class="ib" id="wGuide">${L('曲の探し方','Find songs')}</button><button class="ib" id="wOut"></button></div>
     <div class="wt3" id="wQbar" style="display:none"><input id="wQ" type="search" placeholder="${L('曲名・アーティストで検索','Search title / artist')}"></div>
     <div class="wban" id="wBan" style="display:none"></div><div class="hlp" id="wBarHint" style="display:none;padding:0 10px 4px;margin:0">${L('メニュー操作中：←→／↑↓／皿で選ぶ・Enter／白鍵で決定・Esc／黒鍵で曲選択に戻る','Menu: ←→ / ↑↓ / turntable to move, Enter / white key to select, Esc / black key to go back')}</div></div>
    <div class="wbody"><div class="winfo" id="wInfo"></div><div class="wwheel" id="wWheel"><span class="wcur"></span><div class="widx" id="wIdx" style="display:none"></div></div></div>
@@ -2662,6 +2662,8 @@ function wheelBuild(){
   WHL.syncSel=()=>{cp('#sort','#wSort');cp('#fmode','#wMode');const ts=$('#tblSel'),wt=$('#wTbl');
     if(TABLES.length){wt.style.display='';wt.innerHTML=`<option value="">${L('難易度表なし','No table')}</option>`+TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('');wt.value=S.table||'';
       wt.onchange=()=>{if(ts&&[...ts.options].some(o=>o.value===wt.value)){ts.value=wt.value;ts.dispatchEvent(new Event('change',{bubbles:true}));}else{S.table=wt.value;saveS();renderLibrary();}};}else wt.style.display='none';
+    {const wm=$('#wMiss');wm.style.display=TABLES.length?'':'none';wm.textContent=S.tblMissing?L('未所持：表示','Missing: shown'):L('未所持：隠す','Missing: hidden');wm.classList.toggle('on',!!S.tblMissing);
+      wm.onclick=()=>{S.tblMissing=!S.tblMissing;saveS();const c=$('#tblMiss');if(c)c.checked=S.tblMissing;renderLibrary();};}
     $('#wOut').textContent=$('#outBtn').textContent;const sc=WSORTS.find(x=>x[0]===$('#sort').value);$('#wSortC').textContent=L('並び：','Sort: ')+(sc?sc[1]:'');};
   $('#wList').onclick=()=>{S.libView='list';saveS();renderLibrary();};
   $('#wSet').onclick=()=>$('#setBtn').click();$('#wCourse').onclick=()=>$('#courseBtn').click();$('#wRec').onclick=()=>$('#recBtn').click();
@@ -2820,6 +2822,7 @@ function openWMenu(){
   ov.innerHTML=`<div class="wmbox"><div class="wmhd"><b>MENU</b><button class="ib" id="wmClose">×</button></div>
    <div class="wmsec">${L('曲をえらぶ','Choose songs')}</div>
    <div class="wmgrid"><label><small>${L('ソート','Sort')}</small><select id="wmSort">${opt('#sort')}</select></label><label><small>${L('鍵盤','Keys')}</small><select id="wmMode">${opt('#fmode')}</select></label>
+    ${TABLES.length?`<label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="wmMiss" ${S.tblMissing?'checked':''}><small>${L('難易度表の未所持の曲も表示','Show missing table songs')}</small></label>`:''}
     ${TABLES.length?`<label><small>${L('難易度表','Table')}</small><select id="wmTbl"><option value="">${L('なし','None')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select></label>`:''}
     <button class="wmf" id="wmFlt"><small>${L('絞り込み','Filter')}</small><span>${fn?L(`${fn}件`,`${fn} set`):L('なし','None')} ›</span></button></div>
    ${it('wmFav','★',L('この曲をお気に入りに','Favourite this song'),L('長押しでフォルダにも入れられます','Long-press a row to add to folders'))}
@@ -2840,6 +2843,7 @@ function openWMenu(){
   ov.onclick=e=>{if(e.target===ov)close();};q('#wmClose').onclick=close;
   const bindSel=(id,src)=>{const el=q(id);if(!el)return;el.value=$(src).value;el.onchange=()=>{$(src).value=el.value;$(src).dispatchEvent(new Event('change',{bubbles:true}));};};
   bindSel('#wmSort','#sort');bindSel('#wmMode','#fmode');
+  if(q('#wmMiss'))q('#wmMiss').onchange=e=>{S.tblMissing=e.target.checked;saveS();const c=$('#tblMiss');if(c)c.checked=S.tblMissing;renderLibrary();};
   if(q('#wmTbl')){q('#wmTbl').value=S.table||'';q('#wmTbl').onchange=()=>{$('#wTbl').value=q('#wmTbl').value;$('#wTbl').onchange();};}
   const go=(id,f)=>{const el=q(id);if(el)el.onclick=()=>{close();setTimeout(f,30);};};
   go('#wmFav',wheelFav);go('#wmFlt',()=>$('#wFlt').click());go('#wmRnd',()=>$('#wRnd').click());go('#wmRndC',()=>$('#rndCfg').click());
