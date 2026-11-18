@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.0901)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0901)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.1021)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1021)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.0901)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.0901)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.1021)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.1021)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -964,6 +964,8 @@ function parseRaw(text,rng){
     wav:{},bmp:{},bpms:{},stops:{},scrolls:{},len:{},data:[],maxM:0};
   const randStack=[],ifStack=[],swStack=[];
   const active=()=>ifStack.every(f=>f.on)&&swStack.every(s=>s.on);
+  // #BASE 62: object ids are case-sensitive (00-zz); otherwise ids are base 36 and case does not matter
+  const b62=/^[ \t]*#BASE[ \t]+62\b/im.test(text);P.base62=b62;
   const lines=text.split(/\r\n|\r|\n/);
   for(const raw of lines){
     const line=raw.trim();
@@ -993,7 +995,7 @@ function parseRaw(text,rng){
       continue;
     }
     if((m=line.match(/^#(WAV|BMP|BPM|EXBPM|STOP|SCROLL)([0-9A-Za-z]{2})\s+(.+)$/i))){
-      const k=m[1].toUpperCase(),id=m[2].toUpperCase(),v=m[3].trim();
+      const k=m[1].toUpperCase(),id=b62?m[2]:m[2].toUpperCase(),v=m[3].trim();
       if(k==='WAV')P.wav[id]=v;else if(k==='BMP')P.bmp[id]=v;
       else if(k==='STOP')P.stops[id]=parseFloat(v);
       else if(k==='SCROLL')P.scrolls[id]=parseFloat(v);
@@ -1008,7 +1010,7 @@ function parseRaw(text,rng){
         case 'BPM':{const b=parseFloat(v);if(b>0)P.bpm=b;break;}
         case 'PLAYLEVEL':P.playlevel=v;break;case 'DIFFICULTY':P.difficulty=parseInt(v)||0;break;
         case 'RANK':P.rank=parseInt(v);if(isNaN(P.rank))P.rank=2;break;case 'DEFEXRANK':P.defexrank=parseFloat(v)||0;break;
-        case 'TOTAL':P.total=parseFloat(v)||0;break;case 'LNOBJ':P.lnobj=v.toUpperCase();break;
+        case 'TOTAL':P.total=parseFloat(v)||0;break;case 'LNOBJ':P.lnobj=b62?v.trim():v.toUpperCase();break;
         case 'LNMODE':P.lnmode=parseInt(v)||0;break;case 'PLAYER':P.player=parseInt(v)||1;break;
         case 'VOLWAV':P.volwav=parseFloat(v)||100;break;
         case 'COMMENT':{const c=v.replace(/^"(.*)"$/,'$1').trim();if(c)P.comment=P.comment?P.comment+' '+c:c;break;}
@@ -1058,7 +1060,7 @@ function compileBase(text,ext,rng){
   for(const r of P.data){
     const n=Math.floor(r.str.length/2);if(!n)continue;
     for(let i=0;i<n;i++){
-      const id=r.str.substr(i*2,2).toUpperCase();
+      const id=P.base62?r.str.substr(i*2,2):r.str.substr(i*2,2).toUpperCase();
       if(id==='00')continue;
       evs.push({beat:mBeat[r.m]+4*lenOf(r.m)*i/n,ch:r.ch,id});
     }
