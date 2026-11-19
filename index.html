@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1118.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2331)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1119.2113)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2113)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1118.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1118.2331)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1119.2113)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2113)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -5326,7 +5326,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     const ok=G.record&&!G.failed&&lamp>=3,ch=G.chart,dur=ch.endTime||0,gmin=(G.glog||[]).reduce((m,v)=>Math.min(m,Array.isArray(v)?v[1]:v),100);
     const cur=G.record?{nmHard:!G.failed&&['hard','exhard','hazard'].includes(G.startGauge||S.gauge)&&c.BD+c.PR===0&&G.N>0,acc90:G.N>=300&&c.PG/G.N>=0.9,fc1000:G.N>=1000&&lamp>=7,bpm200:ok&&(ch.maxB||ch.bpm||0)>=200,long:ok&&dur>=180,combo:G.maxCombo,
       noscr:ok&&ch.mode==='7k'&&!G.opts.autoScr&&(G.opts.reduce||'off')==='off',comeback:ok&&gmin<=10,hour:new Date().getHours(),close:ok&&GT[G.cur].border>0&&G.gauges[G.cur].v>=GT[G.cur].border&&G.gauges[G.cur].v<GT[G.cur].border+2,miss1:!G.failed&&c.BD+c.PR===1,
-      lucky7:ex===777,oneGr:!G.failed&&c.GR===1&&c.GD+c.BD+c.PR===0&&c.PG===N-1,grMaster:!G.failed&&N>=50&&c.PG===0&&c.BD+c.PR===0,
+      lucky7:ex===777,oneGr:!G.failed&&c.GR===1&&c.GD+c.BD+c.PR===0&&c.PG===N-1,grMaster:!G.failed&&N>=50&&c.PG===0&&c.BD+c.PR===0&&c.GR+c.GD>=N,
       even:G.fs.f>=20&&G.fs.f===G.fs.s,clock:N>=300&&G.dts.length>=300&&Math.abs(G.dts.reduce((a,b)=>a+b,0)/G.dts.length)<=1,
       draw:!!(R.ghost&&R.ghost.d===0&&ex>0),
       ko:G.failed&&!!GT[G.cur].surv&&G.failAt!=null&&G.failAt-((G.chart.notes[0]||{time:0}).time)<=5,
@@ -5379,6 +5379,7 @@ function showResult(R){
     ${G.replay||G.auto?'':`<button id="rSame">${L('同じ配置でもう一度','Retry with same arrangement')}</button>`}
     ${R.thisReplay?`<button id="rReplay">${L('今のプレイをリプレイ','Watch this play')}</button>`:''}
     <button class="sec" id="rShare">${L('結果を共有','Share result')}</button>
+    ${meta&&meta.hash&&!meta.demo?`<button id="rFav"></button>`:''}
     <button id="rBack">${L('曲選択へ','Back to songs')}</button>
     <button class="ib" id="rGloss" style="margin-top:6px;border:none;color:var(--dim)">${L('？ 用語の説明（SCORE・ランプなど）','? Glossary (score, lamps…)')}</button>`;
   show('#result',true);
@@ -5390,6 +5391,8 @@ function showResult(R){
   if($('#rSame'))$('#rSame').onclick=()=>retry(true);
   $('#rBack').onclick=toLib;
   $('#rShare').onclick=()=>openShare(SH);
+  {const fb=$('#rFav');if(fb){const h=meta.hash,paint=()=>{const f=FAV.has(h);fb.textContent=f?L('★ お気に入り登録済み（押すと解除）','★ In favourites (tap to remove)'):L('☆ この曲をお気に入りに追加','☆ Add this song to favourites');fb.style.color=f?'#fd3':'';};paint();
+    fb.onclick=()=>{if(FAV.has(h))FAV.delete(h);else FAV.add(h);saveFav();paint();toast(FAV.has(h)?L('★ お気に入りに追加しました','★ Added to favourites'):L('お気に入りから外しました','Removed from favourites'),1600);};}}
   if(R.thisReplay)$('#rReplay').onclick=()=>{show('#result',false);startPlay(meta,{replay:R.thisReplay});};
 }
 function renderAdvice(R,meta){
