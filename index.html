@@ -237,7 +237,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1119.2113)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2113)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1119.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2115)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1119.2113)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2113)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1119.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2115)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1776,7 +1776,11 @@ const saveRec=()=>{try{localStorage.setItem(LSK+'rec',JSON.stringify(REC));}catc
 
 const LANG=()=>S.lang==='auto'?((navigator.language||'ja').toLowerCase().startsWith('ja')?'ja':'en'):S.lang;
 const L=(ja,en)=>LANG()==='en'?(en==null?ja:en):ja;
-function applyPhosphor(){document.documentElement.dataset.ph=S.phosphor||'amber';PAL=null;}
+/* theme colour; "random" picks one of the colours at start-up and again for every play */
+const PH_LIST=['amber','green','white','purple','pink','yellow','blue'];let PH_RND=null;
+function phNow(){if(S.phosphor==='random'){if(!PH_RND)PH_RND=PH_LIST[Math.floor(Math.random()*PH_LIST.length)];return PH_RND;}return S.phosphor||'amber';}
+function phReroll(){if(S.phosphor!=='random')return;const o=PH_LIST.filter(x=>x!==PH_RND);PH_RND=o[Math.floor(Math.random()*o.length)];applyPhosphor();}
+function applyPhosphor(){document.documentElement.dataset.ph=phNow();PAL=null;}
 let PAL=null;
 function pal(){if(PAL)return PAL;const cs=getComputedStyle(document.documentElement),v=k=>cs.getPropertyValue(k).trim();PAL={ink:v('--ink')||'#FFB000',hi:v('--hi')||'#FFD466',dim:v('--dim')||'#B57A00',faint:v('--faint')||'#6E4800',bg:v('--bg')||'#140B01',bg2:v('--bg2')||'#2A1804',glow:v('--glow')||'rgba(255,176,0,.55)',alert:v('--alert')||'#FF6A3C'};return PAL;}
 const CLASSIC=()=>S.playSkin==='classic';
@@ -1881,7 +1885,7 @@ function SCHEMA(){return [
  ]},
  {sec:L('画面の色・言語','Colour & language'),items:[
   {k:'playSkin',t:L('プレイ画面のデザイン','Play screen style'),sel:[['crt',L('デフォルト','Default')],['classic',L('ポップ','Pop')],['neon',L('ネオン','Neon')]],h:L('デフォルト：テーマカラーのドット文字。ポップ：白と青の鍵盤にピンクの判定ライン、太い文字。ネオン：黒地に青緑とピンクが光る、くっきりした表示。','Default: pixel text in the theme colour. Pop: white/blue keys, pink judge line, bold type. Neon: black background with glowing cyan and pink.')},
-  {k:'phosphor',t:L('テーマカラー','Theme colour'),h:L('文字・枠線・ノーツなど、画面全体の色（文字の色）を変えます。','Changes the colour of the whole screen: text, frames and notes.'),sel:[['amber',L('オレンジ','Orange')],['green',L('グリーン','Green')],['white',L('ホワイト','White')],['purple',L('パープル','Purple')],['pink',L('ピンク','Pink')],['yellow',L('イエロー','Yellow')],['blue',L('ブルー','Blue')]]},
+  {k:'phosphor',t:L('テーマカラー','Theme colour'),h:L('文字・枠線・ノーツなど、画面全体の色（文字の色）を変えます。','Changes the colour of the whole screen: text, frames and notes.'),sel:[['amber',L('オレンジ','Orange')],['green',L('グリーン','Green')],['white',L('ホワイト','White')],['purple',L('パープル','Purple')],['pink',L('ピンク','Pink')],['yellow',L('イエロー','Yellow')],['blue',L('ブルー','Blue')],['random',L('ランダム（プレイごとに変わる）','Random (changes every play)')]]},
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
@@ -4093,6 +4097,7 @@ async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
   GHOST=null;
+  phReroll();
   // a preview that is playing or still loading must not carry over into the game
   clearTimeout(WHL.pvT);stopPreview();
   if(BT){bAct(0);BT=null;hold=new Map();}
@@ -5334,7 +5339,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
       hazard:ok&&G.cur==='hazard'&&!G.gauges.hazard.dead,mash:ok&&c.KP>=100,frank:ok&&rankOf(rate)==='F',pause10:(G.pauses||0)>=10,
       same10:(()=>{const d=dayKey();if(!ACHC.sd||ACHC.sd.d!==d)ACHC.sd={d,h:{}};ACHC.sd.h[hash]=(ACHC.sd.h[hash]||0)+1;return ACHC.sd.h[hash]>=10;})()}:{hour:new Date().getHours()};
     // colours and styles used, and the random-pick streak
-    {const ph=ACHC.ph||(ACHC.ph=[]),sk=ACHC.sk||(ACHC.sk=[]);if(!ph.includes(S.phosphor))ph.push(S.phosphor);if(!sk.includes(S.playSkin))sk.push(S.playSkin);}
+    {const ph=ACHC.ph||(ACHC.ph=[]),sk=ACHC.sk||(ACHC.sk=[]);if(!ph.includes(phNow()))ph.push(phNow());if(!sk.includes(S.playSkin))sk.push(S.playSkin);}
     if(G.record){if(RND_HASH&&hash===RND_HASH)ACHC.rs=ok?(ACHC.rs||0)+1:0;else ACHC.rs=0;RND_HASH=null;}
     saveC();
     R.ach=checkAch(R,cur);}catch(e){console.warn('ach',e);}}
