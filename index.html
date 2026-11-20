@@ -250,7 +250,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2115)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2135)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2135)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -869,7 +869,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2115)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2135)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2135)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3459,21 +3459,24 @@ async function playPreview(c){
     const t0=peakStart(nt.length?nt:base.bgm.map(x=>x.time),end,PV_DUR),t1=t0+PV_DUR;
     const evs=[...base.notes.filter(n=>n.id),...base.bgm];
     const cnt=new Map();for(const e of evs)cnt.set(e.id,(cnt.get(e.id)||0)+1);
-    // sounds in the window, plus rarely-used earlier sounds that may still be ringing (e.g. one long BGM file)
-    const pick=evs.filter(e=>(e.time>=t0&&e.time<t1)||(e.time<t0&&cnt.get(e.id)<=4));
+    // sounds in the window, plus a few earlier background sounds that may still be ringing (e.g. one long BGM file).
+    // Only BGM-channel sounds used once or twice, and only the latest 24 of them: fully keysounded songs use
+    // thousands of one-shot sounds, and taking all of them pushed the window's own sounds out of the load list.
+    const early=base.bgm.filter(e=>e.time<t0&&cnt.get(e.id)<=2).sort((a,b)=>b.time-a.time).slice(0,24);
+    const pick=evs.filter(e=>e.time>=t0&&e.time<t1).concat(early);
     // load sounds in the order they are heard, and start as soon as the opening is ready:
     // sounds that finish loading later are added while the preview is already playing
     const first=new Map();for(const e of pick){const k=e.time<t0?-1:e.time;if(!first.has(e.id)||k<first.get(e.id))first.set(e.id,k);}
-    const ids=[...first.keys()].sort((a,b)=>first.get(a)-first.get(b)).slice(0,400);
+    const ids=[...first.keys()].sort((a,b)=>first.get(a)-first.get(b)).slice(0,1500);
     const byId=new Map();for(const e of pick){if(!byId.has(e.id))byId.set(e.id,[]);byId.get(e.id).push(e);}
     const bufs={},byName=new Map();
-    const loadFile=ff=>{const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).catch(()=>null));return bufCache.get(key);};
+    const loadFile=ff=>{const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).then(b=>{if(!b)bufCache.delete(key);return b;}).catch(()=>{bufCache.delete(key);return null;}));return bufCache.get(key);};
     const loadId=async id=>{
       if(base.slices){const sl=base.slices[id];if(!sl)return null;if(!byName.has(sl.name)){const ff=ix.resolve(c.dir,sl.name);byName.set(sl.name,ff?loadFile(ff):Promise.resolve(null));}
         const bb=await byName.get(sl.name);return bb?{b:bb,off:sl.off,dur:sl.dur}:null;}
       if(!base.P.wav[id])return null;const ff=ix.resolve(c.dir,base.P.wav[id]);if(!ff)return null;
       const bb=await loadFile(ff);return bb?{b:bb,off:0,dur:bb.duration}:null;};
-    let g=null,now=0;const srcs=[];
+    let g=null,now=0,srcs=[];
     const sched=id=>{const bf=bufs[id];if(!bf||!g)return;
       for(const e of byId.get(id)||[]){let when=now+(e.time-t0),skip=0;
         if(e.time<t0){skip=t0-e.time;when=now;}
@@ -3483,23 +3486,30 @@ async function playPreview(c){
         try{sr.start(when,bf.off+skip,Math.max(0.01,Math.min(bf.dur-skip,now+PV_DUR-when)));srcs.push(sr);}catch(err){}}};
     const opening=new Set(ids.filter(id=>first.get(id)<t0+2));
     let openLeft=opening.size,openDone;const openP=new Promise(r=>{openDone=r;if(!openLeft)r();});
-    const q=ids.slice();
+    const q=ids.slice(),tried=new Set();
     const worker=async()=>{while(q.length&&alive()){const id=q.shift();let bf=null;try{bf=await loadId(id);}catch(e){}
       if(bf){bufs[id]=bf;if(g&&alive())sched(id);}
-      if(opening.has(id)&&--openLeft<=0)openDone();}};
-    const all=Promise.all([1,2,3,4,5,6].map(worker));
+      if(opening.has(id)&&!tried.has(id)&&--openLeft<=0)openDone();tried.add(id);}};
+    const runWorkers=()=>Promise.all([1,2,3,4,5,6].map(worker));
+    const all=runWorkers();
     // wait for the opening sounds (at most 1.5 s), then start
     await Promise.race([openP,all,new Promise(r=>setTimeout(r,1500))]);
     if(!alive())return;
-    g=actx.createGain();now=actx.currentTime+0.1;const vol=S.volM*0.8*((base.P.volwav||100)/100);
-    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.6);
-    g.gain.setValueAtTime(vol,now+PV_DUR-2.5);g.gain.linearRampToValueAtTime(0,now+PV_DUR);
-    g.connect(actx.destination);
-    for(const id of Object.keys(bufs))sched(id);
-    pvSrcs=srcs;pvGain=g;
-    const mm=Math.floor(t0/60),ss=String(Math.floor(t0%60)).padStart(2,'0');
-    pvLabel(L(`♪ 自動プレビュー（${mm}:${ss}〜）`,`♪ Auto preview (from ${mm}:${ss})`));
-    setTimeout(()=>{if(tok===pvTok){pvSrcs=[];pvGain=null;pvLabel('');}},PV_DUR*1000+300);
+    const vol=S.volM*0.8*((base.P.volwav||100)/100),mm=Math.floor(t0/60),ss=String(Math.floor(t0%60)).padStart(2,'0');
+    // the preview repeats while the song stays selected; sounds that were still loading during one pass,
+    // or failed once, are tried again and play in full on the next pass
+    let pass=0;
+    const startPass=()=>{if(!alive()){if(tok===pvTok){pvSrcs=[];pvGain=null;pvLabel('');}return;}
+      if(pass>0){const miss=ids.filter(id=>!bufs[id]);if(miss.length&&pass<3){q.push(...miss);runWorkers();}}
+      pass++;srcs=[];g=actx.createGain();now=actx.currentTime+0.1;
+      g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.6);
+      g.gain.setValueAtTime(vol,now+PV_DUR-2.5);g.gain.linearRampToValueAtTime(0,now+PV_DUR);
+      g.connect(actx.destination);
+      for(const id of Object.keys(bufs))sched(id);
+      pvSrcs=srcs;pvGain=g;
+      pvLabel(L(`♪ 自動プレビュー（${mm}:${ss}〜）`,`♪ Auto preview (from ${mm}:${ss})`));
+      const gg=g;setTimeout(()=>{if(tok!==pvTok)return;try{gg.disconnect();}catch(e){}startPass();},PV_DUR*1000+400);};
+    startPass();
   }catch(e){if(tok===pvTok)pvLabel('');}
 }
 function densityCanvas(c){
