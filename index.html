@@ -250,7 +250,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2135)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2135)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2331)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -869,7 +869,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2135)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2135)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2331)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1771,7 +1771,7 @@ function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=Strin
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,uiFont:'dot',bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,uiFont:'dot',bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'menu',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:'',statMode:''};
@@ -1844,7 +1844,7 @@ function SCHEMA(){return [
   {k:'wheelFold',t:L('ホイールをフォルダで分ける','Wheel folders'),b:1,h:L('ONにすると、ホイールの最初に「未プレイ」「クリア済み」「☆レベル別」「難易度表のレベル別」などのフォルダが並び、選ぶと中の曲が出ます。','Shows folders such as Not played, Cleared, by level and by table level at the top of the wheel.')},
   {k:'wheelGroup',t:L('ホイールで1曲を1行にまとめる','One row per song'),b:1,h:L('同じ曲の難易度違い（NORMAL・HYPERなど）を1行にまとめ、左右で切り替えます。選んだ難易度は次の曲にも引き継がれます。','Groups difficulties of the same song into one row; switch with left/right. Your difficulty carries over to the next song.')},
   {k:'wheelSe',t:L('曲選択の効果音','Song select sounds'),b:1,h:L('ホイールを回したときの「カチッ」という音と、決定したときの音です。','Tick when the wheel moves and a sound when you decide.')},
-  {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['bar',L('上のバーに並べる（標準）','Top bar (standard)')],['menu',L('メニューボタンにまとめる','One menu button')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
+  {k:'wheelMenu',t:L('ホイール画面のボタン','Wheel screen buttons'),sel:[['menu',L('メニューボタンにまとめる（標準）','One menu button (standard)')],['bar',L('上のバーに並べる','Top bar')]],h:L('ホイール型の曲選択で、追加・絞り込み・おまかせ・設定などのボタンを、上のバーに並べるか、☰メニューの中にまとめるかを選びます。メニューにすると画面が広く使えます。','On the wheel screen, show the buttons in a top bar or gather them in a ☰ menu for more room.')},
   {k:'preview',t:L('曲のプレビュー','Song preview'),sel:[['auto',L('自動（なければ盛り上がりを再生）','Auto (busiest part if none)')],['file',L('プレビュー音源があるときだけ','Only with a preview file')],['off','OFF']],h:L('曲の詳細を開くと試聴が流れます。プレビュー音源がない曲は、譜面のいちばん盛り上がる約20秒を自動で選んで再生します。','Plays a preview when you open a song. Songs without a preview file play the busiest ~20 seconds of the chart.')},
  ]},
  {sec:L('アシスト','Assist'),items:[
@@ -5955,6 +5955,7 @@ function drawTimingGraph(cv){
 
 /* ---------- boot ---------- */
 if(PLICY){const n=document.getElementById('plicyNote');if(n)n.style.display='';}
+try{if(!localStorage.getItem(LSK+'mig_wmenu')){localStorage.setItem(LSK+'mig_wmenu','1');if(S.wheelMenu!=='menu'){S.wheelMenu='menu';saveS();}}}catch(e){}
 applyFont();applyPhosphor();applyI18n();renderOut();
 refreshLibrary().then(addBuiltinSongs);
 /* built-in songs: each is added once; if the player deletes it, it stays deleted */
