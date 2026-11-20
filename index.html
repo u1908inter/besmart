@@ -145,6 +145,7 @@ canvas{display:block;touch-action:none}
 .rank{font:400 80px/1 var(--font);text-align:center;color:var(--hi);text-shadow:0 0 14px var(--glow)}
 .new{display:inline-block;background:var(--ink);color:var(--bg);font:400 11px/1.4 var(--font);padding:0 4px;margin-left:6px;vertical-align:middle;text-shadow:none}
 .graph{width:100%;height:110px;border:2px solid var(--faint);margin:6px 0;touch-action:pan-y}
+.traits{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.traits span{font-size:11px;padding:1px 6px;border:1px solid var(--dim);color:var(--hi);border-radius:2px;white-space:nowrap}
 .ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
 .ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
 .ldist .bar2 i{display:block;height:100%}
@@ -237,7 +238,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1119.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2115)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.0959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.0959)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -856,7 +857,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1119.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1119.2115)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.0959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.0959)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2715,9 +2716,44 @@ function wMissing(T,lvOnly){if(!S.tblMissing)return [];
     out.push({fid:'m:'+(e.sha256||e.md5),miss:true,e,T,lv,title:e.title||'',artist:e.artist||'',tl:T.symbol+lv});}
   return out;}
 function wTableKeyMap(T){const bm=new Map();for(const e of T.data){const lv=String(e.level);if(e.sha256)bm.set('s'+String(e.sha256).toLowerCase(),lv);if(e.md5)bm.set('m'+String(e.md5).toLowerCase(),lv);}return c=>bm.get('s'+(c.sha256||'').toLowerCase())||bm.get('m'+(c.md5||'').toLowerCase());}
+/* ---------- helping beginners choose songs ---------- */
+const lampOf=c=>(REC[c.hash]||{}).lamp||0;
+const npsOf=c=>c.notesN&&c.endTime?c.notesN/Math.max(10,c.endTime):0;
+/* skill level: the 3rd-highest level among cleared charts (or the highest if fewer) */
+function skillLevel(list){const lv=list.filter(c=>lampOf(c)>=3).map(c=>lvNum(c.level)).filter(x=>x>=0).sort((a,b)=>b-a);return lv.length?lv[Math.min(2,lv.length-1)]:0;}
+/* songs that suit the player now: around their level, not cleared yet; for a new player, the lightest songs */
+function justRight(list,n=30){
+  const pool=list.filter(c=>c.hash&&!c.demo);const sk=skillLevel(pool);
+  if(!sk)return pool.filter(c=>lampOf(c)<3).sort((a,b)=>npsOf(a)-npsOf(b)||(a.endTime||0)-(b.endTime||0)).slice(0,n);
+  for(const w of [1,2,3]){const c=pool.filter(c=>{const l=lvNum(c.level);return l>=0&&Math.abs(l-sk)<=w&&lampOf(c)<3;});
+    if(c.length>=Math.min(5,n)||w===3)return c.sort((a,b)=>{const da=lvNum(a.level)-sk,db=lvNum(b.level)-sk,ra=da===0?0:da>0?1:2,rb=db===0?0:db>0?1:2;
+      return ra-rb||(lampOf(a)?1:0)-(lampOf(b)?1:0)||npsOf(a)-npsOf(b);}).slice(0,n);}
+  return [];}
+/* what to play next after a result: a bit harder after a clear, a bit easier after a fail */
+function nextPicks(meta,cleared){
+  const L0=lvNum(meta.level),pool=CHARTS.filter(c=>c.hash&&c.hash!==meta.hash&&!c.demo&&c.mode===meta.mode&&lampOf(c)<3);if(L0<0)return [];
+  const d=c=>lvNum(c.level)-L0;
+  let cand=cleared?pool.filter(c=>d(c)>=0&&d(c)<=3&&!(d(c)===0&&npsOf(c)<npsOf(meta)*0.9)):pool.filter(c=>d(c)<=0&&d(c)>=-4&&!(d(c)===0&&npsOf(c)>=npsOf(meta)));
+  cand.sort((a,b)=>(cleared?d(a)-d(b):d(b)-d(a))||(lampOf(a)?1:0)-(lampOf(b)?1:0)||(cleared?npsOf(a)-npsOf(b):npsOf(a)-npsOf(b)));
+  const seen=new Set(),out=[];for(const c of cand){const k=c.title+'|'+c.artist;if(seen.has(k))continue;seen.add(k);out.push(c);if(out.length>=3)break;}
+  return out;}
+/* a short description of a chart, from its notes radar */
+function chartTraits(c){const r=c.radar;if(!r)return [];const t=[];
+  if(r.notes<25&&r.peak<40)t.push(L('ノーツ少なめでやさしい','Few notes, gentle'));
+  else if(r.notes>=80)t.push(L('全体的にノーツが多い','Lots of notes throughout'));
+  if(r.peak>=60&&r.peak>=r.notes*2)t.push(L('一部だけ急に忙しくなる','One part gets suddenly busy'));
+  if(r.chord>=45)t.push(L('同時押しが多め','Many chords'));
+  if(r.scratch>=40&&MODES[c.mode]&&MODES[c.mode].scr.length)t.push(L('皿が多い','Lots of scratch'));
+  if(r.charge>=40)t.push(L('ロングノーツが多い','Many long notes'));
+  if(r.soflan>=30)t.push(L('途中で速さが変わる','Speed changes'));
+  const bpm=c.mainB||c.bpm;if(bpm>=180)t.push(L('テンポ速め','Fast tempo'));else if(bpm&&bpm<=110)t.push(L('テンポゆっくり','Slow tempo'));
+  if(c.endTime&&c.endTime<90)t.push(L('短め（1分半以内）','Short (under 1:30)'));else if(c.endTime>180)t.push(L('長め（3分以上）','Long (3 min+)'));
+  return t.slice(0,4);}
+const traitsHTML=c=>{const t=chartTraits(c);return t.length?`<div class="traits">${t.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:'';};
 function wheelRootFolders(){
   const all=LIBLIST,lp=c=>(REC[c.hash]||{}).lamp||0,F=[];
   const add=(fid,ic,name,charts,sub)=>{if(sub||charts.length)F.push({fid,fold:true,ic,name,charts:charts||[],sub});};
+  add('just','🎯',L('ちょうどいい曲','Songs for you'),justRight(all));
   add('all','💿',L('すべての曲','All songs'),all);
   add('fav','★',L('お気に入り','Favourites'),all.filter(c=>FAV.has(c.hash)));
   FOLDERS.forEach(f=>add('u:'+f.name,'📁',f.name,all.filter(c=>f.hashes.includes(c.hash))));
@@ -2946,7 +2982,7 @@ function wheelInfo0(){
   const ranks=['F','E','D','C','B','A','AA','AAA'],ri=rate>=8/9?7:rate>=7/9?6:rate>=6/9?5:rate>=5/9?4:rate>=4/9?3:rate>=3/9?2:rate>=2/9?1:0;
   const lampN=LAMPS[r.lamp||0]||'NO PLAY';
   box.innerHTML=`<div class="whead"><div style="flex:1;min-width:0"><div class="wgenre">${esc(c.genre||'')}&nbsp;</div><div class="wtitle">${esc(c.title)}</div>${c.subtitle?`<div class="wsub">${esc(c.subtitle)}</div>`:''}
-     <div class="wart">${esc(c.artist||'')}　<span>BPM ${bpm}</span>　<span>${c.notesN} notes</span></div>${c.comment?`<div class="wart" style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💬 ${esc(c.comment)}</div>`:''}</div>${c.thumb?`<img class="wthumb" src="${c.thumb}" alt="">`:''}</div>
+     <div class="wart">${esc(c.artist||'')}　<span>BPM ${bpm}</span>　<span>${c.notesN} notes</span></div>${traitsHTML(c)}${c.comment?`<div class="wart" style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💬 ${esc(c.comment)}</div>`:''}</div>${c.thumb?`<img class="wthumb" src="${c.thumb}" alt="">`:''}</div>
    <div class="wdfs">${df}</div>${unk?`<div class="hlp" style="margin:-4px 0 6px">${L('この譜面は難易度名なし','No difficulty name')}：☆${esc(String(c.level??'?'))}</div>`:''}
    <div class="wscore"><div class="sr"><span>CLEAR</span><span style="color:${r.lamp?LAMPC[r.lamp]:'var(--dim)'};text-shadow:0 0 8px ${r.lamp?LAMPC[r.lamp]:'transparent'}">${esc(lampN)}</span></div>
     <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
@@ -3477,7 +3513,7 @@ async function openDetail(c){
     <div style="display:flex;gap:8px;align-items:flex-start"><div class="dt" style="flex:1"><span class="lv d${c.difficulty||0}">${DIFN()[c.difficulty]||''} ☆${esc(c.level||'?')}</span><br>${esc(c.title)} ${esc(c.subtitle||'')}</div>
       <button class="ib" id="dFld" style="width:auto;margin:0;font-size:18px" title="${L('フォルダ','Folder')}">📁</button><button class="ib" id="dFav" style="width:auto;margin:0;font-size:20px;color:${fav?'#fd3':'#889'}">${fav?'★':'☆'}</button></div>
     <div id="dFldBox" class="card" style="display:none;padding:8px 10px;margin:6px 0"></div>
-    <div class="ds">${esc(c.artist||'')} ${esc(c.subartist||'')}${c.genre?' ／ '+esc(c.genre):''}</div>${c.comment?`<div class="ds" style="opacity:.8">💬 ${esc(c.comment)}</div>`:''}
+    <div class="ds">${esc(c.artist||'')} ${esc(c.subartist||'')}${c.genre?' ／ '+esc(c.genre):''}</div>${c.comment?`<div class="ds" style="opacity:.8">💬 ${esc(c.comment)}</div>`:''}${traitsHTML(c)}
     <div class="grid"><span class="k">${L('鍵盤','Keys')}</span><span>${c.mode.toUpperCase()}</span><span class="k">BPM</span><span>${bpm}</span>
       <span class="k">${L('ノーツ','Notes')}</span><span>${c.notesN}${c.ln?`（LN ${c.ln}）`:''}${c.mines?` ${L('地雷','mines ')}${c.mines}`:''}</span><span class="k">${L('判定','Judge')}</span><span>${c.defexrank?'RANK '+c.defexrank+'%':rk}</span>
       <span class="k">TOTAL</span><span>${c.total||L('自動','auto')}</span><span class="k">${L('長さ','Length')}</span><span>${Math.floor(c.endTime/60)}:${String(Math.floor(c.endTime%60)).padStart(2,'0')}</span></div>
@@ -5378,6 +5414,7 @@ function showResult(R){
     </div>
     ${R.ach&&R.ach.length?`<div class="advc"><b>🏆 ${L('実績を達成','Achievement unlocked')}</b>${R.ach.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:''}
     <div id="advBox"></div>
+    <div id="nextBox"></div>
     <div class="hlp">${L('ゲージ推移','Gauge history')}</div><canvas class="graph" id="gGraph"></canvas>
     <div class="hlp">${L('タイミング分布（左＝早い／右＝遅い）','Timing (left = early / right = late)')}</div><canvas class="graph" id="tGraph"></canvas>
     <button class="pri" id="rRetry">${L('もう一度','Retry')}</button>
@@ -5390,6 +5427,9 @@ function showResult(R){
   show('#result',true);
   $('#rGloss').onclick=openGloss;
   try{renderAdvice(R,meta);}catch(e){console.warn(e);}
+  try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice){const ok=!G.failed&&(R.lamp==null||R.lamp>=3),pk=nextPicks(meta,ok);
+    if(pk.length){const nb=$('#nextBox');nb.innerHTML=`<div class="advc"><b>${ok?L('🎯 次はこの曲はどう？（少しだけ難しい）','🎯 Try next (a little harder)'):L('🎯 次はこの曲はどう？（少しやさしめ）','🎯 Try next (a little easier)')}</b>${pk.map(c=>`<button class="ib" data-nx="${c.hash}" style="display:block;width:100%;text-align:left;margin:4px 0;padding:6px 8px;height:auto;white-space:normal"><b>${esc((c.level!=null?'☆'+c.level+' ':'')+c.title)}</b><br><small style="opacity:.75">${esc(chartTraits(c).slice(0,2).join('・')||c.artist||'')}</small></button>`).join('')}</div>`;
+      nb.querySelectorAll('[data-nx]').forEach(b=>b.onclick=()=>{const c=CHARTS.find(x=>x.hash===b.dataset.nx);if(!c)return;toLib();setTimeout(()=>openDetail(c),60);});}}}catch(e){console.warn(e);}
   const SH=snapResult(R);
   requestAnimationFrame(()=>{drawGaugeGraph($('#gGraph'));drawTimingGraph($('#tGraph'));});
   $('#rRetry').onclick=()=>retry(false);
