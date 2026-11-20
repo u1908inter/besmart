@@ -244,7 +244,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1038)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1148)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1148)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -863,7 +863,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1038)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1148)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1148)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1762,7 +1762,7 @@ function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=Strin
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:'',statMode:''};
@@ -1856,6 +1856,7 @@ function SCHEMA(){return [
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
   {k:'ghost',t:L('ゴースト','Ghost'),sel:[['off','OFF'],['on',L('スコア差','Score gap')],['lane',L('スコア差＋レーン','Gap + lanes')]],h:L('自己ベストのリプレイと同時に競います。スコア差を判定の下に表示し、リザルトで勝敗を出します。「＋レーン」はゴーストが押したレーンを判定ラインの上に半透明で表示します（通常プレイで、自己ベストのリプレイがある曲のみ）','Race your best replay: the score gap shows under the judgement and the result says WIN or LOSE. Gap + lanes also marks where the ghost pressed (normal plays with a saved best replay only)')},
+  {k:'bpmWarn',t:L('速さが変わる前に予告','Warn before speed changes'),b:1,h:L('BPMが大きく変わる場所や、ノーツが止まる場所（STOP）の少し前に、画面に予告を出します。','Shows a notice shortly before big BPM changes and stops.')},
   {k:'earlyGhost',t:L('早押しで消えたノーツを薄く残す','Keep early-hit notes faintly'),b:1,h:L('早く押しすぎてBAD・GOODになったノーツを、判定ラインに届くまで薄く表示します。判定は変わりません。リズムの目印が急になくならないので、立て直しやすくなります。','Notes hit too early (BAD/GOOD) stay faintly visible until they reach the line. Judgement is unchanged.')},
   {k:'celebrate',t:L('フルコンボ演出','Full combo effect'),b:1},
   {k:'fps',t:L('フレームレート','Frame rate'),sel:[['auto',L('自動（画面の最大）','Auto (display max)')],['120','120fps'],['60','60fps'],['30',L('30fps（省電力）','30fps (battery saver)')]],h:L('判定は音の時計とタッチの瞬間で行うので、fpsを下げても判定の精度は変わりません。','Judging uses the audio clock and touch time, so lowering fps does not affect accuracy.')},
@@ -2532,9 +2533,12 @@ async function fetchText(u){
   if(!r.ok)throw new Error(`HTTP ${r.status}: ${u}`);
   return stripBom(await r.text());
 }
+function normCourses(raw){const out=[];const walk=x=>{if(Array.isArray(x)){x.forEach(walk);return;}
+  if(x&&typeof x==='object'&&(Array.isArray(x.md5)||Array.isArray(x.sha256)))out.push({name:String(x.name||'Course'),md5:(x.md5||[]).map(v=>String(v).toLowerCase()),sha256:(x.sha256||[]).map(v=>String(v).toLowerCase()),cons:Array.isArray(x.constraint)?x.constraint.map(String):[]});};
+  walk(raw);return out.slice(0,80);}
 function normTable(url,header,data){
   if(!Array.isArray(data))throw new Error(L('表のデータの形式が正しくありません','Unexpected table data format'));
-  return {url,name:String(header.name||url),symbol:String(header.symbol||''),levelOrder:header.level_order||null,updated:Date.now(),
+  return {url,name:String(header.name||url),symbol:String(header.symbol||''),levelOrder:header.level_order||null,updated:Date.now(),courses:normCourses(header.course),
     data:data.filter(e=>e&&(e.md5||e.sha256)).map(e=>({md5:e.md5||'',sha256:e.sha256||'',level:String(e.level??'?'),title:e.title||'',artist:e.artist||'',url:e.url||'',url_diff:e.url_diff||'',comment:e.comment||''}))};
 }
 async function addTableUrl(raw){
@@ -3543,6 +3547,7 @@ async function openDetail(c){
       <div class="row"><span>${L('自分の名前','Your name')}</span><input id="dPname" maxlength="20" style="max-width:55%" placeholder="PLAYER"></div>
       <button id="dRepOut" ${rep?'':'disabled style="opacity:.4"'}>${L('自分のベストを書き出す（友達に送る）','Export my best (send to a friend)')}</button>
       <div class="hlp">${L('書き出したファイルを送り、相手が同じ曲で「ライバルのリプレイを読み込む」から選ぶと対戦できます。ゴーストは設定 → ゴースト がOFF以外のときに出ます。','Send the file; your friend picks it with “Load a rival replay” on the same song. The ghost appears when Settings → Ghost is not OFF.')}</div></div></details>`}
+    <div id="dWeak"></div><div id="dPats"></div>
     <details class="card" style="margin-top:6px"><summary>${L('練習モード','Practice')}</summary><div class="in">
       <div class="row"><span>${L('開始小節','Start measure')}</span><input type="range" id="pM" min="0" max="${Math.max(0,(c.measures||2)-2)}" step="1" value="0"><output id="pMo">0</output></div>
       <div class="row"><span>${L('終了小節','End measure')}</span><input type="range" id="pE" min="0" max="${Math.max(0,(c.measures||2)-1)}" step="1" value="${Math.max(0,(c.measures||2)-1)}"><output id="pEo"></output></div>
@@ -3582,6 +3587,16 @@ async function openDetail(c){
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
   if(rep)$('#dRep').onclick=()=>{close();startPlay(c,{replay:rep});};
+  try{const red=(c.mode==='7k'||c.mode==='5k')?S.reduce:'off',W=weakSecs(msecLoad()[msecKeyOf(c.hash,red)]),wb=$('#dWeak');
+    if(W&&W.pick&&W.pick.length){wb.innerHTML=`<details class="card" style="margin-top:6px"><summary>🧭 ${L('苦手な区間','Weak sections')}</summary><div class="in">${weakHTML(W)}</div></details>`;bindWeak(wb,c,c.measures||W.agg.length,close);}
+    const pl=patsLoad()[c.hash]||[],pb=$('#dPats');
+    if(pl.length){pb.innerHTML=`<details class="card" style="margin-top:6px"><summary>☆ ${L('保存した配置','Saved patterns')}（${pl.length}）</summary><div class="in">
+      ${pl.map((o,i)=>`<div class="row" style="gap:6px"><span><b>${esc(o.p)}</b> <small style="color:${LAMPC[o.lp||0]}">${o.f?'FAILED':LAMPS[o.lp||0]}</small> <small>${rankOf(o.r)} ${(o.r*100).toFixed(2)}%${o.red?' / '+esc(RED_N[o.red]||o.red):''}</small></span>
+        <span style="white-space:nowrap"><button class="ib" data-pu="${i}" style="width:auto;padding:0 10px">${S.arr==='custom'&&S.arrPat===o.p?L('使用中','In use'):L('使う','Use')}</button><button class="ib" data-pd="${i}" style="width:auto;padding:0 8px">✕</button></span></div>`).join('')}
+      <div class="hlp" style="margin:4px 0 0">${L('「使う」で、配置を「RANDOM（並びを指定）」にしてこの並びで遊びます。','“Use” sets the arrangement to RANDOM (fixed pattern) with this order.')}</div></div></details>`;
+      pb.querySelectorAll('[data-pu]').forEach(b=>b.onclick=()=>{const o=pl[+b.dataset.pu];S.arr='custom';S.arrPat=o.p;saveS();toast(L(`配置を ${o.p} にしました`,`Pattern set to ${o.p}`));openDetail(c);});
+      pb.querySelectorAll('[data-pd]').forEach(b=>b.onclick=()=>{pl.splice(+b.dataset.pd,1);patsLoad()[c.hash]=pl;if(!pl.length)delete PATS[c.hash];patsSave();openDetail(c);});
+      }}catch(e){console.warn(e);}
   $('#dPrac').onclick=()=>{close();const en=+pE.value>=+pE.max?null:+pE.value;startPlay(c,{practice:{measure:+pM.value,rate:+pR.value,end:en,loop:$('#pL').value==='1',step:+$('#pU').value}});};
   if($('#dDel'))$('#dDel').onclick=async()=>{
     const n=CHARTS.filter(x=>x.archiveId===c.archiveId).length;
@@ -4070,9 +4085,48 @@ let COURSES=[];try{COURSES=JSON.parse(localStorage.getItem(LSK+'course')||'[]');
 const saveCourses=()=>{try{localStorage.setItem(LSK+'course',JSON.stringify(COURSES));}catch(e){}};
 let CS=null,cEdit=null;
 const findChart=it=>CHARTS.find(c=>c.key===it.key)||CHARTS.find(c=>c.hash===it.hash);
+const djb=s=>{let h=5381;for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36);};
+function tblCourses(){
+  const byM=new Map(),byS=new Map();for(const c of CHARTS){if(c.md5)byM.set(c.md5.toLowerCase(),c);if(c.sha256)byS.set(c.sha256.toLowerCase(),c);}
+  const out=[];
+  for(const T of TABLES){if(!Array.isArray(T.courses)||!T.courses.length)continue;
+    const eM=new Map(),eS=new Map();for(const e of T.data){if(e.md5)eM.set(e.md5.toLowerCase(),e);if(e.sha256)eS.set(e.sha256.toLowerCase(),e);}
+    const list=T.courses.map(k=>{const n=Math.max(k.md5.length,k.sha256.length),items=[],miss=[];
+      for(let j=0;j<n;j++){const c=(k.sha256[j]&&byS.get(k.sha256[j]))||(k.md5[j]&&byM.get(k.md5[j]))||null,e=(k.sha256[j]&&eS.get(k.sha256[j]))||(k.md5[j]&&eM.get(k.md5[j]))||null;
+        if(c)items.push({key:c.key,hash:c.hash,title:c.title+(c.subtitle?' '+c.subtitle:'')});else{items.push({title:e?e.title:'?'});miss.push(e);}}
+      return {co:{id:'t'+djb(T.url+'|'+k.name),name:k.name,grade:true,cons:k.cons,items},miss};});
+    out.push({T,list});}
+  return out;}
+function renderTblCourses(box){
+  const tc=tblCourses(),need=TABLES.filter(t=>t.courses===undefined&&/^https?:/.test(t.url));
+  if(!tc.length&&!need.length)return;
+  const w=document.createElement('div');
+  w.innerHTML=`<h3 style="margin:2px 0 4px">🎓 ${L('難易度表の段位コース','Dan courses from tables')}</h3>
+    <div class="hlp" style="margin:0 0 6px">${L('追加した難易度表に入っている段位認定です。ゲージはHARD（曲をまたいで引き継ぎ）、配置は正規かMIRRORだけ、鍵盤の変換はなしで遊びます。','Dan courses included in your tables. HARD gauge carried across songs, normal or MIRROR only, no key conversion.')}</div>
+    ${need.length?`<button class="sec" id="tcLoad">${L(`難易度表を更新して段位コースを読み込む（${need.length}表）`,`Update tables to load dan courses (${need.length})`)}</button>`:''}`;
+  for(const {T,list} of tc){
+    const cl=list.filter(x=>((REC['course:'+x.co.id]||{}).lamp||0)>=3).length,own=list.filter(x=>!x.miss.length).length;
+    const d=document.createElement('details');d.className='card';d.style.margin='6px 0';
+    d.innerHTML=`<summary style="cursor:pointer"><b>${esc(T.name)}</b> <small class="hlp">${L(`合格 ${cl} / ${list.length}　遊べる ${own}`,`passed ${cl} / ${list.length}, playable ${own}`)}</small></summary><div class="in"></div>`;
+    const inn=d.querySelector('.in');
+    list.forEach(({co,miss})=>{const r=REC['course:'+co.id]||{},row=document.createElement('div');row.style.cssText='border-top:1px solid var(--faint);padding:6px 0';
+      row.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div style="background:${LAMPC[r.lamp||0]};width:6px;height:34px"></div>
+        <div style="flex:1;min-width:0"><div style="font-weight:800">${esc(co.name)}</div><div class="hlp" style="margin:0">${miss.length?L(`あと${miss.length}曲で挑戦できます`,`${miss.length} song(s) missing`):LAMPS[r.lamp||0]+(r.ex?`　SCORE ${r.ex}`:'')}</div></div>
+        <button class="${miss.length?'':'pri'}" data-a="go" style="width:auto;padding:0 14px" ${miss.length?'disabled style="opacity:.4;width:auto;padding:0 14px"':''}>${L('挑戦','Play')}</button></div>
+        <div class="hlp" style="margin:2px 0 0">${co.items.map(it=>it.hash?esc(it.title):`<a href="#" data-m="${esc(it.title)}" style="color:var(--alert)">${esc(it.title)}</a>`).join(' → ')}</div>`;
+      row.querySelector('[data-a=go]').onclick=()=>{if(!miss.length)startCourse(co);};
+      row.querySelectorAll('[data-m]').forEach((a,i)=>a.onclick=ev=>{ev.preventDefault();const e=miss[i];if(e&&typeof openGetDlg==='function')openGetDlg(e,T,e.level);});
+      inn.appendChild(row);});
+    w.appendChild(d);}
+  box.appendChild(w);
+  const b=w.querySelector('#tcLoad');if(b)b.onclick=async()=>{b.disabled=true;b.textContent=L('読み込み中…','Loading…');let ok=0;
+    for(const t of need){try{await addTableUrl(t.url);ok++;}catch(e){console.warn(e);}}
+    await loadTables();renderCourses();toast(L(`${ok}表を更新しました`,`Updated ${ok} table(s)`));};
+  const h=document.createElement('h3');h.style.margin='12px 0 4px';h.textContent=L('自分で作ったコース','Your courses');box.appendChild(h);
+}
 function renderCourses(){
-  const box=$('#courseList');box.innerHTML='';
-  if(!COURSES.length)box.innerHTML=`<div class="empty">${L('コースはまだありません。「新しいコース」から曲を選んで作れます。','No courses yet. Create one from "New course".')}</div>`;
+  const box=$('#courseList');box.innerHTML='';try{renderTblCourses(box);}catch(e){console.warn(e);}
+  if(!COURSES.length)box.insertAdjacentHTML('beforeend',`<div class="empty">${L('コースはまだありません。「新しいコース」から曲を選んで作れます。','No courses yet. Create one from "New course".')}</div>`);
   for(const co of COURSES){
     const r=REC['course:'+co.id]||{},d=document.createElement('div');d.className='card';
     const missing=co.items.filter(it=>!findChart(it)).length;
@@ -4199,6 +4253,9 @@ async function startPlay(meta,mode){
     }
     const opts=mode.replay?mode.replay.opts:mode.tutorial?Object.assign(snapOpts(),{arr:'off',arr2:'off',flip:false,gauge:'aeasy',gas:false,autoScr:false,legacy:false,lnmode:'ln'}):snapOpts();
     if(mode.course&&mode.course.idx>0&&mode.course.carry)opts.gauge=mode.course.carry.cur;
+    if(mode.course&&mode.course.co&&mode.course.co.grade){if(!(mode.course.idx>0&&mode.course.carry))opts.gauge='hard';opts.gas=false;opts.reduce='off';opts.playRate=1;
+      if(!['off','mirror'].includes(opts.arr))opts.arr='off';if(!['off','mirror'].includes(opts.arr2))opts.arr2='off';
+      const cs=mode.course.co.cons||[];if(cs.includes('hcn'))opts.lnmode='hcn';else if(cs.includes('cn'))opts.lnmode='cn';else if(cs.includes('ln'))opts.lnmode='ln';}
     const base2=(!mode.tutorial&&opts.reduce&&opts.reduce!=='off')?reduceKeys(base,opts.reduce):base;
     const chart=makePlay(base2,Object.assign({},opts,{seed}));
     show('#loading',false);
@@ -4349,8 +4406,18 @@ function startGame(chart,buffers,images,o){
   if(o.viewer){$('#vSeek').max=Math.ceil(chart.endTime+2);$('#vPlay').textContent='❚❚';}
   applyVol();layout();
   G.ppbFix=refBpm(chart);
+  G.glogA=[];G.mT=(chart.measures||[]).map(m=>m.time);
+  G.msec=(!o.auto&&!o.replay&&!o.viewer&&!o.tutorial&&!o.practice&&!o.course&&rate===1&&G.mT.length>1&&!(o.meta&&o.meta.demo))?[]:null;
+  G.bpmAl=bpmAlerts(chart);G.bpmI=0;
   raf=requestAnimationFrame(loop);
 }
+function bpmAlerts(c){const out=[],sg=c.segs||[];let pr=0,last=-9;
+  for(let i=0;i<sg.length;i++){const g=sg[i];
+    if(g.r===0){const nx=sg[i+1],d=nx?nx.t-g.t:0;if(d>=0.12&&g.t-last>=1.5&&g.t>0.3){out.push({t:g.t,s:'STOP',up:true});last=g.t;}continue;}
+    if(pr>0&&g.t>0.3){const q=g.r/pr;if((q>=1.2||q<=1/1.2)&&g.t-last>=1.5){out.push({t:g.t,s:`BPM ${Math.round(pr*60)} → ${Math.round(g.r*60)}`,up:q>1});last=g.t;}}
+    pr=g.r;}
+  return out;}
+function measIdx(t){const a=G.mT;if(!a||!a.length)return 0;let lo=0,hi=a.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(a[m]<=t+1e-6)lo=m;else hi=m-1;}return lo;}
 function refBpm(c){const f=S.fhs&&S.fix==='off'?'main':S.fix;return f==='off'?null:f==='main'?c.mainB:f==='start'?c.bpm:f==='max'?c.maxB:c.minB;}
 const audioTime=()=>G.T0+(actx.currentTime-G.clock0)*G.rate;
 const songTime=()=>audioTime()-G.ofs/1000;
@@ -4381,12 +4448,12 @@ function gaugeApply(j,factor){
     else if(j==='GD')d=t.surv?0:G.gain*t.gd;
     else{d=t[j.toLowerCase()];if(t.low&&s.v<30)d*=0.6;}
     s.v=Math.min(100,Math.max(t.surv?0:2,s.v+d));
-    if(t.surv&&s.v<=0){s.v=0;s.dead=true;}
+    if(t.surv&&s.v<=0){s.v=0;s.dead=true;try{s.dt=songTime();}catch(e){}}
     if(k==='normal'){if(s.v>=100)s.full=1;else if(s.full)s.drop=1;}
   }
   checkFail();
 }
-function gaugeDamage(pct){for(const k in GT){const t=GT[k],s=G.gauges[k];if(s.dead)continue;s.v=Math.max(t.surv?0:2,s.v-pct);if(t.surv&&s.v<=0){s.v=0;s.dead=true;}}checkFail();}
+function gaugeDamage(pct){for(const k in GT){const t=GT[k],s=G.gauges[k];if(s.dead)continue;s.v=Math.max(t.surv?0:2,s.v-pct);if(t.surv&&s.v<=0){s.v=0;s.dead=true;try{s.dt=songTime();}catch(e){}}}checkFail();}
 function checkFail(){
   if(!G.gauges[G.cur].dead||G.ended)return;
   if(G.opts.gas){const i=GORDER.indexOf(G.cur),lim=G.opts.gasMin&&GORDER.includes(G.opts.gasMin)?GORDER.indexOf(G.opts.gasMin):GORDER.length-1;for(let k=i+1;k<=lim;k++){if(!G.gauges[GORDER[k]].dead){G.cur=GORDER[k];return;}}}
@@ -4401,6 +4468,7 @@ function applyJudge(j,dt,lane){
     if(dt!=null&&j!=='PR'){if(j!=='PG'){if(dt<0)a[5]++;else a[6]++;}a[7]+=dt*1000;a[8]++;}
     const kk=G.ks[JK]||(G.ks[JK]=[0,0,0,0,0]);if(k>=0)kk[k]++;}
   if(j!=='KP')G.judged++;
+  if(G.msec&&!G.ghost&&j!=='KP'){let tt=0;try{tt=songTime()-(j==='PR'?G.W.BD:0);}catch(e){}const mi=measIdx(tt),a=G.msec[mi]||(G.msec[mi]=[0,0]);if(j==='PG')a[0]+=2;else if(j==='GR')a[0]++;else if(j==='BD'||j==='PR')a[1]++;}
   if(j==='PG'||j==='GR'||j==='GD'){G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);}else if(j!=='KP')G.combo=0;
   if((j==='BD'||j==='PR')&&!G.ghost)(G.missT||(G.missT=[])).push(songTime());
   if(dt!=null&&j!=='PR'&&j!=='KP'){G.dts.push(dt*1000);if(j!=='PG'){if(dt<0)G.fs.f++;else G.fs.s++;}}
@@ -4516,7 +4584,7 @@ function update(){
     while(mi<ml.length&&ml[mi].time<=t){const m=ml[mi++];if(m.state===2)continue;if(G.pressed[lane]&&!auto){gaugeDamage(m.dmg);G.mineHits++;G.bombs.push({lane,t:now,col:gpal().alert});}}
     G.mineIdx[lane]=mi;
   }
-  if(t-(G.glog.length?G.glog[G.glog.length-1][0]:-9)>0.5)G.glog.push([t,G.gauges[G.cur].v,G.cur]);
+  if(t-(G.glog.length?G.glog[G.glog.length-1][0]:-9)>0.5){G.glog.push([t,G.gauges[G.cur].v,G.cur]);if(G.glogA)G.glogA.push([t].concat(GORDER.map(k=>G.gauges[k].v)));}
   if(G.viewer){if(t>c.endTime+2&&!G.paused)viewerPause(true);return;}
   if(!G.ended&&t>c.endTime+2.5)finish();
 }
@@ -4710,6 +4778,10 @@ function draw(){
    g.fillStyle=hexA(PP.ink,.18);g.fillRect(areaX,H-5,areaW,5);
    g.fillStyle=G.viewer?hexA(PP.ink,.6):PP.hi;g.fillRect(areaX,H-5,areaW*pr,5);}
   if(TMSG){if(performance.now()>TMSG.until)TMSG=null;else{g.textAlign='left';g.textBaseline='bottom';let fs=12;g.font=fs+'px '+GF();const mw=areaW*(S.showFps?0.55:0.92),w=g.measureText(TMSG.s).width;if(w>mw){fs=Math.max(8,Math.floor(fs*mw/w));g.font=fs+'px '+GF();}g.fillStyle=PP.hi;g.fillText(TMSG.s,areaX+6,judgeY-12);}}
+  if(S.bpmWarn&&G.bpmAl&&G.bpmAl.length&&!G.tut){while(G.bpmI<G.bpmAl.length&&G.bpmAl[G.bpmI].t<t-0.15)G.bpmI++;
+    while(G.bpmI>0&&G.bpmAl[G.bpmI-1].t>=t-0.15)G.bpmI--;
+    const a=G.bpmAl[G.bpmI];if(a&&a.t-t<=1.6){const bl=0.55+0.45*Math.abs(Math.sin(nowMs/130));g.save();g.globalAlpha=bl;g.textAlign='center';g.textBaseline='middle';g.font='15px '+GF();
+      g.fillStyle=a.up?PP.alert:'#6cf';g.fillText(`${a.s==='STOP'?'■':a.up?'▲':'▼'} ${a.s}`,cx,len*0.22);g.restore();}}
   if(S.showFps){g.textAlign='right';g.textBaseline='bottom';g.font='12px '+GF();g.fillStyle=PP.hi;g.fillText(`${G.drawT.length}fps / ${G.rafT.length}Hz`,areaX+areaW-6,judgeY-12);}
   if(t<(G.practice?G.T0+2:0)&&!G.viewer){g.textAlign='center';g.textBaseline='middle';g.font='22px '+GF();g.fillStyle=PP.ink;g.fillText('READY',cx,len*0.38);}
   if(G.ctrlMsg&&nowMs-G.ctrlMsg.t<900){g.textAlign='center';g.textBaseline='middle';g.font='16px '+GF();g.fillStyle=PP.hi;g.fillText(G.ctrlMsg.s,cx,len*0.3);}
@@ -4829,7 +4901,7 @@ function pracLoop(){
   const idx=(arr,f)=>{const i=arr.findIndex(f);return i<0?arr.length:i;};
   G.bgmIdx=idx(c.bgm,b=>b.time>=st-0.001);G.autoIdx=idx(c.notes,n=>n.time>=st-0.001);
   stopVideos();G.bgaIdx=0;G.layerIdx=0;G.poorIdx=0;G.curBga=null;G.curLayer=null;G.curPoor=null;
-  for(const k in G.counts)G.counts[k]=0;G.combo=0;G.judged=0;G.dts=[];G.fs={f:0,s:0};G.glog=[];G.judge=null;G.bombs=[];
+  for(const k in G.counts)G.counts[k]=0;G.combo=0;G.judged=0;G.dts=[];G.fs={f:0,s:0};G.glog=[];G.glogA=[];G.judge=null;G.bombs=[];
   G.gauges=JSON.parse(JSON.stringify(G.pracG));
   G.pracLoops++;bumpC('lp');G.T0=st-1.5;G.clock0=actx.currentTime+0.1;G.lastFrame=0;
   resumeTails(st,false);
@@ -5388,8 +5460,13 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 function vib(p){if(S.vib==='off'||!navigator.vibrate)return;try{navigator.vibrate(p);}catch(e){}}
 function patLine(){
   const p=(G.chart.arrPat||[]).filter(Boolean);if(!p.length||!G.opts||G.opts.arr==='off')return '';
-  return `<div class="hlp" style="text-align:center">${L('配置','Pattern')} ${p.map(esc).join(' / ')} <button class="ib" id="patUse" data-p="${esc(p[0])}" style="margin-left:6px">${L('この並びを指定に使う','Use this pattern')}</button></div>`;
+  return `<div class="hlp" style="text-align:center">${L('配置','Pattern')} ${p.map(esc).join(' / ')} <button class="ib" id="patUse" data-p="${esc(p[0])}" style="margin-left:6px">${L('この並びを指定に使う','Use this pattern')}</button>${G.meta&&G.meta.hash&&!G.meta.demo?`<button class="ib" id="patSave" data-p="${esc(p[0])}" style="margin-left:6px">${L('☆ この配置を保存','☆ Save this pattern')}</button>`:''}</div>`;
 }
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#patSave');if(!b||!G||!G.meta)return;
+  const D=patsLoad(),h=G.meta.hash,l=D[h]||(D[h]=[]),c=G.counts,ex=c.PG*2+c.GR,r=G.N?ex/(2*G.N):0,p=b.dataset.p;
+  const o={p,ex,r:+r.toFixed(4),lp:G.failed?1:computeLamp(),f:G.failed?1:0,red:G.reduced?G.opts.reduce:'',t:Date.now()};
+  const i=l.findIndex(x=>x.p===p);if(i>=0)l[i]=o;else l.unshift(o);D[h]=l.slice(0,8);patsSave();b.textContent=L('★ 保存しました','★ Saved');b.disabled=true;
+  toast(L('曲の詳細画面から、この配置を選んで遊べます','Pick it from the song detail screen'));});
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#patUse');if(!b)return;S.arrPat=b.dataset.p;S.arr='custom';saveS();toast(L(`配置を「RANDOM（並びを指定）${S.arrPat}」にしました`,`Arrangement set to RANDOM pattern ${S.arrPat}`));});
 /* ---------- hashes (difficulty tables use MD5 / SHA-256 of the chart file) ---------- */
 function md5hex(u8){
@@ -5470,6 +5547,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
     vib([70,50,70,50,180]);G.celebrate={type:c.GD===0&&c.GR===0?'MAX':c.GD===0?'PERFECT':'FULL COMBO',t:performance.now()};
   }
   const R={lamp,ex,max,rate,bp,news,thisReplay};
+  try{R.sec=msecPush(ex);}catch(e){console.warn('msec',e);}
   if(GHOST&&GHOST.replay){const gEx=GHOST.replay.ex||0;R.ghost={ex:gEx,d:ex-gEx,name:GHOST.rival};}
   if(!G.auto&&!G.viewer&&!G.replay&&!G.tut){try{
     if(R.ghost&&R.ghost.d>0&&G.record)bumpC(R.ghost.name?'rw':'gw');
@@ -5495,6 +5573,72 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
   if(G.tut){setTimeout(()=>{toLib();toast(L('チュートリアル完了！','Tutorial complete!'),3000);},800);return;}
   setTimeout(()=>showResult(R),delay);
 }
+function gaugeSimHTML(){
+  if(!G||G.auto||G.replay||G.viewer||G.tut||G.practice||G.course)return '';
+  const ks=['aeasy','easy','normal','hard','exhard'],early=G.failed,mOf=t=>measIdx(t);
+  const rows=ks.map(k=>{const t=GT[k],s=G.gauges[k],v=Math.floor(s.v);let st,col='inherit';
+    if(t.surv){if(s.dead){st=L(`${mOf(s.dt||0)}小節目で落ちる`,`Fails at bar ${mOf(s.dt||0)}`);col='var(--alert)';}
+      else if(early)st=L(`終了した所まで残る（${v}%）`,`Alive when the play ended (${v}%)`);
+      else{st=L(`クリア（残り ${v}%）`,`Clear (${v}% left)`);col=gcol(k);}}
+    else if(early)st=L(`終了した所で ${v}%`,`${v}% when the play ended`);
+    else if(s.v>=t.border){st=L(`クリア（${v}%）`,`Clear (${v}%)`);col=gcol(k);}
+    else st=L(`届かず（${v}% / ${t.border}%）`,`Short (${v}% / ${t.border}%)`);
+    return `<span class="k">${t.n}${k===G.cur?' ◀':''}</span><span style="color:${col}">${st}</span>`;}).join('');
+  return `<details class="card" style="margin:8px 0;padding:8px 10px"><summary style="cursor:pointer"><b>📈 ${L('ほかのゲージだったら','With other gauges')}</b></summary>
+    <div class="grid2" style="margin:6px 0 0">${rows}</div><div class="hlp" style="margin:4px 0 0">${L('今のプレイを、ほかのゲージで遊んでいた場合で計算した結果です。グラフの薄い線がほかのゲージです。','This play recalculated for each gauge. Faint lines on the gauge graph show the other gauges.')}</div></details>`;}
+/* per-measure records: misses of recent plays and the best play's EX per measure */
+const MSK=LSK+'msec';let MSEC=null;
+function msecLoad(){if(!MSEC){try{MSEC=JSON.parse(localStorage.getItem(MSK)||'{}')||{};}catch(e){MSEC={};}}return MSEC;}
+function msecSave(){try{const ks=Object.keys(MSEC);if(ks.length>200)ks.sort((a,b)=>(MSEC[a].t||0)-(MSEC[b].t||0)).slice(0,ks.length-200).forEach(k=>delete MSEC[k]);localStorage.setItem(MSK,JSON.stringify(MSEC));}catch(e){}}
+const spEnc=a=>a.map((v,i)=>v?i+':'+v:'').filter(Boolean).join(','),spDec=(s,n)=>{const a=new Array(n).fill(0);String(s||'').split(',').forEach(x=>{const[i,v]=x.split(':');if(v!=null&&+i<n)a[+i]=+v;});return a;};
+const msecKeyOf=(hash,red)=>hash+(red&&red!=='off'?'@'+red:'');
+function msecPush(ex){
+  if(!G.msec||G.rate!==1)return null;
+  const D=msecLoad(),k=msecKeyOf(G.chart.hash,G.reduced?G.opts.reduce:''),nm=G.mT.length,e=D[k]||(D[k]={nm,p:[],b:null});
+  if(e.nm!==nm){e.nm=nm;e.p=[];e.b=null;}
+  const exA=[],bpA=[];for(let i=0;i<nm;i++){const a=G.msec[i];exA.push(a?a[0]:0);bpA.push(a?a[1]:0);}
+  const prev=e.b?{ex:e.b.ex,a:e.b.a.split(',').map(Number)}:null;
+  e.p.push([Date.now(),spEnc(bpA)]);e.p=e.p.slice(-10);e.t=Date.now();
+  if(!G.failed&&(!e.b||ex>e.b.ex))e.b={ex,a:exA.join(',')};
+  msecSave();return {prev:prev&&prev.a.length===nm?prev:null,exA,bpA,nm,key:k};}
+function weakSecs(e){
+  if(!e||!e.p||!e.p.length)return [];
+  const nm=e.nm,agg=new Array(nm).fill(0);for(const p of e.p)spDec(p[1],nm).forEach((v,i)=>agg[i]+=v);
+  const win=[];for(let i=0;i<nm-1;i++)win.push([i,agg[i]+agg[i+1]]);win.sort((a,b)=>b[1]-a[1]);
+  const pick=[];for(const w of win){if(w[1]<=0||pick.length>=3)break;if(pick.some(p=>Math.abs(p[0]-w[0])<3))continue;pick.push(w);}
+  return {agg,pick,n:e.p.length};}
+function weakHTML(W){
+  if(!W||!W.pick||!W.pick.length)return '';
+  const mx=Math.max(1,...W.agg);
+  return `<div class="hlp" style="margin:0 0 3px">${L(`直近 ${W.n} 回のプレイで、ミス（BAD＋MISS）が多かった場所です。`,`Where you missed most (BAD + MISS) in the last ${W.n} plays.`)}</div>
+    <div style="display:flex;height:12px;border:1px solid var(--faint);margin:0 0 6px">${W.agg.map(v=>`<i style="flex:1;background:${v?`hsla(0,85%,58%,${(0.25+0.75*v/mx).toFixed(2)})`:'transparent'}"></i>`).join('')}</div>
+    ${W.pick.map(([m,v])=>`<div class="row" style="gap:6px"><span>${L(`${m}〜${m+1}小節　ミス ${v}`,`Bars ${m}-${m+1}: ${v} misses`)}</span><button class="ib" data-pm="${m}" style="width:auto;padding:0 10px">${L('ここを練習','Practice here')}</button></div>`).join('')}`;}
+function bindWeak(box,meta,nm,before){
+  box.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{const m=+b.dataset.pm;if(before)before();
+    startPlay(meta,{practice:{measure:Math.max(0,m-1),rate:1,end:Math.min(nm-1,m+2),loop:true,step:0}});});}
+function renderSec(R){
+  const box=$('#secBox');if(!box||!R.sec)return;const sc=R.sec,meta=G.meta;let h='';
+  const W=weakSecs(msecLoad()[sc.key]);
+  if(W&&W.pick&&W.pick.length)h+=`<div class="advc"><b>🧭 ${L('苦手な区間','Weak sections')}</b>${weakHTML(W)}</div>`;
+  if(sc.prev){const n=sc.nm,cd=[];let a=0,b=0;for(let i=0;i<n;i++){a+=sc.exA[i];b+=sc.prev.a[i]||0;cd.push(a-b);}
+    let lo=[0,0],hi=[0,0];for(let i=0;i+4<=n;i++){const d=cd[i+3]-(i?cd[i-1]:0);if(d<lo[1])lo=[i,d];if(d>hi[1])hi=[i,d];}
+    const tot=cd[n-1];
+    h+=`<div class="advc"><b>🏁 ${L('自己ベストとの区間ごとの差','Versus your best, by section')}</b>
+      <div class="hlp" style="margin:0 0 3px">${L(`ベスト（EX ${sc.prev.ex}）との差の移り変わりです。上が勝ち、下が負け。`,`Running difference against your best (EX ${sc.prev.ex}). Up = ahead, down = behind.`)}</div>
+      <canvas class="graph" id="sGraph"></canvas>
+      <div>${L(`最後の差：${tot>=0?'+':''}${tot}`,`Final: ${tot>=0?'+':''}${tot}`)}</div>
+      ${lo[1]<0?`<div>${L(`一番負けた区間：${lo[0]}〜${lo[0]+3}小節（${lo[1]}）`,`Most lost: bars ${lo[0]}-${lo[0]+3} (${lo[1]})`)} <button class="ib" data-pm="${lo[0]+1}" style="width:auto;padding:0 10px">${L('ここを練習','Practice here')}</button></div>`:''}
+      ${hi[1]>0?`<div>${L(`一番勝った区間：${hi[0]}〜${hi[0]+3}小節（+${hi[1]}）`,`Most gained: bars ${hi[0]}-${hi[0]+3} (+${hi[1]})`)}</div>`:''}</div>`;
+    box.innerHTML=h;
+    requestAnimationFrame(()=>{const cv=$('#sGraph');if(!cv)return;const [x,w,hh]=prepCanvas(cv),P1=pal(),m=Math.max(4,...cd.map(Math.abs));
+      x.strokeStyle=hexA(P1.faint,.8);x.lineWidth=1;x.beginPath();x.moveTo(0,hh/2);x.lineTo(w,hh/2);x.stroke();
+      for(let i=1;i<n;i++){const v=cd[i];x.strokeStyle=v>=0?'#6cf':'#f77';x.lineWidth=2;x.beginPath();x.moveTo((i-1)/(n-1)*w,hh/2-cd[i-1]/m*hh*0.45);x.lineTo(i/(n-1)*w,hh/2-v/m*hh*0.45);x.stroke();}});}
+  else box.innerHTML=h;
+  bindWeak(box,meta,sc.nm,()=>{stopAll();show('#result',false);});}
+/* saved RANDOM patterns per chart */
+const PATK=LSK+'pats';let PATS=null;
+function patsLoad(){if(!PATS){try{PATS=JSON.parse(localStorage.getItem(PATK)||'{}')||{};}catch(e){PATS={};}}return PATS;}
+function patsSave(){try{localStorage.setItem(PATK,JSON.stringify(PATS));}catch(e){}}
 function median(a){if(!a.length)return 0;const b=a.slice().sort((x,y)=>x-y),m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2;}
 function statsHTML(){
   const c=G.counts,dts=G.dts,avg=dts.length?dts.reduce((a,b)=>a+b,0)/dts.length:0,sd=dts.length?Math.sqrt(dts.reduce((a,b)=>a+(b-avg)**2,0)/dts.length):0,md=median(dts);
@@ -5525,6 +5669,8 @@ function showResult(R){
     ${R.ach&&R.ach.length?`<div class="advc"><b>🏆 ${L('実績を達成','Achievement unlocked')}</b>${R.ach.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:''}
     <div id="advBox"></div>
     <div id="nextBox"></div>
+    ${gaugeSimHTML()}
+    <div id="secBox"></div>
     <div class="hlp">${L('ゲージ推移','Gauge history')}</div><canvas class="graph" id="gGraph"></canvas>
     <div class="hlp">${L('タイミング分布（左＝早い／右＝遅い）','Timing (left = early / right = late)')}</div><canvas class="graph" id="tGraph"></canvas>
     <button class="pri" id="rRetry">${L('もう一度','Retry')}</button>
@@ -5540,6 +5686,7 @@ function showResult(R){
   try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice){const ok=!G.failed&&(R.lamp==null||R.lamp>=3),pk=nextPicks(meta,ok);
     if(pk.length){const nb=$('#nextBox');nb.innerHTML=`<div class="advc"><b>${ok?L('🎯 次はこの曲はどう？（少しだけ難しい）','🎯 Try next (a little harder)'):L('🎯 次はこの曲はどう？（少しやさしめ）','🎯 Try next (a little easier)')}</b>${pk.map(c=>`<button class="ib" data-nx="${c.hash}" style="display:block;width:100%;text-align:left;margin:4px 0;padding:6px 8px;height:auto;white-space:normal"><b>${esc((c.level!=null?'☆'+c.level+' ':'')+c.title)}</b><br><small style="opacity:.75">${esc(chartTraits(c).slice(0,2).join('・')||c.artist||'')}</small></button>`).join('')}</div>`;
       nb.querySelectorAll('[data-nx]').forEach(b=>b.onclick=()=>{const c=CHARTS.find(x=>x.hash===b.dataset.nx);if(!c)return;toLib();setTimeout(()=>openDetail(c),60);});}}}catch(e){console.warn(e);}
+  try{renderSec(R);}catch(e){console.warn(e);}
   const SH=snapResult(R);
   requestAnimationFrame(()=>{drawGaugeGraph($('#gGraph'));drawTimingGraph($('#tGraph'));});
   $('#rRetry').onclick=()=>retry(false);
@@ -5721,10 +5868,13 @@ async function openShare(D){
 }
 $('#shClose').onclick=()=>show('#share',false);
 function prepCanvas(cv){const w=cv.clientWidth||300,h=cv.clientHeight||110,d=devicePixelRatio||1;cv.width=w*d;cv.height=h*d;const x=cv.getContext('2d');x.scale(d,d);return [x,w,h];}
-function drawGaugeGraph(cv){
+function drawGaugeGraph(cv){if(!G)return;
   const [x,w,h]=prepCanvas(cv),lg=G.glog,t0=G.practice?G.T0:0,end=Math.max(1,G.chart.endTime,lg.length?lg[lg.length-1][0]:1);
   const P1=pal();const bd=GT[G.cur].border;if(bd){x.fillStyle=hexA(P1.alert,.14);x.fillRect(0,0,w,h*(1-bd/100));}
   x.strokeStyle=hexA(P1.faint,.8);x.beginPath();x.moveTo(0,h/2);x.lineTo(w,h/2);x.stroke();
+  if(G.glogA&&G.glogA.length>1&&!G.practice){const px=t=>Math.max(0,Math.min(1,(t-t0)/(end-t0)))*w;
+    GORDER.forEach((k,gi)=>{if(k===G.cur||k==='hazard')return;x.strokeStyle=hexA(gcol(k),.35);x.lineWidth=1;x.beginPath();let on=false;
+      for(const p of G.glogA){const v=p[gi+1];x[on?'lineTo':'moveTo'](px(p[0]),h-v/100*h);on=true;if(GT[k].surv&&v<=0)break;}x.stroke();});}
   for(let i=1;i<lg.length;i++){const a=lg[i-1],b=lg[i];x.strokeStyle=gcol(b[2]);x.lineWidth=2;x.beginPath();
     const px=t=>Math.max(0,Math.min(1,(t-t0)/(end-t0)))*w;x.moveTo(px(a[0]),h-a[1]/100*h);x.lineTo(px(b[0]),h-b[1]/100*h);x.stroke();}
 }
