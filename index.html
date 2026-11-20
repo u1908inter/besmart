@@ -240,6 +240,7 @@ canvas{display:block;touch-action:none}
 .hasIdx .wrow{padding-right:36px}
 .ib.on{background:var(--hi);color:var(--bg);font-weight:700;border-color:var(--hi)}
 html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
+.wt1{min-width:0;max-width:100%;box-sizing:border-box}.wt1 .wlogo{flex:0 1 auto;min-width:0;overflow:hidden;font-size:clamp(13px,4.4vw,18px)}.wt1 .wcnt{flex:1 1 0;min-width:56px;overflow:hidden}@media (max-width:480px){#wheel.menuMode .wt1.hasBack .wlogo{display:none}}@media (max-width:380px){#wheel.menuMode .wt1 .wlogo{display:none}}
 </style>
 </head>
 <body>
@@ -249,7 +250,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2109)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2115)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -868,7 +869,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2109)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2115)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2115)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3001,7 +3002,7 @@ function wheelSettle(){clearTimeout(WHL.pvT);const c=WHL.cur;if(!c)return;try{lo
 /* keep the info panel at one height in portrait, so the wheel does not move when switching between Back / folders and songs */
 function wheelInfo(){wheelInfo0();try{wInfoFix();}catch(e){}}
 function wInfoFix(){
-  show('#wBackBtn',!!(WHL.path.length||WHL.searchMode),'');
+  show('#wBackBtn',!!(WHL.path.length||WHL.searchMode),'');{const t1=$('.wt1');if(t1)t1.classList.toggle('hasBack',!!(WHL.path.length||WHL.searchMode));}
   const el=$('#wInfo');if(!el)return;
   if(innerWidth>innerHeight){el.style.minHeight='';return;}
   // first time: measure a few songs with long titles, so the height rarely has to grow later
