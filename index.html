@@ -245,7 +245,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1239)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1239)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1246)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1246)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -864,7 +864,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1239)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1239)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1246)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1246)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1285,7 +1285,10 @@ function makePlay(base,o){
 function judgeWindows(rank,defex,expand,basis,mode){
   const T=[[8,24,40,100],[15,30,60,150],[18,40,100,200],[21,60,120,220],[26,75,150,260]];
   let w;
-  if(basis==='beatoraja'){
+  if(basis==='iidx'){
+    /* arcade-like (approximate, community-measured; KONAMI does not publish these): fixed windows, chart judge rank ignored */
+    w=[16.67,33.33,116.67,250];
+  }else if(basis==='beatoraja'){
     /* beatoraja style: base windows scaled by judgerank (VERYHARD 25 / HARD 50 / NORMAL 75 / EASY 100 / VERYEASY 125) */
     const B=(mode==='5k'||mode==='10k')?[20,50,100,150]:[20,60,150,220];
     const jr=defex>0?defex*0.75:[25,50,75,100,125][Math.max(0,Math.min(4,isNaN(rank)?2:rank))];
@@ -1852,7 +1855,7 @@ function SCHEMA(){return [
   {k:'ofs',t:L('判定タイミング','Audio offset'),r:[-400,400,1],f:v=>(v>0?'+':'')+v+'ms',h:L('音が遅れて聞こえる → プラス方向。出力先ごとに別々に保存されます。','Sound heard late → plus. Saved separately per audio output.')},
   {k:'vofs',t:L('表示タイミング','Visual offset'),r:[-300,300,1],f:v=>(v>0?'+':'')+v+'ms',h:L('ノーツの見た目だけをずらします（プラス＝早く表示）','Shifts only the note display (plus = drawn earlier)')},
   {k:'ksMode',t:L('キー音の鳴らし方','Keysound playback'),sel:[['input',L('押した瞬間に鳴らす','On key press')],['auto',L('譜面どおり自動で鳴らす','Auto, on chart timing')]],h:L('<b>Bluetoothイヤホンでは「自動」がおすすめ</b>です。Bluetoothは音が遅れて届くため、押した瞬間に鳴らすと音がずれて聞こえます。「自動」なら曲どおりのタイミングで鳴ります（押さなくても鳴ります）。出力をBluetoothに切り替えると自動でこちらになり、スピーカー・有線に戻すと元に戻ります。','<b>Auto is recommended for Bluetooth.</b> Bluetooth audio arrives late, so sounds played on press feel off. Auto plays them on chart timing (even if you miss). Switching output to Bluetooth selects Auto; switching back restores your choice.')},
-  {k:'judgeBase',t:L('判定幅の基準','Judge window basis'),sel:[['lr2',L('LR2基準（標準）','LR2 style (default)')],['beatoraja',L('beatoraja基準','beatoraja style')]],h:L('判定の幅（PGREAT・GREAT・GOOD・BADになる時間のずれ）を、どのPC版プレイヤーに合わせるかを選びます。beatoraja基準は、譜面の判定ランク（EASY〜VERY HARD）によって幅が大きく変わります。EASYではLR2基準とほぼ同じ、VERY HARDではかなり厳しくなります。','Choose which PC player the judge windows follow. beatoraja style changes a lot with the chart’s judge rank: about the same as LR2 on EASY, much stricter on VERY HARD.')},
+  {k:'judgeBase',t:L('判定幅の基準','Judge window basis'),sel:[['lr2',L('LR2基準（標準）','LR2 style (default)')],['beatoraja',L('beatoraja基準','beatoraja style')],['iidx',L('本家風（目安）','Arcade-like (approx.)')]],h:L('判定の幅（PGREAT・GREAT・GOOD・BADになる時間のずれ）を、どの基準に合わせるかを選びます。beatoraja基準は、譜面の判定ランク（EASY〜VERY HARD）によって幅が大きく変わります。EASYではLR2基準とほぼ同じ、VERY HARDではかなり厳しくなります。本家風は、アーケード版でよく言われている目安の幅（PGREAT ±約17ms、GREAT ±約33ms）で、譜面の判定ランクに関係なく同じ幅です。公式の数値ではありません。タッチ操作ではかなり厳しいので、キーボード・コントローラー向けです。','Choose the basis for judge windows. beatoraja style changes a lot with the chart’s judge rank: about the same as LR2 on EASY, much stricter on VERY HARD. Arcade-like uses commonly cited approximate arcade windows (PGREAT about ±17 ms, GREAT about ±33 ms), the same for every chart. These are not official figures. Very strict on touch; meant for keyboards and controllers.')},
   {k:'judgeAlg',t:L('判定アルゴリズム','Judge algorithm'),sel:[['lowest',L('LOWEST（手前のノーツを優先）','LOWEST (earliest note first)')],['combo',L('COMBO（コンボがつながる方を優先）','COMBO (keep the combo)')],['duration',L('DURATION（タイミングが近い方を優先）','DURATION (closest timing)')]],h:L('ノーツが密集していて、1回押したときに複数のノーツが判定の範囲に入る場合、どれを判定するかを決めます。','Decides which note a press hits when several notes are within the timing window.')},
   {k:'fsDisp',t:L('FAST/SLOW表示','FAST/SLOW display'),sel:[['both',L('FAST/SLOW＋ズレ(ms)','FAST/SLOW + ms')],['text',L('FAST/SLOWのみ','FAST/SLOW only')],['ms',L('ズレ(ms)のみ','ms only')],['off','OFF']]},{k:'judgeCount',t:L('判定カウントを表示','Show judge counts'),b:1},{k:'white',t:L('白数字（上カバーの量）を表示','Show white number (top cover)'),b:1},
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
@@ -5656,7 +5659,7 @@ function showResult(R){
   const meta=G.meta;
   const N=k=>R.news[k]?'<span class="new">NEW</span>':'';
   const tag=G.replay?L('（リプレイ）',' (replay)'):G.auto?L('（オート）',' (auto)'):G.practice?L('（練習・記録なし）',' (practice, not recorded)'):G.redSaved?L(`（${RED_N[G.redSaved]}変換・${RED_N[G.redSaved]}の記録に保存）`,` (${RED_N[G.redSaved]} conversion, saved to ${RED_N[G.redSaved]} record)`):'';
-  $('#resultBox').innerHTML=`<div class="hlp" style="text-align:center">${esc(G.chart.title)} ${esc(G.chart.subtitle||'')} ${tag}</div>
+  $('#resultBox').innerHTML=`<div class="hlp" style="text-align:center">${esc(G.chart.title)} ${esc(G.chart.subtitle||'')} ${tag}${G.opts&&G.opts.judgeBase==='iidx'?L(' ［本家風判定］',' [arcade-like judge]'):''}</div>
     <div class="res-clear" style="color:${LAMPC[R.lamp]}">${G.failed?'FAILED':LAMPS[R.lamp]}${N('lamp')}</div>
     <div class="rank" data-t="${rankOf(R.rate)}">${rankOf(R.rate)}</div>
     ${patLine()}
