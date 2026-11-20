@@ -235,6 +235,7 @@ canvas{display:block;touch-action:none}
 .bigRow{display:flex;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px dashed var(--faint);cursor:pointer}.bigRow input{flex:none;width:18px;height:18px}.bigRow .bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bigRow .bs{flex:none;opacity:.7;font-size:.85em}
 .navsel{outline:3px solid var(--hi)!important;outline-offset:2px;box-shadow:0 0 12px var(--glow)!important}
 .song.navsel{outline-offset:-3px;background:var(--bg2)}
+.wrow .pc{flex:none;font-size:11px;color:var(--dim);margin-left:4px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -244,7 +245,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1148)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1148)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1239)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1239)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -863,7 +864,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1148)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1148)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1239)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1239)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2446,7 +2447,7 @@ function songRow(c,lvLabel){
   d.innerHTML=`<div class="lvb"><b>${esc(String(lvLabel||c.level||'?').slice(0,5))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
     <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
     <div class="m">${begTag(c,r)}${redBadges(r)}<span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span></div></div>
-    <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}</div>`;
+    <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}${playsOf(r)?`<small style="display:block;color:var(--dim)">${playsOf(r)}${L('回',' plays')}</small>`:''}</div>`;
   d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
   d.onclick=()=>openDetail(c);
   return d;
@@ -2905,7 +2906,8 @@ function openWMenu(){
 function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
 function wPips(c){if(!S.wheelGroup)return '';const g=WHL.gmap.get(wGk(c));if(!g||g.length<2)return '';
   return '<span class="pips">'+g.slice().sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level)).map(x=>{const l=(REC[x.hash]||{}).lamp||0,dc=diffCol(x.difficulty);return `<i style="border-color:${dc};background:${l?LAMPC[l]:'transparent'}${x.hash===c.hash?';outline:1px solid #fff':''}"></i>`;}).join('')+'</span>';}
-function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'');}
+const playsOf=r=>(r&&r.plays||0)+(r&&r.red?Object.values(r.red).reduce((a,q)=>a+(q&&q.plays||0),0):0);
+function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'')+'p'+playsOf(r);}
 function wheelPaint(){
   const wh=$('#wWheel');if(!wh||!WHL.built)return;
   {const idx=wheelIdx();if(idx!==WHL.lastIdx){if(WHL.lastIdx>=0&&performance.now()-(WHL.tickT||0)>25){WHL.tickT=performance.now();wSe('tick');}WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;
@@ -2930,7 +2932,7 @@ function wheelPaint(){
       else{const cs=c.sub?null:c.charts,cl=cs?cs.filter(x=>((REC[x.hash]||{}).lamp||0)>=3).length:0;
         r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}${c.mlist&&c.mlist.length?' ＋'+L('未所持','missing')+c.mlist.length:''}</span>`:''}`;}}}
     else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
-      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
+      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${playsOf(rc)?`<span class="pc">${playsOf(rc)}${L('回','')}</span>`:''}${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
   })();}
   for(const r of WHL.rows)if(!used.has(r))r.style.display='none';
 }
@@ -2997,7 +2999,7 @@ function wheelInfo0(){
    <div class="wscore"><div class="sr"><span>CLEAR</span><span style="color:${r.lamp?LAMPC[r.lamp]:'var(--dim)'};text-shadow:0 0 8px ${r.lamp?LAMPC[r.lamp]:'transparent'}">${esc(lampN)}</span></div>
     <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
     <div class="sr"><span>MISS COUNT</span><span>${r.bp!=null?r.bp:'----'}</span></div>
-    <div class="sr"><span>PLAY</span><span>${r.plays||0}${r.last?`<small>　${L('最終','last')} ${(()=>{const d=new Date(r.last);return `${d.getMonth()+1}/${d.getDate()}`;})()}</small>`:''}</span></div>
+    <div class="sr"><span>PLAY</span><span>${playsOf(r)}${r.red&&playsOf(r)!==(r.plays||0)?`<small>（${['4k','5k'].filter(m=>r.red[m]&&r.red[m].plays).map(m=>`${RED_N[m]} ${r.red[m].plays}`).join('・')}）</small>`:''}${r.last?`<small>　${L('最終','last')} ${(()=>{const d=new Date(r.last);return `${d.getMonth()+1}/${d.getDate()}`;})()}</small>`:''}</span></div>
     ${(()=>{if(!r.ex)return '';const th=[[2/9,'E'],[3/9,'D'],[4/9,'C'],[5/9,'B'],[6/9,'A'],[7/9,'AA'],[8/9,'AAA'],[17/18,'MAX-'],[1,'MAX']];const nx=th.find(([v])=>r.ex<Math.ceil(v*2*N));return nx?`<div class="sr"><span>NEXT</span><span>${L(`${nx[1]}まで あと ${Math.ceil(nx[0]*2*N)-r.ex}`,`${Math.ceil(nx[0]*2*N)-r.ex} to ${nx[1]}`)}</span></div>`:'';})()}
     <div class="wrank">${ranks.map((x,i)=>`<span class="${r.ex&&i===ri?'on':''}">${x}</span>`).join('')}${r.ex?`<i style="left:${Math.min(99,rate*100)}%"></i>`:''}</div></div>
    <div class="wtags">${redBadges(r)}${begTag(c,r)}<span id="wRiv"></span></div><div class="wpv" id="wPv"></div>`;
