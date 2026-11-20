@@ -236,6 +236,7 @@ canvas{display:block;touch-action:none}
 .navsel{outline:3px solid var(--hi)!important;outline-offset:2px;box-shadow:0 0 12px var(--glow)!important}
 .song.navsel{outline-offset:-3px;background:var(--bg2)}
 .wrow .pc{flex:none;font-size:11px;color:var(--dim);margin-left:4px;white-space:nowrap}
+#pause [data-q]{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -245,7 +246,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1246)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1246)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1251)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1251)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -864,7 +865,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1246)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1246)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1251)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1251)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -5413,13 +5414,20 @@ function togglePause(force){
   if(p){actx.suspend();for(const l of [...hold.keys()])release(l);hold.clear();ptr.clear();ctrlPtr=null;syncPause();show('#pause',true);show('#retrySame',!G.replay&&!G.tut,'block');}
   else{show('#pause',false);G.lastFrame=0;actx.resume();}
 }
-$$('#pause [data-q]').forEach(b=>b.onclick=()=>{
-  const q=b.dataset.q;
+function pauseQ(q){
   if(q==='hs-'||q==='hs+'){const d=q==='hs+'?1:-1;if(S.fhs)S.green=Math.max(150,Math.min(2000,S.green-d*20));else S.hs=Math.max(.5,Math.min(10,S.hs+d*.25));}
   if(q==='sud-'||q==='sud+'){S.suddenOn=true;S.sudden=Math.max(0,Math.min(80,S.sudden+(q==='sud+'?2:-2)));}
   if(q==='ofs-'||q==='ofs+'){S.ofs+=q==='ofs+'?5:-5;if(G&&!G.replay)G.ofs=S.ofs;storeOfs();}
   saveS();syncPause();
-});
+}
+/* tap = one step; hold = repeat (faster the longer it is held) */
+$$('#pause [data-q]').forEach(b=>{let tm=null,t0=0;
+  const stop=()=>{clearTimeout(tm);tm=null;};
+  const tick=()=>{pauseQ(b.dataset.q);const held=performance.now()-t0;tm=setTimeout(tick,held>1500?40:80);};
+  b.addEventListener('pointerdown',e=>{if(e.button>0)return;e.preventDefault();b._ptr=true;stop();t0=performance.now();pauseQ(b.dataset.q);tm=setTimeout(tick,400);try{b.setPointerCapture(e.pointerId);}catch(_){}});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>{stop();setTimeout(()=>{b._ptr=false;},400);}));
+  b.addEventListener('contextmenu',e=>e.preventDefault());
+  b.onclick=()=>{if(b._ptr){b._ptr=false;return;}pauseQ(b.dataset.q);};});
 $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
