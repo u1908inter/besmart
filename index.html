@@ -239,6 +239,7 @@ canvas{display:block;touch-action:none}
 #pause [data-q]{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .hasIdx .wrow{padding-right:36px}
 .ib.on{background:var(--hi);color:var(--bg);font-weight:700;border-color:var(--hi)}
+html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 </style>
 </head>
 <body>
@@ -248,7 +249,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2107)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2107)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2109)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -867,7 +868,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2107)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2107)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2109)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2109)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1769,7 +1770,7 @@ function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=Strin
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,uiFont:'dot',bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:'',statMode:''};
@@ -1804,7 +1805,11 @@ const FLAT=()=>S.playSkin==='classic'||S.playSkin==='neon';
 const NPAL={ink:'#FFFFFF',hi:'#FFD23D',dim:'#8899AA',faint:'#22223A',bg:'#000000',bg2:'#16161F',glow:'rgba(61,240,255,.5)',alert:'#FF2D55',blue:'#4DA3FF'};
 const gpal=()=>CLASSIC()?CPAL:NEON()?NPAL:pal();
 const GF=()=>CLASSIC()?'Dela,"Hiragino Sans",sans-serif':NEON()?'-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif':CF;
-const CF='\"Dot\",\"DotGothic16\",monospace';
+const FONTS={dot:'"Dot","DotGothic16","Osaka-Mono","MS Gothic",monospace',
+  gothic:'system-ui,-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Noto Sans CJK JP","Yu Gothic","Meiryo",sans-serif',
+  mincho:'"Hiragino Mincho ProN","Noto Serif JP","Noto Serif CJK JP","Yu Mincho","MS Mincho",serif'};
+let CF=FONTS.dot;
+function applyFont(){const k=FONTS[S.uiFont]?S.uiFont:'dot';CF=FONTS[k];const r=document.documentElement;r.style.setProperty('--font',CF);r.classList.toggle('smoothFont',k!=='dot');}
 function applyI18n(){
   $$('[data-en]').forEach(el=>{if(el.dataset.ja==null)el.dataset.ja=el.innerHTML;el.innerHTML=LANG()==='en'?el.dataset.en:el.dataset.ja;});
   $$('[data-en-ph]').forEach(el=>{if(el.dataset.jaPh==null)el.dataset.jaPh=el.placeholder;el.placeholder=LANG()==='en'?el.dataset.enPh:el.dataset.jaPh;});
@@ -1902,9 +1907,10 @@ function SCHEMA(){return [
   {k:'volK',t:L('キー音','Keysounds'),r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
   {k:'volB',t:'BGM',r:[0,1.5,0.05],f:v=>Math.round(v*100)+'%'},
  ]},
- {sec:L('画面の色・言語','Colour & language'),items:[
+ {sec:L('画面の色・文字・言語','Colour, type & language'),items:[
   {k:'playSkin',t:L('プレイ画面のデザイン','Play screen style'),sel:[['crt',L('デフォルト','Default')],['classic',L('ポップ','Pop')],['neon',L('ネオン','Neon')]],h:L('デフォルト：テーマカラーのドット文字。ポップ：白と青の鍵盤にピンクの判定ライン、太い文字。ネオン：黒地に青緑とピンクが光る、くっきりした表示。','Default: pixel text in the theme colour. Pop: white/blue keys, pink judge line, bold type. Neon: black background with glowing cyan and pink.')},
   {k:'phosphor',t:L('テーマカラー','Theme colour'),h:L('文字・枠線・ノーツなど、画面全体の色（文字の色）を変えます。','Changes the colour of the whole screen: text, frames and notes.'),sel:[['amber',L('オレンジ','Orange')],['green',L('グリーン','Green')],['white',L('ホワイト','White')],['purple',L('パープル','Purple')],['pink',L('ピンク','Pink')],['yellow',L('イエロー','Yellow')],['blue',L('ブルー','Blue')],['random',L('ランダム（プレイごとに変わる）','Random (changes every play)')]]},
+  {k:'uiFont',t:L('文字の書体','Typeface'),sel:[['dot',L('ドット（標準）','Pixel (default)')],['gothic',L('ゴシック','Sans-serif')],['mincho',L('明朝','Serif')]],h:L('画面の文字の書体を選びます。ゴシックと明朝は、端末に入っている文字を使うので、端末によって見た目が少し変わります。小さい文字を読みやすくしたいときはゴシックがおすすめです。','Choose the typeface for on-screen text. Sans-serif and serif use fonts installed on your device, so they look a little different per device. Sans-serif is easiest to read at small sizes.')},
   {k:'lang',t:L('表示言語','Language'),sel:[['auto',L('自動','Auto')],['ja','日本語'],['en','English']]},
  ]},
 ];}
@@ -2228,7 +2234,7 @@ function wirePresetBox(){
     if($('#psDel').dataset.armed!=='1'){$('#psDel').dataset.armed='1';$('#psDel').textContent=L('もう一度押すと削除','Tap again to delete');setTimeout(()=>{const b=$('#psDel');if(b){b.dataset.armed='';b.textContent=L('削除','Delete');}},3000);return;}
     PRESETS.splice(PRESETS.indexOf(p),1);if(S.preset===p.name)S.preset='';saveS();savePresets();toast(L('削除しました','Deleted'));re();};
 }
-function afterSet(k){saveS();setTimeout(depSync,0);applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();if(k==='vib'&&S.vib!=='off'){vib(S.vib==='strong'?[45,80,45]:[25,80,25]);if(!navigator.vibrate)toast(L('このブラウザは振動に対応していません（iPhoneは非対応）','This browser does not support vibration (not available on iPhone)'),3500);}}
+function afterSet(k){saveS();setTimeout(depSync,0);applyVol();if(k==='ofs')storeOfs();if(k==='lang'){applyI18n();buildSettings();renderLibrary();}if(k==='phosphor')applyPhosphor();if(k==='uiFont')applyFont();if(k==='vib'&&S.vib!=='off'){vib(S.vib==='strong'?[45,80,45]:[25,80,25]);if(!navigator.vibrate)toast(L('このブラウザは振動に対応していません（iPhoneは非対応）','This browser does not support vibration (not available on iPhone)'),3500);}}
 function renderItem(it,inn,compact){
   if(it.hint){if(!compact){const d=document.createElement('div');d.className='hlp dep';d.innerHTML=it.hint;d._it=it;inn.appendChild(d);if(!itVisible(it))d.style.display='none';}return;}
   const row=document.createElement('div');row.className='row';row._it=it;
@@ -5938,7 +5944,7 @@ function drawTimingGraph(cv){
 
 /* ---------- boot ---------- */
 if(PLICY){const n=document.getElementById('plicyNote');if(n)n.style.display='';}
-applyPhosphor();applyI18n();renderOut();
+applyFont();applyPhosphor();applyI18n();renderOut();
 refreshLibrary().then(addBuiltinSongs);
 /* built-in songs: each is added once; if the player deletes it, it stays deleted */
 const BUILTIN=[
