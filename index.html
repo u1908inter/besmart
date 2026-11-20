@@ -237,6 +237,7 @@ canvas{display:block;touch-action:none}
 .song.navsel{outline-offset:-3px;background:var(--bg2)}
 .wrow .pc{flex:none;font-size:11px;color:var(--dim);margin-left:4px;white-space:nowrap}
 #pause [data-q]{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.hasIdx .wrow{padding-right:36px}
 </style>
 </head>
 <body>
@@ -246,7 +247,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1308)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1308)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1315)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1315)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -865,7 +866,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1308)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1308)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1315)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1315)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2842,7 +2843,7 @@ function wheelJump(d){const n=WHL.n;if(n<2)return;if(!WHL.list.some(e=>e.hash)){
   const cur=Math.round(WHL.pos);let dd=((i-cur)%n+n)%n;if(d<0&&dd>0)dd-=n;wheelAnim(cur+dd);toast(wSecLabel(WHL.list[i])||'',700);}
 function wheelIndexStrip(){const st=$('#wIdx');if(!st)return;const n=WHL.n,secs=[];let last=null;
   for(let i=0;i<n;i++){const e=WHL.list[i];if(!e.hash)continue;const k=wSecKey(e);if(k!==last){secs.push([i,wSecLabel(e)]);last=k;}}
-  if(secs.length<3||n<20){st.style.display='none';return;}
+  const par=st.parentElement;if(secs.length<3||n<20){st.style.display='none';if(par)par.classList.remove('hasIdx');return;}if(par)par.classList.add('hasIdx');
   const max=Math.max(4,Math.floor(($('#wWheel').clientHeight-20)/22)),stp=Math.max(1,Math.ceil(secs.length/max));
   st.innerHTML=secs.filter((x,i)=>i%stp===0).map(([i,l])=>`<span data-i="${i}">${esc(String(l)).slice(0,4)}</span>`).join('');st.style.display='flex';
   const go=y=>{const el=document.elementFromPoint(st.getBoundingClientRect().left+8,y);if(el&&el.dataset.i!=null){const i=+el.dataset.i;if(i!==wheelIdx()){WHL.pos=i;WHL.target=null;WHL.lastIdx=-2;wheelPaint();wSe('tick');}}};
