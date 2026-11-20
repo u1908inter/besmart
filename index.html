@@ -145,6 +145,12 @@ canvas{display:block;touch-action:none}
 .rank{font:400 80px/1 var(--font);text-align:center;color:var(--hi);text-shadow:0 0 14px var(--glow)}
 .new{display:inline-block;background:var(--ink);color:var(--bg);font:400 11px/1.4 var(--font);padding:0 4px;margin-left:6px;vertical-align:middle;text-shadow:none}
 .graph{width:100%;height:110px;border:2px solid var(--faint);margin:6px 0;touch-action:pan-y}
+.stgrid{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:14px}.stgrid b{text-align:right}
+.sbar{display:inline-block;flex:1;min-width:40px;height:8px;border:1px solid var(--faint);vertical-align:middle}.sbar i{display:block;height:100%;background:var(--ink)}
+.strow{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:13px}.strow b{text-align:right}
+.strow1{display:flex;gap:8px;font-size:13px;padding:2px 0;border-bottom:1px dashed var(--faint)}
+.sttbl{display:grid;grid-template-columns:repeat(6,auto);gap:2px 8px;font-size:12px;overflow-x:auto}.sttbl.g4{grid-template-columns:auto auto 1fr auto}.sttbl span:nth-child(-n+6){color:var(--dim)}.sttbl.g4 span:nth-child(-n+4){color:var(--dim)}
+.keymap{display:flex;gap:3px;overflow-x:auto;padding:2px 0}.kcell{flex:1;min-width:38px;border:2px solid;display:flex;flex-direction:column;align-items:center;padding:4px 2px;font-size:12px;gap:1px}.kcell b{font-size:14px}.kcell.scr{min-width:48px}.kcell small{font-size:10px;color:var(--dim)}
 .traits{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.traits span{font-size:11px;padding:1px 6px;border:1px solid var(--dim);color:var(--hi);border-radius:2px;white-space:nowrap}
 .ldist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin:6px 0}
 .ldist .bar2{display:flex;height:14px;background:var(--faint);overflow:hidden}
@@ -238,7 +244,7 @@ canvas{display:block;touch-action:none}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.0959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.0959)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.1038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1038)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -857,7 +863,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.0959)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.0959)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.1038)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.1038)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1759,7 +1765,7 @@ const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'char
   ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'bar',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
-  lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:''};
+  lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:'',statMode:''};
 const S=Object.assign({},DEF);
 try{const o=JSON.parse(localStorage.getItem('bmsp-set')||'{}');for(const k of ['hs','ofs','edge','side'])if(o[k]!==undefined)S[k]=o[k];}catch(e){}
 /* PLiCy build: own storage names (shared origin), no service worker */
@@ -4331,7 +4337,8 @@ function startGame(chart,buffers,images,o){
     pressed:Array(chart.M.lanes).fill(false),beam:Array(chart.M.lanes).fill(-9),bombs:[],judge:null,fs:{f:0,s:0},dts:[],glog:[],
     rafT:[],drawT:[],lastDraw:0,bgmIdx:0,autoIdx:0,bgaIdx:0,layerIdx:0,poorIdx:0,curBga:null,curLayer:null,curPoor:null,poorUntil:0,
     rec:[],repIdx:0,t0ms:performance.now(),khint:(!o.auto&&!o.replay&&!o.viewer&&totalPlays()<5)?performance.now():0,khintTouch:matchMedia('(pointer:coarse)').matches,ended:false,paused:false,drawIdx:0,playing:{},lastFrame:0,
-    record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null};
+    record:!o.auto&&!o.practice&&!o.replay&&!o.viewer&&!o.tutorial&&!o.course&&!o.reduced&&!(o.opts.playRate&&o.opts.playRate!==1&&!o.practice),reduced:!!o.reduced,celebrate:null,ls:[],ks:{}};
+  {const tm=new Map();for(const n of chart.notes){if(n.mine)continue;const k=Math.round(n.time*1000);tm.set(k,(tm.get(k)||0)+1);}for(const n of chart.notes)n.ch=!n.mine&&tm.get(Math.round(n.time*1000))>1;}
   if(startT!=null){G.bgmIdx=chart.bgm.findIndex(b=>b.time>=startT-0.001);if(G.bgmIdx<0)G.bgmIdx=chart.bgm.length;
     G.autoIdx=chart.notes.findIndex(n=>n.time>=startT-0.001);if(G.autoIdx<0)G.autoIdx=chart.notes.length;
     resumeTails(startT,false);}
@@ -4386,8 +4393,13 @@ function checkFail(){
   if(G.auto||G.practice||G.viewer||G.tut)return;
   G.failed=true;G.failAt=songTime();finish();
 }
+let JK='tap';
 function applyJudge(j,dt,lane){
   const c=G.counts;c[j]++;
+  // per-key and per-kind tallies for the statistics screen (not for auto lanes or empty presses)
+  if(lane!=null&&j!=='KP'&&JK!=='auto'&&G.ls){const a=G.ls[lane]||(G.ls[lane]=[0,0,0,0,0,0,0,0,0]),k='PG GR GD BD PR'.split(' ').indexOf(j);if(k>=0)a[k]++;
+    if(dt!=null&&j!=='PR'){if(j!=='PG'){if(dt<0)a[5]++;else a[6]++;}a[7]+=dt*1000;a[8]++;}
+    const kk=G.ks[JK]||(G.ks[JK]=[0,0,0,0,0]);if(k>=0)kk[k]++;}
   if(j!=='KP')G.judged++;
   if(j==='PG'||j==='GR'||j==='GD'){G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);}else if(j!=='KP')G.combo=0;
   if((j==='BD'||j==='PR')&&!G.ghost)(G.missT||(G.missT=[])).push(songTime());
@@ -4429,7 +4441,7 @@ function press(lane,src,tOv){
   if(!n)return;
   const dt=(t-n.time)/G.rate;
   if(Math.abs(dt)<=G.W.BD){G.lastHit={lane,t:performance.now()};
-    const j=judgeOf(Math.abs(dt));applyJudge(j,dt,lane);
+    const j=judgeOf(Math.abs(dt));JK=n.ch?'chord':'tap';applyJudge(j,dt,lane);JK='tap';
     if(n.et!=null){n.state=1;n.hj=j;}else{n.state=2;n.ej=dt<0&&(j==='BD'||j==='GD')?1:0;}
     G.laneLast[lane]=n.id;
   }else if(dt<-G.W.BD&&dt>=-G.W.KP)applyJudge('KP',null,null);
@@ -4448,14 +4460,14 @@ function release(lane,src,tOv){
   if(G.lnmode==='ln'){
     if(dt<-G.W.BD){n.state=2;breakLN(n,lane);}else n.state=2;
   }else{
-    if(dt<-G.W.BD){if(G.lnmode==='hcn')n.state=4;else{n.state=2;applyJudge('PR',null,lane);}}
-    else{applyJudge(judgeOf(Math.abs(dt)),dt,lane);n.state=2;}
+    JK='ln';if(dt<-G.W.BD){if(G.lnmode==='hcn')n.state=4;else{n.state=2;applyJudge('PR',null,lane);}}
+    else{applyJudge(judgeOf(Math.abs(dt)),dt,lane);n.state=2;}JK='tap';
   }
 }
 function breakLN(n,lane){
   const c=G.counts;c[n.hj]--;G.judged--;
   if(n.hj==='PG'||n.hj==='GR'||n.hj==='GD'){G.combo=Math.max(0,G.combo-1);}
-  applyJudge('PR',null,lane);
+  JK='ln';applyJudge('PR',null,lane);JK='tap';
 }
 
 function schedSound(at){const c=G.chart,ahead=G.pracEnd!=null&&G.practice&&G.practice.loop?Math.min(at+0.25*G.rate,G.pracEnd+0.05):at+0.25*G.rate;
@@ -4479,22 +4491,22 @@ function update(){
       const n=list[i];
       if(n.state===2){i++;continue;}
       if(auto){
-        if(n.state===0&&n.time<=t){applyJudge('PG',0,lane);G.beam[lane]=now;G.laneLast[lane]=n.id;n.state=n.et!=null?1:2;if(n.state===2){i++;continue;}}
-        if(n.state===1){G.beam[lane]=now;if(t>=n.et){if(G.lnmode!=='ln')applyJudge('PG',0,lane);n.state=2;i++;continue;}}
+        if(n.state===0&&n.time<=t){JK='auto';applyJudge('PG',0,lane);JK='tap';G.beam[lane]=now;G.laneLast[lane]=n.id;n.state=n.et!=null?1:2;if(n.state===2){i++;continue;}}
+        if(n.state===1){G.beam[lane]=now;if(t>=n.et){JK='auto';if(G.lnmode!=='ln')applyJudge('PG',0,lane);JK='tap';n.state=2;i++;continue;}}
         break;
       }
       if(n.state===0){
-        if((t-n.time)/R>W.BD){n.state=2;applyJudge('PR',null,lane);if(n.et!=null&&G.lnmode!=='ln')applyJudge('PR',null,lane);i++;continue;}
+        if((t-n.time)/R>W.BD){n.state=2;JK=n.ch?'chord':'tap';applyJudge('PR',null,lane);JK='ln';if(n.et!=null&&G.lnmode!=='ln')applyJudge('PR',null,lane);JK='tap';i++;continue;}
         break;
       }
       if(n.state===1){
         if(G.lnmode==='ln'){if(t>=n.et){n.state=2;i++;continue;}if(!G.pressed[lane]&&t<n.et-W.BD){n.state=2;breakLN(n,lane);i++;continue;}}
-        else if((t-n.et)/R>W.BD){n.state=2;applyJudge('BD',W.BD,lane);i++;continue;}
+        else if((t-n.et)/R>W.BD){n.state=2;JK='ln';applyJudge('BD',W.BD,lane);JK='tap';i++;continue;}
         break;
       }
       if(n.state===4){
         gaugeApply('drain',-(GT[G.cur].surv?6:3)*dtF);
-        if((t-n.et)/R>W.BD){n.state=2;applyJudge('PR',null,lane);i++;continue;}
+        if((t-n.et)/R>W.BD){n.state=2;JK='ln';applyJudge('PR',null,lane);JK='tap';i++;continue;}
         break;
       }
       break;
@@ -4882,6 +4894,102 @@ function renderRadar(){
   box.querySelectorAll('.radGo').forEach(a=>a.onclick=e=>{e.preventDefault();const c=CHARTS.find(x=>x.hash===a.dataset.h);if(c){show('#recDlg',false);openDetail(c);}});
   const fb=box.querySelector('#radFill');if(fb)fb.onclick=async()=>{fb.disabled=true;await backfillRadar();renderRadar();};
 }
+/* ---------- play statistics ---------- */
+const PSK=LSK+'pstat';let PSTAT=[];try{PSTAT=JSON.parse(localStorage.getItem(PSK)||'[]')||[];}catch(e){}
+const MODE_N={'7k':L('7鍵','7K'),'5k':L('5鍵','5K'),'14k':L('14鍵','14K'),'10k':L('10鍵','10K'),'9k':L('9ボタン','9B'),'5p':'5P','4k':L('4鍵','4K'),'24k':L('24鍵','24K'),'4k*':L('4鍵変換','4K (conv.)'),'5k*':L('5鍵変換','5K (conv.)')};
+const modeN=m=>MODE_N[m]||String(m).toUpperCase();
+function pstatPush(ex,N,lamp,rate){
+  if(G.auto||G.replay||G.viewer||G.tut||G.practice||!N)return;
+  const m=G.reduced?((G.opts&&G.opts.reduce)==='5k'?'5k*':'4k*'):G.chart.mode;
+  const d=G.dts,mean=d.length?d.reduce((a,b)=>a+b,0)/d.length:0,sd=d.length?Math.sqrt(d.reduce((a,b)=>a+(b-mean)*(b-mean),0)/d.length):0,c=G.counts;
+  PSTAT.push({t:Date.now(),m,h:G.chart.hash,lv:G.meta&&G.meta.level,n:N,ex,r:+(ex/(2*N)).toFixed(4),lp:lamp,f:G.failed?1:0,
+    c:[c.PG,c.GR,c.GD,c.BD,c.PR,c.KP],fs:[G.fs.f,G.fs.s],mu:+mean.toFixed(1),sd:+sd.toFixed(1),ls:G.ls.map(a=>a||[0,0,0,0,0,0,0,0,0]).map(a=>a.map(x=>Math.round(x))),ks:G.ks,
+    sc:(MODES[G.chart.mode]||{scr:[]}).scr});
+  if(PSTAT.length>1500)PSTAT=PSTAT.slice(-1500);
+  try{localStorage.setItem(PSK,JSON.stringify(PSTAT));}catch(e){PSTAT=PSTAT.slice(-600);try{localStorage.setItem(PSK,JSON.stringify(PSTAT));}catch(_){}}
+}
+const pct=(a,b)=>b?(a/b*100):0,fx=(v,d=1)=>(Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);
+const bar=(v,max,col)=>`<span class="sbar"><i style="width:${Math.max(0,Math.min(100,v/max*100)).toFixed(1)}%;${col?'background:'+col:''}"></i></span>`;
+function wkKey(t){const d=new Date(t);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getTime();}
+const md=t=>{const d=new Date(t);return (d.getMonth()+1)+'/'+d.getDate();};
+/* clears per mode from the records (key-reduced plays come from their own lamps) */
+function modeRecords(){const out={};
+  const add=(m,lp,rate,lv)=>{const o=out[m]||(out[m]={plays:0,n:0,clear:0,hard:0,fc:0,dist:new Array(LAMPS.length).fill(0),rs:0,rn:0,maxLv:-1});o.n++;o.dist[lp]++;if(lp>=3)o.clear++;if(lp>=5)o.hard++;if(lp>=7)o.fc++;if(rate>0){o.rs+=rate;o.rn++;}const l=lvNum(lv);if(lp>=3&&l>o.maxLv)o.maxLv=l;};
+  for(const c of CHARTS){const r=REC[c.hash];if(!r)continue;
+    if(r.plays||r.lamp){add(c.mode,r.lamp||0,c.notesN&&r.ex?r.ex/(2*c.notesN):0,c.level);out[c.mode].plays+=r.plays||0;}
+    for(const k of ['4k','5k'])if(r.red&&r.red[k]&&r.red[k].plays){const q=r.red[k];add(k+'*',q.lamp||0,q.max?q.ex/q.max:0,c.level);out[k+'*'].plays+=q.plays;}}
+  return out;}
+function openStats(){
+  const ov=document.createElement('div');ov.className='overlay';ov.id='statDlg';ov.style.cssText='display:flex;z-index:13';
+  ov.innerHTML=`<div class="box card" style="max-height:94vh;overflow:auto"><h2>${L('📊 統計','📊 Statistics')}</h2><div id="stBody"></div><button class="pri" id="stClose">${L('閉じる','Close')}</button></div>`;
+  document.body.appendChild(ov);ov.querySelector('#stClose').onclick=()=>ov.remove();ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  const MR=modeRecords(),modes=[...new Set(Object.keys(MR).concat(PSTAT.map(p=>p.m)))];
+  const order=['7k','5k','4k*','5k*','14k','10k','9k','4k','24k','5p'];modes.sort((a,b)=>(order.indexOf(a)+99)%99-(order.indexOf(b)+99)%99);
+  let mode=S.statMode&&modes.includes(S.statMode)?S.statMode:modes[0];
+  const body=ov.querySelector('#stBody');
+  const draw=()=>{
+    if(!modes.length){body.innerHTML=`<div class="hlp">${L('まだ記録がありません。何曲か遊ぶと、ここに統計が表示されます。','No records yet. Play a few songs to see statistics here.')}</div>`;return;}
+    const P=PSTAT.filter(p=>p.m===mode),mr=MR[mode];let h='';
+    h+=`<div class="chips" style="flex-wrap:wrap">${modes.map(m=>`<button class="ib${m===mode?' on':''}" data-m="${esc(m)}" style="width:auto;padding:0 10px">${esc(modeN(m))}</button>`).join('')}</div>`;
+    // 1. per mode
+    h+=`<h3>${L('鍵盤モード別の成績','By key mode')}</h3>`;
+    if(mr){h+=`<div class="stgrid"><span>${L('プレイ回数','Plays')}</span><b>${mr.plays}</b><span>${L('遊んだ譜面','Charts played')}</span><b>${mr.n}</b>
+      <span>${L('クリア','Cleared')}</span><b>${mr.clear}</b><span>${L('HARD以上','HARD+')}</span><b>${mr.hard}</b><span>${L('フルコンボ','Full combo')}</span><b>${mr.fc}</b>
+      <span>${L('平均EXスコア率','Avg EX rate')}</span><b>${mr.rn?fx(mr.rs/mr.rn*100,2)+'%':'—'}</b><span>${L('クリアした最高レベル','Highest clear')}</span><b>${mr.maxLv>=0?'☆'+mr.maxLv:'—'}</b></div>
+      <div class="ldist" style="margin:6px 0">${mr.dist.map((v,i)=>v?`<span title="${LAMPS[i]}" style="flex:${v};background:${LAMPC[i]}"></span>`:'').join('')}</div>
+      <div class="hlp" style="margin:0">${mr.dist.map((v,i)=>v?`<span style="color:${LAMPC[i]}">■</span>${LAMPS[i]} ${v}`:'').filter(Boolean).join('　')}</div>`;}
+    else h+=`<div class="hlp">${L('このモードの自己ベストの記録はまだありません。','No personal bests in this mode yet.')}</div>`;
+    if(!P.length){h+=`<div class="hlp" style="margin-top:10px">${L('キー別などの詳しい統計は、この更新のあとのプレイから集めています。このモードで何曲か遊ぶと表示されます。','Detailed stats (per key, etc.) are collected from plays after this update. Play some songs in this mode to see them.')}</div>`;body.innerHTML=h+growthHTML();bind();return;}
+    // 2. per key
+    const lanes=Math.max(...P.map(p=>p.ls.length)),agg=[];for(let i=0;i<lanes;i++)agg.push([0,0,0,0,0,0,0,0,0]);
+    for(const p of P)p.ls.forEach((a,i)=>a.forEach((v,k)=>agg[i][k]+=v));
+    const scr=new Set((P[P.length-1].sc)||[]);let ki=0;const names=agg.map((_,i)=>scr.has(i)?L('皿','Scr'):String(++ki));
+    const miss=agg.map(a=>{const n=a[0]+a[1]+a[2]+a[3]+a[4];return n?pct(a[3]+a[4],n):null;});
+    const mmax=Math.max(10,...miss.filter(x=>x!=null));
+    h+=`<h3>${L('キー別の得意・苦手','By key')}</h3><div class="hlp" style="margin:0 0 4px">${L(`直近 ${P.length} プレイの合計。色が赤いほどミス（BAD＋MISS）が多いキーです。`,`Totals of the last ${P.length} plays. Redder keys have more misses (BAD + MISS).`)}</div>
+      <div class="keymap">${agg.map((a,i)=>{const m=miss[i],n=a[0]+a[1]+a[2]+a[3]+a[4],fsN=a[5]+a[6],mu=a[8]?a[7]/a[8]:0;
+        const hue=m==null?0:Math.max(0,120-120*Math.min(1,m/mmax));
+        return `<div class="kcell${scr.has(i)?' scr':''}" style="border-color:${m==null?'var(--faint)':`hsl(${hue} 80% 55%)`}"><b>${esc(names[i])}</b><span style="color:${m==null?'var(--dim)':`hsl(${hue} 80% 60%)`}">${m==null?'—':fx(m)+'%'}</span><small>${fsN?(a[5]>a[6]*1.3?L('早め','early'):a[6]>a[5]*1.3?L('遅め','late'):L('±','even')):'—'}</small><small>${n?(mu>=0?'+':'')+fx(mu,0)+'ms':''}</small></div>`;}).join('')}</div>
+      <div class="hlp" style="margin:2px 0 0">${L('上から：キー／ミス率／FAST・SLOWの傾向／平均のずれ','Rows: key / miss rate / early-late tendency / mean offset')}</div>`;
+    {let w=-1;miss.forEach((m,i)=>{if(m!=null&&(w<0||m>miss[w]))w=i;});const avg=miss.filter(x=>x!=null),av=avg.reduce((a,b)=>a+b,0)/Math.max(1,avg.length);
+      if(w>=0&&miss[w]>=av*1.4&&miss[w]-av>=2){const a=agg[w],tip=a[5]>a[6]*1.3?L('早押しぎみなので、少し引きつけて押してみましょう。','You tend to press early: wait a touch longer.'):a[6]>a[5]*1.3?L('遅れぎみなので、少し早めを意識してみましょう。','You tend to be late: press a touch earlier.'):L('押し逃しが多いので、このキーに来るノーツを意識して見てみましょう。','Many missed notes: watch for notes in this lane.');
+        h+=`<div class="advc">・${scr.has(w)?L('皿','The turntable'):L(`${names[w]}番のキー`,`Key ${names[w]}`)}${L(`のミス率が高め（${fx(miss[w])}%、平均 ${fx(av)}%）です。`,` has more misses (${fx(miss[w])}% vs ${fx(av)}% average).`)}${tip}</div>`;}}
+    {const K={tap:L('単押し','Single notes'),chord:L('同時押し','Chords'),ln:L('ロングノーツ（離し・押しっぱなし）','Long notes (release / hold)')},ag={};
+      for(const p of P)for(const k in p.ks){const a=ag[k]||(ag[k]=[0,0,0,0,0]);p.ks[k].forEach((v,i)=>a[i]+=v);}
+      const rows=Object.keys(K).filter(k=>ag[k]).map(k=>{const a=ag[k],n=a.reduce((x,y)=>x+y,0),m=pct(a[3]+a[4],n);return `<span>${K[k]}</span>${bar(m,Math.max(10,m),m>15?'var(--alert)':'')}<b>${fx(m)}%</b>`;});
+      if(rows.length)h+=`<div class="hlp" style="margin:8px 0 2px">${L('押し方別のミス率','Miss rate by note type')}</div><div class="strow">${rows.join('')}</div>`;}
+    // 3. judgement trends (weekly)
+    {const W=new Map();for(const p of P){const k=wkKey(p.t),o=W.get(k)||{n:0,pg:0,gr:0,f:0,s:0,mu:0,sd:0,c:0,r:0};const N=p.c[0]+p.c[1]+p.c[2]+p.c[3]+p.c[4];o.n+=N;o.pg+=p.c[0];o.gr+=p.c[1];o.f+=p.fs[0];o.s+=p.fs[1];o.mu+=p.mu;o.sd+=p.sd;o.r+=p.r;o.c++;W.set(k,o);}
+      const ks=[...W.keys()].sort((a,b)=>a-b).slice(-8);
+      h+=`<h3>${L('判定の推移（週ごと）','Judgement trend (weekly)')}</h3><div class="sttbl"><span>${L('週','Week')}</span><span>PERFECT</span><span>GREAT</span><span>${L('早/遅','F/S')}</span><span>${L('ずれ','Offset')}</span><span>${L('安定度','Spread')}</span>
+        ${ks.map(k=>{const o=W.get(k);return `<span>${md(k)}〜</span><span>${fx(pct(o.pg,o.n))}%</span><span>${fx(pct(o.gr,o.n))}%</span><span>${o.f+o.s?fx(pct(o.f,o.f+o.s),0)+':'+fx(pct(o.s,o.f+o.s),0):'—'}</span><span>${(o.mu/o.c>=0?'+':'')+fx(o.mu/o.c)}ms</span><span>±${fx(o.sd/o.c)}ms</span>`;}).join('')}</div>
+        <div class="hlp" style="margin:2px 0 0">${L('安定度は、ずれのばらつき（小さいほど安定）です。','Spread is how much your timing varies (smaller is steadier).')}</div>`;}
+    // 5. habits
+    {const TB=[[5,11,L('朝','Morning')],[11,17,L('昼','Day')],[17,23,L('夜','Evening')],[23,29,L('深夜','Late night')]],tb=TB.map(()=>({r:0,c:0}));
+      for(const p of P){let hr=new Date(p.t).getHours();if(hr<5)hr+=24;const i=TB.findIndex(b=>hr>=b[0]&&hr<b[1]);if(i>=0){tb[i].r+=p.r;tb[i].c++;}}
+      const seq=[[],[],[],[],[]];let lastDay='',idx=0,lastT=0;for(const p of P){const d=new Date(p.t).toDateString();if(d!==lastDay||p.t-lastT>3*3600e3){idx=0;lastDay=d;}seq[Math.min(4,idx)].push(p.r);idx++;lastT=p.t;}
+      const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null,all=avg(P.map(p=>p.r));
+      h+=`<h3>${L('遊び方のくせ','Habits')}</h3><div class="hlp" style="margin:0 0 2px">${L('時間帯別の平均EXスコア率','Average EX rate by time of day')}</div><div class="strow">${TB.map((b,i)=>tb[i].c?`<span>${b[2]}（${tb[i].c}）</span>${bar(tb[i].r/tb[i].c*100,100)}<b>${fx(tb[i].r/tb[i].c*100)}%</b>`:'').join('')}</div>
+        <div class="hlp" style="margin:6px 0 2px">${L('その日の何曲目か別の平均EXスコア率（調子が上がるまでの目安）','Average EX rate by song number in a session (warm-up)')}</div><div class="strow">${seq.map((a,i)=>a.length?`<span>${i<4?L(`${i+1}曲目`,`Song ${i+1}`):L('5曲目以降','5th+')}（${a.length}）</span>${bar(avg(a)*100,100)}<b>${fx(avg(a)*100)}%</b>`:'').join('')}</div>
+        <div class="hlp" style="margin:2px 0 0">${L('同じ曲ばかりでなく、いろいろな曲の平均です。全体の平均は ','Averages over all songs played. Overall average: ')}${all!=null?fx(all*100)+'%':'—'}</div>`;}
+    body.innerHTML=h+growthHTML();bind();
+  };
+  // 4. growth (from the records; all modes)
+  const growthHTML=()=>{const firstClear=new Map(),firstFc=new Map();
+    for(const c of CHARTS){const r=REC[c.hash];if(!r||!r.lamp)continue;const hs=r.hist||[];let fc=null,ff=null;for(const x of hs){if(x[3]>=3&&fc==null)fc=x[0];if(x[3]>=7&&ff==null)ff=x[0];}
+      if(r.lamp>=3)firstClear.set(c,fc||r.last||Date.now());if(r.lamp>=7)firstFc.set(c,ff||r.last||Date.now());}
+    if(!firstClear.size)return '';
+    const t0=Math.min(...firstClear.values()),weeks=[];for(let w=wkKey(t0);w<=wkKey(Date.now());w+=7*86400e3)weeks.push(w);
+    const rows=weeks.slice(-8).map(w=>{const end=w+7*86400e3,cl=[...firstClear].filter(([,t])=>t<end).map(([c])=>c),lv=cl.map(c=>lvNum(c.level)).filter(x=>x>=0).sort((a,b)=>b-a);
+      return {w,clear:cl.length,fc:[...firstFc.values()].filter(t=>t<end).length,sk:lv.length?lv[Math.min(2,lv.length-1)]:0};});
+    const mx=Math.max(1,...rows.map(r=>r.clear));
+    const best=CHARTS.filter(c=>{const r=REC[c.hash];return r&&r.hist&&r.hist.length;}).map(c=>{const hs=REC[c.hash].hist;let t=0,prev=0;for(const x of hs){if(x[1]>prev){t=x[0];prev=x[1];}}return {c,t,ex:prev};}).filter(x=>x.t).sort((a,b)=>b.t-a.t).slice(0,8);
+    return `<h3>${L('成長の記録','Progress')}</h3><div class="sttbl g4"><span>${L('週','Week')}</span><span>${L('腕前（推定）','Level (est.)')}</span><span>${L('クリア累計','Clears')}</span><span>${L('フルコンボ累計','FCs')}</span>
+      ${rows.map(r=>`<span>${md(r.w)}〜</span><span>${r.sk?'☆'+r.sk:'—'}</span><span>${bar(r.clear,mx)} ${r.clear}</span><span>${r.fc}</span>`).join('')}</div>
+      ${best.length?`<div class="hlp" style="margin:8px 0 2px">${L('最近の自己ベスト更新','Recent personal bests')}</div>${best.map(x=>`<div class="strow1"><span>${md(x.t)}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.c.title)}</span><b>EX ${x.ex}</b></div>`).join('')}`:''}`;};
+  const bind=()=>body.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;S.statMode=mode;saveS();draw();});
+  draw();
+}
 function renderRec(){
   const body=$('#recBody'),days=Object.keys(STATS).sort(),today=dayKey();
   const sum=ks=>ks.reduce((a,k)=>{const q=STATS[k]||{};a.p+=q.p||0;a.n+=q.n||0;a.s+=q.s||0;return a;},{p:0,n:0,s:0});
@@ -4894,6 +5002,7 @@ function renderRec(){
     <div class="hlp">${L('プレイ記録（オートやリプレイは数えません）','Play stats (autoplay and replays are not counted)')}</div>
     <div class="stt">${cell(L('今日','Today'),t)}${cell(L('7日間','7 days'),w)}${cell(L('累計','Total'),all)}</div>
     <canvas class="graph" id="recDays" style="height:90px"></canvas>
+    <button class="pri" id="statOpen" style="margin:10px 0 4px">${L('📊 詳しい統計を見る（キー別・モード別など）','📊 Detailed statistics (per key, per mode…)')}</button>
     <div class="hlp" style="margin-top:10px">${L('ノーツレーダー（得意・苦手）','Notes radar (strengths)')}</div>
     <div id="recRadar"></div>
     <div class="hlp" style="margin-top:10px">${L('クリアランプの分布','Clear lamp distribution')}</div>
@@ -4903,7 +5012,7 @@ function renderRec(){
   $('#recGloss').onclick=openGloss;
   const sel=$('#recSrc');sel.value=TABLES.some(T=>T.url===src)?src:'';
   sel.onchange=()=>{S.recSrc=sel.value;saveS();renderDist();};
-  renderDist();renderRadar();
+  renderDist();renderRadar();{const so=$('#statOpen');if(so)so.onclick=openStats;}
   requestAnimationFrame(()=>{
     const cv=$('#recDays');if(!cv)return;const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;const x=cv.getContext('2d');x.scale(d,d);
     const ks=[];for(let i=13;i>=0;i--)ks.push(dayKey(Date.now()-i*86400000));const v=ks.map(k=>(STATS[k]||{}).p||0),mx=Math.max(1,...v);
@@ -5376,6 +5485,7 @@ function finish(){if(G&&G.ghost){G.ended=true;return;}if(BT){if(G.ended)return;G
       same10:(()=>{const d=dayKey();if(!ACHC.sd||ACHC.sd.d!==d)ACHC.sd={d,h:{}};ACHC.sd.h[hash]=(ACHC.sd.h[hash]||0)+1;return ACHC.sd.h[hash]>=10;})()}:{hour:new Date().getHours()};
     // colours and styles used, and the random-pick streak
     {const ph=ACHC.ph||(ACHC.ph=[]),sk=ACHC.sk||(ACHC.sk=[]);if(!ph.includes(phNow()))ph.push(phNow());if(!sk.includes(S.playSkin))sk.push(S.playSkin);}
+    try{pstatPush(ex,N,lamp,rate);}catch(e){console.warn(e);}
     if(G.record){if(RND_HASH&&hash===RND_HASH)ACHC.rs=ok?(ACHC.rs||0)+1:0;else ACHC.rs=0;RND_HASH=null;}
     saveC();
     R.ach=checkAch(R,cur);}catch(e){console.warn('ach',e);}}
