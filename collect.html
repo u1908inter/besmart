@@ -47,8 +47,8 @@ details summary{cursor:pointer;color:var(--hi)}
 
 <div class="box" id="inboxBox">
   <h2>取り込み待ち</h2>
-  <div class="row"><span id="inboxN">確認中…</span><a class="btn pri" id="goImport" href="./?shared=1">BeSmartで取り込む</a></div>
-  <div class="hlp">ダウンロードした書庫はいったんここに貯まります。「BeSmartで取り込む」を押すと、BeSmartが開いて曲一覧に追加します（タイトル画面ならスタートを押した後に始まります）。</div>
+  <div class="row"><span id="inboxN">確認中…</span><a class="btn pri" id="goImport" href="./?shared=1" target="_blank" rel="noopener">BeSmartで取り込む</a></div>
+  <div class="hlp">ダウンロードした書庫はいったんここに貯まります。「BeSmartで取り込む」を押すと、BeSmartが新しいタブで開いて曲一覧に追加します（タイトル画面ならスタートを押した後に始まります）。</div>
   <div class="row"><span class="hlp" id="quota"></span></div>
 </div>
 
@@ -310,6 +310,13 @@ async function run(){
 $('#go').onclick=()=>{if(RUN){RUN=false;ABORT&&ABORT.abort();updBar('停止しました');}else run();};
 $('#clrHist').onclick=()=>{if(confirm('取得済み・失敗の記録を消します。曲や取り込み待ちのファイルは消えません。')){HIST={};saveHist();build();}};
 window.addEventListener('beforeunload',e=>{if(RUN){e.preventDefault();e.returnValue='';}});
+
+/* back from the BeSmart tab: update the inbox count and what is now owned */
+document.addEventListener('visibilitychange',async()=>{
+  if(document.hidden||RUN)return;
+  await refreshInbox();
+  OWNED=await loadOwned();build();
+});
 
 /* ---------- start ---------- */
 (async()=>{
