@@ -103,6 +103,20 @@ details summary{cursor:pointer;color:var(--hi)}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ARCH_RE=/\.(zip|rar|7z|lzh|lha)(\?|#|$)/i;
+/* share and entry pages the relay can follow to the file itself */
+function pageViaRelay(u){let x;try{x=new URL(u);}catch(e){return false;}
+  const h=x.hostname.toLowerCase(),p=x.pathname;
+  if(/^(drive|docs)\.google\.com$/.test(h))return !/folders/.test(p)&&(/\/d\/[\w-]{10,}/.test(p)||x.searchParams.has('id'))&&!/spreadsheet|document|presentation/.test(p);
+  if(/(^|\.)(onedrive\.live\.com|skydrive\.live\.com)$/.test(h))return x.searchParams.has('id')||x.searchParams.has('resid');
+  if(h==='1drv.ms')return !/^\/f\//.test(p);
+  if(/(^|\.)mediafire\.com$/.test(h))return /^\/(file|download)\//.test(p)||/^\/\?\w+/.test(p+x.search);
+  if(/(^|\.)dropbox\.com$/.test(h))return /^\/(s|scl)\//.test(p);
+  if(h==='manbow.nothing.sh')return /event\.cgi/.test(p)&&/More_def/.test(x.search);
+  if(h==='stellabms.xyz')return /^\/upload\/\d+/.test(p);
+  if(h==='venue.bmssearch.net')return /^\/[^/]+\/\d+/.test(p);
+  if(h==='bmssearch.net')return /^\/(venue\/detail|bmses\/)/.test(p);
+  if(h==='gnqg.rosx.net')return /get=/.test(x.search);
+  return false;}
 const SHARE='besmart-share';
 const HK='besmart-collect-hist', SK='besmart-collect-set';
 let HIST={};try{HIST=JSON.parse(localStorage.getItem(HK)||'{}');}catch(e){}
@@ -190,10 +204,11 @@ function build(){
     let auto=false;
     for(const [k,on,label] of [['url',body,'本体'],['url_diff',diff,'差分']]){
       const u=(e[k]||'').trim();if(!u||!on)continue;
-      if(!ARCH_RE.test(u))continue;
+      const via=ARCH_RE.test(u)?'':(SET.px&&pageViaRelay(u))?'px':null;
+      if(via===null)continue;
       auto=true;
       if(hide&&HIST[u]&&HIST[u].st==='ok')continue;
-      if(!map.has(u))map.set(u,{url:u,kind:label,lv,title,rank:CUR.rank(String(e.level))});
+      if(!map.has(u))map.set(u,{url:u,kind:label,via,lv,title,rank:CUR.rank(String(e.level))});
       else if(label==='本体')map.get(u).kind='本体';
     }
     if(!auto&&(e.url||e.url_diff))MANUAL.push({lv,title,url:e.url,url_diff:e.url_diff});
@@ -208,7 +223,7 @@ function stTxt(u){const h=HIST[u];if(!h)return '';return h.st==='ok'?'<span clas
 function renderList(){
   if(!ITEMS.length){$('#list').innerHTML='<div class="it hlp">自動で取れる曲はありません</div>';return;}
   $('#list').innerHTML=ITEMS.map((it,i)=>{let host='';try{host=new URL(it.url).hostname;}catch(e){}
-    return `<label class="it"><input type="checkbox" data-i="${i}" ${it.sel?'checked':''}><span class="lv">${esc(it.lv)}</span><span class="t"><b>${esc(it.title)}</b><small>${esc(it.kind)}・${esc(host)}</small></span><span id="s${i}">${stTxt(it.url)}</span></label>`;}).join('');
+    return `<label class="it"><input type="checkbox" data-i="${i}" ${it.sel?'checked':''}><span class="lv">${esc(it.lv)}</span><span class="t"><b>${esc(it.title)}</b><small>${esc(it.kind)}${it.via?'（中継でページをたどる）':''}・${esc(host)}</small></span><span id="s${i}">${stTxt(it.url)}</span></label>`;}).join('');
 }
 function renderManual(){
   $('#manual').innerHTML=MANUAL.length?MANUAL.slice(0,500).map(m=>`<div class="it"><span class="lv">${esc(m.lv)}</span><span class="t"><b>${esc(m.title)}</b>${m.url?`<small><a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--hi)">配布ページ</a></small>`:''}${m.url_diff?`<small><a href="${esc(m.url_diff)}" target="_blank" rel="noopener" style="color:var(--hi)">差分</a></small>`:''}</span></div>`).join('')+(MANUAL.length>500?`<div class="it hlp">ほか${MANUAL.length-500}件</div>`:''):'<div class="hlp">なし</div>';
@@ -223,7 +238,7 @@ $('#tbl').onchange=()=>{SET.tbl=$('#tbl').value;saveSet();loadTable($('#tbl').va
 /* ---------- proxy settings ---------- */
 $('#pxUrl').value=SET.px||'';$('#pxKey').value=SET.key||'';
 if(SET.gap)$('#gap').value=SET.gap;if(SET.batch)$('#batch').value=SET.batch;
-$('#pxSave').onclick=()=>{SET.px=$('#pxUrl').value.trim().replace(/\/+$/,'');SET.key=$('#pxKey').value;saveSet();$('#pxMsg').textContent='保存しました';};
+$('#pxSave').onclick=()=>{SET.px=$('#pxUrl').value.trim().replace(/\/+$/,'');SET.key=$('#pxKey').value;saveSet();$('#pxMsg').textContent='保存しました';build();};
 $('#pxTest').onclick=async()=>{
   $('#pxSave').click();if(!SET.px){$('#pxMsg').textContent='URLを入れてください';return;}
   $('#pxMsg').textContent='確認中…';
@@ -249,16 +264,19 @@ async function getOnce(url,viaProxy,signal){
   return fetch(target,opt);
 }
 async function download(it,onp){
-  let x;try{x=normUrl(it.url);}catch(e){throw new Error('URLの形式が正しくありません');}
+  let x;try{x=it.via?new URL(it.url):normUrl(it.url);}catch(e){throw new Error('URLの形式が正しくありません');}
   const https=location.protocol==='https:';
   const tries=[];
-  if(x.protocol==='https:'||!https){tries.push([x.href,false]);}
-  else{const y=new URL(x.href);y.protocol='https:';tries.push([y.href,false]);}
+  if(!it.via){
+    if(x.protocol==='https:'||!https){tries.push([x.href,false]);}
+    else{const y=new URL(x.href);y.protocol='https:';tries.push([y.href,false]);}
+  }
   if(SET.px)tries.push([x.href,true]);
   let res=null,lastErr='';
   for(const [u,px] of tries){
     try{res=await getOnce(u,px,ABORT.signal);
-      if(!res.ok){lastErr=(px?'中継：':'')+`HTTP ${res.status}`+(px&&res.status===401?'（合言葉）':'');res=null;continue;}
+      if(!res.ok){let why='';if(px){try{why=(await res.text()).slice(0,200);}catch(e){}}
+        lastErr=px?'中継：'+(why||`HTTP ${res.status}`):`HTTP ${res.status}`;res=null;continue;}
       break;
     }catch(e){if(e.name==='AbortError')throw e;lastErr=px?'中継に接続できません':'配布元が他サイトからの読み込みを許可していないか、接続できません'+(SET.px?'':'（中継を設定すると取れる可能性があります）');res=null;}
   }
