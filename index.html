@@ -3696,12 +3696,17 @@ function renderPwaBox(){
   const btn=document.getElementById('pwaInstall');if(btn)btn.onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;renderPwaBox();};
 }
 async function importShared(){
-  if(!/[?&]shared=1/.test(location.search)||!('caches' in window))return;
+  // ?shared=1 comes from the share target; without it, files still waiting in the inbox (left by the share target or collect.html) are imported too
+  if(!('caches' in window))return;
+  const asked=/[?&]shared=1/.test(location.search);
+  if(!asked){try{if(!(await caches.has('besmart-share')))return;}catch(e){return;}}
   try{
     const c=await caches.open('besmart-share');const ks=await c.keys();const files=[];
-    for(const k of ks){const r=await c.match(k);if(!r)continue;const nm=decodeURIComponent(r.headers.get('X-Name')||'shared.zip');files.push(new File([await r.blob()],nm));await c.delete(k);}
-    history.replaceState(null,'',location.pathname);
-    if(files.length){const go=()=>importFiles(files);if($('#title').style.display==='flex')$('#titleStart').addEventListener('click',()=>setTimeout(go,60),{once:true});else go();}
+    if(!ks.length&&!asked)return;
+    for(const k of ks){const r=await c.match(k);if(!r)continue;const nm=decodeURIComponent(r.headers.get('X-Name')||'shared.zip');files.push(new File([await r.blob()],nm));}
+    if(asked)history.replaceState(null,'',location.pathname);
+    // the inbox is emptied only once the import has run, so closing the app before it starts keeps the files
+    if(files.length){const go=async()=>{await importFiles(files);for(const k of ks){try{await c.delete(k);}catch(e){}}};if($('#title').style.display==='flex')$('#titleStart').addEventListener('click',()=>setTimeout(go,60),{once:true});else go();}
   }catch(e){console.error(e);}
 }
 importShared();

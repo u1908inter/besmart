@@ -43,3 +43,46 @@ self.addEventListener('fetch', e => {
     return hit || net;
   }));
 });
+
+/* "まとめて追加" (collect.html): downloads handed to the browser keep going with the screen off.
+   Each finished file goes into the same inbox as the share target; BeSmart imports it on its next start. */
+function bfKind(u8) {
+  if (u8[0] === 0x50 && u8[1] === 0x4B) return 'zip';
+  if (u8[0] === 0x52 && u8[1] === 0x61 && u8[2] === 0x72 && u8[3] === 0x21) return 'rar';
+  if (u8[0] === 0x37 && u8[1] === 0x7A && u8[2] === 0xBC && u8[3] === 0xAF) return '7z';
+  if (u8[2] === 0x2D && u8[3] === 0x6C && (u8[4] === 0x68 || u8[4] === 0x7A) && u8[6] === 0x2D) return 'lzh';
+  return null;
+}
+function bfName(res, src, kind) {
+  let n = ''; const cd = res.headers.get('content-disposition') || '';
+  let m = cd.match(/filename\*\s*=\s*UTF-8''([^;]+)/i); if (m) { try { n = decodeURIComponent(m[1]); } catch (e) {} }
+  if (!n) { m = cd.match(/filename\s*=\s*"?([^";]+)"?/i); if (m) n = m[1]; }
+  if (!n) { try { n = decodeURIComponent(new URL(res.headers.get('x-final-url') || src).pathname.split('/').pop().replace(/\+/g, ' ')); } catch (e) {} }
+  n = (n || 'download').replace(/[\\/:*?"<>|]/g, '_');
+  if (!/\.(zip|rar|7z|lzh|lha)$/i.test(n)) n += '.' + kind;
+  return n;
+}
+async function bfCollect(e) {
+  const reg = e.registration, out = [];
+  const inbox = await caches.open('besmart-share');
+  for (const rec of await reg.matchAll()) {
+    let src = rec.request.url; try { src = new URL(rec.request.url).searchParams.get('url') || src; } catch (err) {}
+    try {
+      const res = await rec.responseReady;
+      if (!res.ok || res.headers.get('x-collect-error')) { let why = ''; try { why = (await res.text()).slice(0, 200); } catch (err) {} out.push({ url: src, ok: false, msg: '中継：' + (why || 'HTTP ' + res.status) }); continue; }
+      const blob = await res.blob();
+      const kind = bfKind(new Uint8Array(await blob.slice(0, 8).arrayBuffer()));
+      if (!kind) { out.push({ url: src, ok: false, msg: 'BMSの書庫ではないようです（Webページが返ってきた可能性）' }); continue; }
+      const name = bfName(res, src, kind);
+      await inbox.put(new Request(`./shared/collect-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`), new Response(blob, { headers: { 'X-Name': encodeURIComponent(name) } }));
+      out.push({ url: src, ok: true, name, size: blob.size });
+    } catch (err) { out.push({ url: src, ok: false, msg: '中継に接続できませんでした' }); }
+  }
+  const box = await caches.open('besmart-collect');
+  await box.put(new Request(`./collect-result/${encodeURIComponent(reg.id)}`), new Response(JSON.stringify({ id: reg.id, t: Date.now(), items: out }), { headers: { 'Content-Type': 'application/json' } }));
+  const ok = out.filter(x => x.ok).length;
+  try { await e.updateUI({ title: `BeSmart：${ok}件取得${out.length - ok ? `・${out.length - ok}件失敗` : ''}（次にBeSmartを開くと取り込みます）` }); } catch (err) {}
+}
+self.addEventListener('backgroundfetchsuccess', e => e.waitUntil(bfCollect(e)));
+self.addEventListener('backgroundfetchfail', e => e.waitUntil(bfCollect(e)));
+self.addEventListener('backgroundfetchclick', e => e.waitUntil(clients.openWindow('./collect.html')));

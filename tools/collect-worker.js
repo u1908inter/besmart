@@ -17,16 +17,19 @@ export default {
       'Access-Control-Allow-Origin': ALLOW.includes(origin) ? origin : ALLOW[0],
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'X-Key',
-      'Access-Control-Expose-Headers': 'Content-Length, Content-Type, Content-Disposition, X-Final-Url',
+      'Access-Control-Expose-Headers': 'Content-Length, Content-Type, Content-Disposition, X-Final-Url, X-Collect-Error',
       'Access-Control-Max-Age': '86400',
       'Vary': 'Origin',
     };
-    const text = (s, status) => new Response(s, { status, headers: { ...cors, 'Content-Type': 'text/plain; charset=utf-8' } });
+    const bg = new URL(req.url).searchParams.has('k');
+    // background downloads stall on an error status, so they get 200 with an X-Collect-Error header instead
+    const text = (s, status) => new Response(s, { status: bg && status !== 200 ? 200 : status, headers: { ...cors, 'Content-Type': 'text/plain; charset=utf-8', ...(status !== 200 ? { 'X-Collect-Error': String(status) } : {}) } });
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    if (req.method !== 'GET' || !ALLOW.includes(origin)) return new Response('forbidden', { status: 403 });
-    if (!env.KEY || req.headers.get('X-Key') !== env.KEY) return text('合言葉が違います', 401);
-
+    // a page from another site is refused; requests with no Origin (background downloads) still need the key
+    if (req.method !== 'GET' || (origin && !ALLOW.includes(origin))) return new Response('forbidden', { status: 403 });
     const q = new URL(req.url).searchParams;
+    // the key comes as a header, or as ?k= for background downloads (those cannot send custom headers)
+    if (!env.KEY || (req.headers.get('X-Key') || q.get('k')) !== env.KEY) return text('合言葉が違います', 401);
     if (q.has('ping')) return text('ok', 200);
     let target;
     try { target = new URL(q.get('url') || ''); } catch (e) { return text('URLの形式が正しくありません', 400); }

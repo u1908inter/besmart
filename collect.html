@@ -48,7 +48,7 @@ details summary{cursor:pointer;color:var(--hi)}
 <div class="box" id="inboxBox">
   <h2>取り込み待ち</h2>
   <div class="row"><span id="inboxN">確認中…</span><a class="btn pri" id="goImport" href="./?shared=1" target="_blank" rel="noopener">BeSmartで取り込む</a></div>
-  <div class="hlp">ダウンロードした書庫はいったんここに貯まります。「BeSmartで取り込む」を押すと、BeSmartが新しいタブで開いて曲一覧に追加します（タイトル画面ならスタートを押した後に始まります）。</div>
+  <div class="hlp">ダウンロードした書庫はいったんここに貯まります。「BeSmartで取り込む」を押すか、次にBeSmartを開いたときに、自動で曲一覧に追加されます（タイトル画面ならスタートを押した後に始まります）。</div>
   <div class="row"><span class="hlp" id="quota"></span></div>
 </div>
 
@@ -75,6 +75,9 @@ details summary{cursor:pointer;color:var(--hi)}
     <label>間隔 <input type="number" id="gap" min="2" max="60" value="4">秒</label>
     <label><input type="number" id="batch" min="1" max="200" value="20">件ごとに止める</label>
   </div>
+  <div class="row" id="bgRow" style="display:none"><label><input type="checkbox" id="useBg">バックグラウンドで取る（画面を消しても続きます）</label></div>
+  <div class="hlp" id="bgHlp" style="display:none">ブラウザにダウンロードを任せます。進み具合は通知に出て、終わった曲は次にBeSmartを開いたときに自動で取り込まれます。中継の設定が必要です。間隔は空けられないので、件数は10件程度がおすすめです。</div>
+  <div class="hlp" id="bgNow"></div>
   <div class="hlp" id="sum"></div>
   <div class="row"><button id="selAll">全部選ぶ</button><button id="selNone">全部外す</button></div>
 </div>
@@ -207,7 +210,7 @@ function build(){
       const via=ARCH_RE.test(u)?'':(SET.px&&pageViaRelay(u))?'px':null;
       if(via===null)continue;
       auto=true;
-      if(hide&&HIST[u]&&HIST[u].st==='ok')continue;
+      if(hide&&HIST[u]&&(HIST[u].st==='ok'||HIST[u].st==='bg'))continue;
       if(!map.has(u))map.set(u,{url:u,kind:label,via,lv,title,rank:CUR.rank(String(e.level))});
       else if(label==='本体')map.get(u).kind='本体';
     }
@@ -215,11 +218,11 @@ function build(){
   }
   // bodies before chart add-ons so a 差分 finds its song
   ITEMS=[...map.values()].sort((a,b)=>(a.kind==='本体'?0:1)-(b.kind==='本体'?0:1)||a.rank-b.rank);
-  ITEMS.forEach(it=>it.sel=!(HIST[it.url]&&HIST[it.url].st==='ok'));
+  ITEMS.forEach(it=>it.sel=!(HIST[it.url]&&(HIST[it.url].st==='ok'||HIST[it.url].st==='bg')));
   $('#sum').textContent=`この範囲：所持 ${owned}譜面／未所持 ${miss}譜面 → 自動で取れる書庫 ${ITEMS.length}件、手動 ${MANUAL.length}譜面`;
   renderList();renderManual();updBar();
 }
-function stTxt(u){const h=HIST[u];if(!h)return '';return h.st==='ok'?'<span class="st okc">取得済</span>':`<span class="st err">失敗</span>`;}
+function stTxt(u){const h=HIST[u];if(!h)return '';return h.st==='ok'?'<span class="st okc">取得済</span>':h.st==='bg'?'<span class="st">予約中</span>':`<span class="st err">失敗</span>`;}
 function renderList(){
   if(!ITEMS.length){$('#list').innerHTML='<div class="it hlp">自動で取れる曲はありません</div>';return;}
   $('#list').innerHTML=ITEMS.map((it,i)=>{let host='';try{host=new URL(it.url).hostname;}catch(e){}
@@ -325,15 +328,61 @@ async function run(){
   updBar(`終了：成功 ${ok}件・失敗 ${ng}件`);
   await refreshInbox();
 }
-$('#go').onclick=()=>{if(RUN){RUN=false;ABORT&&ABORT.abort();updBar('停止しました');}else run();};
+$('#go').onclick=()=>{if(RUN){RUN=false;ABORT&&ABORT.abort();updBar('停止しました');}else if(BG_OK&&$('#useBg').checked)runBg();else run();};
 $('#clrHist').onclick=()=>{if(confirm('取得済み・失敗の記録を消します。曲や取り込み待ちのファイルは消えません。')){HIST={};saveHist();build();}};
 window.addEventListener('beforeunload',e=>{if(RUN){e.preventDefault();e.returnValue='';}});
+
+/* ---------- background downloads (Chrome's Background Fetch, finished by sw.js) ---------- */
+let BG_OK=false,SWREG=null;
+async function initBg(){
+  if(!('serviceWorker' in navigator))return;
+  try{await navigator.serviceWorker.register('sw.js');SWREG=await navigator.serviceWorker.ready;}catch(e){return;}
+  BG_OK=!!(SWREG&&SWREG.backgroundFetch);
+  $('#bgRow').style.display=BG_OK?'':'none';$('#bgHlp').style.display=BG_OK?'':'none';
+  if(BG_OK){$('#useBg').checked=!!SET.bg;$('#useBg').onchange=()=>{SET.bg=$('#useBg').checked;saveSet();};}
+  await syncBg();
+}
+async function syncBg(){
+  // results the service worker left behind
+  let changed=false;
+  try{const box=await caches.open('besmart-collect');
+    for(const k of await box.keys()){const r=await box.match(k);let o=null;try{o=await r.json();}catch(e){}
+      if(o&&o.items){let ok=0;for(const it of o.items){
+          const t=(HIST[it.url]&&HIST[it.url].title)||it.url;
+          HIST[it.url]=it.ok?{st:'ok',t:o.t}:{st:'ng',t:o.t,msg:it.msg};if(it.ok)ok++;
+          log(it.ok?`<span class="okc">✓</span> ${esc(t)}（${esc(it.name)}・${fmtMB(it.size)}）［バックグラウンド］`:`<span class="err">✗</span> ${esc(t)}：${esc(it.msg)}　<a href="${esc(it.url)}" target="_blank" rel="noopener">開く</a>`);}
+        log(`— バックグラウンド取得の結果：成功 ${ok}件・失敗 ${o.items.length-ok}件 —`);changed=true;}
+      await box.delete(k);}
+  }catch(e){}
+  // still running
+  let n=0;if(BG_OK){try{for(const id of await SWREG.backgroundFetch.getIds()){const f=await SWREG.backgroundFetch.get(id);if(f&&f.result==='')n++;}}catch(e){}}
+  // anything still marked 予約中 with nothing running was lost (cancelled from the notification, etc.)
+  if(!n)for(const u in HIST)if(HIST[u].st==='bg'){delete HIST[u];changed=true;}
+  $('#bgNow').textContent=n?`バックグラウンドで取得中：${n}件の予約があります（通知で進み具合を確認できます）`:'';
+  if(changed){saveHist();build();$('#logBox').open=true;}
+}
+async function runBg(){
+  if(!SET.px){alert('バックグラウンドで取るには、中継（Cloudflare Worker）の設定が必要です');$('#setBox').open=true;return;}
+  const batch=Math.max(1,+$('#batch').value||10);
+  const todo=ITEMS.filter(x=>x.sel).slice(0,batch);if(!todo.length)return;
+  try{await navigator.storage.persist();}catch(e){}
+  const reqs=todo.map(it=>{let u=it.url;if(!it.via){try{u=normUrl(it.url).href;}catch(e){}}
+    return new Request(`${SET.px}/?k=${encodeURIComponent(SET.key||'')}&url=${encodeURIComponent(u)}`,{mode:'cors',credentials:'omit'});});
+  const id='collect-'+Date.now();
+  try{
+    await SWREG.backgroundFetch.fetch(id,reqs,{title:`BeSmart：${todo.length}曲をダウンロード中`,icons:[{src:'icons/icon-192.png',sizes:'192x192',type:'image/png'}]});
+  }catch(e){alert('バックグラウンドでの取得を始められませんでした：'+e.message+'\n（通常の取得を使ってください）');return;}
+  for(const it of todo){HIST[it.url]={st:'bg',t:Date.now(),title:it.lv+' '+it.title};it.sel=false;}
+  saveHist();log(`— ${todo.length}件をバックグラウンドで取得し始めました。画面を消しても大丈夫です —`);$('#logBox').open=true;
+  build();await syncBg();updBar(`${todo.length}件をバックグラウンドで取得中`);
+}
 
 /* back from the BeSmart tab: update the inbox count and what is now owned */
 document.addEventListener('visibilitychange',async()=>{
   if(document.hidden||RUN)return;
   await refreshInbox();
   OWNED=await loadOwned();build();
+  await syncBg();
 });
 
 /* ---------- start ---------- */
@@ -345,6 +394,7 @@ document.addEventListener('visibilitychange',async()=>{
     $('#tbl').innerHTML=TABLES.map(t=>`<option value="${esc(t.id)}">${esc(t.symbol)} ${esc(t.name)}（${t.count}）</option>`).join('');
     const id=TABLES.some(t=>t.id===SET.tbl)?SET.tbl:(TABLES[0]&&TABLES[0].id);
     if(id){$('#tbl').value=id;await loadTable(id);}
+    await initBg();
   }catch(e){$('#list').innerHTML=`<div class="it err">読み込みに失敗しました：${esc(e.message)}</div>`;}
 })();
 </script>
