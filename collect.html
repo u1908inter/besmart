@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>BeSmart まとめて追加</title>
+<link rel="icon" href="icons/icon-192.png">
+<style>
+:root{--ink:#FFB000;--hi:#FFD466;--dim:#B57A00;--faint:#6E4800;--bg:#140B01;--bg2:#2A1804;--alert:#FF6A3C;--ok:#7CFF9B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;padding:12px 12px calc(90px + env(safe-area-inset-bottom))}
+h1{font-size:18px;margin:4px 0 10px}
+h2{font-size:15px;margin:0 0 6px;color:var(--hi)}
+.box{border:2px solid var(--faint);padding:10px;margin:0 0 12px;background:var(--bg2)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+label{display:inline-flex;gap:6px;align-items:center}
+input[type=text],input[type=password],input[type=number],select{background:var(--bg);color:var(--ink);border:2px solid var(--dim);padding:8px;font:inherit;border-radius:0;min-height:42px}
+input[type=text],input[type=password]{width:100%}
+input[type=number]{width:5em}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--ink)}
+button,a.btn{border:2px solid var(--ink);background:transparent;color:var(--ink);font:inherit;padding:8px 12px;min-height:44px;border-radius:0;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button.pri,a.btn.pri{background:var(--ink);color:var(--bg)}
+button:disabled{opacity:.4}
+.hlp{font-size:13px;color:var(--dim)}
+.err{color:var(--alert)}
+.okc{color:var(--ok)}
+#list{border:2px solid var(--faint)}
+.it{display:flex;gap:8px;align-items:flex-start;padding:8px;border-bottom:1px solid var(--faint)}
+.it:last-child{border-bottom:0}
+.it .t{flex:1;min-width:0}
+.it .t b{display:block;overflow-wrap:anywhere;font-weight:600}
+.it small{display:block;color:var(--dim);overflow-wrap:anywhere}
+.lv{min-width:3.2em;font-weight:700;color:var(--hi)}
+.st{font-size:12px;white-space:nowrap}
+#bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:2px solid var(--ink);padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center}
+#bar .info{flex:1;font-size:13px;line-height:1.4}
+#prog{height:6px;background:var(--faint);margin-top:4px}
+#prog i{display:block;height:100%;width:0;background:var(--ink)}
+details summary{cursor:pointer;color:var(--hi)}
+#log{white-space:pre-wrap;font-size:12px;max-height:40vh;overflow:auto}
+#log a{color:var(--hi)}
+</style>
+</head>
+<body>
+<h1>まとめて追加（自分用）</h1>
+
+<div class="box" id="inboxBox">
+  <h2>取り込み待ち</h2>
+  <div class="row"><span id="inboxN">確認中…</span><a class="btn pri" id="goImport" href="./?shared=1">BeSmartで取り込む</a></div>
+  <div class="hlp">ダウンロードした書庫はいったんここに貯まります。「BeSmartで取り込む」を押すと、BeSmartが開いて曲一覧に追加します（タイトル画面ならスタートを押した後に始まります）。</div>
+  <div class="row"><span class="hlp" id="quota"></span></div>
+</div>
+
+<details class="box" id="setBox">
+  <summary>中継（Cloudflare Worker）の設定</summary>
+  <div class="hlp" style="margin:6px 0">配布元が他サイトからの読み込みを許可していないときに使います。空欄なら直接ダウンロードだけを試します。</div>
+  <div class="row"><input type="text" id="pxUrl" placeholder="https://xxxx.workers.dev" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+  <div class="row"><input type="password" id="pxKey" placeholder="合言葉" autocomplete="off"></div>
+  <div class="row"><button id="pxSave">保存</button><button id="pxTest">接続テスト</button><span id="pxMsg" class="hlp"></span></div>
+</details>
+
+<div class="box">
+  <h2>集める曲を選ぶ</h2>
+  <div class="row"><select id="tbl" style="flex:1"><option>読み込み中…</option></select></div>
+  <div class="row">
+    <label>レベル <select id="lvMin"></select></label>〜<select id="lvMax"></select>
+  </div>
+  <div class="row">
+    <label><input type="checkbox" id="useBody" checked>本体</label>
+    <label><input type="checkbox" id="useDiff" checked>差分</label>
+    <label><input type="checkbox" id="hideDone" checked>取得済みを隠す</label>
+  </div>
+  <div class="row">
+    <label>間隔 <input type="number" id="gap" min="2" max="60" value="4">秒</label>
+    <label><input type="number" id="batch" min="1" max="200" value="20">件ごとに止める</label>
+  </div>
+  <div class="hlp" id="sum"></div>
+  <div class="row"><button id="selAll">全部選ぶ</button><button id="selNone">全部外す</button></div>
+</div>
+
+<div id="list"></div>
+
+<details class="box" style="margin-top:12px">
+  <summary>自動で取れない曲（配布ページ）</summary>
+  <div class="hlp" style="margin:6px 0">配布ページやGoogleドライブなどのため、手動でダウンロードしてBeSmartの「追加」から入れてください。</div>
+  <div id="manual"></div>
+</details>
+
+<details class="box" id="logBox">
+  <summary>結果</summary>
+  <div id="log"></div>
+  <div class="row"><button id="clrHist">取得履歴を消す</button></div>
+</details>
+
+<div id="bar">
+  <div class="info"><span id="barTxt">準備中…</span><div id="prog"><i></i></div></div>
+  <button class="pri" id="go" disabled>開始</button>
+</div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ARCH_RE=/\.(zip|rar|7z|lzh|lha)(\?|#|$)/i;
+const SHARE='besmart-share';
+const HK='besmart-collect-hist', SK='besmart-collect-set';
+let HIST={};try{HIST=JSON.parse(localStorage.getItem(HK)||'{}');}catch(e){}
+let SET={};try{SET=JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){}
+const saveHist=()=>{try{localStorage.setItem(HK,JSON.stringify(HIST));}catch(e){}};
+const saveSet=()=>{try{localStorage.setItem(SK,JSON.stringify(SET));}catch(e){}};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmtMB=b=>(b/1048576).toFixed(b<1048576*10?1:0)+'MB';
+
+/* ---------- owned charts (BeSmart's own IndexedDB) ---------- */
+function openDB(){return new Promise(res=>{
+  try{const r=indexedDB.open('bmsplayer',2);
+    r.onupgradeneeded=()=>{const d=r.result,KP={archives:'id',charts:'key',replays:'hash',tables:'url'};for(const s in KP)if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:KP[s]});};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);r.onblocked=()=>res(null);
+  }catch(e){res(null);}
+});}
+async function loadOwned(){
+  const md5=new Set(),sha=new Set();const db=await openDB();if(!db)return {md5,sha};
+  await new Promise(res=>{try{const q=db.transaction('charts').objectStore('charts').openCursor();
+    q.onsuccess=()=>{const c=q.result;if(!c){res();return;}const v=c.value;if(v.md5)md5.add(String(v.md5).toLowerCase());if(v.sha256)sha.add(String(v.sha256).toLowerCase());c.continue();};
+    q.onerror=()=>res();}catch(e){res();}});
+  db.close();return {md5,sha};
+}
+
+/* ---------- inbox (same cache BeSmart's share target uses) ---------- */
+async function inboxCount(){try{const c=await caches.open(SHARE);return (await c.keys()).length;}catch(e){return 0;}}
+async function refreshInbox(){
+  const n=await inboxCount();$('#inboxN').textContent=n?`${n}件`:'なし';$('#goImport').style.display=n?'':'none';
+  try{const e=await navigator.storage.estimate();$('#quota').textContent=`ブラウザの保存領域：${fmtMB(e.usage||0)} 使用中／空き 約${fmtMB(Math.max(0,(e.quota||0)-(e.usage||0)))}`;}catch(e){}
+}
+
+/* ---------- URL handling ---------- */
+function normUrl(raw){
+  let x=new URL(String(raw).trim());
+  if(!/^https?:$/.test(x.protocol))throw new Error('http(s)ではないURL');
+  const h=x.hostname.toLowerCase();
+  if(/(^|\.)dropbox\.com$/.test(h)){x.hostname='dl.dropboxusercontent.com';['dl','raw','st'].forEach(k=>x.searchParams.delete(k));}
+  else if(h==='github.com'){const m=x.pathname.match(/^\/([^/]+)\/([^/]+)\/(?:blob|raw)\/(.+)$/);if(m)x=new URL(`https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`);}
+  else if(h==='web.archive.org'){x.pathname=x.pathname.replace(/^\/web\/(\d+)(?:[a-z]{2}_)?\//,'/web/$1id_/');} // raw file, not the Wayback page
+  return x;
+}
+function sniffKind(u8){
+  if(u8[0]===0x50&&u8[1]===0x4B)return 'zip';
+  if(u8[0]===0x52&&u8[1]===0x61&&u8[2]===0x72&&u8[3]===0x21)return 'rar';
+  if(u8[0]===0x37&&u8[1]===0x7A&&u8[2]===0xBC&&u8[3]===0xAF)return '7z';
+  if(u8[2]===0x2D&&u8[3]===0x6C&&(u8[4]===0x68||u8[4]===0x7A)&&u8[6]===0x2D)return 'lzh';
+  return null;
+}
+function nameFrom(res,url,kind){
+  let n='';const cd=res.headers.get('content-disposition')||'';
+  let m=cd.match(/filename\*\s*=\s*UTF-8''([^;]+)/i);if(m){try{n=decodeURIComponent(m[1]);}catch(e){}}
+  if(!n){m=cd.match(/filename\s*=\s*"?([^";]+)"?/i);if(m)n=m[1];}
+  if(!n){try{n=decodeURIComponent(new URL(res.headers.get('x-final-url')||url).pathname.split('/').pop().replace(/\+/g,' '));}catch(e){}}
+  n=(n||'download').replace(/[\\/:*?"<>|]/g,'_');
+  if(!/\.(zip|rar|7z|lzh|lha)$/i.test(n))n+='.'+kind;
+  return n;
+}
+
+/* ---------- tables ---------- */
+let TABLES=[],CUR=null,OWNED={md5:new Set(),sha:new Set()},ITEMS=[],MANUAL=[];
+const isOwned=e=>(e.md5&&OWNED.md5.has(String(e.md5).toLowerCase()))||(e.sha256&&OWNED.sha.has(String(e.sha256).toLowerCase()));
+async function loadTable(id){
+  $('#list').innerHTML='<div class="it hlp">読み込み中…</div>';
+  const [h,d]=await Promise.all([fetch(`tables/${id}/header.json`).then(r=>r.json()),fetch(`tables/${id}/data.json`).then(r=>r.json())]);
+  const order=(h.level_order||[]).map(String);
+  const lvs=[...new Set(d.map(e=>String(e.level)))];
+  const rank=v=>{const i=order.indexOf(v);if(i>=0)return i;const n=parseFloat(v);return isNaN(n)?9999:1000+n;};
+  lvs.sort((a,b)=>rank(a)-rank(b)||a.localeCompare(b));
+  CUR={id,h,d,lvs,rank,sym:h.symbol||''};
+  const opts=lvs.map((v,i)=>`<option value="${i}">${esc(CUR.sym+v)}</option>`).join('');
+  $('#lvMin').innerHTML=opts;$('#lvMax').innerHTML=opts;$('#lvMin').value=0;$('#lvMax').value=lvs.length-1;
+  build();
+}
+function build(){
+  if(!CUR)return;
+  const lo=+$('#lvMin').value,hi=+$('#lvMax').value;
+  const okLv=new Set(CUR.lvs.slice(Math.min(lo,hi),Math.max(lo,hi)+1));
+  const body=$('#useBody').checked,diff=$('#useDiff').checked,hide=$('#hideDone').checked;
+  const map=new Map();MANUAL=[];let owned=0,miss=0;
+  for(const e of CUR.d){
+    if(!okLv.has(String(e.level)))continue;
+    if(isOwned(e)){owned++;continue;}
+    miss++;
+    const lv=CUR.sym+e.level,title=(e.title||'(無題)')+(e.artist?' / '+e.artist:'');
+    let auto=false;
+    for(const [k,on,label] of [['url',body,'本体'],['url_diff',diff,'差分']]){
+      const u=(e[k]||'').trim();if(!u||!on)continue;
+      if(!ARCH_RE.test(u))continue;
+      auto=true;
+      if(hide&&HIST[u]&&HIST[u].st==='ok')continue;
+      if(!map.has(u))map.set(u,{url:u,kind:label,lv,title,rank:CUR.rank(String(e.level))});
+      else if(label==='本体')map.get(u).kind='本体';
+    }
+    if(!auto&&(e.url||e.url_diff))MANUAL.push({lv,title,url:e.url,url_diff:e.url_diff});
+  }
+  // bodies before chart add-ons so a 差分 finds its song
+  ITEMS=[...map.values()].sort((a,b)=>(a.kind==='本体'?0:1)-(b.kind==='本体'?0:1)||a.rank-b.rank);
+  ITEMS.forEach(it=>it.sel=!(HIST[it.url]&&HIST[it.url].st==='ok'));
+  $('#sum').textContent=`この範囲：所持 ${owned}譜面／未所持 ${miss}譜面 → 自動で取れる書庫 ${ITEMS.length}件、手動 ${MANUAL.length}譜面`;
+  renderList();renderManual();updBar();
+}
+function stTxt(u){const h=HIST[u];if(!h)return '';return h.st==='ok'?'<span class="st okc">取得済</span>':`<span class="st err">失敗</span>`;}
+function renderList(){
+  if(!ITEMS.length){$('#list').innerHTML='<div class="it hlp">自動で取れる曲はありません</div>';return;}
+  $('#list').innerHTML=ITEMS.map((it,i)=>{let host='';try{host=new URL(it.url).hostname;}catch(e){}
+    return `<label class="it"><input type="checkbox" data-i="${i}" ${it.sel?'checked':''}><span class="lv">${esc(it.lv)}</span><span class="t"><b>${esc(it.title)}</b><small>${esc(it.kind)}・${esc(host)}</small></span><span id="s${i}">${stTxt(it.url)}</span></label>`;}).join('');
+}
+function renderManual(){
+  $('#manual').innerHTML=MANUAL.length?MANUAL.slice(0,500).map(m=>`<div class="it"><span class="lv">${esc(m.lv)}</span><span class="t"><b>${esc(m.title)}</b>${m.url?`<small><a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--hi)">配布ページ</a></small>`:''}${m.url_diff?`<small><a href="${esc(m.url_diff)}" target="_blank" rel="noopener" style="color:var(--hi)">差分</a></small>`:''}</span></div>`).join('')+(MANUAL.length>500?`<div class="it hlp">ほか${MANUAL.length-500}件</div>`:''):'<div class="hlp">なし</div>';
+}
+$('#list').addEventListener('change',e=>{const i=e.target.dataset.i;if(i!=null){ITEMS[i].sel=e.target.checked;updBar();}});
+$('#selAll').onclick=()=>{ITEMS.forEach(x=>x.sel=true);renderList();updBar();};
+$('#selNone').onclick=()=>{ITEMS.forEach(x=>x.sel=false);renderList();updBar();};
+['#lvMin','#lvMax','#useBody','#useDiff','#hideDone'].forEach(s=>$(s).onchange=build);
+$('#tbl').onchange=()=>{SET.tbl=$('#tbl').value;saveSet();loadTable($('#tbl').value).catch(err=>$('#list').innerHTML=`<div class="it err">難易度表を読み込めませんでした：${esc(err.message)}</div>`);};
+['#gap','#batch'].forEach(s=>$(s).onchange=()=>{SET.gap=+$('#gap').value;SET.batch=+$('#batch').value;saveSet();});
+
+/* ---------- proxy settings ---------- */
+$('#pxUrl').value=SET.px||'';$('#pxKey').value=SET.key||'';
+if(SET.gap)$('#gap').value=SET.gap;if(SET.batch)$('#batch').value=SET.batch;
+$('#pxSave').onclick=()=>{SET.px=$('#pxUrl').value.trim().replace(/\/+$/,'');SET.key=$('#pxKey').value;saveSet();$('#pxMsg').textContent='保存しました';};
+$('#pxTest').onclick=async()=>{
+  $('#pxSave').click();if(!SET.px){$('#pxMsg').textContent='URLを入れてください';return;}
+  $('#pxMsg').textContent='確認中…';
+  try{const r=await fetch(SET.px+'/?ping=1',{headers:{'X-Key':SET.key||''}});
+    $('#pxMsg').innerHTML=r.ok?'<span class="okc">つながりました</span>':r.status===401?'<span class="err">合言葉が違います</span>':`<span class="err">HTTP ${r.status}</span>`;}
+  catch(e){$('#pxMsg').innerHTML='<span class="err">接続できません（URLかWorkerのコードを確認）</span>';}
+};
+
+/* ---------- download ---------- */
+let RUN=false,ABORT=null;
+function updBar(t){
+  const n=ITEMS.filter(x=>x.sel).length;
+  $('#barTxt').textContent=t||(n?`選択中 ${n}件`:'曲を選んでください');
+  $('#go').disabled=!RUN&&!n;$('#go').textContent=RUN?'停止':'開始';
+}
+function prog(p){$('#prog i').style.width=Math.max(0,Math.min(100,p*100))+'%';}
+function log(html){const d=document.createElement('div');d.innerHTML=html;$('#log').prepend(d);}
+
+async function getOnce(url,viaProxy,signal){
+  const target=viaProxy?`${SET.px}/?url=${encodeURIComponent(url)}`:url;
+  const opt={signal,credentials:'omit',mode:'cors',redirect:'follow'};
+  if(viaProxy)opt.headers={'X-Key':SET.key||''};
+  return fetch(target,opt);
+}
+async function download(it,onp){
+  let x;try{x=normUrl(it.url);}catch(e){throw new Error('URLの形式が正しくありません');}
+  const https=location.protocol==='https:';
+  const tries=[];
+  if(x.protocol==='https:'||!https){tries.push([x.href,false]);}
+  else{const y=new URL(x.href);y.protocol='https:';tries.push([y.href,false]);}
+  if(SET.px)tries.push([x.href,true]);
+  let res=null,lastErr='';
+  for(const [u,px] of tries){
+    try{res=await getOnce(u,px,ABORT.signal);
+      if(!res.ok){lastErr=(px?'中継：':'')+`HTTP ${res.status}`+(px&&res.status===401?'（合言葉）':'');res=null;continue;}
+      break;
+    }catch(e){if(e.name==='AbortError')throw e;lastErr=px?'中継に接続できません':'配布元が他サイトからの読み込みを許可していないか、接続できません'+(SET.px?'':'（中継を設定すると取れる可能性があります）');res=null;}
+  }
+  if(!res)throw new Error(lastErr);
+  const total=+res.headers.get('content-length')||0;
+  if(total){try{const e=await navigator.storage.estimate();if((e.quota-e.usage)<total*2.5+50*1048576)throw new Error('保存領域が足りません');}catch(e){if(e.message==='保存領域が足りません')throw e;}}
+  const rd=res.body.getReader(),parts=[];let got=0;
+  for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;onp(got,total);}
+  const blob=new Blob(parts);
+  const kind=sniffKind(new Uint8Array(await blob.slice(0,8).arrayBuffer()));
+  if(!kind){const ct=(res.headers.get('content-type')||'').toLowerCase();throw new Error(ct.includes('html')?'ファイルではなくWebページが返ってきました（リンク切れの可能性）':'BMSの書庫ではないようです');}
+  const name=nameFrom(res,x.href,kind);
+  const c=await caches.open(SHARE);
+  await c.put(new Request(`./shared/collect-${Date.now()}-${Math.random().toString(36).slice(2,6)}`),new Response(blob,{headers:{'X-Name':encodeURIComponent(name)}}));
+  return {name,size:blob.size};
+}
+async function run(){
+  RUN=true;ABORT=new AbortController();updBar();
+  try{await navigator.storage.persist();}catch(e){}
+  const gap=Math.max(2,+$('#gap').value||4)*1000,batch=Math.max(1,+$('#batch').value||20);
+  const todo=ITEMS.map((it,i)=>[it,i]).filter(([it])=>it.sel);
+  let ok=0,ng=0,n=0;
+  for(const [it,i] of todo){
+    if(!RUN)break;
+    if(n>=batch){log(`— ${batch}件取得したので止めました。取り込んでから続けてください —`);break;}
+    n++;
+    const s=$('#s'+i);if(s)s.innerHTML='<span class="st">取得中</span>';
+    updBar(`(${n}/${Math.min(todo.length,batch)}) ${it.title}`);prog(0);
+    try{
+      const r=await download(it,(g,t)=>{prog(t?g/t:0);$('#barTxt').textContent=`(${n}/${Math.min(todo.length,batch)}) ${it.title}　${fmtMB(g)}${t?' / '+fmtMB(t):''}`;});
+      HIST[it.url]={st:'ok',t:Date.now()};ok++;it.sel=false;
+      log(`<span class="okc">✓</span> ${esc(it.lv)} ${esc(it.title)}（${esc(r.name)}・${fmtMB(r.size)}）`);
+    }catch(e){
+      if(e.name==='AbortError'){if(s)s.innerHTML='';break;}
+      HIST[it.url]={st:'ng',t:Date.now(),msg:e.message};ng++;
+      log(`<span class="err">✗</span> ${esc(it.lv)} ${esc(it.title)}：${esc(e.message)}　<a href="${esc(it.url)}" target="_blank" rel="noopener">開く</a>`);
+      if(e.message==='保存領域が足りません'){saveHist();break;}
+    }
+    saveHist();
+    const cb=document.querySelector(`input[data-i="${i}"]`);if(cb)cb.checked=it.sel;
+    if(s)s.innerHTML=stTxt(it.url);
+    await refreshInbox();
+    if(RUN&&n<Math.min(todo.length,batch))await sleep(gap);
+  }
+  RUN=false;prog(0);$('#logBox').open=true;
+  updBar(`終了：成功 ${ok}件・失敗 ${ng}件`);
+  await refreshInbox();
+}
+$('#go').onclick=()=>{if(RUN){RUN=false;ABORT&&ABORT.abort();updBar('停止しました');}else run();};
+$('#clrHist').onclick=()=>{if(confirm('取得済み・失敗の記録を消します。曲や取り込み待ちのファイルは消えません。')){HIST={};saveHist();build();}};
+window.addEventListener('beforeunload',e=>{if(RUN){e.preventDefault();e.returnValue='';}});
+
+/* ---------- start ---------- */
+(async()=>{
+  refreshInbox();
+  try{
+    OWNED=await loadOwned();
+    TABLES=(await fetch('tables/index.json').then(r=>r.json())).tables||[];
+    $('#tbl').innerHTML=TABLES.map(t=>`<option value="${esc(t.id)}">${esc(t.symbol)} ${esc(t.name)}（${t.count}）</option>`).join('');
+    const id=TABLES.some(t=>t.id===SET.tbl)?SET.tbl:(TABLES[0]&&TABLES[0].id);
+    if(id){$('#tbl').value=id;await loadTable(id);}
+  }catch(e){$('#list').innerHTML=`<div class="it err">読み込みに失敗しました：${esc(e.message)}</div>`;}
+})();
+</script>
+</body>
+</html>
