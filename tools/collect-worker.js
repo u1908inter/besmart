@@ -78,7 +78,7 @@ async function resolve(u, depth, seen) {
     const r = await get(u.href);
     if (!r.ok) throw new Fail(`MediaFire：HTTP ${r.status}`);
     if (!isHtml(r)) return r;
-    const html = await r.text();
+    const html = await pageText(r);
     let link = (html.match(/href="(https?:\/\/download\d*\.mediafire\.com\/[^"]+)"/i) || [])[1];
     if (!link) { const s = (html.match(/data-scrambled-url="([^"]+)"/i) || [])[1]; if (s) { try { link = atob(s); } catch (e) {} } }
     if (!link) throw new Fail('MediaFireのダウンロードリンクが見つかりません（削除済みの可能性）');
@@ -97,7 +97,7 @@ async function resolve(u, depth, seen) {
   if (!isHtml(r)) return r;
   // a link to a file that answers with a page is dead: do not pick some other song off that page
   if (ARCH.test(u.pathname)) throw new Fail('ファイルではなくWebページが返ってきました（リンク切れの可能性）');
-  const html = await r.text();
+  const html = await pageText(r);
   const cands = pickLinks(html, new URL(r.url || u.href));
   if (!cands.length) throw new Fail(`${u.hostname} のページにダウンロードリンクが見つかりません`);
   let last = null;
@@ -112,7 +112,7 @@ async function driveGet(id) {
   if (r.ok && !isHtml(r)) return r;
   if (r.ok) {
     // "can't scan for viruses" or similar confirmation form: submit it
-    const html = await r.text();
+    const html = await pageText(r);
     const form = html.match(/<form[^>]+id="download-form"[^>]*action="([^"]+)"[\s\S]*?<\/form>/i);
     if (form) {
       const act = new URL(unent(form[1]), 'https://drive.usercontent.google.com/');
@@ -146,6 +146,19 @@ function pickLinks(html, base) {
   return out.sort((a, b) => b[0] - a[0] || a[1] - b[1]).map(a => a[2]);
 }
 
-function get(url) { return fetch(url, { redirect: 'follow', headers: { 'User-Agent': UA, 'Accept': '*/*' } }); }
+// a server that never answers would hold a background download at 99% forever: give up on the headers after 40 s
+function get(url) {
+  return Promise.race([
+    fetch(url, { redirect: 'follow', headers: { 'User-Agent': UA, 'Accept': '*/*' } }),
+    new Promise((_, rej) => setTimeout(() => rej(new Fail('配布元が応答しません（40秒）')), 40000)),
+  ]);
+}
+// only the start of a page is read, which keeps link hunting inside the free plan's CPU limit
+async function pageText(r, max = 400000) {
+  const rd = r.body.getReader(), dec = new TextDecoder(); let s = '';
+  while (s.length < max) { const { done, value } = await rd.read(); if (done) break; s += dec.decode(value, { stream: true }); }
+  try { rd.cancel(); } catch (e) {}
+  return s;
+}
 function isHtml(r) { return /text\/html|application\/xhtml/i.test(r.headers.get('Content-Type') || ''); }
 function unent(s) { return String(s).replace(/&amp;/g, '&').replace(/&#x2F;/gi, '/').replace(/&#47;/g, '/').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); }

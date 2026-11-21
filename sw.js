@@ -76,13 +76,15 @@ async function bfCollect(e) {
       const name = bfName(res, src, kind);
       await inbox.put(new Request(`./shared/collect-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`), new Response(blob, { headers: { 'X-Name': encodeURIComponent(name) } }));
       out.push({ url: src, ok: true, name, size: blob.size });
-    } catch (err) { out.push({ url: src, ok: false, msg: '中継に接続できませんでした' }); }
+    } catch (err) { out.push({ url: src, ok: false, msg: e.type === 'backgroundfetchabort' ? '取得し終わる前にキャンセルされました' : '中継に接続できませんでした' }); }
   }
   const box = await caches.open('besmart-collect');
   await box.put(new Request(`./collect-result/${encodeURIComponent(reg.id)}`), new Response(JSON.stringify({ id: reg.id, t: Date.now(), items: out }), { headers: { 'Content-Type': 'application/json' } }));
   const ok = out.filter(x => x.ok).length;
-  try { await e.updateUI({ title: `BeSmart：${ok}件取得${out.length - ok ? `・${out.length - ok}件失敗` : ''}（次にBeSmartを開くと取り込みます）` }); } catch (err) {}
+  if (e.updateUI) try { await e.updateUI({ title: `BeSmart：${ok}件取得${out.length - ok ? `・${out.length - ok}件失敗` : ''}（次にBeSmartを開くと取り込みます）` }); } catch (err) {}
 }
 self.addEventListener('backgroundfetchsuccess', e => e.waitUntil(bfCollect(e)));
 self.addEventListener('backgroundfetchfail', e => e.waitUntil(bfCollect(e)));
+// cancelled from the notification (e.g. stuck at 99%): keep the files that did finish
+self.addEventListener('backgroundfetchabort', e => e.waitUntil(bfCollect(e)));
 self.addEventListener('backgroundfetchclick', e => e.waitUntil(clients.openWindow('./collect.html')));

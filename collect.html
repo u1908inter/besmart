@@ -76,7 +76,7 @@ details summary{cursor:pointer;color:var(--hi)}
     <label><input type="number" id="batch" min="1" max="200" value="20">件ごとに止める</label>
   </div>
   <div class="row" id="bgRow" style="display:none"><label><input type="checkbox" id="useBg">バックグラウンドで取る（画面を消しても続きます）</label></div>
-  <div class="hlp" id="bgHlp" style="display:none">ブラウザにダウンロードを任せます。進み具合は通知に出て、終わった曲は次にBeSmartを開いたときに自動で取り込まれます。中継の設定が必要です。間隔は空けられないので、件数は10件程度がおすすめです。</div>
+  <div class="hlp" id="bgHlp" style="display:none">ブラウザにダウンロードを任せます。進み具合は通知に出て、終わった曲は次にBeSmartを開いたときに自動で取り込まれます。中継の設定が必要です。1件でも止まるとまとめて待たされるので、1回は最大20件までにしています。99%のまま進まないときは、通知の「キャンセル」を押すと、取れた分だけ取り込み待ちに入ります。</div>
   <div class="hlp" id="bgNow"></div>
   <div class="hlp" id="sum"></div>
   <div class="row"><button id="selAll">全部選ぶ</button><button id="selNone">全部外す</button></div>
@@ -363,7 +363,8 @@ async function syncBg(){
 }
 async function runBg(){
   if(!SET.px){alert('バックグラウンドで取るには、中継（Cloudflare Worker）の設定が必要です');$('#setBox').open=true;return;}
-  const batch=Math.max(1,+$('#batch').value||10);
+  // one stuck file holds the whole batch at 99%, so keep background batches small
+  const batch=Math.min(20,Math.max(1,+$('#batch').value||10));
   const todo=ITEMS.filter(x=>x.sel).slice(0,batch);if(!todo.length)return;
   try{await navigator.storage.persist();}catch(e){}
   const reqs=todo.map(it=>{let u=it.url;if(!it.via){try{u=normUrl(it.url).href;}catch(e){}}
