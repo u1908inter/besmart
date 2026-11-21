@@ -36,7 +36,14 @@ export default {
     if (!/^https?:$/.test(target.protocol)) return text('URLの形式が正しくありません', 400);
 
     try {
-      const r = await resolve(target, 0, new Set());
+      let r;
+      try { r = await resolve(target, 0, new Set()); }
+      catch (e) {
+        // a dead link to a file: try the Internet Archive's copy
+        if (!(e instanceof Fail) || !ARCH.test(target.pathname) || /(^|\.)archive\.org$/.test(target.hostname)) throw e;
+        r = await wayback(target).catch(() => null);
+        if (!r) throw new Fail(e.message + '（Internet Archiveにも保存されていませんでした）');
+      }
       const h = new Headers(cors);
       for (const k of ['Content-Type', 'Content-Length', 'Content-Disposition']) { const v = r.headers.get(k); if (v) h.set(k, v); }
       h.set('X-Final-Url', r.url);
@@ -69,7 +76,7 @@ async function resolve(u, depth, seen) {
     if (/^\/f\//.test(u.pathname)) throw new Fail('OneDriveのフォルダ共有は取得できません');
     const share = 'u!' + btoa(u.href).replace(/=+$/, '').replace(/\//g, '_').replace(/\+/g, '-');
     const r = await get(`https://api.onedrive.com/v1.0/shares/${share}/root/content`);
-    if (r.ok && !isHtml(r)) return r;
+    if (r.ok && !isHtml(r)) return checkArchive(r);
     throw new Fail('OneDriveから取得できませんでした（非公開・フォルダ・削除済みの可能性）');
   }
 
@@ -77,7 +84,7 @@ async function resolve(u, depth, seen) {
   if (/(^|\.)mediafire\.com$/.test(h) && !/^download\d*\./.test(h)) {
     const r = await get(u.href);
     if (!r.ok) throw new Fail(`MediaFire：HTTP ${r.status}`);
-    if (!isHtml(r)) return r;
+    if (!isHtml(r)) return checkArchive(r);
     const html = await pageText(r);
     let link = (html.match(/href="(https?:\/\/download\d*\.mediafire\.com\/[^"]+)"/i) || [])[1];
     if (!link) { const s = (html.match(/data-scrambled-url="([^"]+)"/i) || [])[1]; if (s) { try { link = atob(s); } catch (e) {} } }
@@ -94,7 +101,7 @@ async function resolve(u, depth, seen) {
   // anything else: take the file, or look for one on the page
   const r = await get(u.href);
   if (!r.ok) throw new Fail(`HTTP ${r.status}（${u.hostname}）`);
-  if (!isHtml(r)) return r;
+  if (!isHtml(r)) return checkArchive(r);
   // a link to a file that answers with a page is dead: do not pick some other song off that page
   if (ARCH.test(u.pathname)) throw new Fail('ファイルではなくWebページが返ってきました（リンク切れの可能性）');
   const html = await pageText(r);
@@ -107,9 +114,43 @@ async function resolve(u, depth, seen) {
   throw last || new Fail('ダウンロードリンクをたどれませんでした');
 }
 
+// the response must really be an archive: look at its first bytes, then hand the whole body on
+async function checkArchive(r) {
+  const rd = r.body.getReader(); let head = new Uint8Array(0);
+  while (head.length < 8) {
+    const { done, value } = await rd.read(); if (done) break;
+    const n = new Uint8Array(head.length + value.length); n.set(head); n.set(value, head.length); head = n;
+  }
+  const u = head;
+  const ok = (u[0] === 0x50 && u[1] === 0x4B) || (u[0] === 0x52 && u[1] === 0x61 && u[2] === 0x72 && u[3] === 0x21) ||
+    (u[0] === 0x37 && u[1] === 0x7A && u[2] === 0xBC && u[3] === 0xAF) || (u[2] === 0x2D && u[3] === 0x6C && (u[4] === 0x68 || u[4] === 0x7A) && u[6] === 0x2D);
+  if (!ok) {
+    try { rd.cancel(); } catch (e) {}
+    let host = ''; try { host = new URL(r.url).hostname; } catch (e) {}
+    throw new Fail(`書庫ではないファイルが返ってきました（${host}・${r.headers.get('Content-Type') || '種類不明'}・${head.length < 8 ? '空に近い' : '中身が違う'}）`);
+  }
+  const body = new ReadableStream({
+    start(c) { c.enqueue(head); },
+    async pull(c) { const { done, value } = await rd.read(); if (done) c.close(); else c.enqueue(value); },
+    cancel() { try { rd.cancel(); } catch (e) {} },
+  });
+  return { headers: r.headers, url: r.url, body };
+}
+
+async function wayback(u) {
+  const a = await get('https://archive.org/wayback/available?url=' + encodeURIComponent(u.href));
+  if (!a.ok) return null;
+  const snap = ((await a.json()).archived_snapshots || {}).closest;
+  if (!snap || !snap.available || String(snap.status) !== '200') return null;
+  const raw = snap.url.replace(/^http:/, 'https:').replace(/\/web\/(\d+)\//, '/web/$1id_/');
+  const r = await get(raw);
+  if (!r.ok || isHtml(r)) return null;
+  return checkArchive(r);
+}
+
 async function driveGet(id) {
   let r = await get(`https://drive.usercontent.google.com/download?id=${encodeURIComponent(id)}&export=download&confirm=t`);
-  if (r.ok && !isHtml(r)) return r;
+  if (r.ok && !isHtml(r)) return checkArchive(r);
   if (r.ok) {
     // "can't scan for viruses" or similar confirmation form: submit it
     const html = await pageText(r);
@@ -121,7 +162,7 @@ async function driveGet(id) {
         if (n) act.searchParams.set(n, unent(v || ''));
       }
       r = await get(act.href);
-      if (r.ok && !isHtml(r)) return r;
+      if (r.ok && !isHtml(r)) return checkArchive(r);
     }
   }
   throw new Fail('Googleドライブから取得できませんでした（非公開・削除済み・ダウンロード上限の可能性）');
@@ -149,7 +190,8 @@ function pickLinks(html, base) {
 // a server that never answers would hold a background download at 99% forever: give up on the headers after 40 s
 function get(url) {
   return Promise.race([
-    fetch(url, { redirect: 'follow', headers: { 'User-Agent': UA, 'Accept': '*/*' } }),
+    fetch(url, { redirect: 'follow', headers: { 'User-Agent': UA, 'Accept': '*/*' } })
+      .catch(() => { let h = url; try { h = new URL(url).hostname; } catch (e) {} throw new Fail(`配布元に接続できません（${h}）`); }),
     new Promise((_, rej) => setTimeout(() => rej(new Fail('配布元が応答しません（40秒）')), 40000)),
   ]);
 }
