@@ -131,7 +131,16 @@ async function checkArchive(r) {
   }
   const body = new ReadableStream({
     start(c) { c.enqueue(head); },
-    async pull(c) { const { done, value } = await rd.read(); if (done) c.close(); else c.enqueue(value); },
+    // a server that stops sending halfway would hold a background download forever: cut it after 60 s of silence
+    async pull(c) {
+      let t;
+      const idle = new Promise((_, rej) => { t = setTimeout(() => rej(new Error('stalled')), 60000); });
+      try {
+        const { done, value } = await Promise.race([rd.read(), idle]);
+        if (done) c.close(); else c.enqueue(value);
+      } catch (e) { try { rd.cancel(); } catch (x) {} c.error(e); }
+      finally { clearTimeout(t); }
+    },
     cancel() { try { rd.cancel(); } catch (e) {} },
   });
   return { headers: r.headers, url: r.url, body };

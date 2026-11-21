@@ -78,6 +78,7 @@ details summary{cursor:pointer;color:var(--hi)}
   <div class="row" id="bgRow" style="display:none"><label><input type="checkbox" id="useBg">バックグラウンドで取る（画面を消しても続きます）</label></div>
   <div class="hlp" id="bgHlp" style="display:none">ブラウザにダウンロードを任せます。進み具合は通知に出て、終わった曲は次にBeSmartを開いたときに自動で取り込まれます。中継の設定が必要です。1件でも止まるとまとめて待たされるので、1回は最大20件までにしています。99%のまま進まないときは、通知の「キャンセル」を押すと、取れた分だけ取り込み待ちに入ります。</div>
   <div class="hlp" id="bgNow"></div>
+  <div id="bgDetail" class="hlp"></div>
   <div class="hlp" id="sum"></div>
   <div class="row"><button id="selAll">全部選ぶ</button><button id="selNone">全部外す</button></div>
 </div>
@@ -396,11 +397,33 @@ async function syncBg(){
       await box.delete(k);}
   }catch(e){}
   // still running
-  let n=0;if(BG_OK){try{for(const id of await SWREG.backgroundFetch.getIds()){const f=await SWREG.backgroundFetch.get(id);if(f&&f.result==='')n++;}}catch(e){}}
+  let n=0;const run=[];if(BG_OK){try{for(const id of await SWREG.backgroundFetch.getIds()){const f=await SWREG.backgroundFetch.get(id);if(f&&f.result===''){n++;run.push(f);}}}catch(e){}}
+  await showBgDetail(run);
   // anything still marked 予約中 with nothing running was lost (cancelled from the notification, etc.)
   if(!n)for(const u in HIST)if(HIST[u].st==='bg'){delete HIST[u];changed=true;}
   $('#bgNow').textContent=n?`バックグラウンドで取得中：${n}件の予約があります（通知で進み具合を確認できます）`:'';
   if(changed){saveHist();build();$('#logBox').open=true;}
+}
+// progress of running batches, and a way to give up on a stuck one
+let BG_TIMER=null;const BG_SEEN={};
+async function showBgDetail(run){
+  clearTimeout(BG_TIMER);
+  if(!run.length){$('#bgDetail').innerHTML='';return;}
+  const now=Date.now(),parts=[];
+  for(const f of run){
+    const seen=BG_SEEN[f.id];
+    if(!seen||seen.bytes!==f.downloaded)BG_SEEN[f.id]={bytes:f.downloaded,t:now};
+    const still=Math.round((now-BG_SEEN[f.id].t)/60000);
+    parts.push(`<div style="margin-top:6px">受信済み ${fmtMB(f.downloaded)}${still>=2?`　<span class="err">${still}分間増えていません（止まっている可能性）</span>`:''}</div>
+      <div class="row"><button data-abort="${esc(f.id)}">止まっている分をあきらめる</button></div>`);
+  }
+  $('#bgDetail').innerHTML=parts.join('')+'<div>大きな曲は時間がかかります。受信済みの量が何分も増えないときは「あきらめる」を押してください。取れた分は取り込み待ちに入り、残りは失敗として飛ばします（通知の「キャンセル」と同じです）。</div>';
+  $('#bgDetail').querySelectorAll('button[data-abort]').forEach(b=>b.onclick=async()=>{
+    b.disabled=true;b.textContent='処理中…';
+    try{const f=await SWREG.backgroundFetch.get(b.dataset.abort);if(f)await f.abort();}catch(e){}
+    setTimeout(()=>{syncBg();refreshInbox();},2500);
+  });
+  if(!document.hidden)BG_TIMER=setTimeout(syncBg,15000); // keep the numbers fresh while the page is open
 }
 async function runBg(){
   if(!SET.px){alert('バックグラウンドで取るには、中継（Cloudflare Worker）の設定が必要です');$('#setBox').open=true;return;}
