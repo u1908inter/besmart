@@ -90,6 +90,14 @@ details summary{cursor:pointer;color:var(--hi)}
   <div id="manual"></div>
 </details>
 
+<div class="box" id="ngBox">
+  <h2>失敗した曲</h2>
+  <div class="hlp" id="ngSum">なし</div>
+  <div class="row"><button class="pri" id="ngCopy">失敗のまとめをコピー</button><button id="ngRetry">もう一度選ぶ</button></div>
+  <div class="hlp">コピーした内容をClaudeに貼ると、理由ごとに対策を相談できます。「もう一度選ぶ」は、失敗した曲を一覧で選び直された状態に戻します（中継を直した後の再挑戦用）。</div>
+  <div id="ngList"></div>
+</div>
+
 <details class="box" id="logBox">
   <summary>結果</summary>
   <div id="log"></div>
@@ -220,7 +228,7 @@ function build(){
   ITEMS=[...map.values()].sort((a,b)=>(a.kind==='本体'?0:1)-(b.kind==='本体'?0:1)||a.rank-b.rank);
   ITEMS.forEach(it=>it.sel=!(HIST[it.url]&&(HIST[it.url].st==='ok'||HIST[it.url].st==='bg')));
   $('#sum').textContent=`この範囲：所持 ${owned}譜面／未所持 ${miss}譜面 → 自動で取れる書庫 ${ITEMS.length}件、手動 ${MANUAL.length}譜面`;
-  renderList();renderManual();updBar();
+  renderList();renderManual();renderNg();updBar();
 }
 function stTxt(u){const h=HIST[u];if(!h)return '';return h.st==='ok'?'<span class="st okc">取得済</span>':h.st==='bg'?'<span class="st">予約中</span>':`<span class="st err">失敗</span>`;}
 function renderList(){
@@ -314,11 +322,11 @@ async function run(){
       log(`<span class="okc">✓</span> ${esc(it.lv)} ${esc(it.title)}（${esc(r.name)}・${fmtMB(r.size)}）`);
     }catch(e){
       if(e.name==='AbortError'){if(s)s.innerHTML='';break;}
-      HIST[it.url]={st:'ng',t:Date.now(),msg:e.message};ng++;
+      HIST[it.url]={st:'ng',t:Date.now(),msg:e.message,title:it.lv+' '+it.title};ng++;
       log(`<span class="err">✗</span> ${esc(it.lv)} ${esc(it.title)}：${esc(e.message)}　<a href="${esc(it.url)}" target="_blank" rel="noopener">開く</a>`);
       if(e.message==='保存領域が足りません'){saveHist();break;}
     }
-    saveHist();
+    saveHist();renderNg();
     const cb=document.querySelector(`input[data-i="${i}"]`);if(cb)cb.checked=it.sel;
     if(s)s.innerHTML=stTxt(it.url);
     await refreshInbox();
@@ -329,6 +337,39 @@ async function run(){
   await refreshInbox();
 }
 $('#go').onclick=()=>{if(RUN){RUN=false;ABORT&&ABORT.abort();updBar('停止しました');}else if(BG_OK&&$('#useBg').checked)runBg();else run();};
+/* ---------- failures: grouped by reason, easy to copy ---------- */
+function hostOf(u){try{return new URL(u).hostname;}catch(e){return '?';}}
+function ngGroups(){
+  const g=new Map();
+  for(const u in HIST){const h=HIST[u];if(h.st!=='ng')continue;
+    const why=String(h.msg||'不明').replace(/\s+/g,' ').trim(),k=why+'\u0000'+hostOf(u);
+    if(!g.has(k))g.set(k,{why,host:hostOf(u),items:[]});g.get(k).items.push({u,title:h.title||''});}
+  return [...g.values()].sort((a,b)=>b.items.length-a.items.length);
+}
+function renderNg(){
+  const gs=ngGroups(),n=gs.reduce((a,x)=>a+x.items.length,0);
+  $('#ngSum').textContent=n?`${n}件（理由 ${gs.length}種類）`:'なし';
+  $('#ngCopy').disabled=$('#ngRetry').disabled=!n;
+  $('#ngList').innerHTML=gs.slice(0,30).map(x=>`<details style="margin-top:6px"><summary>${esc(x.host)}：${esc(x.why)}（${x.items.length}件）</summary>${x.items.slice(0,50).map(i=>`<div class="it"><span class="t"><b>${esc(i.title||'(曲名不明)')}</b><small><a href="${esc(i.u)}" target="_blank" rel="noopener" style="color:var(--hi)">${esc(i.u)}</a></small></span></div>`).join('')}</details>`).join('');
+}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true;}catch(e){}
+  const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();return ok;
+}
+$('#ngCopy').onclick=async()=>{
+  const gs=ngGroups(),n=gs.reduce((a,x)=>a+x.items.length,0);
+  const lines=[`【BeSmart まとめて追加：失敗 ${n}件／理由 ${gs.length}種類】`,`中継：${SET.px?'あり':'なし'}`,''];
+  for(const x of gs){
+    lines.push(`■ ${x.host}：${x.why}（${x.items.length}件）`);
+    for(const i of x.items.slice(0,3))lines.push(`  ${i.title?i.title+' | ':''}${i.u}`);
+    if(x.items.length>3)lines.push(`  ほか${x.items.length-3}件`);
+  }
+  const ok=await copyText(lines.join('\n'));
+  $('#ngCopy').textContent=ok?'コピーしました':'コピーできませんでした';setTimeout(()=>$('#ngCopy').textContent='失敗のまとめをコピー',2000);
+};
+$('#ngRetry').onclick=()=>{let n=0;for(const u in HIST)if(HIST[u].st==='ng'){delete HIST[u];n++;}saveHist();build();renderNg();$('#ngRetry').textContent=`${n}件を戻しました`;setTimeout(()=>$('#ngRetry').textContent='もう一度選ぶ',2000);};
+
 $('#clrHist').onclick=()=>{if(confirm('取得済み・失敗の記録を消します。曲や取り込み待ちのファイルは消えません。')){HIST={};saveHist();build();}};
 window.addEventListener('beforeunload',e=>{if(RUN){e.preventDefault();e.returnValue='';}});
 
@@ -349,7 +390,7 @@ async function syncBg(){
     for(const k of await box.keys()){const r=await box.match(k);let o=null;try{o=await r.json();}catch(e){}
       if(o&&o.items){let ok=0;for(const it of o.items){
           const t=(HIST[it.url]&&HIST[it.url].title)||it.url;
-          HIST[it.url]=it.ok?{st:'ok',t:o.t}:{st:'ng',t:o.t,msg:it.msg};if(it.ok)ok++;
+          HIST[it.url]=it.ok?{st:'ok',t:o.t}:{st:'ng',t:o.t,msg:it.msg,title:t};if(it.ok)ok++;
           log(it.ok?`<span class="okc">✓</span> ${esc(t)}（${esc(it.name)}・${fmtMB(it.size)}）［バックグラウンド］`:`<span class="err">✗</span> ${esc(t)}：${esc(it.msg)}　<a href="${esc(it.url)}" target="_blank" rel="noopener">開く</a>`);}
         log(`— バックグラウンド取得の結果：成功 ${ok}件・失敗 ${o.items.length-ok}件 —`);changed=true;}
       await box.delete(k);}
