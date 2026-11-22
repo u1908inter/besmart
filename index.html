@@ -12,13 +12,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="BeSmart">
-<title>BeSmart｜スマホで遊べるBMSプレイヤー（ブラウザ版）</title>
-<meta name="description" content="スマホのブラウザだけで遊べる無料のBMSプレイヤー。ZIP・RAR・LZH・7zを解凍せずに読み込み、数GBのパックも曲を選んで取り込めます。難易度表、RANDOM・各種ゲージ、リプレイ、譜面ビューワーに対応。インストール不要。">
+<title>BeSmart｜スマホでBMSが遊べる無料BMSプレイヤー（ブラウザ版・音ゲー）</title>
+<meta name="description" content="スマホでBMSを遊ぶなら。iPhone・Androidのブラウザだけで遊べる無料のBMSプレイヤー（音ゲー）です。インストール不要。ZIP・RAR・7zの曲をそのまま読み込み、7鍵・DP・スマホ向け4鍵変換、難易度表、段位、リプレイに対応。">
 <link rel="canonical" href="https://u1908inter.github.io/besmart/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BeSmart">
-<meta property="og:title" content="BeSmart｜スマホで遊べるBMSプレイヤー（ブラウザ版）">
-<meta property="og:description" content="スマホのブラウザだけで遊べる無料のBMSプレイヤー。ZIP・RAR・LZH・7zを解凍せずに読み込み、数GBのパックも曲を選んで取り込めます。難易度表、RANDOM・各種ゲージ、リプレイ、譜面ビューワーに対応。インストール不要。">
+<meta property="og:title" content="BeSmart｜スマホでBMSが遊べる無料BMSプレイヤー">
+<meta property="og:description" content="スマホでBMSを遊ぶなら。iPhone・Androidのブラウザだけで遊べる無料のBMSプレイヤー（音ゲー）です。インストール不要。ZIP・RAR・7zの曲をそのまま読み込み、7鍵・DP・スマホ向け4鍵変換、難易度表、段位、リプレイに対応。">
 <meta property="og:url" content="https://u1908inter.github.io/besmart/">
 <meta property="og:image" content="https://u1908inter.github.io/besmart/icons/og.png">
 <meta property="og:image:width" content="1200">
@@ -250,7 +250,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1120.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2331)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1122.0956)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.0956)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -869,7 +869,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1120.2331)">スマホで遊べるBMSプレイヤー　VER 1.0 (1120.2331)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1122.0956)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.0956)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3696,17 +3696,12 @@ function renderPwaBox(){
   const btn=document.getElementById('pwaInstall');if(btn)btn.onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;renderPwaBox();};
 }
 async function importShared(){
-  // ?shared=1 comes from the share target; without it, files still waiting in the inbox (left by the share target or collect.html) are imported too
-  if(!('caches' in window))return;
-  const asked=/[?&]shared=1/.test(location.search);
-  if(!asked){try{if(!(await caches.has('besmart-share')))return;}catch(e){return;}}
+  if(!/[?&]shared=1/.test(location.search)||!('caches' in window))return;
   try{
     const c=await caches.open('besmart-share');const ks=await c.keys();const files=[];
-    if(!ks.length&&!asked)return;
-    for(const k of ks){const r=await c.match(k);if(!r)continue;const nm=decodeURIComponent(r.headers.get('X-Name')||'shared.zip');files.push(new File([await r.blob()],nm));}
-    if(asked)history.replaceState(null,'',location.pathname);
-    // the inbox is emptied only once the import has run, so closing the app before it starts keeps the files
-    if(files.length){const go=async()=>{await importFiles(files);for(const k of ks){try{await c.delete(k);}catch(e){}}};if($('#title').style.display==='flex')$('#titleStart').addEventListener('click',()=>setTimeout(go,60),{once:true});else go();}
+    for(const k of ks){const r=await c.match(k);if(!r)continue;const nm=decodeURIComponent(r.headers.get('X-Name')||'shared.zip');files.push(new File([await r.blob()],nm));await c.delete(k);}
+    history.replaceState(null,'',location.pathname);
+    if(files.length){const go=()=>importFiles(files);if($('#title').style.display==='flex')$('#titleStart').addEventListener('click',()=>setTimeout(go,60),{once:true});else go();}
   }catch(e){console.error(e);}
 }
 importShared();
