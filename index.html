@@ -250,7 +250,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1122.0956)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.0956)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1122.2241)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.2241)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -869,7 +869,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1122.0956)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.0956)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1122.2241)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.2241)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3611,7 +3611,9 @@ async function openDetail(c){
       <div class="hlp">${L('練習モードと速度変更プレイはスコアを記録しません。','Practice and speed-changed plays are not recorded.')}</div>
       <button class="sec" id="dPrac">${L('練習開始','Start practice')}</button></div></details>
     <div class="hlp">${esc(c.archName||'')}${c.demo?'':' ／ '+esc(c.path)}</div>
-    ${c.demo?'':`<button class="danger" id="dDel">${L('この書庫の曲を削除','Delete this archive')}</button>`}
+    ${c.demo?'':(()=>{const all=CHARTS.filter(x=>x.archiveId===c.archiveId),song=all.filter(x=>x.dir===c.dir);
+      return song.length<all.length?`<button class="danger" id="dDelSong">${L(`この曲だけ削除（${song.length}譜面）`,`Delete this song only (${song.length} charts)`)}</button><button class="danger" id="dDel">${L(`書庫ごと削除（${all.length}譜面）`,`Delete the whole archive (${all.length} charts)`)}</button><div class="hlp">${L('この書庫には、ほかの曲も一緒に入っています。「この曲だけ削除」なら、ほかの曲は残ります。','This archive also holds other songs. “Delete this song only” keeps them.')}</div>`
+        :`<button class="danger" id="dDel">${L(`この曲を削除（${all.length}譜面）`,`Delete this song (${all.length} charts)`)}</button>`;})()}
     <button id="dClose">${L('閉じる','Close')}</button>`;
   $('#dens').appendChild(densityCanvas(c));
   const pM=$('#pM'),pR=$('#pR');
@@ -3652,6 +3654,16 @@ async function openDetail(c){
       pb.querySelectorAll('[data-pd]').forEach(b=>b.onclick=()=>{pl.splice(+b.dataset.pd,1);patsLoad()[c.hash]=pl;if(!pl.length)delete PATS[c.hash];patsSave();openDetail(c);});
       }}catch(e){console.warn(e);}
   $('#dPrac').onclick=()=>{close();const en=+pE.value>=+pE.max?null:+pE.value;startPlay(c,{practice:{measure:+pM.value,rate:+pR.value,end:en,loop:$('#pL').value==='1',step:+$('#pU').value}});};
+  if($('#dDelSong'))$('#dDelSong').onclick=async()=>{
+    const list=CHARTS.filter(x=>x.archiveId===c.archiveId&&x.dir===c.dir);
+    $('#dDelSong').textContent=L(`本当にこの曲を削除する（${list.length}譜面）`,`Really delete this song (${list.length} charts)`);$('#dDelSong').onclick=async()=>{
+      for(const x of list)await DB.del('charts',x.key);
+      try{const arch=await DB.get('archives',c.archiveId);
+        if(arch){const rest=CHARTS.filter(x=>x.archiveId===c.archiveId&&x.dir!==c.dir);
+          if(!rest.length)await DB.del('archives',c.archiveId);
+          else if(c.dir&&arch.extra&&arch.extra.length){arch.extra=arch.extra.filter(e=>!String(e.path).startsWith(c.dir));await DB.put('archives',arch);}}}catch(e){console.warn(e);}
+      archCache.delete(c.archiveId);close();await refreshLibrary();toast(L('この曲を削除しました','Song deleted'));};
+  };
   if($('#dDel'))$('#dDel').onclick=async()=>{
     const n=CHARTS.filter(x=>x.archiveId===c.archiveId).length;
     $('#dDel').textContent=L(`本当に削除する（${n}譜面）`,`Really delete (${n} charts)`);$('#dDel').onclick=async()=>{
