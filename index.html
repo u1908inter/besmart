@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2046)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2046)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2106)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2046)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2046)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2106)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3199,7 +3199,7 @@ function openWMenu(){
     ${TABLES.length?`<label><small>${L('難易度表','Table')}</small><select id="wmTbl"><option value="">${L('なし','None')}</option>${TABLES.map(T=>`<option value="${esc(T.url)}">${esc(T.name)}</option>`).join('')}</select></label>`:''}
     <button class="wmf" id="wmFlt"><small>${L('絞り込み','Filter')}</small><span>${fn?L(`${fn}件`,`${fn} set`):L('なし','None')} ›</span></button></div>
    ${it('wmFav','★',L('この曲をお気に入りに','Favourite this song'),L('長押しでフォルダにも入れられます','Long-press a row to add to folders'))}
-   ${it('wmRnd','🎲',L('おまかせ選曲','Random pick'),rn?L(`条件 ${rn}件で選ぶ`,`${rn} conditions`):L('すべての曲から','From all songs'),1)}
+   ${it('wmRnd','🎲',L('おまかせ選曲','Random pick'),rn?L(`条件 ${rn}件で選ぶ`,`${rn} conditions`):L('すべての曲から','From all songs'))}
    ${it('wmRndC','⚙',L('おまかせの条件','Random conditions'),L('鍵盤・レベル・クリア状況など','Keys, level, clear status…'))}
    <div class="wmsec">${L('あそぶ','Play')}</div>
    ${it('wmDaily','📅',L('今日のチャレンジ','Today’s challenge'),(()=>{try{const D=dailyState();return D?(D.done?L(`✅ 達成済み・連続${D.streak||0}日`,`✅ Done · streak ${D.streak||0}`):L(`目標：${goalText(D.g)}`,`Goal: ${goalText(D.g)}`)):L('曲を追加すると出ます','Add songs first');}catch(e){return '';}})())}
@@ -3207,7 +3207,7 @@ function openWMenu(){
    ${it('wmCourse','🎖',L('コース','Courses'),L('何曲か続けて遊ぶ','Play several songs in a row'))}
    ${it('wmRec','📊',L('記録','Records'),L('今日の傾向・実績・ランプ分布','Today, achievements, lamps'))}
    <div class="wmsec">${L('曲を増やす','Add songs')}</div>
-   <label class="wmi hl" for="fileIn" id="wmAdd"><span class="ic">＋</span><span class="tx"><b>${L('曲を追加','Add songs')}</b><small>zip・rar・7z・tar</small></span><span class="ar">›</span></label>
+   <label class="wmi${CHARTS.some(c=>!c.builtin&&!c.demo)?'':' hl'}" for="fileIn" id="wmAdd"><span class="ic">＋</span><span class="tx"><b>${L('曲を追加','Add songs')}</b><small>zip・rar・7z・tar</small></span><span class="ar">›</span></label>
    ${it('wmGuide','🧭',L('曲の探し方ガイド','Finding songs'),L('配布イベント・難易度表','Events and tables'))}
    <div class="wmsec">${L('せってい','Settings')}</div>
    ${it('wmOut','🔊',L('タイミング調整','Timing'),esc($('#outBtn').textContent))}
