@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0157)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0157)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0843)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0843)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0157)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0157)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0843)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0843)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3080,13 +3080,30 @@ function recResultUI(box){
     else sb.style.display='none';});
 }
 // ===== ジュークボックス（画面を消しても流れる） =====
-const JB={on:false,list:[],idx:-1,au:null,cache:new Map(),src:'folder',shuf:true,busy:new Map(),srcName:''};
+const JB=Object.assign({on:false,list:[],idx:-1,au:null,cache:new Map(),busy:new Map(),srcName:'',src:'folder',ord:'shuf',norm:true,trim:true,sleep:null},(()=>{try{const o=JSON.parse(localStorage.getItem(LSK+'jbopt')||'{}');return {src:o.src||'folder',ord:o.ord||'shuf',norm:o.norm!==false,trim:o.trim!==false};}catch(e){return {};}})());
+const jbOptSave=()=>{try{localStorage.setItem(LSK+'jbopt',JSON.stringify({src:JB.src,ord:JB.ord,norm:JB.norm,trim:JB.trim}));}catch(e){}};
+function jbOrder(l){const o=JB.ord;if(o==='shuf')return jbShuffle(l.slice());const a=l.slice(),col=(x,y)=>String(x||'').localeCompare(String(y||''),'ja');
+  if(o==='title')return a.sort((x,y)=>col(x.title,y.title));
+  if(o==='artist')return a.sort((x,y)=>col(x.artist,y.artist)||col(x.title,y.title));
+  if(o==='new')return a.sort((x,y)=>(y.added||0)-(x.added||0));
+  if(o==='level'){let lv=c=>lvNum(c.level);const T=S.table&&TABLES.find(t=>t.url===S.table);
+    if(T){try{const key=wTableKeyMap(T),ord=new Map(tblLevels(T).map((x,i)=>[String(x),i+1]));lv=c=>{const k=key(c);return k!=null&&ord.has(String(k))?ord.get(String(k)):1000+Math.max(0,lvNum(c.level));};}catch(e){}}
+    return a.sort((x,y)=>lv(x)-lv(y)||col(x.title,y.title));}
+  return a;}
 function jbAudio(){if(JB.au)return JB.au;const a=new Audio();a.preload='auto';a.setAttribute('playsinline','');a.style.display='none';document.body.appendChild(a);
-  a.addEventListener('ended',()=>jbNext(1));a.addEventListener('play',jbPaint);a.addEventListener('pause',jbPaint);
-  a.addEventListener('timeupdate',()=>{const p=$('#jbPos');if(p&&a.duration)p.value=a.currentTime/a.duration*1000;const t=$('#jbTime');if(t&&a.duration)t.textContent=fmtT(a.currentTime)+' / '+fmtT(a.duration);
+  a.addEventListener('ended',()=>{if(JB.sleep&&JB.sleep.song){JB.sleep=null;jbStop();toast(L('😴 スリープタイマーで止めました','😴 Stopped by sleep timer'));return;}jbNext(1);});a.addEventListener('play',jbPaint);a.addEventListener('pause',jbPaint);
+  a.addEventListener('timeupdate',()=>{jbSleepTick();const p=$('#jbPos');if(p&&a.duration)p.value=a.currentTime/a.duration*1000;const t=$('#jbTime');if(t&&a.duration)t.textContent=fmtT(a.currentTime)+' / '+fmtT(a.duration);
     try{if(navigator.mediaSession&&navigator.mediaSession.setPositionState&&a.duration)navigator.mediaSession.setPositionState({duration:a.duration,playbackRate:1,position:Math.min(a.currentTime,a.duration)});}catch(e){}});
   JB.au=a;return a;}
 const fmtT=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+function jbSleepTick(){const z=JB.sleep;if(!z||z.song||!JB.au)return;const left=z.until-Date.now();
+  if(left<=0){JB.sleep=null;JB.au.volume=1;jbStop();toast(L('😴 スリープタイマーで止めました','😴 Stopped by sleep timer'));return;}
+  JB.au.volume=left<8000?Math.max(0.05,left/8000):1;const e=$('#jbSlpL');if(e)e.textContent=L(`あと${Math.ceil(left/60000)}分`,`${Math.ceil(left/60000)} min left`);}
+function jbSetSleep(v){if(JB.slT)clearTimeout(JB.slT);if(JB.au)JB.au.volume=1;
+  if(v==='off')JB.sleep=null;else if(v==='song')JB.sleep={song:true};else{const ms=(+v)*60000;JB.sleep={until:Date.now()+ms};JB.slT=setTimeout(jbSleepTick,ms+500);}
+  const e=$('#jbSlpL');if(e)e.textContent=JB.sleep?(JB.sleep.song?L('この曲で終わり','After this song'):L(`あと${Math.ceil((JB.sleep.until-Date.now())/60000)}分`,'')):'';}
+function jbFavBtn(c){return c&&FAV.has(c.hash)?'♥':'♡';}
+function jbFav(){const c=JB.on?JB.list[JB.idx]:null;if(!c)return;if(FAV.has(c.hash)){FAV.delete(c.hash);toast(L('お気に入りから外しました','Removed from favourites'));}else{FAV.add(c.hash);toast(L('♥ お気に入りに追加しました','♥ Added to favourites'));}saveFav();jbPaint();}
 function jbSongKey(c){return c.archiveId+'|'+c.dir+'|'+String(c.title||'').replace(/\s*[\[\(（【<〔].*$/,'').trim().toLowerCase();}
 function jbSource(kind){
   let src;const uniq=a=>{const m=new Map();for(const c of a){if(!c||!c.hash||c.demo||c.builtin)continue;const k=jbSongKey(c);if(!m.has(k))m.set(k,c);}return [...m.values()];};
@@ -3097,12 +3114,20 @@ function jbSource(kind){
   return src;
 }
 function jbShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function wavBlob(ab){const ch=Math.min(2,ab.numberOfChannels),n=ab.length,sr=ab.sampleRate,buf=new ArrayBuffer(44+n*ch*2),v=new DataView(buf);
+function jbAnalyze(ab){const ch=Math.min(2,ab.numberOfChannels),n=ab.length,sr=ab.sampleRate,d=[];for(let c=0;c<ch;c++)d.push(ab.getChannelData(c));
+  const amp=i=>{let m=0;for(let c=0;c<ch;c++){const x=Math.abs(d[c][i]);if(x>m)m=x;}return m;};
+  let st=0,en=n;if(JB.trim){const th=0.003;let i=0;while(i<n&&amp(i)<th)i++;st=Math.max(0,i-Math.round(sr*0.15));let j=n-1;while(j>st&&amp(j)<0.0015)j--;en=Math.min(n,j+Math.round(sr*0.8));if(en-st<sr)st=0,en=n;}
+  let gain=1;if(JB.norm){let sum=0,cnt=0,pk=0;const B=Math.round(sr*0.4);const bl=[];
+    for(let b=st;b<en;b+=B){let s2=0,k=0;for(let i=b;i<Math.min(en,b+B);i+=4){for(let c=0;c<ch;c++){const x=d[c][i];s2+=x*x;const a=x<0?-x:x;if(a>pk)pk=a;}k+=ch;}if(k)bl.push(s2/k);}
+    bl.sort((a,b)=>b-a);const top=bl.slice(0,Math.max(1,Math.round(bl.length*0.5)));const rms=Math.sqrt(top.reduce((a,b)=>a+b,0)/top.length)||0;
+    if(rms>1e-5){gain=Math.pow(10,-16/20)/rms;gain=Math.max(0.35,Math.min(3,gain));if(pk*gain>0.98)gain=Math.max(Math.min(gain,1),0.98/Math.max(pk,1e-6));}}
+  return {st,en,gain};}
+function wavBlob(ab){const A=jbAnalyze(ab);const ch=Math.min(2,ab.numberOfChannels),n=A.en-A.st,sr=ab.sampleRate,buf=new ArrayBuffer(44+n*ch*2),v=new DataView(buf),G0=A.gain,ST=A.st;
   const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
   ws(0,'RIFF');v.setUint32(4,36+n*ch*2,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);
   v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,n*ch*2,true);
   const d=[];for(let c=0;c<ch;c++)d.push(ab.getChannelData(c));let o=44;
-  for(let i=0;i<n;i++)for(let c=0;c<ch;c++){let s=d[c][i];s=s<-1?-1:s>1?1:s;v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true);o+=2;}
+  for(let i=0;i<n;i++)for(let c=0;c<ch;c++){let s=d[c][i+ST]*G0;s=s<-1?-1:s>1?1:s;v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true);o+=2;}
   return new Blob([buf],{type:'audio/wav'});}
 async function jbRender(c){
   ensureAudio();
@@ -3123,7 +3148,7 @@ async function jbRender(c){
   const comp=oc.createDynamicsCompressor();comp.threshold.value=-10;comp.ratio.value=4;comp.connect(oc.destination);
   const g=oc.createGain();g.gain.value=(base.P.volwav||100)/100;g.connect(comp);
   for(const e of evs){const b=bufs[e.id];if(!b||e.time>=end)continue;const s=oc.createBufferSource();s.buffer=b.b;s.connect(g);try{s.start(Math.max(0,e.time),b.off,Math.max(0.01,b.dur));}catch(err){}}
-  const out=await oc.startRendering();return {url:URL.createObjectURL(wavBlob(out)),dur:out.duration,base:{bga:base.bga,layer:base.layer,P:{bmp:base.P.bmp}}};
+  const out=await oc.startRendering();const wb=wavBlob(out);return {url:URL.createObjectURL(wb),dur:(wb.size-44)/(2*Math.min(2,out.numberOfChannels)*out.sampleRate),base:{bga:base.bga,layer:base.layer,P:{bmp:base.P.bmp}}};
 }
 function jbGet(i){const c=JB.list[i];if(!c)return Promise.reject(new Error('none'));const k=jbSongKey(c);
   if(JB.cache.has(k))return Promise.resolve(JB.cache.get(k));
@@ -3144,7 +3169,7 @@ function jbPause(){if(JB.au&&!JB.au.paused)JB.au.pause();}
 function jbStop(){if(JBV.on)closeJbBga();JB.on=false;if(JB.au){JB.au.pause();JB.au.removeAttribute('src');try{JB.au.load();}catch(e){}}for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();
   try{if(navigator.mediaSession)navigator.mediaSession.metadata=null;}catch(e){}jbPaint();}
 function jbStart(){stopPreview();const l=jbSource(JB.src);if(!l.length){toast(L('曲がありません','No songs'));return;}
-  JB.list=JB.shuf?jbShuffle(l.slice()):l;for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();jbPlayIdx(0);}
+  JB.list=jbOrder(l);for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();jbPlayIdx(0);}
 function jbMeta(c){if(!('mediaSession' in navigator))return;try{
   navigator.mediaSession.metadata=new MediaMetadata({title:c.title||'',artist:c.artist||'',album:'BeSmart '+L('ジュークボックス','Jukebox'),artwork:c.thumb?[{src:c.thumb,sizes:'256x256'}]:[]});
   const h={play:()=>jbAudio().play(),pause:()=>jbAudio().pause(),nexttrack:()=>jbNext(1),previoustrack:()=>jbNext(-1),stop:jbStop,
@@ -3157,13 +3182,14 @@ function jbPaint(msg){
       document.body.appendChild(mb);}
     const gm=$('#game');mb.style.display=gm&&gm.style.display==='block'?'none':'flex';
     mb.innerHTML=`<span style="font-size:18px">🎧</span><span id="jbMiniT" style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px">${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}<small style="opacity:.7"> ／ ${esc(c.artist||'')}</small></span>
-      <button class="ib" id="jbmV" style="width:auto;margin:0;padding:0 8px">🎬</button><button class="ib" id="jbmP" style="width:auto;margin:0;padding:0 10px">${playing?'❚❚':'▶'}</button><button class="ib" id="jbmN" style="width:auto;margin:0;padding:0 10px">⏭</button><button class="ib" id="jbmX" style="width:auto;margin:0;padding:0 8px">✕</button>`;
-    mb.querySelector('#jbmP').onclick=jbToggle;mb.querySelector('#jbmV').onclick=openJbBga;mb.querySelector('#jbmN').onclick=()=>jbNext(1);mb.querySelector('#jbmX').onclick=jbStop;mb.querySelector('#jbMiniT').onclick=openJukebox;
+      <button class="ib" id="jbmF" style="width:auto;margin:0;padding:0 8px">${jbFavBtn(c)}</button><button class="ib" id="jbmV" style="width:auto;margin:0;padding:0 8px">🎬</button><button class="ib" id="jbmP" style="width:auto;margin:0;padding:0 10px">${playing?'❚❚':'▶'}</button><button class="ib" id="jbmN" style="width:auto;margin:0;padding:0 10px">⏭</button><button class="ib" id="jbmX" style="width:auto;margin:0;padding:0 8px">✕</button>`;
+    mb.querySelector('#jbmP').onclick=jbToggle;mb.querySelector('#jbmV').onclick=openJbBga;mb.querySelector('#jbmF').onclick=jbFav;mb.querySelector('#jbmN').onclick=()=>jbNext(1);mb.querySelector('#jbmX').onclick=jbStop;mb.querySelector('#jbMiniT').onclick=openJukebox;
   }else if(mb)mb.remove();
   const ov=$('#jbDlg');if(ov){const t=ov.querySelector('#jbNow');if(t)t.innerHTML=c?`<b>${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}</b><div class="hlp" style="margin:2px 0 0">${esc(c.artist||'')}</div>`:`<span class="hlp">${L('停止中','Stopped')}</span>`;
     const p=ov.querySelector('#jbPlay');if(p)p.textContent=playing?L('❚❚ 一時停止','❚❚ Pause'):JB.on?L('▶ 再開','▶ Resume'):L('▶ 再生スタート','▶ Start');
     const ql=ov.querySelector('#jbQ');if(ql){const n=JB.list.length;ql.innerHTML=JB.on&&n?[1,2,3,4,5].filter(k=>k<n).map(k=>{const x=JB.list[(JB.idx+k)%n];return `<div class="row" data-jq="${(JB.idx+k)%n}" style="cursor:pointer"><span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${k}. ${esc(x.title||'')}</span><small>${esc(x.artist||'').slice(0,20)}</small></div>`;}).join(''):'';
       ql.querySelectorAll('[data-jq]').forEach(r=>r.onclick=()=>jbPlayIdx(+r.dataset.jq));}
+    const fb=ov.querySelector('#jbFavB');if(fb){fb.textContent=c?(FAV.has(c.hash)?L('♥ お気に入り済み','♥ Favourited'):L('♡ お気に入りに追加','♡ Add to favourites')):L('♡ お気に入り','♡ Favourite');fb.disabled=!c;}
     const sn=ov.querySelector('#jbSrcN');if(sn)sn.textContent=JB.on?`${JB.srcName}・${JB.list.length}${L('曲','')}`:'';}
 }
 function openJukebox(){
@@ -3172,23 +3198,45 @@ function openJukebox(){
   ov.innerHTML=`<div class="box card"><h2>🎧 ${L('ジュークボックス','Jukebox')}</h2>
     <div class="hlp">${L('曲を次々に自動で流します（キー音もすべて鳴らして1曲ずつ音声にします）。画面を消しても、ロック画面やイヤホンのボタンで操作できます。','Plays songs one after another, rendering each with all its keysounds. Keeps playing with the screen off; use the lock screen or earphone buttons.')}</div>
     <div class="row"><span>${L('流す曲','Songs')}</span><select id="jbSrc"><option value="folder">${L('今のフォルダ','This folder')}（${esc(fn)}）</option><option value="fav">${L('お気に入り','Favourites')}</option><option value="all">${L('すべての曲','All songs')}</option></select></div>
-    <div class="row"><span>${L('シャッフル','Shuffle')}</span><select id="jbShuf"><option value="1">ON</option><option value="0">OFF</option></select></div>
+    <div class="row"><span>${L('流す順番','Order')}</span><select id="jbOrd"><option value="shuf">${L('シャッフル','Shuffle')}</option><option value="title">${L('曲名順','By title')}</option><option value="level">${L('レベルの低い順','By level')}</option><option value="artist">${L('アーティスト順','By artist')}</option><option value="new">${L('追加が新しい順','Newest first')}</option></select></div>
+    <div class="row"><span>${L('音量をそろえる','Even out volume')}</span><select id="jbNorm"><option value="1">ON</option><option value="0">OFF</option></select></div>
+    <div class="row"><span>${L('曲の前後の無音を詰める','Trim silence')}</span><select id="jbTrim"><option value="1">ON</option><option value="0">OFF</option></select></div>
+    <div class="row"><span>${L('スリープタイマー','Sleep timer')} <small id="jbSlpL" style="opacity:.7"></small></span><select id="jbSlp"><option value="off">${L('オフ','Off')}</option><option value="15">15${L('分','min')}</option><option value="30">30${L('分','min')}</option><option value="60">60${L('分','min')}</option><option value="90">90${L('分','min')}</option><option value="song">${L('この曲で終わり','After this song')}</option></select></div>
     <div class="card" style="padding:8px 10px;margin:8px 0"><div id="jbNow"></div><input type="range" id="jbPos" min="0" max="1000" value="0" style="width:100%"><div class="hlp" style="display:flex;justify-content:space-between;margin:0"><span id="jbTime"></span><span id="jbSrcN"></span></div></div>
     <button class="pri" id="jbPlay"></button>
     <div class="btns"><button id="jbPrev">⏮ ${L('前へ','Prev')}</button><button id="jbNext">${L('次へ','Next')} ⏭</button></div>
+    <div class="btns"><button id="jbFavB"></button><button id="jbNotes">🎮 ${L('ノーツつきで見る','Watch with notes')}</button></div>
     <button id="jbBga">🎬 ${L('BGAつきで見る（全画面）','Watch with BGA (full screen)')}</button>
     <button id="jbRe">${L('この条件で選び直す','Restart with these options')}</button>
     <div class="hlp" style="margin:8px 0 2px">${L('次に流れる曲（タップで再生）','Up next (tap to play)')}</div><div id="jbQ"></div>
     <button id="jbStopB">${L('止める','Stop')}</button><button id="jbClose">${L('閉じる（流したまま）','Close (keep playing)')}</button>
-    <div class="hlp" style="margin-top:6px">${L('・1曲ごとに準備（数秒〜十数秒）が要ります。次の曲は先に準備しておきます。<br>・iPhoneはサイレントスイッチがONだと音が出ないことがあります。<br>・画面を消したあと長時間たつと、端末の省電力機能で止まる場合があります。','• Each song takes a few seconds to prepare; the next one is prepared in advance.<br>• Long periods with the screen off may be stopped by the phone’s power saving.')}</div></div>`;
+    <div class="hlp" style="margin-top:6px">${L('・1曲ごとに準備（数秒〜十数秒）が要ります。次の曲は先に準備しておきます。<br>・iPhoneはサイレントスイッチがONだと音が出ないことがあります。<br>・画面を消したあと長時間たつと、端末の省電力機能で止まる場合があります。<br>・「ノーツつきで見る」はオートプレイの画面で1曲ずつ流します。こちらは画面を消すと止まります。','• Each song takes a few seconds to prepare; the next one is prepared in advance.<br>• Long periods with the screen off may be stopped by the phone’s power saving.')}</div></div>`;
   document.body.appendChild(ov);const q=s=>ov.querySelector(s);
-  q('#jbSrc').value=JB.src;q('#jbShuf').value=JB.shuf?'1':'0';
-  q('#jbSrc').onchange=e=>{JB.src=e.target.value;};q('#jbShuf').onchange=e=>{JB.shuf=e.target.value==='1';};
+  q('#jbSrc').value=JB.src;q('#jbOrd').value=JB.ord;q('#jbNorm').value=JB.norm?'1':'0';q('#jbTrim').value=JB.trim?'1':'0';q('#jbSlp').value=JB.sleep?(JB.sleep.song?'song':'off'):'off';
+  q('#jbSrc').onchange=e=>{JB.src=e.target.value;jbOptSave();};q('#jbOrd').onchange=e=>{JB.ord=e.target.value;jbOptSave();};
+  const reRender=()=>{jbOptSave();for(const [k,r] of JB.cache){if(JB.on&&JB.list[JB.idx]&&jbSongKey(JB.list[JB.idx])===k)continue;try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.delete(k);}toast(L('次の曲から反映します','Applies from the next song'));};
+  q('#jbNorm').onchange=e=>{JB.norm=e.target.value==='1';reRender();};q('#jbTrim').onchange=e=>{JB.trim=e.target.value==='1';reRender();};
+  q('#jbSlp').onchange=e=>{if(e.target.value!=='keep')jbSetSleep(e.target.value);};q('#jbFavB').onclick=jbFav;q('#jbNotes').onclick=()=>{ov.remove();jbWatchNotes();};
   q('#jbPlay').onclick=jbToggle;q('#jbPrev').onclick=()=>jbNext(-1);q('#jbNext').onclick=()=>jbNext(1);q('#jbRe').onclick=jbStart;q('#jbBga').onclick=()=>{ov.remove();openJbBga();};q('#jbStopB').onclick=jbStop;
   q('#jbPos').oninput=e=>{const a=JB.au;if(a&&a.duration)a.currentTime=e.target.value/1000*a.duration;};
   const close=()=>ov.remove();q('#jbClose').onclick=close;ov.onclick=e=>{if(e.target===ov)close();};
-  jbPaint();
+  jbPaint();{const e=q('#jbSlpL');if(e&&JB.sleep)e.textContent=JB.sleep.song?L('この曲で終わり','After this song'):L(`あと${Math.ceil((JB.sleep.until-Date.now())/60000)}分`,`${Math.ceil((JB.sleep.until-Date.now())/60000)} min left`);if(JB.sleep&&!JB.sleep.song){const o=document.createElement('option');o.value='keep';o.textContent=L('動作中','Running');q('#jbSlp').prepend(o);q('#jbSlp').value='keep';}}
 }
+// ===== ノーツつきで見る（オートプレイで次々に） =====
+let JBAUTO=false,JBW_T=0;
+function jbWatchNotes(){
+  if(!JB.list.length){const l=jbSource(JB.src);if(!l.length){toast(L('曲がありません','No songs'));return;}JB.list=jbOrder(l);JB.idx=0;}
+  if(JB.idx<0)JB.idx=0;const c=JB.list[JB.idx];jbPause();if(JBV.on)closeJbBga();
+  startPlay(c,{auto:true,jbw:true});
+}
+function jbWatchNext(){clearTimeout(JBW_T);if(!JBAUTO||!JB.list.length)return;stopAll();show('#result',false);
+  JB.idx=(JB.idx+1)%JB.list.length;try{jbPaint();}catch(e){}actx.resume().then(()=>startPlay(JB.list[JB.idx],{auto:true,jbw:true}));}
+function jbWatchResult(box){if(!box)return;const n=JB.list[(JB.idx+1)%JB.list.length];if(!n)return;let left=6;
+  const slept=JB.sleep&&(JB.sleep.song||(JB.sleep.until&&Date.now()>=JB.sleep.until));
+  if(slept){JB.sleep=null;JBAUTO=false;box.innerHTML=`<div class="advc"><b>😴 ${L('スリープタイマーで止めました','Stopped by sleep timer')}</b></div>`;return;}
+  box.innerHTML=`<div class="advc"><b>🎮 ${L('次の曲','Up next')}：${esc(n.title||'')}</b><div class="hlp" style="margin:2px 0 6px" id="jbwL"></div><div class="btns"><button id="jbwGo">${L('今すぐ次へ','Next now')}</button><button id="jbwStop">${L('ここで止める','Stop here')}</button></div></div>`;
+  const tick=()=>{const e=box.querySelector('#jbwL');if(!e||!JBAUTO)return;if(left<=0){jbWatchNext();return;}e.textContent=L(`${left}秒後に始まります`,`Starting in ${left}s`);left--;JBW_T=setTimeout(tick,1000);};tick();
+  box.querySelector('#jbwGo').onclick=jbWatchNext;box.querySelector('#jbwStop').onclick=()=>{clearTimeout(JBW_T);JBAUTO=false;box.innerHTML='';};}
 // ===== ジュークボックスのBGA表示 =====
 const JBV={on:false,raf:0,key:null,imgs:{},bga:[],lay:[],stage:null,ui:true,uiT:0,vid:null,loading:false,c:null};
 async function jbvLoad(c,base){
@@ -4694,6 +4742,7 @@ async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
   GHOST=null;
+  JBAUTO=!!mode.jbw;clearTimeout(JBW_T);
   if(JB.on&&!mode.viewer){jbPause();}if(JBV.on)closeJbBga();
   if(!mode.rec&&!mode._keepRec)RECMODE=false;if(mode.rec)RECMODE=true;
   phReroll();
@@ -5943,8 +5992,8 @@ $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
 function stopAll(){if(RECV)recStop(false);if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
-function toLib(){GHOST=null;RECMODE=false;if(RECLAST){try{URL.revokeObjectURL(RECLAST.url);}catch(e){}RECLAST=null;}wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');toastRestore();if(actx)actx.resume();renderLibrary();try{jbPaint();}catch(e){}}
-function retry(same){const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
+function toLib(){GHOST=null;RECMODE=false;JBAUTO=false;clearTimeout(JBW_T);if(RECLAST){try{URL.revokeObjectURL(RECLAST.url);}catch(e){}RECLAST=null;}wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');toastRestore();if(actx)actx.resume();renderLibrary();try{jbPaint();}catch(e){}}
+function retry(same){clearTimeout(JBW_T);const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
   actx.resume().then(()=>{if(!lastMeta)return;startPlay(lastMeta,Object.assign({},lastMode,{seed:same?seed:undefined,replay:null}));});}
 $('#quitBtn').onclick=toLib;
@@ -6194,7 +6243,7 @@ function showResult(R){
       <span class="k">${L('ゲージ','Gauge')}</span><span>${GT[G.cur].n} ${Math.floor(G.gauges[G.cur].v)}%</span>
     </div>
     ${R.ach&&R.ach.length?`<div class="advc"><b>🏆 ${L('実績を達成','Achievement unlocked')}</b>${R.ach.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:''}
-    <div id="goalBox"></div><div id="recBox"></div>
+    <div id="goalBox"></div><div id="recBox"></div><div id="jbwBox"></div>
     <div id="advBox"></div>
     <div id="nextBox"></div>
     ${gaugeSimHTML()}
@@ -6213,6 +6262,7 @@ function showResult(R){
   try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice&&!G.redSaved&&(G.rate||1)===1){const gm=goalsAfterPlay(R,meta);
     if(gm.length)$('#goalBox').innerHTML=`<div class="advc" style="border-color:var(--hi)">${gm.map(x=>`<div><b>${esc(x)}</b></div>`).join('')}</div>`;}}catch(e){console.warn(e);}
   if(RECV)recResultUI($('#recBox'));
+  if(JBAUTO&&G&&G.auto)try{jbWatchResult($('#jbwBox'));}catch(e){console.warn(e);}
   try{renderAdvice(R,meta);}catch(e){console.warn(e);}
   try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice){const ok=!G.failed&&(R.lamp==null||R.lamp>=3),pk=nextPicks(meta,ok);
     if(pk.length){const nb=$('#nextBox');nb.innerHTML=`<div class="advc"><b>${ok?L('🎯 次はこの曲はどう？（少しだけ難しい）','🎯 Try next (a little harder)'):L('🎯 次はこの曲はどう？（少しやさしめ）','🎯 Try next (a little easier)')}</b>${pk.map(c=>`<button class="ib" data-nx="${c.hash}" style="display:block;width:100%;text-align:left;margin:4px 0;padding:6px 8px;height:auto;white-space:normal"><b>${esc((c.level!=null?'☆'+c.level+' ':'')+c.title)}</b><br><small style="opacity:.75">${esc(chartTraits(c).slice(0,2).join('・')||c.artist||'')}</small></button>`).join('')}</div>`;
