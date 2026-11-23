@@ -37,16 +37,16 @@
    "src": "https://stellabms.xyz/sl/table.html",
    "name": "Satellite",
    "symbol": "sl",
-   "count": 2568,
-   "updated": "2026-11-18"
+   "count": 2584,
+   "updated": "2026-11-23"
   },
   {
    "id": "st",
    "src": "https://stellabms.xyz/st/table.html",
    "name": "Stella",
    "symbol": "st",
-   "count": 2406,
-   "updated": "2026-11-18"
+   "count": 2447,
+   "updated": "2026-11-23"
   },
   {
    "id": "sr",
