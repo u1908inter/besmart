@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2112)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2112)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0157)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0157)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2112)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2112)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0157)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0157)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3123,7 +3123,7 @@ async function jbRender(c){
   const comp=oc.createDynamicsCompressor();comp.threshold.value=-10;comp.ratio.value=4;comp.connect(oc.destination);
   const g=oc.createGain();g.gain.value=(base.P.volwav||100)/100;g.connect(comp);
   for(const e of evs){const b=bufs[e.id];if(!b||e.time>=end)continue;const s=oc.createBufferSource();s.buffer=b.b;s.connect(g);try{s.start(Math.max(0,e.time),b.off,Math.max(0.01,b.dur));}catch(err){}}
-  const out=await oc.startRendering();return {url:URL.createObjectURL(wavBlob(out)),dur:out.duration};
+  const out=await oc.startRendering();return {url:URL.createObjectURL(wavBlob(out)),dur:out.duration,base:{bga:base.bga,layer:base.layer,P:{bmp:base.P.bmp}}};
 }
 function jbGet(i){const c=JB.list[i];if(!c)return Promise.reject(new Error('none'));const k=jbSongKey(c);
   if(JB.cache.has(k))return Promise.resolve(JB.cache.get(k));
@@ -3141,7 +3141,7 @@ async function jbPlayIdx(i,tries=0){
 function jbNext(d){if(!JB.list.length)return;const a=jbAudio();if(d<0&&a.currentTime>3){a.currentTime=0;return;}jbPlayIdx(JB.idx+d);}
 function jbToggle(){const a=jbAudio();if(!JB.on){jbStart();return;}if(a.paused)a.play().catch(()=>{});else a.pause();}
 function jbPause(){if(JB.au&&!JB.au.paused)JB.au.pause();}
-function jbStop(){JB.on=false;if(JB.au){JB.au.pause();JB.au.removeAttribute('src');try{JB.au.load();}catch(e){}}for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();
+function jbStop(){if(JBV.on)closeJbBga();JB.on=false;if(JB.au){JB.au.pause();JB.au.removeAttribute('src');try{JB.au.load();}catch(e){}}for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();
   try{if(navigator.mediaSession)navigator.mediaSession.metadata=null;}catch(e){}jbPaint();}
 function jbStart(){stopPreview();const l=jbSource(JB.src);if(!l.length){toast(L('曲がありません','No songs'));return;}
   JB.list=JB.shuf?jbShuffle(l.slice()):l;for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();jbPlayIdx(0);}
@@ -3157,8 +3157,8 @@ function jbPaint(msg){
       document.body.appendChild(mb);}
     const gm=$('#game');mb.style.display=gm&&gm.style.display==='block'?'none':'flex';
     mb.innerHTML=`<span style="font-size:18px">🎧</span><span id="jbMiniT" style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px">${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}<small style="opacity:.7"> ／ ${esc(c.artist||'')}</small></span>
-      <button class="ib" id="jbmP" style="width:auto;margin:0;padding:0 10px">${playing?'❚❚':'▶'}</button><button class="ib" id="jbmN" style="width:auto;margin:0;padding:0 10px">⏭</button><button class="ib" id="jbmX" style="width:auto;margin:0;padding:0 8px">✕</button>`;
-    mb.querySelector('#jbmP').onclick=jbToggle;mb.querySelector('#jbmN').onclick=()=>jbNext(1);mb.querySelector('#jbmX').onclick=jbStop;mb.querySelector('#jbMiniT').onclick=openJukebox;
+      <button class="ib" id="jbmV" style="width:auto;margin:0;padding:0 8px">🎬</button><button class="ib" id="jbmP" style="width:auto;margin:0;padding:0 10px">${playing?'❚❚':'▶'}</button><button class="ib" id="jbmN" style="width:auto;margin:0;padding:0 10px">⏭</button><button class="ib" id="jbmX" style="width:auto;margin:0;padding:0 8px">✕</button>`;
+    mb.querySelector('#jbmP').onclick=jbToggle;mb.querySelector('#jbmV').onclick=openJbBga;mb.querySelector('#jbmN').onclick=()=>jbNext(1);mb.querySelector('#jbmX').onclick=jbStop;mb.querySelector('#jbMiniT').onclick=openJukebox;
   }else if(mb)mb.remove();
   const ov=$('#jbDlg');if(ov){const t=ov.querySelector('#jbNow');if(t)t.innerHTML=c?`<b>${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}</b><div class="hlp" style="margin:2px 0 0">${esc(c.artist||'')}</div>`:`<span class="hlp">${L('停止中','Stopped')}</span>`;
     const p=ov.querySelector('#jbPlay');if(p)p.textContent=playing?L('❚❚ 一時停止','❚❚ Pause'):JB.on?L('▶ 再開','▶ Resume'):L('▶ 再生スタート','▶ Start');
@@ -3176,6 +3176,7 @@ function openJukebox(){
     <div class="card" style="padding:8px 10px;margin:8px 0"><div id="jbNow"></div><input type="range" id="jbPos" min="0" max="1000" value="0" style="width:100%"><div class="hlp" style="display:flex;justify-content:space-between;margin:0"><span id="jbTime"></span><span id="jbSrcN"></span></div></div>
     <button class="pri" id="jbPlay"></button>
     <div class="btns"><button id="jbPrev">⏮ ${L('前へ','Prev')}</button><button id="jbNext">${L('次へ','Next')} ⏭</button></div>
+    <button id="jbBga">🎬 ${L('BGAつきで見る（全画面）','Watch with BGA (full screen)')}</button>
     <button id="jbRe">${L('この条件で選び直す','Restart with these options')}</button>
     <div class="hlp" style="margin:8px 0 2px">${L('次に流れる曲（タップで再生）','Up next (tap to play)')}</div><div id="jbQ"></div>
     <button id="jbStopB">${L('止める','Stop')}</button><button id="jbClose">${L('閉じる（流したまま）','Close (keep playing)')}</button>
@@ -3183,11 +3184,81 @@ function openJukebox(){
   document.body.appendChild(ov);const q=s=>ov.querySelector(s);
   q('#jbSrc').value=JB.src;q('#jbShuf').value=JB.shuf?'1':'0';
   q('#jbSrc').onchange=e=>{JB.src=e.target.value;};q('#jbShuf').onchange=e=>{JB.shuf=e.target.value==='1';};
-  q('#jbPlay').onclick=jbToggle;q('#jbPrev').onclick=()=>jbNext(-1);q('#jbNext').onclick=()=>jbNext(1);q('#jbRe').onclick=jbStart;q('#jbStopB').onclick=jbStop;
+  q('#jbPlay').onclick=jbToggle;q('#jbPrev').onclick=()=>jbNext(-1);q('#jbNext').onclick=()=>jbNext(1);q('#jbRe').onclick=jbStart;q('#jbBga').onclick=()=>{ov.remove();openJbBga();};q('#jbStopB').onclick=jbStop;
   q('#jbPos').oninput=e=>{const a=JB.au;if(a&&a.duration)a.currentTime=e.target.value/1000*a.duration;};
   const close=()=>ov.remove();q('#jbClose').onclick=close;ov.onclick=e=>{if(e.target===ov)close();};
   jbPaint();
 }
+// ===== ジュークボックスのBGA表示 =====
+const JBV={on:false,raf:0,key:null,imgs:{},bga:[],lay:[],stage:null,ui:true,uiT:0,vid:null,loading:false,c:null};
+async function jbvLoad(c,base){
+  const key=jbSongKey(c);if(JBV.key===key)return;JBV.key=key;JBV.c=c;JBV.imgs={};JBV.bga=[];JBV.lay=[];JBV.stage=null;JBV.vid=null;JBV.loading=true;
+  if(c.thumb){const im=new Image();im.onload=()=>{if(JBV.key===key)JBV.stage=im;};im.src=c.thumb;}
+  try{const arch=await DB.get('archives',c.archiveId),ix=await getArchive(arch),imgs={};
+    const bids=new Set([...base.bga,...base.layer].map(b=>b.id));
+    for(const id of bids){if(JBV.key!==key)return;const nm=base.P.bmp[id];if(!nm)continue;let f=ix.resolve(c.dir,nm);if(!f)continue;
+      if(/\.(mpg|mpeg|avi|wmv|mp4|webm|m4v|mov|m1v|m2v|ogv)$/i.test(f.n)){
+        if(!/\.(mp4|webm|m4v|mov|ogv)$/i.test(f.n)){const stem=nm.replace(/\.[^.]+$/,'');f=ix.resolve(c.dir,stem+'.mp4')||ix.resolve(c.dir,stem+'.webm')||ix.resolve(c.dir,stem+'.m4v');if(!f)continue;}
+        const vkey='v|'+c.archiveId+'|'+f.n;
+        if(!imgCache.has(vkey))imgCache.set(vkey,f.get().then(ab=>loadVideo(new Blob([ab],{type:/webm$/i.test(f.n)?'video/webm':'video/mp4'}))).catch(()=>null));
+        const v=await imgCache.get(vkey);if(v)imgs[id]=v;continue;}
+      const k2=c.archiveId+'|'+f.n;
+      if(!imgCache.has(k2))imgCache.set(k2,f.get().then(ab=>new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=URL.createObjectURL(new Blob([ab]));})).catch(()=>null));
+      const im=await imgCache.get(k2);if(im)imgs[id]=im;}
+    if(JBV.key!==key)return;
+    for(const b of base.layer){const im=imgs[b.id];if(im&&!im._isVideo)layerKey(im);}
+    JBV.imgs=imgs;JBV.bga=base.bga.filter(e=>imgs[e.id]).sort((a,b)=>a.time-b.time);JBV.lay=base.layer.slice().sort((a,b)=>a.time-b.time);
+  }catch(e){console.warn(e);}finally{if(JBV.key===key)JBV.loading=false;}
+}
+function jbvAt(list,t){let lo=0,hi=list.length-1,r=-1;while(lo<=hi){const m=(lo+hi)>>1;if(list[m].time<=t){r=m;lo=m+1;}else hi=m-1;}return r<0?null:list[r];}
+function jbvFit(x,src,w,h,W,H,alpha){if(!w||!h)return;x.globalAlpha=alpha==null?1:alpha;
+  if(S.bgaFit==='full')x.drawImage(src,0,0,W,H);
+  else{let s=Math.min(W/w,H/h);if(S.bgaFit==='int'){s=s>=1?Math.floor(s):s;x.imageSmoothingEnabled=false;}x.drawImage(src,(W-w*s)/2,(H-h*s)/2,w*s,h*s);x.imageSmoothingEnabled=true;}x.globalAlpha=1;}
+function jbvFrame(){
+  if(!JBV.on)return;JBV.raf=requestAnimationFrame(jbvFrame);
+  const cv=$('#jbvCv');if(!cv)return;const dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(cv.clientWidth*dpr),H=Math.round(cv.clientHeight*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
+  const x=cv.getContext('2d'),a=JB.au,t=a?a.currentTime:0,playing=a&&!a.paused;x.fillStyle='#000';x.fillRect(0,0,W,H);
+  const c=JB.on?JB.list[JB.idx]:null;
+  if(c&&jbSongKey(c)!==JBV.key){const r=JB.cache.get(jbSongKey(c));if(r&&r.base)jbvLoad(c,r.base);}
+  const ev=jbvAt(JBV.bga,t),im=ev&&JBV.imgs[ev.id];
+  if(JBV.vid&&(!im||JBV.vid.v!==im)){try{JBV.vid.v.pause();}catch(e){}JBV.vid=null;}
+  if(im){
+    if(im._isVideo){if(!JBV.vid)JBV.vid={v:im};const v=im,want=t-ev.time;
+      if(playing){if(v.paused&&want<(v.duration||1e9))v.play().catch(()=>{});if(Math.abs(v.currentTime-want)>0.35&&want<(v.duration||1e9))try{v.currentTime=want;}catch(e){}}
+      else{if(!v.paused)v.pause();if(Math.abs(v.currentTime-want)>0.1)try{v.currentTime=want;}catch(e){}}
+      if(v.readyState>=2)jbvFit(x,v,v.videoWidth||16,v.videoHeight||9,W,H);}
+    else jbvFit(x,im,im.naturalWidth||im.width,im.naturalHeight||im.height,W,H);
+    const le=jbvAt(JBV.lay,t),li=le&&JBV.imgs[le.id];
+    if(li){const k=layerKey(li);if(k)jbvFit(x,k,k.width,k.height,W,H);else if(li._isVideo&&li.readyState>=2){x.globalCompositeOperation='lighter';jbvFit(x,li,li.videoWidth,li.videoHeight,W,H);x.globalCompositeOperation='source-over';}}
+  }else if(c){
+    if(JBV.stage){const s=JBV.stage;x.filter='blur(18px) brightness(.45)';jbvFit(x,s,s.width,s.height,W,H);x.filter='none';
+      const sz=Math.min(W,H)*0.5;x.drawImage(s,(W-sz)/2,(H-sz)/2-H*0.06,sz,sz*(s.height/s.width||1));}
+    x.textAlign='center';x.fillStyle='#fff';x.font=`${Math.round(Math.min(W,H)*0.055)}px Dela,DelaX,"Hiragino Sans",sans-serif`;
+    x.fillText(c.title||'',W/2,H*0.8,W*0.9);x.font=`${Math.round(Math.min(W,H)*0.035)}px ${(typeof CF!=='undefined'&&CF)||'sans-serif'}`;x.globalAlpha=.75;x.fillText(c.artist||'',W/2,H*0.8+Math.min(W,H)*0.07,W*0.9);x.globalAlpha=1;
+    if(JBV.loading||!playing){x.font=`${Math.round(Math.min(W,H)*0.03)}px sans-serif`;x.globalAlpha=.6;x.fillText(JBV.loading?L('BGAを読み込み中…','Loading BGA…'):(a&&a.src?L('一時停止中','Paused'):L('準備中…','Preparing…')),W/2,H*0.93);x.globalAlpha=1;}
+  }
+  const bar=$('#jbvBar');if(bar){const on=JBV.ui||!playing;bar.style.opacity=on?1:0;bar.style.pointerEvents=on?'auto':'none';
+    const tt=bar.querySelector('#jbvT');if(tt&&c)tt.textContent=`${c.title||''} ／ ${c.artist||''}`;const pp=bar.querySelector('#jbvP');if(pp)pp.textContent=playing?'❚❚':'▶';
+    const pt=bar.querySelector('#jbvTime');if(pt&&a&&a.duration)pt.textContent=fmtT(t)+' / '+fmtT(a.duration);}
+  if(JBV.ui&&playing&&performance.now()-JBV.uiT>3500)JBV.ui=false;
+}
+function openJbBga(){
+  if(!JB.on){jbStart();}
+  if($('#jbv'))return;const d=document.createElement('div');d.id='jbv';
+  d.style.cssText='position:fixed;inset:0;z-index:30;background:#000;touch-action:manipulation';
+  d.innerHTML=`<canvas id="jbvCv" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+    <div id="jbvBar" style="position:absolute;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.85));transition:opacity .4s;display:flex;align-items:center;gap:8px;color:#fff">
+      <div style="flex:1;min-width:0"><div id="jbvT" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:14px"></div><div id="jbvTime" style="font-size:12px;opacity:.7"></div></div>
+      <button class="ib" id="jbvPv" style="width:auto;margin:0;padding:0 12px">⏮</button><button class="ib" id="jbvP" style="width:auto;margin:0;padding:0 14px">❚❚</button><button class="ib" id="jbvN" style="width:auto;margin:0;padding:0 12px">⏭</button><button class="ib" id="jbvX" style="width:auto;margin:0;padding:0 12px">✕</button></div>`;
+  document.body.appendChild(d);
+  const poke=()=>{JBV.ui=true;JBV.uiT=performance.now();};
+  d.querySelector('#jbvCv').onclick=poke;d.querySelector('#jbvP').onclick=()=>{poke();jbToggle();};d.querySelector('#jbvPv').onclick=()=>{poke();jbNext(-1);};d.querySelector('#jbvN').onclick=()=>{poke();jbNext(1);};
+  d.querySelector('#jbvX').onclick=closeJbBga;
+  JBV.on=true;poke();JBV.key=null;try{if('wakeLock' in navigator&&!wakeLk)navigator.wakeLock.request('screen').then(l=>{wakeLk=l;l.addEventListener('release',()=>{wakeLk=null;});}).catch(()=>{});}catch(e){}
+  JBV.raf=requestAnimationFrame(jbvFrame);
+}
+function closeJbBga(){JBV.on=false;cancelAnimationFrame(JBV.raf);if(JBV.vid)try{JBV.vid.v.pause();}catch(e){}JBV.vid=null;JBV.key=null;JBV.imgs={};const d=$('#jbv');if(d)d.remove();try{wakeOff();}catch(e){}}
 function openWMenu(){
   const ov=document.createElement('div');ov.className='overlay wmenu';ov.id='wMenuDlg';ov.style.zIndex=13;ov.style.display='flex';
   const it=(id,ic,t,d,pri)=>`<button class="wmi${pri?' hl':''}" id="${id}"><span class="ic">${ic}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="ar">›</span></button>`;
@@ -4623,7 +4694,7 @@ async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
   GHOST=null;
-  if(JB.on&&!mode.viewer){jbPause();}
+  if(JB.on&&!mode.viewer){jbPause();}if(JBV.on)closeJbBga();
   if(!mode.rec&&!mode._keepRec)RECMODE=false;if(mode.rec)RECMODE=true;
   phReroll();
   // a preview that is playing or still loading must not carry over into the game
