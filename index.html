@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0852)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0852)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0855)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0855)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0852)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0852)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0855)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0855)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3080,8 +3080,8 @@ function recResultUI(box){
     else sb.style.display='none';});
 }
 // ===== ジュークボックス（画面を消しても流れる） =====
-const JB=Object.assign({on:false,list:[],idx:-1,au:null,cache:new Map(),busy:new Map(),srcName:'',src:'folder',ord:'shuf',norm:true,trim:true,sleep:null},(()=>{try{const o=JSON.parse(localStorage.getItem(LSK+'jbopt')||'{}');return {src:o.src||'folder',ord:o.ord||'shuf',norm:o.norm!==false,trim:o.trim!==false};}catch(e){return {};}})());
-const jbOptSave=()=>{try{localStorage.setItem(LSK+'jbopt',JSON.stringify({src:JB.src,ord:JB.ord,norm:JB.norm,trim:JB.trim}));}catch(e){}};
+const JB=Object.assign({on:false,list:[],idx:-1,au:null,cache:new Map(),busy:new Map(),srcName:'',src:'folder',ord:'shuf',norm:true,trim:true,sleep:null},(()=>{try{const o=JSON.parse(localStorage.getItem(LSK+'jbopt')||'{}');return {src:o.src||'folder',ord:o.ord||'shuf',norm:o.norm!==false,trim:o.trim!==false,bgaOnly:!!o.bgaOnly};}catch(e){return {};}})());
+const jbOptSave=()=>{try{localStorage.setItem(LSK+'jbopt',JSON.stringify({src:JB.src,ord:JB.ord,norm:JB.norm,trim:JB.trim,bgaOnly:JB.bgaOnly}));}catch(e){}};
 function jbOrder(l){const o=JB.ord;if(o==='shuf')return jbShuffle(l.slice());const a=l.slice(),col=(x,y)=>String(x||'').localeCompare(String(y||''),'ja');
   if(o==='title')return a.sort((x,y)=>col(x.title,y.title));
   if(o==='artist')return a.sort((x,y)=>col(x.artist,y.artist)||col(x.title,y.title));
@@ -3104,6 +3104,16 @@ function jbSetSleep(v){if(JB.slT)clearTimeout(JB.slT);if(JB.au)JB.au.volume=1;
   const e=$('#jbSlpL');if(e)e.textContent=JB.sleep?(JB.sleep.song?L('この曲で終わり','After this song'):L(`あと${Math.ceil((JB.sleep.until-Date.now())/60000)}分`,'')):'';}
 function jbFavBtn(c){return c&&FAV.has(c.hash)?'♥':'♡';}
 function jbFav(){const c=JB.on?JB.list[JB.idx]:null;if(!c)return;if(FAV.has(c.hash)){FAV.delete(c.hash);toast(L('お気に入りから外しました','Removed from favourites'));}else{FAV.add(c.hash);toast(L('♥ お気に入りに追加しました','♥ Added to favourites'));}saveFav();jbPaint();}
+const BGAC=(()=>{try{return JSON.parse(localStorage.getItem(LSK+'bgac')||'{}')||{};}catch(e){return {};}})();
+function jbHasBga(c){if(!c)return false;if(c.bga!==undefined)return c.bga>0;if(c.hash in BGAC)return !!BGAC[c.hash];return null;}
+async function jbBgaScan(list,prog){const unk=list.filter(c=>jbHasBga(c)===null);if(!unk.length)return;const ixs=new Map();let n=0;
+  for(const c of unk){try{if(!ixs.has(c.archiveId)){const arch=await DB.get('archives',c.archiveId);ixs.set(c.archiveId,arch?await getArchive(arch):null);}
+      const ix=ixs.get(c.archiveId),f=ix&&ix.byPath.get(c.path);if(!f){BGAC[c.hash]=0;continue;}const t=decodeText(await f.get());
+      BGAC[c.hash]=(/^#\d{3}0[47]:(?!(?:00)+\s*$)/mi.test(t)||/"bga_events"\s*:\s*\[\s*\{/.test(t))?1:0;}catch(e){BGAC[c.hash]=0;}
+    n++;if(prog)prog(n,unk.length);}
+  try{localStorage.setItem(LSK+'bgac',JSON.stringify(BGAC));}catch(e){}}
+const jbFilt=()=>JBV.on&&JB.bgaOnly&&JB.list.some(c=>jbHasBga(c));
+function jbStep(i,d){const n=JB.list.length;if(!n)return i;let j=i+d;if(!jbFilt())return j;for(let k=0;k<n;k++){const x=((j%n)+n)%n;if(jbHasBga(JB.list[x])!==false)return x;j+=d>=0?1:-1;}return i+d;}
 function jbSongKey(c){return c.archiveId+'|'+c.dir+'|'+String(c.title||'').replace(/\s*[\[\(（【<〔].*$/,'').trim().toLowerCase();}
 function jbSource(kind){
   let src;const uniq=a=>{const m=new Map();for(const c of a){if(!c||!c.hash||c.demo||c.builtin)continue;const k=jbSongKey(c);if(!m.has(k))m.set(k,c);}return [...m.values()];};
@@ -3160,10 +3170,10 @@ async function jbPlayIdx(i,tries=0){
   if(!JB.list.length)return;i=(i+JB.list.length)%JB.list.length;JB.idx=i;const c=JB.list[i],a=jbAudio();JB.on=true;
   jbPaint(L('♪ 準備中…','♪ Preparing…'));
   try{const r=await jbGet(i);if(JB.idx!==i||!JB.on)return;a.src=r.url;JB.counted=false;await a.play().catch(()=>{});jbMeta(c);jbPaint();
-    setTimeout(()=>{if(JB.on&&JB.idx===i)jbGet(i+1).catch(()=>{});},800);}
-  catch(e){console.warn(e);if(JB.idx!==i||!JB.on)return;if(tries<JB.list.length-1)return jbPlayIdx(i+1,tries+1);JB.on=false;jbPaint();toast(L('⚠ 再生できる曲がありませんでした','⚠ No playable songs'),3000);}
+    setTimeout(()=>{if(JB.on&&JB.idx===i)jbGet(jbStep(i,1)).catch(()=>{});},800);}
+  catch(e){console.warn(e);if(JB.idx!==i||!JB.on)return;if(tries<JB.list.length-1)return jbPlayIdx(jbStep(i,1),tries+1);JB.on=false;jbPaint();toast(L('⚠ 再生できる曲がありませんでした','⚠ No playable songs'),3000);}
 }
-function jbNext(d){if(!JB.list.length)return;const a=jbAudio();if(d<0&&a.currentTime>3){a.currentTime=0;return;}jbPlayIdx(JB.idx+d);}
+function jbNext(d){if(!JB.list.length)return;const a=jbAudio();if(d<0&&a.currentTime>3){a.currentTime=0;return;}jbPlayIdx(jbStep(JB.idx,d<0?-1:1));}
 function jbToggle(){const a=jbAudio();if(!JB.on){jbStart();return;}if(a.paused)a.play().catch(()=>{});else a.pause();}
 function jbPause(){if(JB.au&&!JB.au.paused)JB.au.pause();}
 function jbStop(){if(JBV.on)closeJbBga();JB.on=false;if(JB.au){JB.au.pause();JB.au.removeAttribute('src');try{JB.au.load();}catch(e){}}for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();
@@ -3206,14 +3216,15 @@ function openJukebox(){
     <button class="pri" id="jbPlay"></button>
     <div class="btns"><button id="jbPrev">⏮ ${L('前へ','Prev')}</button><button id="jbNext">${L('次へ','Next')} ⏭</button></div>
     <div class="btns"><button id="jbFavB"></button><button id="jbNotes">🎮 ${L('ノーツつきで見る','Watch with notes')}</button></div>
+    <div class="row"><span>${L('BGAつきのときは BGAのある曲だけ','With BGA view: BGA songs only')}</span><select id="jbBgaO"><option value="1">ON</option><option value="0">OFF</option></select></div>
     <button id="jbBga">🎬 ${L('BGAつきで見る（全画面）','Watch with BGA (full screen)')}</button>
     <button id="jbRe">${L('この条件で選び直す','Restart with these options')}</button>
     <div class="hlp" style="margin:8px 0 2px">${L('次に流れる曲（タップで再生）','Up next (tap to play)')}</div><div id="jbQ"></div>
     <button id="jbStopB">${L('止める','Stop')}</button><button id="jbClose">${L('閉じる（流したまま）','Close (keep playing)')}</button>
     <div class="hlp" style="margin-top:6px">${L('・1曲ごとに準備（数秒〜十数秒）が要ります。次の曲は先に準備しておきます。<br>・iPhoneはサイレントスイッチがONだと音が出ないことがあります。<br>・画面を消したあと長時間たつと、端末の省電力機能で止まる場合があります。<br>・「ノーツつきで見る」はオートプレイの画面で1曲ずつ流します。こちらは画面を消すと止まります。','• Each song takes a few seconds to prepare; the next one is prepared in advance.<br>• Long periods with the screen off may be stopped by the phone’s power saving.')}</div></div>`;
   document.body.appendChild(ov);const q=s=>ov.querySelector(s);
-  q('#jbSrc').value=JB.src;q('#jbOrd').value=JB.ord;q('#jbNorm').value=JB.norm?'1':'0';q('#jbTrim').value=JB.trim?'1':'0';q('#jbSlp').value=JB.sleep?(JB.sleep.song?'song':'off'):'off';
-  q('#jbSrc').onchange=e=>{JB.src=e.target.value;jbOptSave();};q('#jbOrd').onchange=e=>{JB.ord=e.target.value;jbOptSave();};
+  q('#jbSrc').value=JB.src;q('#jbOrd').value=JB.ord;q('#jbBgaO').value=JB.bgaOnly?'1':'0';q('#jbNorm').value=JB.norm?'1':'0';q('#jbTrim').value=JB.trim?'1':'0';q('#jbSlp').value=JB.sleep?(JB.sleep.song?'song':'off'):'off';
+  q('#jbSrc').onchange=e=>{JB.src=e.target.value;jbOptSave();};q('#jbOrd').onchange=e=>{JB.ord=e.target.value;jbOptSave();};q('#jbBgaO').onchange=e=>{JB.bgaOnly=e.target.value==='1';jbOptSave();};
   const reRender=()=>{jbOptSave();for(const [k,r] of JB.cache){if(JB.on&&JB.list[JB.idx]&&jbSongKey(JB.list[JB.idx])===k)continue;try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.delete(k);}toast(L('次の曲から反映します','Applies from the next song'));};
   q('#jbNorm').onchange=e=>{JB.norm=e.target.value==='1';reRender();};q('#jbTrim').onchange=e=>{JB.trim=e.target.value==='1';reRender();};
   q('#jbSlp').onchange=e=>{if(e.target.value!=='keep')jbSetSleep(e.target.value);};q('#jbFavB').onclick=jbFav;q('#jbNotes').onclick=()=>{ov.remove();jbWatchNotes();};
@@ -3291,8 +3302,13 @@ function jbvFrame(){
     const pt=bar.querySelector('#jbvTime');if(pt&&a&&a.duration)pt.textContent=fmtT(t)+' / '+fmtT(a.duration);}
   if(JBV.ui&&playing&&performance.now()-JBV.uiT>3500)JBV.ui=false;
 }
+async function jbBgaPrep(){if(!JB.bgaOnly)return;if(!JB.list.length)JB.list=jbOrder(jbSource(JB.src));
+  await jbBgaScan(JB.list,(n,m)=>{if(n===1||n%10===0||n===m)toast(L(`BGAのある曲を調べています… ${n}/${m}`,`Checking for BGA… ${n}/${m}`),1500);});
+  if(!JB.list.some(c=>jbHasBga(c))){toast(L('この中にBGAのある曲がありません。すべての曲を流します','No songs with BGA here; playing all songs'),3000);return;}
+  if(!JBV.on)return;const cur=JB.list[JB.idx];if(!JB.on||JB.idx<0||jbHasBga(cur)===false)jbPlayIdx(jbStep(JB.idx<0?-1:JB.idx,1));}
 function openJbBga(){
-  if(!JB.on){jbStart();}
+  if(JB.bgaOnly){if(!JB.list.length||!JB.on)JB.list=jbOrder(jbSource(JB.src));}
+  else if(!JB.on){jbStart();}
   if($('#jbv'))return;const d=document.createElement('div');d.id='jbv';
   d.style.cssText='position:fixed;inset:0;z-index:30;background:#000;touch-action:manipulation';
   d.innerHTML=`<canvas id="jbvCv" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
@@ -3305,6 +3321,7 @@ function openJbBga(){
   d.querySelector('#jbvX').onclick=closeJbBga;
   JBV.on=true;poke();JBV.key=null;try{if('wakeLock' in navigator&&!wakeLk)navigator.wakeLock.request('screen').then(l=>{wakeLk=l;l.addEventListener('release',()=>{wakeLk=null;});}).catch(()=>{});}catch(e){}
   JBV.raf=requestAnimationFrame(jbvFrame);
+  if(JB.bgaOnly)jbBgaPrep().then(()=>{if(!JB.on)jbStart();});
 }
 function closeJbBga(){JBV.on=false;cancelAnimationFrame(JBV.raf);if(JBV.vid)try{JBV.vid.v.pause();}catch(e){}JBV.vid=null;JBV.key=null;JBV.imgs={};const d=$('#jbv');if(d)d.remove();try{wakeOff();}catch(e){}}
 function openWMenu(){
@@ -3591,7 +3608,7 @@ async function attachDiff(host,name,rawU,b,ext,st){
   await DB.put('archives',arch);archCache.delete(arch.id);
   const N=b.notes.length;
   await DB.put('charts',{key:arch.id+'|'+path,archiveId:arch.id,path,ext,dir:c.dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,comment:b.comment||'',
-    level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
+    level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,bga:(b.bga||[]).length,
     total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,radar:chartRadar(b),
     preview:b.P.preview||c.preview,thumb:c.thumb,added:Date.now(),archName:c.archName,md5:md5hex(rawU),sha256:await sha256hex(rawU),diff:1});
   st.added++;(st.attached||(st.attached=[])).push(b.title+' → '+c.archName);
@@ -3624,7 +3641,7 @@ async function importGroup(gr,st){
       if(!thumbs.has(tk))thumbs.set(tk,await makeThumb(ix,dir,[b.P.stagefile,b.P.banner,b.P.backbmp]));
       const N=b.notes.length;
       metas.push({key:id+'|'+f.n,archiveId:id,path:f.n,ext,dir,hash:b.hash,title:b.title,subtitle:b.subtitle,artist:b.artist,subartist:b.subartist,genre:b.genre,comment:b.comment||'',
-        level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,
+        level:b.level,difficulty:b.difficulty,mode:b.mode,bpm:b.bpm,minB:b.minB,maxB:b.maxB,mainB:b.mainB,notesN:N,ln:b.lnCount,mines:b.mines.length,bga:(b.bga||[]).length,
         total:b.total,rank:b.rank,defexrank:b.defexrank,lnmode:b.lnmode,endTime:b.endTime,density:b.density,measures:b.measures.length,radar:chartRadar(b),
         preview:b.P.preview,thumb:thumbs.get(tk),added:Date.now(),archName:gr.name,builtin:!!st.io.builtin,md5:md5hex(rawU),sha256:await sha256hex(rawU)});
     }catch(e){console.warn(e);}
