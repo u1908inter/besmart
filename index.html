@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2106)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2112)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2112)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2106)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2106)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2112)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2112)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -3860,17 +3860,34 @@ function goalMet(g,r){if(!g||!r)return false;const rate=r.ex&&r.max?r.ex/r.max:r
 function recNow(c){const r=REC[c.hash]||{};return {lamp:r.lamp||0,ex:r.ex||0,max:2*c.notesN,bp:r.bp};}
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 function hashStr(t){let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function dailyPool(){
+  let pool=CHARTS.filter(c=>!c.demo&&!c.builtin&&c.notesN>0&&c.hash),lv=c=>lvNum(c.level),src='lv';
+  const T=S.table&&TABLES.find(t=>t.url===S.table);
+  if(T){try{const key=wTableKeyMap(T),ord=new Map(tblLevels(T).map((x,i)=>[String(x),i+1]));
+    const tp=pool.filter(c=>{const k=key(c);return k!=null&&ord.has(String(k));});
+    if(tp.length>=3){pool=tp;lv=c=>ord.get(String(key(c)));src='tbl';}}catch(e){}}
+  return {pool,lv,src};
+}
+function dailyPick(today){
+  const {pool,lv}=dailyPool();if(!pool.length)return null;
+  const cl=pool.filter(c=>lampOf(c)>=3).map(lv).filter(x=>x>=0).sort((a,b)=>b-a);
+  const sk=cl.length?cl[Math.min(2,cl.length-1)]:0;
+  let cand=[];
+  if(sk>0)for(const w of [1,2,3]){cand=pool.filter(c=>{const l=lv(c);return l>=0&&Math.abs(l-sk)<=w;});if(cand.length>=3)break;}
+  const ez=(a,b)=>{const la=lv(a),lb=lv(b);return (la<0?999:la)-(lb<0?999:lb)||npsOf(a)-npsOf(b)||(a.endTime||0)-(b.endTime||0);};
+  if(cand.length<3)cand=pool.filter(c=>lampOf(c)<3).sort(ez).slice(0,15);
+  if(!cand.length)cand=pool.slice().sort(ez).slice(0,15);
+  cand.sort((a,b)=>a.hash<b.hash?-1:1);
+  return cand[hashStr(today+'|bsd')%cand.length];
+}
 function dailyState(){
   const today=ymd(new Date());let D=jget('daily',{});
-  if(D.date===today&&D.hash&&CHARTS.some(c=>c.hash===D.hash))return D;
-  const pool=CHARTS.filter(c=>!c.demo&&!c.builtin&&c.notesN>0&&c.hash);if(!pool.length)return null;
-  const sk=skillLevel(pool);let cand=pool.filter(c=>{const n=lvNum(c.level);return n>=0&&Math.abs(n-sk)<=1;});
-  if(cand.length<3)cand=pool;
-  cand.sort((a,b)=>a.hash<b.hash?-1:1);
-  const c=cand[hashStr(today+'|bsd')%cand.length],r=REC[c.hash]||{},rate=r.ex?r.ex/(2*c.notesN):0;let g;
+  if(D.date===today&&D.hash&&(D.v===2||D.done)&&CHARTS.some(c=>c.hash===D.hash))return D;
+  const c=dailyPick(today);if(!c)return null;
+  const r=REC[c.hash]||{},rate=r.ex?r.ex/(2*c.notesN):0;let g;
   if((r.lamp||0)<3)g={l:3};else if((r.lamp||0)<4)g={l:4};
   else{const nx=RANKS_T.find(x=>rate<x[1]);g=nx?{r:nx[1]}:{b:Math.max(0,(r.bp??10)-1)};}
-  D={...D,date:today,hash:c.hash,g,done:false};jset('daily',D);return D;
+  D={...D,date:today,hash:c.hash,g,done:false,v:2};jset('daily',D);return D;
 }
 function dailyCharts(){const D=dailyState();if(!D)return [];return LIBLIST.filter(c=>c.hash===D.hash);}
 function dailyHTML(c){const D=dailyState();if(!D||D.hash!==c.hash)return '';
