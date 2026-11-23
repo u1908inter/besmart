@@ -250,12 +250,13 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1122.2241)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.2241)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.1848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.1848)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
     <button class="ib" id="courseBtn" data-en="Course">コース</button>
     <button class="ib" id="recBtn" data-en="Records">記録</button>
+    <button class="ib" id="jbBtn" title="ジュークボックス" aria-label="Jukebox">🎧</button>
     <button class="ib" id="outBtn" title="音の遅延">0ms</button>
     <button class="ib" id="setBtn" data-en="Settings">設定</button>
   </nav>
@@ -781,6 +782,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 <div id="pause" class="overlay"><div class="box card">
   <h2 data-en="Paused">一時停止</h2>
+  <div id="pMemo" class="hlp" style="display:none;white-space:pre-wrap;text-align:left;margin:0 0 8px;padding:6px 8px;border:1px dashed var(--faint);border-radius:6px"></div>
   <div class="row"><span data-en="Speed">スピード</span><button class="ib" data-q="hs-">－</button><output id="qHs"></output><button class="ib" data-q="hs+">＋</button></div>
   <div class="row"><span data-en="Top cover">上カバー</span><button class="ib" data-q="sud-">－</button><output id="qSud"></output><button class="ib" data-q="sud+">＋</button></div>
   <div class="row"><span data-en="Audio offset">判定タイミング</span><button class="ib" data-q="ofs-">－</button><output id="qOfs"></output><button class="ib" data-q="ofs+">＋</button></div>
@@ -869,7 +871,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1122.2241)">スマホで遊べるBMSプレイヤー　VER 1.0 (1122.2241)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.1848)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.1848)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -1771,7 +1773,7 @@ function toast(t,ms){const el=$('#toast');clearTimeout(toastT);const first=Strin
 /* ---------- settings ---------- */
 const DEF={gauge:'normal',gas:false,arr:'off',arr2:'off',flip:false,lnmode:'chart',autoScr:false,legacy:false,expand:false,
   hs:3,fix:'main',fhs:false,green:600,suddenOn:false,sudden:20,hiddenOn:false,hidden:15,lift:0,
-  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,uiFont:'dot',bpmWarn:true,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'menu',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
+  ofs:0,vofs:0,volM:.8,volK:1,volB:1,bga:'on',bgaA:.6,laneA:.4,bgaFit:'keep',setAll:false,uiFont:'dot',bpmWarn:true,noteCol:'auto',noteEdge:false,table:'',tblMissing:true,playRate:1,arrPat:'',reduce:'off',preview:'auto',judgeBase:'lr2',scrSens:6,scrHold:90,scrRev:true,rub:true,tapAdj:true,tapOfs:{},vib:'off',wake:true,eco:false,judgeMs:true,fsDisp:'both',judgeAlg:'lowest',gasMin:'aeasy',white:true,judgeCount:true,pace:'off',ghost:'on',ghostVs:'best',recSrc:'',recoLv:'',libView:'wheel',wheelMenu:'menu',wheelFold:true,wheelGroup:true,wheelSe:true,flt:{},rnd:{src:'all',st:'all'},noteH:1,laneW:1,side:'L',edge:10,
   keys:{},pad:{},sort:'title',fmode:'all',rate:1,
   preset:'',prof:null,profAuto:true,profCur:'speaker',lowProf:'speaker',fps:'auto',showFps:false,earlyGhost:true,
   lang:'auto',ksMode:'input',panel:'center',persp:false,celebrate:true,phosphor:'amber',playSkin:'crt',radarMode:'',statMode:''};
@@ -1872,6 +1874,8 @@ function SCHEMA(){return [
   {k:'pace',t:L('ペースメーカー','Pacemaker'),sel:[['off','OFF'],['best',L('自己ベスト','Personal best')],['max','MAX'],['aaa','AAA'],['aa','AA'],['a','A']]},
   {k:'ghost',t:L('ゴースト','Ghost'),sel:[['off','OFF'],['on',L('スコア差','Score gap')],['lane',L('スコア差＋レーン','Gap + lanes')]],h:L('自己ベストのリプレイと同時に競います。スコア差を判定の下に表示し、リザルトで勝敗を出します。「＋レーン」はゴーストが押したレーンを判定ラインの上に半透明で表示します（通常プレイで、自己ベストのリプレイがある曲のみ）','Race your best replay: the score gap shows under the judgement and the result says WIN or LOSE. Gap + lanes also marks where the ghost pressed (normal plays with a saved best replay only)')},
   {k:'bpmWarn',t:L('速さが変わる前に予告','Warn before speed changes'),b:1,h:L('BPMが大きく変わる場所や、ノーツが止まる場所（STOP）の少し前に、画面に予告を出します。','Shows a notice shortly before big BPM changes and stops.')},
+  {k:'noteCol',t:L('ノーツの色','Note colors'),sel:[['auto',L('テーマに合わせる','Match theme')],['classic',L('白・青・赤（定番）','White/blue/red (classic)')],['cb',L('色覚に配慮した配色','Color-blind friendly')],['mono',L('白黒（形で見る）','Monochrome')]],h:L('ノーツの色だけを変えます。「色覚に配慮した配色」は、赤と緑の区別がつきにくい方でも見分けやすい組み合わせ（白・空色・橙）です。','Changes only note colors. Color-blind friendly uses white / sky blue / orange.')},
+  {k:'noteEdge',t:L('ノーツに縁どり','Note outlines'),b:1,h:L('ノーツのまわりに黒い縁をつけて、BGAや明るい背景の上でも見やすくします。','Adds a dark outline so notes stand out over BGA or bright themes.')},
   {k:'earlyGhost',t:L('早押しで消えたノーツを薄く残す','Keep early-hit notes faintly'),b:1,h:L('早く押しすぎてBAD・GOODになったノーツを、判定ラインに届くまで薄く表示します。判定は変わりません。リズムの目印が急になくならないので、立て直しやすくなります。','Notes hit too early (BAD/GOOD) stay faintly visible until they reach the line. Judgement is unchanged.')},
   {k:'celebrate',t:L('フルコンボ演出','Full combo effect'),b:1},
  ]},
@@ -2330,12 +2334,12 @@ const DB=(()=>{
 })();
 
 /* ---------- audio ---------- */
-let actx=null,master=null,gKey=null,gBgm=null;
+let actx=null,master=null,gKey=null,gBgm=null,COMP=null;
 function ensureAudio(){
   if(!actx){
     actx=new (window.AudioContext||window.webkitAudioContext)();
     const comp=actx.createDynamicsCompressor();comp.threshold.value=-10;comp.ratio.value=4;
-    master=actx.createGain();master.connect(comp);comp.connect(actx.destination);
+    master=actx.createGain();master.connect(comp);comp.connect(actx.destination);COMP=comp;
     gKey=actx.createGain();gKey.connect(master);gBgm=actx.createGain();gBgm.connect(master);
   }
   applyVol();
@@ -2807,6 +2811,8 @@ function wheelRootFolders(){
   const all=LIBLIST,lp=c=>(REC[c.hash]||{}).lamp||0,F=[];
   const add=(fid,ic,name,charts,sub)=>{if(sub||charts.length)F.push({fid,fold:true,ic,name,charts:charts||[],sub});};
   add('just','🎯',L('ちょうどいい曲','Songs for you'),justRight(all));
+  try{add('daily','📅',L('今日のチャレンジ','Today’s challenge'),dailyCharts());}catch(e){}
+  add('goals','🚩',L('目標リスト','Goal list'),all.filter(c=>GOALS[c.hash]));
   add('all','💿',L('すべての曲','All songs'),all);
   add('fav','★',L('お気に入り','Favourites'),all.filter(c=>FAV.has(c.hash)));
   FOLDERS.forEach(f=>add('u:'+f.name,'📁',f.name,all.filter(c=>f.hashes.includes(c.hash))));
@@ -2908,6 +2914,154 @@ function wheelSync(){
   else show('#wBan',false);
   wheelPaint();wheelIndexStrip();
 }
+// ===== プレイ録画 =====
+let RECV=null,RECMODE=false,RECLAST=null;
+function recSupported(){try{return !!(window.MediaRecorder&&HTMLCanvasElement.prototype.captureStream&&window.MediaStream);}catch(e){return false;}}
+function recMime(){const c=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+  for(const m of c){try{if(MediaRecorder.isTypeSupported(m))return m;}catch(e){}}return '';}
+function recStart(){
+  try{const vs=cv.captureStream(30),dest=actx.createMediaStreamDestination();COMP.connect(dest);
+    const ms=new MediaStream([...vs.getVideoTracks(),...dest.stream.getAudioTracks()]);const mime=recMime();
+    const px=cv.width*cv.height,vb=px>2e6?8e6:px>9e5?5e6:3e6;
+    const mr=new MediaRecorder(ms,mime?{mimeType:mime,videoBitsPerSecond:vb,audioBitsPerSecond:160000}:{videoBitsPerSecond:vb});
+    const chunks=[];mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+    RECV={mr,chunks,dest,vs,mime:mr.mimeType||mime,title:(G.chart.title||'play')};mr.start(1000);
+  }catch(e){console.warn(e);RECV=null;toast(L('⚠ この端末・ブラウザでは録画を開始できませんでした','⚠ Recording could not start on this browser'),3500);}
+}
+function recPause(p){if(!RECV)return;try{if(p&&RECV.mr.state==='recording')RECV.mr.pause();else if(!p&&RECV.mr.state==='paused')RECV.mr.resume();}catch(e){}}
+function recStop(keep){
+  if(!RECV)return Promise.resolve(null);const R=RECV;RECV=null;
+  return new Promise(res=>{const done=()=>{try{COMP.disconnect(R.dest);}catch(e){}try{R.vs.getTracks().forEach(t=>t.stop());}catch(e){}
+      if(!keep||!R.chunks.length)return res(null);const type=(R.mime||'video/webm').split(';')[0];
+      res({blob:new Blob(R.chunks,{type}),ext:type.includes('mp4')?'mp4':'webm',title:R.title});};
+    R.mr.onstop=done;try{R.mr.stop();}catch(e){done();}});
+}
+function recFileName(o){const d=new Date(),p=n=>String(n).padStart(2,'0');return `BeSmart_${(o.title||'play').replace(/[\\/:*?"<>|\s]+/g,'_').slice(0,40)}_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.${o.ext}`;}
+function recResultUI(box){
+  if(!box)return;box.innerHTML=`<div class="advc"><b>🎥 ${L('録画','Recording')}</b><div id="recSt">${L('動画を仕上げています…','Finishing the video…')}</div></div>`;
+  recStop(true).then(o=>{const st=box.querySelector('#recSt');if(!st)return;
+    if(!o){st.textContent=L('録画データがありませんでした','No recording data');return;}
+    if(RECLAST&&RECLAST.url)try{URL.revokeObjectURL(RECLAST.url);}catch(e){}
+    o.url=URL.createObjectURL(o.blob);o.name=recFileName(o);RECLAST=o;
+    const mb=(o.blob.size/1048576).toFixed(1);
+    st.innerHTML=`<div class="hlp" style="margin:2px 0 6px">${o.ext.toUpperCase()}・${mb}MB${o.ext==='webm'?L('（WebM形式：再生できないアプリもあります）','(WebM: some apps cannot play it)'):''}</div>
+      <video src="${o.url}" controls playsinline style="width:100%;max-height:40vh;background:#000;border-radius:6px"></video>
+      <div class="btns" style="margin-top:6px"><button id="recShare">${L('共有・保存','Share / save')}</button><a class="btn" id="recDl" href="${o.url}" download="${esc(o.name)}" style="text-align:center">${L('ダウンロード','Download')}</a></div>
+      <div class="hlp" style="margin:4px 0 0">${L('iPhoneは「共有・保存」→「ビデオを保存」で写真アプリに入ります。この画面を離れると動画は消えます。','On iPhone, “Share / save” → “Save Video” puts it in Photos. The video is discarded when you leave this screen.')}</div>`;
+    const f=new File([o.blob],o.name,{type:o.blob.type});
+    const sb=st.querySelector('#recShare');
+    if(navigator.canShare&&navigator.canShare({files:[f]}))sb.onclick=()=>navigator.share({files:[f],title:o.title}).catch(()=>{});
+    else sb.style.display='none';});
+}
+// ===== ジュークボックス（画面を消しても流れる） =====
+const JB={on:false,list:[],idx:-1,au:null,cache:new Map(),src:'folder',shuf:true,busy:new Map(),srcName:''};
+function jbAudio(){if(JB.au)return JB.au;const a=new Audio();a.preload='auto';a.setAttribute('playsinline','');a.style.display='none';document.body.appendChild(a);
+  a.addEventListener('ended',()=>jbNext(1));a.addEventListener('play',jbPaint);a.addEventListener('pause',jbPaint);
+  a.addEventListener('timeupdate',()=>{const p=$('#jbPos');if(p&&a.duration)p.value=a.currentTime/a.duration*1000;const t=$('#jbTime');if(t&&a.duration)t.textContent=fmtT(a.currentTime)+' / '+fmtT(a.duration);
+    try{if(navigator.mediaSession&&navigator.mediaSession.setPositionState&&a.duration)navigator.mediaSession.setPositionState({duration:a.duration,playbackRate:1,position:Math.min(a.currentTime,a.duration)});}catch(e){}});
+  JB.au=a;return a;}
+const fmtT=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+function jbSongKey(c){return c.archiveId+'|'+c.dir+'|'+String(c.title||'').replace(/\s*[\[\(（【<〔].*$/,'').trim().toLowerCase();}
+function jbSource(kind){
+  let src;const uniq=a=>{const m=new Map();for(const c of a){if(!c||!c.hash||c.demo||c.builtin)continue;const k=jbSongKey(c);if(!m.has(k))m.set(k,c);}return [...m.values()];};
+  if(kind==='folder'){src=uniq((WHL.list||[]).filter(e=>e&&e.hash&&!e.fold));JB.srcName=WHL.pathNames&&WHL.pathNames.length?WHL.pathNames[WHL.pathNames.length-1]:L('今のリスト','Current list');
+    if(!src.length){src=uniq(LIBLIST||CHARTS);JB.srcName=L('すべての曲','All songs');}}
+  else if(kind==='fav'){src=uniq(CHARTS.filter(c=>FAV.has(c.hash)));JB.srcName=L('お気に入り','Favourites');}
+  else{src=uniq(CHARTS);JB.srcName=L('すべての曲','All songs');}
+  return src;
+}
+function jbShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function wavBlob(ab){const ch=Math.min(2,ab.numberOfChannels),n=ab.length,sr=ab.sampleRate,buf=new ArrayBuffer(44+n*ch*2),v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF');v.setUint32(4,36+n*ch*2,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,n*ch*2,true);
+  const d=[];for(let c=0;c<ch;c++)d.push(ab.getChannelData(c));let o=44;
+  for(let i=0;i<n;i++)for(let c=0;c<ch;c++){let s=d[c][i];s=s<-1?-1:s>1?1:s;v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true);o+=2;}
+  return new Blob([buf],{type:'audio/wav'});}
+async function jbRender(c){
+  ensureAudio();
+  const arch=await DB.get('archives',c.archiveId);if(!arch)throw new Error('archive');
+  const ix=await getArchive(arch),f=ix.byPath.get(c.path);if(!f)throw new Error('bms');
+  const base=compileBase(decodeText(await f.get()),c.ext,mulberry32(1));
+  const evs=[...base.notes.filter(n=>n.id),...base.bgm];
+  const loadFile=ff=>{const key=c.archiveId+'|'+ff.n;if(!bufCache.has(key))bufCache.set(key,ff.get().then(decodeAudio).then(b=>{if(!b)bufCache.delete(key);return b;}).catch(()=>{bufCache.delete(key);return null;}));return bufCache.get(key);};
+  const byName=new Map(),bufs={};
+  const loadId=async id=>{if(base.slices){const sl=base.slices[id];if(!sl)return null;if(!byName.has(sl.name)){const ff=ix.resolve(c.dir,sl.name);byName.set(sl.name,ff?loadFile(ff):Promise.resolve(null));}
+      const bb=await byName.get(sl.name);return bb?{b:bb,off:sl.off,dur:sl.dur}:null;}
+    if(!base.P.wav[id])return null;const ff=ix.resolve(c.dir,base.P.wav[id]);if(!ff)return null;const bb=await loadFile(ff);return bb?{b:bb,off:0,dur:bb.duration}:null;};
+  const q=[...new Set(evs.map(e=>e.id))];
+  await Promise.all([1,2,3,4,5,6].map(async()=>{while(q.length){const id=q.shift();try{const b=await loadId(id);if(b)bufs[id]=b;}catch(e){}}}));
+  let end=0;for(const e of evs){const b=bufs[e.id];if(b)end=Math.max(end,e.time+Math.min(b.dur,60));}
+  end=Math.min(end,15*60)+0.6;if(end<1)throw new Error('silent');
+  const SR=44100,oc=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,Math.ceil(end*SR),SR);
+  const comp=oc.createDynamicsCompressor();comp.threshold.value=-10;comp.ratio.value=4;comp.connect(oc.destination);
+  const g=oc.createGain();g.gain.value=(base.P.volwav||100)/100;g.connect(comp);
+  for(const e of evs){const b=bufs[e.id];if(!b||e.time>=end)continue;const s=oc.createBufferSource();s.buffer=b.b;s.connect(g);try{s.start(Math.max(0,e.time),b.off,Math.max(0.01,b.dur));}catch(err){}}
+  const out=await oc.startRendering();return {url:URL.createObjectURL(wavBlob(out)),dur:out.duration};
+}
+function jbGet(i){const c=JB.list[i];if(!c)return Promise.reject(new Error('none'));const k=jbSongKey(c);
+  if(JB.cache.has(k))return Promise.resolve(JB.cache.get(k));
+  if(!JB.busy.has(k))JB.busy.set(k,jbRender(c).then(r=>{JB.busy.delete(k);JB.cache.set(k,r);jbTrim();return r;},e=>{JB.busy.delete(k);throw e;}));
+  return JB.busy.get(k);}
+function jbTrim(){const keep=new Set([JB.idx-1,JB.idx,JB.idx+1,JB.idx+2].map(i=>JB.list[(i+JB.list.length)%JB.list.length]).filter(Boolean).map(jbSongKey));
+  for(const [k,r] of JB.cache)if(!keep.has(k)){try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.delete(k);}}
+async function jbPlayIdx(i,tries=0){
+  if(!JB.list.length)return;i=(i+JB.list.length)%JB.list.length;JB.idx=i;const c=JB.list[i],a=jbAudio();JB.on=true;
+  jbPaint(L('♪ 準備中…','♪ Preparing…'));
+  try{const r=await jbGet(i);if(JB.idx!==i||!JB.on)return;a.src=r.url;await a.play().catch(()=>{});jbMeta(c);jbPaint();
+    setTimeout(()=>{if(JB.on&&JB.idx===i)jbGet(i+1).catch(()=>{});},800);}
+  catch(e){console.warn(e);if(JB.idx!==i||!JB.on)return;if(tries<JB.list.length-1)return jbPlayIdx(i+1,tries+1);JB.on=false;jbPaint();toast(L('⚠ 再生できる曲がありませんでした','⚠ No playable songs'),3000);}
+}
+function jbNext(d){if(!JB.list.length)return;const a=jbAudio();if(d<0&&a.currentTime>3){a.currentTime=0;return;}jbPlayIdx(JB.idx+d);}
+function jbToggle(){const a=jbAudio();if(!JB.on){jbStart();return;}if(a.paused)a.play().catch(()=>{});else a.pause();}
+function jbPause(){if(JB.au&&!JB.au.paused)JB.au.pause();}
+function jbStop(){JB.on=false;if(JB.au){JB.au.pause();JB.au.removeAttribute('src');try{JB.au.load();}catch(e){}}for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();
+  try{if(navigator.mediaSession)navigator.mediaSession.metadata=null;}catch(e){}jbPaint();}
+function jbStart(){stopPreview();const l=jbSource(JB.src);if(!l.length){toast(L('曲がありません','No songs'));return;}
+  JB.list=JB.shuf?jbShuffle(l.slice()):l;for(const [,r] of JB.cache)try{URL.revokeObjectURL(r.url);}catch(e){}JB.cache.clear();jbPlayIdx(0);}
+function jbMeta(c){if(!('mediaSession' in navigator))return;try{
+  navigator.mediaSession.metadata=new MediaMetadata({title:c.title||'',artist:c.artist||'',album:'BeSmart '+L('ジュークボックス','Jukebox'),artwork:c.thumb?[{src:c.thumb,sizes:'256x256'}]:[]});
+  const h={play:()=>jbAudio().play(),pause:()=>jbAudio().pause(),nexttrack:()=>jbNext(1),previoustrack:()=>jbNext(-1),stop:jbStop,
+    seekto:e=>{if(e.seekTime!=null)jbAudio().currentTime=e.seekTime;}};
+  for(const k in h)try{navigator.mediaSession.setActionHandler(k,h[k]);}catch(e){}}catch(e){}}
+function jbPaint(msg){
+  const a=JB.au,c=JB.on?JB.list[JB.idx]:null,playing=a&&!a.paused&&JB.on;
+  let mb=$('#jbMini');
+  if(c){if(!mb){mb=document.createElement('div');mb.id='jbMini';mb.style.cssText='position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:12;display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--card,#111);border:1px solid var(--faint,#444);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.5)';
+      document.body.appendChild(mb);}
+    const gm=$('#game');mb.style.display=gm&&gm.style.display==='block'?'none':'flex';
+    mb.innerHTML=`<span style="font-size:18px">🎧</span><span id="jbMiniT" style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px">${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}<small style="opacity:.7"> ／ ${esc(c.artist||'')}</small></span>
+      <button class="ib" id="jbmP" style="width:auto;margin:0;padding:0 10px">${playing?'❚❚':'▶'}</button><button class="ib" id="jbmN" style="width:auto;margin:0;padding:0 10px">⏭</button><button class="ib" id="jbmX" style="width:auto;margin:0;padding:0 8px">✕</button>`;
+    mb.querySelector('#jbmP').onclick=jbToggle;mb.querySelector('#jbmN').onclick=()=>jbNext(1);mb.querySelector('#jbmX').onclick=jbStop;mb.querySelector('#jbMiniT').onclick=openJukebox;
+  }else if(mb)mb.remove();
+  const ov=$('#jbDlg');if(ov){const t=ov.querySelector('#jbNow');if(t)t.innerHTML=c?`<b>${esc(typeof msg==='string'?msg+' ':'')}${esc(c.title||'')}</b><div class="hlp" style="margin:2px 0 0">${esc(c.artist||'')}</div>`:`<span class="hlp">${L('停止中','Stopped')}</span>`;
+    const p=ov.querySelector('#jbPlay');if(p)p.textContent=playing?L('❚❚ 一時停止','❚❚ Pause'):JB.on?L('▶ 再開','▶ Resume'):L('▶ 再生スタート','▶ Start');
+    const ql=ov.querySelector('#jbQ');if(ql){const n=JB.list.length;ql.innerHTML=JB.on&&n?[1,2,3,4,5].filter(k=>k<n).map(k=>{const x=JB.list[(JB.idx+k)%n];return `<div class="row" data-jq="${(JB.idx+k)%n}" style="cursor:pointer"><span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${k}. ${esc(x.title||'')}</span><small>${esc(x.artist||'').slice(0,20)}</small></div>`;}).join(''):'';
+      ql.querySelectorAll('[data-jq]').forEach(r=>r.onclick=()=>jbPlayIdx(+r.dataset.jq));}
+    const sn=ov.querySelector('#jbSrcN');if(sn)sn.textContent=JB.on?`${JB.srcName}・${JB.list.length}${L('曲','')}`:'';}
+}
+function openJukebox(){
+  if($('#jbDlg'))return;const ov=document.createElement('div');ov.className='overlay';ov.id='jbDlg';ov.style.zIndex=14;ov.style.display='flex';
+  const fn=WHL.pathNames&&WHL.pathNames.length?WHL.pathNames[WHL.pathNames.length-1]:L('今のリスト','Current list');
+  ov.innerHTML=`<div class="box card"><h2>🎧 ${L('ジュークボックス','Jukebox')}</h2>
+    <div class="hlp">${L('曲を次々に自動で流します（キー音もすべて鳴らして1曲ずつ音声にします）。画面を消しても、ロック画面やイヤホンのボタンで操作できます。','Plays songs one after another, rendering each with all its keysounds. Keeps playing with the screen off; use the lock screen or earphone buttons.')}</div>
+    <div class="row"><span>${L('流す曲','Songs')}</span><select id="jbSrc"><option value="folder">${L('今のフォルダ','This folder')}（${esc(fn)}）</option><option value="fav">${L('お気に入り','Favourites')}</option><option value="all">${L('すべての曲','All songs')}</option></select></div>
+    <div class="row"><span>${L('シャッフル','Shuffle')}</span><select id="jbShuf"><option value="1">ON</option><option value="0">OFF</option></select></div>
+    <div class="card" style="padding:8px 10px;margin:8px 0"><div id="jbNow"></div><input type="range" id="jbPos" min="0" max="1000" value="0" style="width:100%"><div class="hlp" style="display:flex;justify-content:space-between;margin:0"><span id="jbTime"></span><span id="jbSrcN"></span></div></div>
+    <button class="pri" id="jbPlay"></button>
+    <div class="btns"><button id="jbPrev">⏮ ${L('前へ','Prev')}</button><button id="jbNext">${L('次へ','Next')} ⏭</button></div>
+    <button id="jbRe">${L('この条件で選び直す','Restart with these options')}</button>
+    <div class="hlp" style="margin:8px 0 2px">${L('次に流れる曲（タップで再生）','Up next (tap to play)')}</div><div id="jbQ"></div>
+    <button id="jbStopB">${L('止める','Stop')}</button><button id="jbClose">${L('閉じる（流したまま）','Close (keep playing)')}</button>
+    <div class="hlp" style="margin-top:6px">${L('・1曲ごとに準備（数秒〜十数秒）が要ります。次の曲は先に準備しておきます。<br>・iPhoneはサイレントスイッチがONだと音が出ないことがあります。<br>・画面を消したあと長時間たつと、端末の省電力機能で止まる場合があります。','• Each song takes a few seconds to prepare; the next one is prepared in advance.<br>• Long periods with the screen off may be stopped by the phone’s power saving.')}</div></div>`;
+  document.body.appendChild(ov);const q=s=>ov.querySelector(s);
+  q('#jbSrc').value=JB.src;q('#jbShuf').value=JB.shuf?'1':'0';
+  q('#jbSrc').onchange=e=>{JB.src=e.target.value;};q('#jbShuf').onchange=e=>{JB.shuf=e.target.value==='1';};
+  q('#jbPlay').onclick=jbToggle;q('#jbPrev').onclick=()=>jbNext(-1);q('#jbNext').onclick=()=>jbNext(1);q('#jbRe').onclick=jbStart;q('#jbStopB').onclick=jbStop;
+  q('#jbPos').oninput=e=>{const a=JB.au;if(a&&a.duration)a.currentTime=e.target.value/1000*a.duration;};
+  const close=()=>ov.remove();q('#jbClose').onclick=close;ov.onclick=e=>{if(e.target===ov)close();};
+  jbPaint();
+}
 function openWMenu(){
   const ov=document.createElement('div');ov.className='overlay wmenu';ov.id='wMenuDlg';ov.style.zIndex=13;ov.style.display='flex';
   const it=(id,ic,t,d,pri)=>`<button class="wmi${pri?' hl':''}" id="${id}"><span class="ic">${ic}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="ar">›</span></button>`;
@@ -2922,6 +3076,8 @@ function openWMenu(){
    ${it('wmRnd','🎲',L('おまかせ選曲','Random pick'),rn?L(`条件 ${rn}件で選ぶ`,`${rn} conditions`):L('すべての曲から','From all songs'),1)}
    ${it('wmRndC','⚙',L('おまかせの条件','Random conditions'),L('鍵盤・レベル・クリア状況など','Keys, level, clear status…'))}
    <div class="wmsec">${L('あそぶ','Play')}</div>
+   ${it('wmDaily','📅',L('今日のチャレンジ','Today’s challenge'),(()=>{try{const D=dailyState();return D?(D.done?L(`✅ 達成済み・連続${D.streak||0}日`,`✅ Done · streak ${D.streak||0}`):L(`目標：${goalText(D.g)}`,`Goal: ${goalText(D.g)}`)):L('曲を追加すると出ます','Add songs first');}catch(e){return '';}})())}
+   ${it('wmJuke','🎧',L('ジュークボックス','Jukebox'),L('曲を流しっぱなしにする（画面OFFでもOK）','Keep songs playing, even with the screen off'))}
    ${it('wmCourse','🎖',L('コース','Courses'),L('何曲か続けて遊ぶ','Play several songs in a row'))}
    ${it('wmRec','📊',L('記録','Records'),L('今日の傾向・実績・ランプ分布','Today, achievements, lamps'))}
    <div class="wmsec">${L('曲を増やす','Add songs')}</div>
@@ -2940,7 +3096,7 @@ function openWMenu(){
   if(q('#wmTbl')){q('#wmTbl').value=S.table||'';q('#wmTbl').onchange=()=>{$('#wTbl').value=q('#wmTbl').value;$('#wTbl').onchange();};}
   const go=(id,f)=>{const el=q(id);if(el)el.onclick=()=>{close();setTimeout(f,30);};};
   go('#wmFav',wheelFav);go('#wmFlt',()=>$('#wFlt').click());go('#wmRnd',()=>$('#wRnd').click());go('#wmRndC',()=>$('#rndCfg').click());
-  go('#wmCourse',()=>$('#courseBtn').click());go('#wmRec',()=>$('#recBtn').click());go('#wmGuide',openSongGuide);
+  go('#wmCourse',()=>$('#courseBtn').click());go('#wmJuke',openJukebox);go('#wmDaily',()=>{const D=dailyState();if(!D){toast(L('曲を追加すると今日のチャレンジが出ます','Add songs to get a daily challenge'));return;}const c=CHARTS.find(x=>x.hash===D.hash);if(c)openDetail(c);});go('#wmRec',()=>$('#recBtn').click());go('#wmGuide',openSongGuide);
   go('#wmOut',()=>$('#outBtn').click());go('#wmSet',()=>$('#setBtn').click());go('#wmList',()=>{S.libView='list';saveS();renderLibrary();});
   q('#wmAdd').addEventListener('click',()=>setTimeout(close,50));
   NAV.ctx='';if(NAV.on)setTimeout(()=>navMark(navCtx()),30);
@@ -3433,7 +3589,7 @@ function peakStart(times,end,win){
   return Math.max(0,Math.min(bt-1,Math.max(0,end-win)));
 }
 async function playPreview(c){
-  stopPreview();if(c.demo||S.preview==='off')return;
+  stopPreview();if(c.demo||S.preview==='off'||(JB.on&&JB.au&&!JB.au.paused))return;
   const tok=++pvTok;const busy=()=>{const ld=$('#loading'),gm=$('#game');return (ld&&ld.style.display&&ld.style.display!=='none')||(gm&&gm.style.display==='block');};
   const alive=()=>tok===pvTok&&!busy()&&($('#detail').style.display.includes('flex')||(wheelVisible()&&WHL.cur&&WHL.cur.hash===c.hash));
   try{
@@ -3565,6 +3721,63 @@ function drawHist(cv,hist,notes){
 function dOptItems(c){const its=['gauge','arr',S.fhs?'green':'hs','playRate'].map(findItem).filter(Boolean);
   const rd=findItem('reduce');if(rd&&c&&(c.mode==='7k'||c.mode==='5k')){its.splice(2,0,c.mode==='5k'?Object.assign({},rd,{sel:rd.sel.filter(x=>x[0]!=='5k'),h:L('5鍵の譜面を4鍵に変換して遊びます。変換したプレイは「4K」のランプとして別に記録されます。','Plays a 5K chart on 4 keys. Recorded separately as a 4K lamp.')}):rd);}
   return its;}
+
+// ===== 譜面メモ・目標リスト・今日のチャレンジ =====
+const jget=(k,d)=>{try{const v=localStorage.getItem(LSK+k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const jset=(k,v)=>{try{localStorage.setItem(LSK+k,JSON.stringify(v));}catch(e){}};
+const MEMO=jget('memo',{});const memoSave=()=>jset('memo',MEMO);
+const GOALS=jget('goals',{});const goalsSave=()=>jset('goals',GOALS);
+const RANKS_T=[['A',6/9],['AA',7/9],['AAA',8/9]];
+function goalText(g){if(!g)return '';const a=[];if(g.l)a.push(LAMPS[g.l]);if(g.r)a.push((RANKS_T.find(x=>x[1]===g.r)||['?'])[0]);if(g.b!=null)a.push('BP '+g.b+L('以下',' or less'));return a.join(L(' ＋ ',' + '));}
+function goalMet(g,r){if(!g||!r)return false;const rate=r.ex&&r.max?r.ex/r.max:r.rate||0;
+  return (!g.l||(r.lamp||0)>=g.l)&&(!g.r||rate>=g.r-1e-9)&&(g.b==null||(r.bp!=null&&r.bp<=g.b));}
+function recNow(c){const r=REC[c.hash]||{};return {lamp:r.lamp||0,ex:r.ex||0,max:2*c.notesN,bp:r.bp};}
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function hashStr(t){let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function dailyState(){
+  const today=ymd(new Date());let D=jget('daily',{});
+  if(D.date===today&&D.hash&&CHARTS.some(c=>c.hash===D.hash))return D;
+  const pool=CHARTS.filter(c=>!c.demo&&!c.builtin&&c.notesN>0&&c.hash);if(!pool.length)return null;
+  const sk=skillLevel(pool);let cand=pool.filter(c=>{const n=lvNum(c.level);return n>=0&&Math.abs(n-sk)<=1;});
+  if(cand.length<3)cand=pool;
+  cand.sort((a,b)=>a.hash<b.hash?-1:1);
+  const c=cand[hashStr(today+'|bsd')%cand.length],r=REC[c.hash]||{},rate=r.ex?r.ex/(2*c.notesN):0;let g;
+  if((r.lamp||0)<3)g={l:3};else if((r.lamp||0)<4)g={l:4};
+  else{const nx=RANKS_T.find(x=>rate<x[1]);g=nx?{r:nx[1]}:{b:Math.max(0,(r.bp??10)-1)};}
+  D={...D,date:today,hash:c.hash,g,done:false};jset('daily',D);return D;
+}
+function dailyCharts(){const D=dailyState();if(!D)return [];return LIBLIST.filter(c=>c.hash===D.hash);}
+function dailyHTML(c){const D=dailyState();if(!D||D.hash!==c.hash)return '';
+  return `<div class="advc" style="margin:6px 0"><b>📅 ${L('今日のチャレンジ','Today’s challenge')}</b><div>${L('目標','Goal')}：<b>${esc(goalText(D.g))}</b>${D.done?L('　✅ 達成済み','　✅ Done'):''}</div><div class="hlp" style="margin:2px 0 0">${L(`連続達成 ${D.streak||0}日（最高 ${D.best||0}日）`,`Streak ${D.streak||0} days (best ${D.best||0})`)}</div></div>`;}
+function goalsAfterPlay(R,meta){
+  const out=[];if(!meta||!meta.hash)return out;const r={lamp:G&&G.failed?1:R.lamp,ex:R.ex,max:R.max,bp:R.bp};
+  const g=GOALS[meta.hash];
+  if(g&&goalMet(g,r)){out.push(L(`🚩 目標達成！「${goalText(g)}」（目標リストから外しました）`,`🚩 Goal reached: “${goalText(g)}” (removed from the list)`));delete GOALS[meta.hash];goalsSave();}
+  const D=dailyState();
+  if(D&&D.hash===meta.hash&&!D.done&&goalMet(D.g,r)){const y=new Date();y.setDate(y.getDate()-1);
+    D.streak=D.last===ymd(y)?(D.streak||0)+1:1;D.best=Math.max(D.best||0,D.streak);D.last=D.date;D.done=true;D.total=(D.total||0)+1;jset('daily',D);
+    out.push(L(`📅 今日のチャレンジ達成！（連続 ${D.streak}日）`,`📅 Today’s challenge done! (streak ${D.streak})`));}
+  return out;
+}
+function memoGoalHTML(c){const g=GOALS[c.hash]||{},m=MEMO[c.hash]||'';
+  return `<details class="card" style="margin-top:6px" ${g.l||g.r||g.b!=null?'open':''}><summary>🚩 ${L('目標','Goal')}${g.l||g.r||g.b!=null?'：'+esc(goalText(g)):''}</summary><div class="in">
+    <div class="row"><span>${L('ランプ','Lamp')}</span><select id="gL"><option value="0">${L('指定なし','None')}</option>${[3,4,5,6,7].map(i=>`<option value="${i}" ${g.l===i?'selected':''}>${LAMPS[i]}</option>`).join('')}</select></div>
+    <div class="row"><span>${L('ランク','Rank')}</span><select id="gR"><option value="0">${L('指定なし','None')}</option>${RANKS_T.map(([n,v])=>`<option value="${v}" ${g.r===v?'selected':''}>${n}</option>`).join('')}</select></div>
+    <div class="row"><span>${L('BP（ミス）','BP (misses)')}</span><input id="gB" inputmode="numeric" maxlength="5" style="max-width:40%" placeholder="${L('指定なし','None')}" value="${g.b??''}"></div>
+    <div class="btns"><button id="gSet">${L('目標にする','Set goal')}</button>${GOALS[c.hash]?`<button id="gDel">${L('目標を外す','Remove')}</button>`:''}</div>
+    <div class="hlp" style="margin:4px 0 0">${L('目標を決めた曲は、曲選択の「🚩 目標リスト」フォルダに集まります。達成するとリザルトでお知らせして、リストから外れます。','Goal songs gather in the “🚩 Goal list” folder. When you reach a goal, the result screen tells you and it leaves the list.')}</div></div></details>
+  <details class="card" style="margin-top:6px" ${m?'open':''}><summary>📝 ${L('譜面メモ','Chart memo')}</summary><div class="in">
+    <textarea id="dMemo" rows="3" maxlength="400" style="width:100%;box-sizing:border-box;font:inherit;background:var(--bg2,#111);color:inherit;border:1px solid var(--faint,#444);border-radius:6px;padding:6px" placeholder="${L('例：中盤の階段はHS 3.0で／ラストの皿に注意','e.g. Use HS 3.0 for the middle stairs / watch the last scratch')}">${esc(m)}</textarea>
+    <div class="hlp" style="margin:4px 0 0">${L('メモは一時停止の画面にも出ます。','The memo also shows on the pause screen.')}</div></div></details>`;}
+function bindMemoGoal(c,reopen){
+  const ta=$('#dMemo');if(ta)ta.oninput=()=>{const v=ta.value.trim();if(v)MEMO[c.hash]=v;else delete MEMO[c.hash];memoSave();};
+  if($('#gSet'))$('#gSet').onclick=()=>{const l=+$('#gL').value,r=+$('#gR').value,bv=$('#gB').value.trim(),g={t:Date.now()};
+    if(l)g.l=l;if(r)g.r=r;if(bv!==''&&!isNaN(+bv))g.b=Math.max(0,Math.floor(+bv));
+    if(!g.l&&!g.r&&g.b==null){toast(L('ランク・ランプ・BPのどれかを選んでください','Pick a lamp, rank or BP'));return;}
+    if(goalMet(g,recNow(c))){toast(L('その目標はもう達成しています','You have already reached that goal'),2200);return;}
+    GOALS[c.hash]=g;goalsSave();toast(L('🚩 目標リストに追加しました','🚩 Added to the goal list'));reopen();};
+  if($('#gDel'))$('#gDel').onclick=()=>{delete GOALS[c.hash];goalsSave();toast(L('目標を外しました','Goal removed'));reopen();};
+}
 async function openDetail(c){
   const r=REC[c.hash]||{};
   const rate=r.ex?r.ex/(2*c.notesN):0;
@@ -3587,10 +3800,12 @@ async function openDetail(c){
       <span class="k">SCORE</span><span>${r.ex?`${r.ex}（${(rate*100).toFixed(2)}%）`:'-'}</span><span class="k">BP</span><span>${r.bp??'-'}</span>
       <span class="k">${L('最大コンボ','Max combo')}</span><span>${r.combo||'-'}</span><span class="k">${L('プレイ回数','Plays')}</span><span>${r.plays||0}</span>
       ${['4k','5k'].filter(m=>r.red&&r.red[m]&&r.red[m].plays).map(m=>{const q=r.red[m],rr=q.max?q.ex/q.max:0;return `<span class="k">${RED_N[m]}${L('変換','')}</span><span style="grid-column:span 3"><b style="color:${LAMPC[q.lamp||0]}">${LAMPS[q.lamp||0]}</b>　${q.ex?`${rankOf(rr)}（${(rr*100).toFixed(2)}%）`:''}　${L('プレイ','plays')} ${q.plays}</span>`;}).join('')}</div>${(r.hist||[]).length>=2?`<div class="hlp" style="margin:8px 0 0">${L('スコアの推移（最近','Score history (last ')}${r.hist.length}${L('回）',' plays)')}</div><canvas class="graph" id="dHist" style="height:90px"></canvas>`:''}</div>
+    ${c.demo?'':dailyHTML(c)}
     <div id="dPv" class="hlp" style="margin:4px 0 0;min-height:1.2em;color:var(--hi)"></div>
     <div class="dopts" id="dOpts"></div>
     <button class="pri" id="dPlay">${L('プレイする','Play')}</button>
     <div class="btns"><button id="dAuto">${L('オートプレイ','Autoplay')}</button><button id="dView">${L('譜面ビューア','Chart viewer')}</button></div>
+    ${recSupported()?`<button id="dRecP">🎥 ${L('録画して遊ぶ','Play and record')}</button>`:''}
     ${(BATTLE_MODES.includes(c.mode)||((S.reduce==='4k'||S.reduce==='5k')&&(c.mode==='7k'||c.mode==='5k')))&&!c.demo?`<button id="dBattle">${L('2人で対戦（バトル）','2-player battle')}</button>`:''}
     <button id="dRep" ${rep?'':'disabled style="opacity:.4"'}>${L('ベストのリプレイ','Watch best replay')}</button>
     ${c.demo?'':`<details class="card" style="margin-top:6px"><summary>${L('ライバル（友達のゴースト）','Rival (a friend’s ghost)')}${riv?`：${esc(riv.rname)}`:''}</summary><div class="in">
@@ -3601,6 +3816,7 @@ async function openDetail(c){
       <div class="row"><span>${L('自分の名前','Your name')}</span><input id="dPname" maxlength="20" style="max-width:55%" placeholder="PLAYER"></div>
       <button id="dRepOut" ${rep?'':'disabled style="opacity:.4"'}>${L('自分のベストを書き出す（友達に送る）','Export my best (send to a friend)')}</button>
       <div class="hlp">${L('書き出したファイルを送り、相手が同じ曲で「ライバルのリプレイを読み込む」から選ぶと対戦できます。ゴーストは設定 → ゴースト がOFF以外のときに出ます。','Send the file; your friend picks it with “Load a rival replay” on the same song. The ghost appears when Settings → Ghost is not OFF.')}</div></div></details>`}
+    ${c.demo?'':memoGoalHTML(c)}
     <div id="dWeak"></div><div id="dPats"></div>
     <details class="card" style="margin-top:6px"><summary>${L('練習モード','Practice')}</summary><div class="in">
       <div class="row"><span>${L('開始小節','Start measure')}</span><input type="range" id="pM" min="0" max="${Math.max(0,(c.measures||2)-2)}" step="1" value="0"><output id="pMo">0</output></div>
@@ -3640,6 +3856,7 @@ async function openDetail(c){
    dOptItems(c).forEach(it=>renderItem(it,box,true));}
   $('#dPlay').onclick=()=>{close();rateGuard(()=>firstCal(()=>startPlay(c,{})));};
   $('#dAuto').onclick=()=>{close();rateGuard(()=>startPlay(c,{auto:true}));};
+  if($('#dRecP'))$('#dRecP').onclick=()=>{close();rateGuard(()=>firstCal(()=>startPlay(c,{rec:true})));};
   if($('#dBattle'))$('#dBattle').onclick=()=>{close();rateGuard(()=>startPlay(c,{battle:true}));};
   $('#dView').onclick=()=>{close();startPlay(c,{auto:true,viewer:true});};
   if(rep)$('#dRep').onclick=()=>{close();startPlay(c,{replay:rep});};
@@ -3653,6 +3870,7 @@ async function openDetail(c){
       pb.querySelectorAll('[data-pu]').forEach(b=>b.onclick=()=>{const o=pl[+b.dataset.pu];S.arr='custom';S.arrPat=o.p;saveS();toast(L(`配置を ${o.p} にしました`,`Pattern set to ${o.p}`));openDetail(c);});
       pb.querySelectorAll('[data-pd]').forEach(b=>b.onclick=()=>{pl.splice(+b.dataset.pd,1);patsLoad()[c.hash]=pl;if(!pl.length)delete PATS[c.hash];patsSave();openDetail(c);});
       }}catch(e){console.warn(e);}
+  try{bindMemoGoal(c,()=>openDetail(c));}catch(e){console.warn(e);}
   $('#dPrac').onclick=()=>{close();const en=+pE.value>=+pE.max?null:+pE.value;startPlay(c,{practice:{measure:+pM.value,rate:+pR.value,end:en,loop:$('#pL').value==='1',step:+$('#pU').value}});};
   if($('#dDelSong'))$('#dDelSong').onclick=async()=>{
     const list=CHARTS.filter(x=>x.archiveId===c.archiveId&&x.dir===c.dir);
@@ -3721,7 +3939,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,achc:ACHC,courses:COURSES,settings:S,presets:PRESETS,replays};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,achc:ACHC,courses:COURSES,settings:S,presets:PRESETS,replays,memo:MEMO,goals:GOALS,daily:jget('daily',{})};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -3823,6 +4041,9 @@ $('#impGo').onclick=async()=>{
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
   if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
+  if(d.memo&&typeof d.memo==='object'){for(const k in d.memo)if(replace||!MEMO[k])MEMO[k]=d.memo[k];memoSave();}
+  if(d.goals&&typeof d.goals==='object'){for(const k in d.goals)if(replace||!GOALS[k])GOALS[k]=d.goals[k];goalsSave();}
+  if(d.daily&&typeof d.daily==='object'){const D=jget('daily',{});if((d.daily.best||0)>(D.best||0)||replace)jset('daily',Object.assign({},D,{streak:d.daily.streak,best:Math.max(D.best||0,d.daily.best||0),last:d.daily.last,total:Math.max(D.total||0,d.daily.total||0)}));}
   saveRec();saveFav();saveFolders();saveStats();saveAch();try{localStorage.setItem(LSK+'achc',JSON.stringify(ACHC));}catch(e){}saveCourses();impData=null;show('#impDlg',false);
   toast(L(`読み込みました（記録 ${Object.keys(d.rec).length}件・リプレイ ${nr}件）`,`Imported (${Object.keys(d.rec).length} records, ${nr} replays)`));
   buildSettings();renderPwaBox();if(typeof applyPhosphor==='function')applyPhosphor();
@@ -4259,6 +4480,8 @@ async function startPlay(meta,mode){
   track(mode.viewer?'viewer':mode.auto?'play-auto':mode.practice?'practice':mode.replay?'replay':mode.tutorial?'tutorial':mode.course?'course':'play',
     mode.viewer?'譜面ビューア':mode.auto?'オートプレイ':mode.practice?'練習':mode.replay?'リプレイ':mode.tutorial?'チュートリアル':mode.course?'コース':'プレイ開始');
   GHOST=null;
+  if(JB.on&&!mode.viewer){jbPause();}
+  if(!mode.rec&&!mode._keepRec)RECMODE=false;if(mode.rec)RECMODE=true;
   phReroll();
   // a preview that is playing or still loading must not carry over into the game
   clearTimeout(WHL.pvT);stopPreview();
@@ -4382,7 +4605,16 @@ const GT={
 const GORDER=['hazard','exhard','hard','normal','easy','aeasy'];
 function gcol(t,game){if(game&&NEON())return {aeasy:'#B07AFF',easy:'#66DD66',normal:'#3DD4FF',hard:'#FF4444',exhard:'#FFDD33',hazard:'#FFFFFF'}[t];if(game&&CLASSIC())return {aeasy:'#9a5cff',easy:'#2fbf6a',normal:'#4a8cff',hard:'#ff4a6e',exhard:'#FFC400',hazard:'#ECEBE6'}[t];const p=pal();return {aeasy:p.dim,easy:p.hi,normal:p.ink,hard:p.alert,exhard:p.hi,hazard:'#FFFFFF'}[t]||p.ink;}
 
+function noteScheme(nc,mode,l){
+  const P={classic:{w:'#F2F2F2',b:'#4D8BFF',s:'#FF4D4D',y:'#FFD93D',g:'#4DDB7A'},cb:{w:'#F0F0F0',b:'#56B4E9',s:'#E69F00',y:'#F0E442',g:'#009E73'},mono:{w:'#F2F2F2',b:'#9A9A9A',s:'#5E5E5E',y:'#D0D0D0',g:'#B4B4B4'}}[nc];
+  if(mode==='9k')return [P.w,P.y,P.g,P.b,P.s,P.b,P.g,P.y,P.w][l];
+  if(mode==='5p')return [P.w,P.g,P.s,P.g,P.w][l];
+  if(mode==='24k')return [1,3,6,8,10].includes(l%12)?P.b:P.w;
+  const M=MODES[mode];if(M.scr.includes(l))return P.s;
+  for(const s of M.sides){const i=s.keys.indexOf(l);if(i>=0)return i%2?P.b:P.w;}return P.w;
+}
 function laneColor(mode,l){
+  if(S.noteCol&&S.noteCol!=='auto')return noteScheme(S.noteCol,mode,l);
   if(NEON()){
     if(mode==='9k')return ['#EEEEEE','#FFE34D','#4DFF7A','#4DA3FF','#FF4D6D','#4DA3FF','#4DFF7A','#FFE34D','#EEEEEE'][l];
     if(mode==='5p')return ['#EEEEEE','#4DFF7A','#FF4D6D','#4DFF7A','#EEEEEE'][l];
@@ -4475,6 +4707,9 @@ function startGame(chart,buffers,images,o){
   G.glogA=[];G.mT=(chart.measures||[]).map(m=>m.time);
   G.msec=(!o.auto&&!o.replay&&!o.viewer&&!o.tutorial&&!o.practice&&!o.course&&rate===1&&G.mT.length>1&&!(o.meta&&o.meta.demo))?[]:null;
   G.bpmAl=bpmAlerts(chart);G.bpmI=0;
+  if(RECV)recStop(false);
+  if(RECMODE&&!BT&&!o.viewer){G.recOn=true;recStart();}
+  try{jbPaint();}catch(e){}
   raf=requestAnimationFrame(loop);
 }
 function bpmAlerts(c){const out=[],sg=c.segs||[];let pr=0,last=-9;
@@ -4714,6 +4949,7 @@ function draw(){
   const notes=c.notes;
   while(G.drawIdx<notes.length&&notes[G.drawIdx].state===2&&(notes[G.drawIdx].eb??notes[G.drawIdx].beat)<beat-2)G.drawIdx++;
   const vis=y=>y>-nh&&y<judgeY+nh;
+  const NE_=!!S.noteEdge;
   for(let i=G.drawIdx;i<notes.length;i++){
     const n=notes[i];
     if(n.beat>beat+64)break;
@@ -4727,11 +4963,12 @@ function draw(){
       const yb=(n.state===1||n.state===4)?judgeY:Math.min(y,judgeY);
       const top=Math.max(-10,y2),bot=Math.min(judgeY,yb);
       if(bot>top){g.fillStyle=hexA(col,n.state===1?.8:n.state===4?.2:.4);quad(x+w*.12,top,w*.76,bot-top);}
-      if(vis(y2)){g.fillStyle=col;quad(x,y2-nh/2,w,nh);}
-      if(n.state===0&&vis(y)){g.fillStyle=col;quad(x,y-nh/2,w,nh);}
+      if(vis(y2)){if(NE_){g.fillStyle='rgba(0,0,0,.9)';quad(x-1.5,y2-nh/2-1.5,w+3,nh+3);}g.fillStyle=col;quad(x,y2-nh/2,w,nh);}
+      if(n.state===0&&vis(y)){if(NE_){g.fillStyle='rgba(0,0,0,.9)';quad(x-1.5,y-nh/2-1.5,w+3,nh+3);}g.fillStyle=col;quad(x,y-nh/2,w,nh);}
       continue;
     }
     if(!vis(y))continue;
+    if(NE_){g.fillStyle='rgba(0,0,0,.9)';quad(x-1.5,y-nh/2-1.5,w+3,nh+3);}
     g.fillStyle=col;quad(x,y-nh/2,w,nh);
     g.fillStyle='rgba(255,255,255,.55)';quad(x,y-nh/2,w,Math.max(1,nh*0.2));
   }
@@ -5460,18 +5697,18 @@ addEventListener('keyup',e=>{if(!G)return;EVT=evT(e);queueMicrotask(clrEVT);
 function padHandler(code,on,pi){if(BT)bAct(pi>=1?1:0);if(!G||G.ended)return;const m=padMap(G.chart.mode);if(m[code]===undefined)return;if(on)grab(m[code],'p'+code);else drop(m[code],'p'+code);}
 
 /* ---------- pause ---------- */
-function syncPause(){$('#qHs').textContent=S.fhs?S.green+'ms':S.hs.toFixed(2);$('#qSud').textContent=S.suddenOn?S.sudden+'%':'OFF';$('#qOfs').textContent=(G?G.ofs:S.ofs)+'ms';}
+function syncPause(){try{const pm=$('#pMemo'),h=G&&G.meta&&G.meta.hash,m=h&&MEMO[h];if(pm){pm.textContent=m?'📝 '+m:'';pm.style.display=m?'block':'none';}}catch(e){}$('#qHs').textContent=S.fhs?S.green+'ms':S.hs.toFixed(2);$('#qSud').textContent=S.suddenOn?S.sudden+'%':'OFF';$('#qOfs').textContent=(G?G.ofs:S.ofs)+'ms';}
 function togglePause(force){
   if(BT){if(BT.P.every(p=>p.ended))return;const p=force!==undefined?force:!BT.P[0].paused;if(p===BT.P[0].paused)return;
     for(let i=0;i<2;i++){bAct(i);G.paused=p;if(p){for(const l of [...hold.keys()])release(l);hold.clear();}else G.lastFrame=0;}
     bAct(0);ptr.clear();ptrP.clear();ctrlPtr=null;
-    if(p){actx.suspend();syncPause();show('#pause',true);show('#retrySame',false);}else{show('#pause',false);actx.resume();}
+    if(p){actx.suspend();syncPause();show('#pause',true);show('#retrySame',false);}else{show('#pause',false);actx.resume();}recPause(p);
     return;}
   if(!G||G.ended||G.viewer)return;
   const p=force!==undefined?force:!G.paused;if(p===G.paused)return;
   G.paused=p;
   if(p)G.pauses=(G.pauses||0)+1;
-  if(p){actx.suspend();for(const l of [...hold.keys()])release(l);hold.clear();ptr.clear();ctrlPtr=null;syncPause();show('#pause',true);show('#retrySame',!G.replay&&!G.tut,'block');}
+  recPause(p);if(p){actx.suspend();for(const l of [...hold.keys()])release(l);hold.clear();ptr.clear();ctrlPtr=null;syncPause();show('#pause',true);show('#retrySame',!G.replay&&!G.tut,'block');}
   else{show('#pause',false);G.lastFrame=0;actx.resume();}
 }
 function pauseQ(q){
@@ -5491,12 +5728,13 @@ $$('#pause [data-q]').forEach(b=>{let tm=null,t0=0;
 $('#pauseBtn').onclick=()=>togglePause(true);
 $('#resumeBtn').onclick=()=>togglePause(false);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(G&&G.viewer)viewerPause(true);else togglePause(true);}});
-function stopAll(){if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
-function toLib(){GHOST=null;wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');toastRestore();if(actx)actx.resume();renderLibrary();}
+function stopAll(){if(RECV)recStop(false);if(!G)return;stopVideos();for(const P of (BT?BT.P:[G]))for(const k in P.playing){try{P.playing[k].stop();}catch(e){}}}
+function toLib(){GHOST=null;RECMODE=false;if(RECLAST){try{URL.revokeObjectURL(RECLAST.url);}catch(e){}RECLAST=null;}wakeOff();document.body.classList.remove('noscan');stopAll();cancelAnimationFrame(raf);if(BT){bAct(0);BT=null;hold=new Map();}const wasCourse=G&&G.course;G=null;CS=null;['#game','#pause','#result','#vbar','#cnext'].forEach(s=>show(s,false));show('#lib',true,'block');toastRestore();if(actx)actx.resume();renderLibrary();try{jbPaint();}catch(e){}}
 function retry(same){const seed=G?G.seed:undefined;stopAll();if(BT){bAct(0);BT=null;hold=new Map();cancelAnimationFrame(raf);}show('#pause',false);show('#result',false);
   if(G&&G.course){const co=G.course.co;actx.resume().then(()=>startCourse(co));return;}
   actx.resume().then(()=>{if(!lastMeta)return;startPlay(lastMeta,Object.assign({},lastMode,{seed:same?seed:undefined,replay:null}));});}
 $('#quitBtn').onclick=toLib;
+if($('#jbBtn'))$('#jbBtn').onclick=()=>openJukebox();
 $('#retryBtn').onclick=()=>retry(false);
 $('#retrySame').onclick=()=>retry(true);
 
@@ -5742,6 +5980,7 @@ function showResult(R){
       <span class="k">${L('ゲージ','Gauge')}</span><span>${GT[G.cur].n} ${Math.floor(G.gauges[G.cur].v)}%</span>
     </div>
     ${R.ach&&R.ach.length?`<div class="advc"><b>🏆 ${L('実績を達成','Achievement unlocked')}</b>${R.ach.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:''}
+    <div id="goalBox"></div><div id="recBox"></div>
     <div id="advBox"></div>
     <div id="nextBox"></div>
     ${gaugeSimHTML()}
@@ -5757,6 +5996,9 @@ function showResult(R){
     <button class="ib" id="rGloss" style="margin-top:6px;border:none;color:var(--dim)">${L('？ 用語の説明（SCORE・ランプなど）','? Glossary (score, lamps…)')}</button>`;
   show('#result',true);resTop();
   $('#rGloss').onclick=openGloss;
+  try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice&&!G.redSaved&&(G.rate||1)===1){const gm=goalsAfterPlay(R,meta);
+    if(gm.length)$('#goalBox').innerHTML=`<div class="advc" style="border-color:var(--hi)">${gm.map(x=>`<div><b>${esc(x)}</b></div>`).join('')}</div>`;}}catch(e){console.warn(e);}
+  if(RECV)recResultUI($('#recBox'));
   try{renderAdvice(R,meta);}catch(e){console.warn(e);}
   try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice){const ok=!G.failed&&(R.lamp==null||R.lamp>=3),pk=nextPicks(meta,ok);
     if(pk.length){const nb=$('#nextBox');nb.innerHTML=`<div class="advc"><b>${ok?L('🎯 次はこの曲はどう？（少しだけ難しい）','🎯 Try next (a little harder)'):L('🎯 次はこの曲はどう？（少しやさしめ）','🎯 Try next (a little easier)')}</b>${pk.map(c=>`<button class="ib" data-nx="${c.hash}" style="display:block;width:100%;text-align:left;margin:4px 0;padding:6px 8px;height:auto;white-space:normal"><b>${esc((c.level!=null?'☆'+c.level+' ':'')+c.title)}</b><br><small style="opacity:.75">${esc(chartTraits(c).slice(0,2).join('・')||c.artist||'')}</small></button>`).join('')}</div>`;
