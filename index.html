@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0843)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0843)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1124.0852)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0852)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0843)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0843)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1124.0852)">スマホで遊べるBMSプレイヤー　VER 1.0 (1124.0852)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2615,7 +2615,7 @@ function songRow(c,lvLabel){
   d.innerHTML=`<div class="lvb"><b>${esc(String(lvLabel||c.level||'?').slice(0,5))}</b><small>${esc(DIFN()[c.difficulty]||c.mode.toUpperCase())}</small></div>
     <div class="b"><div class="t">${FAV.has(c.hash)?'<span class="fav">★</span> ':''}${esc(c.title)} <span class="sub">${esc(c.subtitle||'')}</span></div>
     <div class="m">${begTag(c,r)}${redBadges(r)}<span>${esc(c.artist||'')}</span><span>${c.mode.toUpperCase()}</span><span>BPM ${bpm}</span>${lenOf(c)?`<span>⏱ ${lenOf(c)}</span>`:''}</div></div>
-    <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}${playsOf(r)?`<small style="display:block;color:var(--dim)">${playsOf(r)}${L('回',' plays')}</small>`:''}</div>`;
+    <div class="r">${r.ex?`<div class="rk">${rankOf(rate)}</div><small>${(rate*100).toFixed(1)}%</small>`:'<div class="rk" style="color:var(--faint)">---</div>'}${lsOf(c)?`<small style="display:block;color:var(--dim)">🎧${lsOf(c)}</small>`:''}${playsOf(r)?`<small style="display:block;color:var(--dim)">${playsOf(r)}${L('回',' plays')}</small>`:''}</div>`;
   d.onkeydown=e=>{if(e.key==='Enter')openDetail(c);};
   d.onclick=()=>openDetail(c);
   return d;
@@ -3092,7 +3092,7 @@ function jbOrder(l){const o=JB.ord;if(o==='shuf')return jbShuffle(l.slice());con
   return a;}
 function jbAudio(){if(JB.au)return JB.au;const a=new Audio();a.preload='auto';a.setAttribute('playsinline','');a.style.display='none';document.body.appendChild(a);
   a.addEventListener('ended',()=>{if(JB.sleep&&JB.sleep.song){JB.sleep=null;jbStop();toast(L('😴 スリープタイマーで止めました','😴 Stopped by sleep timer'));return;}jbNext(1);});a.addEventListener('play',jbPaint);a.addEventListener('pause',jbPaint);
-  a.addEventListener('timeupdate',()=>{jbSleepTick();const p=$('#jbPos');if(p&&a.duration)p.value=a.currentTime/a.duration*1000;const t=$('#jbTime');if(t&&a.duration)t.textContent=fmtT(a.currentTime)+' / '+fmtT(a.duration);
+  a.addEventListener('timeupdate',()=>{jbSleepTick();if(JB.on&&!JB.counted&&a.duration&&a.currentTime>Math.min(a.duration*0.6,90)){JB.counted=true;lsAdd(JB.list[JB.idx]);}const p=$('#jbPos');if(p&&a.duration)p.value=a.currentTime/a.duration*1000;const t=$('#jbTime');if(t&&a.duration)t.textContent=fmtT(a.currentTime)+' / '+fmtT(a.duration);
     try{if(navigator.mediaSession&&navigator.mediaSession.setPositionState&&a.duration)navigator.mediaSession.setPositionState({duration:a.duration,playbackRate:1,position:Math.min(a.currentTime,a.duration)});}catch(e){}});
   JB.au=a;return a;}
 const fmtT=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
@@ -3159,7 +3159,7 @@ function jbTrim(){const keep=new Set([JB.idx-1,JB.idx,JB.idx+1,JB.idx+2].map(i=>
 async function jbPlayIdx(i,tries=0){
   if(!JB.list.length)return;i=(i+JB.list.length)%JB.list.length;JB.idx=i;const c=JB.list[i],a=jbAudio();JB.on=true;
   jbPaint(L('♪ 準備中…','♪ Preparing…'));
-  try{const r=await jbGet(i);if(JB.idx!==i||!JB.on)return;a.src=r.url;await a.play().catch(()=>{});jbMeta(c);jbPaint();
+  try{const r=await jbGet(i);if(JB.idx!==i||!JB.on)return;a.src=r.url;JB.counted=false;await a.play().catch(()=>{});jbMeta(c);jbPaint();
     setTimeout(()=>{if(JB.on&&JB.idx===i)jbGet(i+1).catch(()=>{});},800);}
   catch(e){console.warn(e);if(JB.idx!==i||!JB.on)return;if(tries<JB.list.length-1)return jbPlayIdx(i+1,tries+1);JB.on=false;jbPaint();toast(L('⚠ 再生できる曲がありませんでした','⚠ No playable songs'),3000);}
 }
@@ -3349,8 +3349,12 @@ function openWMenu(){
 function wheelIdx(){return WHL.n?((Math.round(WHL.pos)%WHL.n)+WHL.n)%WHL.n:-1;}
 function wPips(c){if(!S.wheelGroup)return '';const g=WHL.gmap.get(wGk(c));if(!g||g.length<2)return '';
   return '<span class="pips">'+g.slice().sort((a,b)=>(a.difficulty||9)-(b.difficulty||9)||lvNum(a.level)-lvNum(b.level)).map(x=>{const l=(REC[x.hash]||{}).lamp||0,dc=diffCol(x.difficulty);return `<i style="border-color:${dc};background:${l?LAMPC[l]:'transparent'}${x.hash===c.hash?';outline:1px solid #fff':''}"></i>`;}).join('')+'</span>';}
+const LISTEN=(()=>{try{return JSON.parse(localStorage.getItem(LSK+'listen')||'{}')||{};}catch(e){return {};}})();
+const lsSave=()=>{try{localStorage.setItem(LSK+'listen',JSON.stringify(LISTEN));}catch(e){}};
+function lsOf(c){return c?LISTEN[jbSongKey(c)]||0:0;}
+function lsAdd(c){if(!c||c.demo&&!c.builtin)return;const k=jbSongKey(c);LISTEN[k]=(LISTEN[k]||0)+1;lsSave();}
 const playsOf=r=>(r&&r.plays||0)+(r&&r.red?Object.values(r.red).reduce((a,q)=>a+(q&&q.plays||0),0):0);
-function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'')+'p'+playsOf(r);}
+function wRowSig(c){const r=REC[c.hash]||{};const g=S.wheelGroup&&WHL.gmap.get(wGk(c));return (g&&g.length>1?g.map(x=>(REC[x.hash]||{}).lamp||0).join(''):'')+(r.lamp||0)+(r.red?Object.keys(r.red).map(k=>k+(r.red[k].lamp||0)).join(''):'')+(FAV.has(c.hash)?'f':'')+(isBeginner()?'b':'')+(WHL.tlv&&WHL.tlv.get(c.hash)||'')+'p'+playsOf(r)+'l'+lsOf(c);}
 function wheelPaint(){
   const wh=$('#wWheel');if(!wh||!WHL.built)return;
   {const idx=wheelIdx();if(idx!==WHL.lastIdx){if(WHL.lastIdx>=0&&performance.now()-(WHL.tickT||0)>25){WHL.tickT=performance.now();wSe('tick');}WHL.lastIdx=idx;WHL.cur=idx>=0?WHL.list[idx]:null;
@@ -3375,7 +3379,7 @@ function wheelPaint(){
       else{const cs=c.sub?null:c.charts,cl=cs?cs.filter(x=>((REC[x.hash]||{}).lamp||0)>=3).length:0;
         r.innerHTML=`<span class="lv fold">${c.sub?'▼':'▶'}</span><span class="t">${c.ic?esc(c.ic)+' ':''}${esc(c.name)}</span>${cs?`<span class="fcnt">${cl}/${cs.length}${c.mlist&&c.mlist.length?' ＋'+L('未所持','missing')+c.mlist.length:''}</span>`:''}`;}}}
     else if(r._h!==(c.hash+'|'+wRowSig(c))){r._h=c.hash+'|'+wRowSig(c);r.classList.remove('fold');const rc=REC[c.hash]||{},dc=diffCol(c.difficulty);const lvt=(WHL.tlv&&WHL.tlv.get(c.hash))||c.level||'?';
-      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${playsOf(rc)?`<span class="pc">${playsOf(rc)}${L('回','')}</span>`:''}${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
+      r.innerHTML=`<i class="lamp" style="background:${LAMPC[rc.lamp||0]}"></i><span class="mode">${(c.mode||'').toUpperCase()}</span><span class="lv" style="color:${dc};border-color:${dc}">${esc(String(lvt))}</span><span class="t">${esc(c.title)}${c.subtitle?` <small>${esc(c.subtitle)}</small>`:''}</span><span class="wbd">${begTag(c,rc)}${redBadges(rc)}${wPips(c)}</span>${playsOf(rc)?`<span class="pc">${playsOf(rc)}${L('回','')}</span>`:''}${lsOf(c)?`<span class="pc" title="${L('聴いた回数','Times listened')}">🎧${lsOf(c)}</span>`:''}${FAV.has(c.hash)?'<span class="fv">★</span>':''}<span class="dn" style="color:${dc}">${(DIFF_SLOTS.find(x=>x[0]===c.difficulty)||[0,''])[1].charAt(0)}</span>`;}
   })();}
   for(const r of WHL.rows)if(!used.has(r))r.style.display='none';
 }
@@ -3443,6 +3447,7 @@ function wheelInfo0(){
     <div class="sr"><span>EX SCORE</span><span>${r.ex?`${r.ex.toLocaleString()} <small>(${(rate*100).toFixed(1)}%)</small>`:'----'}</span></div>
     <div class="sr"><span>MISS COUNT</span><span>${r.bp!=null?r.bp:'----'}</span></div>
     <div class="sr"><span>PLAY</span><span>${playsOf(r)}${r.red&&playsOf(r)!==(r.plays||0)?`<small>（${['4k','5k'].filter(m=>r.red[m]&&r.red[m].plays).map(m=>`${RED_N[m]} ${r.red[m].plays}`).join('・')}）</small>`:''}${r.last?`<small>　${L('最終','last')} ${(()=>{const d=new Date(r.last);return `${d.getMonth()+1}/${d.getDate()}`;})()}</small>`:''}</span></div>
+    <div class="sr" title="${L('ジュークボックスやオートプレイで聴いた回数','Times listened in jukebox / autoplay')}"><span>LISTEN 🎧</span><span>${lsOf(c)}</span></div>
     ${(()=>{if(!r.ex)return '';const th=[[2/9,'E'],[3/9,'D'],[4/9,'C'],[5/9,'B'],[6/9,'A'],[7/9,'AA'],[8/9,'AAA'],[17/18,'MAX-'],[1,'MAX']];const nx=th.find(([v])=>r.ex<Math.ceil(v*2*N));return nx?`<div class="sr"><span>NEXT</span><span>${L(`${nx[1]}まで あと ${Math.ceil(nx[0]*2*N)-r.ex}`,`${Math.ceil(nx[0]*2*N)-r.ex} to ${nx[1]}`)}</span></div>`:'';})()}
     <div class="wrank">${ranks.map((x,i)=>`<span class="${r.ex&&i===ri?'on':''}">${x}</span>`).join('')}${r.ex?`<i style="left:${Math.min(99,rate*100)}%"></i>`:''}</div></div>
    <div class="wtags">${redBadges(r)}${begTag(c,r)}<span id="wRiv"></span></div><div class="wpv" id="wPv"></div>`;
@@ -4201,7 +4206,7 @@ importShared();
 /* ---------- data export / import ---------- */
 async function exportData(){
   let replays=[];try{replays=await DB.all('replays')||[];}catch(e){}
-  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,achc:ACHC,courses:COURSES,settings:S,presets:PRESETS,replays,memo:MEMO,goals:GOALS,daily:jget('daily',{})};
+  const data={app:'BeSmart',kind:'backup',v:1,date:new Date().toISOString(),rec:REC,fav:[...FAV],folders:FOLDERS,stats:STATS,ach:ACH,achc:ACHC,courses:COURSES,settings:S,presets:PRESETS,replays,memo:MEMO,goals:GOALS,daily:jget('daily',{}),listen:LISTEN};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const name=`besmart-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
@@ -4303,6 +4308,7 @@ $('#impGo').onclick=async()=>{
     try{const cur=replace?null:await DB.get('replays',r.hash);if(!cur||(r.ex||0)>(cur.ex||0)){await DB.put('replays',r);nr++;}}catch(e){}}
   if($('#impSet').checked&&d.settings&&typeof d.settings==='object'){Object.assign(S,d.settings);saveS();applyI18n();}
   if($('#impSet').checked&&Array.isArray(d.presets)){for(const p of d.presets){if(!p||!p.name||!p.v)continue;const i=PRESETS.findIndex(x=>x.name===p.name);if(i>=0)PRESETS[i]=p;else PRESETS.push(p);}savePresets();}
+  if(d.listen&&typeof d.listen==='object'){for(const k in d.listen){const v=+d.listen[k]||0;LISTEN[k]=replace?v:Math.max(LISTEN[k]||0,v);}lsSave();}
   if(d.memo&&typeof d.memo==='object'){for(const k in d.memo)if(replace||!MEMO[k])MEMO[k]=d.memo[k];memoSave();}
   if(d.goals&&typeof d.goals==='object'){for(const k in d.goals)if(replace||!GOALS[k])GOALS[k]=d.goals[k];goalsSave();}
   if(d.daily&&typeof d.daily==='object'){const D=jget('daily',{});if((d.daily.best||0)>(D.best||0)||replace)jset('daily',Object.assign({},D,{streak:d.daily.streak,best:Math.max(D.best||0,d.daily.best||0),last:d.daily.last,total:Math.max(D.total||0,d.daily.total||0)}));}
@@ -6261,6 +6267,7 @@ function showResult(R){
   $('#rGloss').onclick=openGloss;
   try{if(meta&&meta.hash&&!meta.demo&&!G.auto&&!G.replay&&!G.viewer&&!G.tut&&!G.course&&!G.practice&&!G.redSaved&&(G.rate||1)===1){const gm=goalsAfterPlay(R,meta);
     if(gm.length)$('#goalBox').innerHTML=`<div class="advc" style="border-color:var(--hi)">${gm.map(x=>`<div><b>${esc(x)}</b></div>`).join('')}</div>`;}}catch(e){console.warn(e);}
+  try{if(G&&G.auto&&!G.viewer&&!G.replay&&!G.tut&&meta&&!meta.builtin)lsAdd(meta);}catch(e){}
   if(RECV)recResultUI($('#recBox'));
   if(JBAUTO&&G&&G.auto)try{jbWatchResult($('#jbwBox'));}catch(e){console.warn(e);}
   try{renderAdvice(R,meta);}catch(e){console.warn(e);}
