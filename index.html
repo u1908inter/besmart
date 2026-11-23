@@ -373,7 +373,7 @@ html.smoothFont,html.smoothFont body{-webkit-font-smoothing:antialiased}
 <div id="lib" class="screen"><div id="wheel" style="display:none"></div><div class="wrap">
   <header class="libhead">
     <div class="mark" role="heading" aria-level="1">BeSmart</div>
-    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2000)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2000)</div>
+    <div class="tag" data-en="BMS player for your phone  VER 1.0 (1123.2046)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2046)</div>
   </header>
   <nav class="acts">
     <label class="ib pri" for="fileIn" data-en="Add">追加</label>
@@ -994,7 +994,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   <div class="box" style="max-width:420px">
     <div style="border:2px solid var(--ink);padding:18px 16px 16px;margin-bottom:18px">
       <div class="mark" style="font-size:min(17vw,76px)" role="heading" aria-level="1">BeSmart</div>
-      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2000)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2000)</div>
+      <div class="hlp" style="margin:6px 0 0;font-size:13px" data-en="BMS player for your phone  VER 1.0 (1123.2046)">スマホで遊べるBMSプレイヤー　VER 1.0 (1123.2046)</div>
     </div>
     <p style="font-size:16px;margin:0 0 22px" data-en="Tap the lanes to the music.<br>Load your own BMS / bmson songs.">音楽に合わせてレーンをタップ。<br>手持ちの BMS／bmson の曲で遊べます。</p>
     <button class="pri" id="titleStart" style="font-size:22px;padding:16px"><span data-en="START">はじめる</span><span class="blink">_</span></button>
@@ -2941,7 +2941,10 @@ function wheelRootFolders(){
   FOLDERS.forEach(f=>add('u:'+f.name,'📁',f.name,all.filter(c=>f.hashes.includes(c.hash))));
   const rec=all.filter(c=>(REC[c.hash]||{}).last).sort((a,b)=>REC[b.hash].last-REC[a.hash].last).slice(0,50);
   add('recent','🕘',L('最近遊んだ曲','Recently played'),rec);
-  {const nw=all.filter(c=>!c.builtin&&c.added).sort((a,b)=>b.added-a.added);const cut=Date.now()-14*86400000;let pick=nw.filter(c=>c.added>=cut);if(!pick.length)pick=nw.slice(0,50);add('new','🆕',L('新着（最近追加）','New (recently added)'),pick);}
+  {const by=new Map();for(const c of all){if(c.builtin||!c.added||c.demo)continue;const k=c.archiveId;if(!by.has(k))by.set(k,{k,t:0,name:c.archName||'',list:[]});const g=by.get(k);if(c.added>g.t){g.t=c.added;if(c.archName)g.name=c.archName;}g.list.push(c);}
+   if(by.size)add('new','🆕',L('新着（追加した順）','New (by date added)'),[],()=>{const d0=new Date();d0.setHours(0,0,0,0);
+     const lab=t=>t>=d0.getTime()?L('今日','Today'):t>=d0.getTime()-86400000?L('昨日','Yesterday'):(()=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()}`;})();
+     return [...by.values()].sort((a,b)=>b.t-a.t).slice(0,40).map((g,i)=>({fid:'new:'+g.k,fold:true,ic:i===0?'🆕':'📦',name:`${lab(g.t)}　${(g.name||'').replace(/\.(zip|rar|7z|tar|tgz|gz|lzh)$/i,'')||L('（名前なし）','(no name)')}`,charts:g.list}));});}
   add('np','⬜',L('未プレイ','Not played'),all.filter(c=>!lp(c)));
   add('nc','🔁',L('未クリア','Not cleared'),all.filter(c=>{const l=lp(c);return l>0&&l<3;}));
   add('cl','✅',L('クリア済み','Cleared'),all.filter(c=>lp(c)>=3));
