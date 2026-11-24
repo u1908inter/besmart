@@ -255,8 +255,8 @@ pre{background:var(--bar);border:1px solid var(--line);border-radius:var(--r);pa
 <section class="view" id="v-save"><div class="scrollv"><div class="page">
   <h1>開く・保存する</h1>
   <h2>今あるBMSを開く</h2>
-  <p class="lead">曲フォルダを丸ごと圧縮したZIPか、BMSファイルと音ファイルをまとめて選んでください（.bms / .bme / .bml）。このツールで編集できない部分（画像・2P側など）は、保存するときにそのまま残します。</p>
-  <label class="btn wide" for="openIn">ZIP・BMSファイルを選ぶ</label>
+  <p class="lead">曲フォルダの書庫（ZIP・LZH・RAR・7z）か、BMSファイルと音ファイルをまとめて選んでください（.bms / .bme / .bml）。このツールで編集できない部分（画像・2P側など）は、保存するときにそのまま残します。</p>
+  <label class="btn wide" for="openIn">書庫・BMSファイルを選ぶ</label>
   <h2>保存して遊ぶ</h2>
   <p class="lead">BMSファイルと音をまとめたZIPを作ります。BeSmartなどのプレイヤーに読み込ませて遊べます。</p>
   <div class="stats" id="stats"></div>
@@ -324,7 +324,7 @@ pre{background:var(--bar);border:1px solid var(--line);border-radius:var(--r);pa
     <dt>選曲画面の画像</dt><dd>「曲情報」タブで背景画像・バナー・プレイ中の背景を設定</dd>
   </dl></details>
   <details><summary>開く・保存・確認</summary><dl>
-    <dt>今あるBMSを開く</dt><dd>「ファイル」タブで、曲フォルダのZIPか、BMSと音ファイルをまとめて選びます</dd>
+    <dt>今あるBMSを開く</dt><dd>「ファイル」タブで、曲フォルダの書庫（ZIP・LZH・RAR・7z）か、BMSと音ファイルをまとめて選びます</dd>
     <dt>試し再生</dt><dd>「再生」は見ている小節から、「頭から」は最初から</dd>
     <dt>重なりチェック</dt><dd>「ファイル」タブで重なりなどを一覧表示。タップでその場所へ移動</dd>
     <dt>データの保存先</dt><dd>作業中のデータはこの端末のブラウザに自動で残ります。別の端末には引き継がれないので、ZIPで保存しておくと安心です</dd>
@@ -871,8 +871,172 @@ function parseBms(text){const r={hdr:[],wav:{},bmp:{},stage:'',banner:'',raw:[],
 const WARN={round:'とても細かい位置のノーツを、いちばん近い位置に合わせました。',ln:'LNOBJ式のロングノーツは点線の帯で表示します（タイプ2は短いノーツで表示）。保存時はそのまま残ります。',bpmdef:'定義のないBPM変更・一時停止がありました（読み飛ばしました）。',
   '2p':'2P側のノーツは画面に出ませんが、保存時はそのまま残ります。',random:'#RANDOM（ランダム分岐）の部分は編集できませんが、BMSEと同じく保存時はそのまま残します。',enc:'韓国語（EUC-KR）やUTF-16の文字コードでした。保存するときはUTF-8になります。',
   shift:'0小節目にノーツがあったので、全体を1小節うしろにずらしました。'};
+/* ---------- LZH・7z・RAR（BeSmartと同じ展開部品を使う） ---------- */
+/* ===== LZH (LHA) reader: -lh0- -lz4- -lh4- -lh5- -lh6- -lh7- ===== */
+function lhaDecode(src,start,csize,osize,method){
+  const out=new Uint8Array(osize);
+  if(method==='-lh0-'||method==='-lz4-'){out.set(src.subarray(start,start+Math.min(csize,osize)));return out;}
+  const dicbit={'-lh4-':12,'-lh5-':13,'-lh6-':15,'-lh7-':16}[method];
+  if(!dicbit)throw new Error('未対応の圧縮方式 '+method);
+  const NC=510,NT=19,NP=dicbit+1,CBIT=9,TBIT=5,PBIT=dicbit<=13?4:5;
+  const end=start+csize;
+  let ip=start,bb=0,bc=0;
+  const need=n=>{while(bc<n){bb=((bb<<8)|(ip<end?src[ip++]:0))>>>0;bc+=8;}};
+  const peek=n=>{need(n);return (bb>>>(bc-n))&((1<<n)-1);};
+  const skip=n=>{bc-=n;bb&=(bc>=32?0xffffffff:((1<<bc)>>>0)-1);};
+  const get=n=>{if(!n)return 0;const v=peek(n);skip(n);return v;};
+  // canonical huffman table: returns {tab,len,bits,konst}
+  function mk(lens,nsym){
+    let max=0;for(let i=0;i<nsym;i++)if(lens[i]>max)max=lens[i];
+    if(max===0)return {konst:0,bits:0};
+    const cnt=new Uint16Array(17);for(let i=0;i<nsym;i++)cnt[lens[i]]++;
+    const next=new Uint32Array(18);
+    let code=0;cnt[0]=0;
+    for(let l=1;l<=16;l++){code=(code+cnt[l-1])<<1;next[l]=code;}
+    const tab=new Uint16Array(1<<max);
+    for(let s=0;s<nsym;s++){
+      const l=lens[s];if(!l)continue;
+      const c=next[l]++;const sh=max-l,base=c<<sh;
+      for(let k=0;k<(1<<sh);k++)tab[base+k]=s;
+    }
+    return {tab,lens,bits:max};
+  }
+  const dec=t=>{if(t.konst!==undefined&&t.tab===undefined)return t.konst;const s=t.tab[peek(t.bits)];skip(t.lens[s]);return s;};
+  function readPt(nn,nbit,special){
+    const n=get(nbit);
+    if(n===0){return {konst:get(nbit)};}
+    const lens=new Uint8Array(Math.max(nn,n));let i=0;
+    while(i<n){
+      let c=get(3);if(c===7){while(get(1)===1)c++;}
+      lens[i++]=c;
+      if(i===special){let z=get(2);while(z-->0&&i<lens.length)lens[i++]=0;}
+    }
+    return mk(lens,nn);
+  }
+  function readC(pt){
+    const n=get(CBIT);
+    if(n===0)return {konst:get(CBIT)};
+    const lens=new Uint8Array(NC);let i=0;
+    while(i<n){
+      let c=dec(pt);
+      if(c<=2){let z=c===0?1:c===1?get(4)+3:get(CBIT)+20;while(z-->0&&i<NC)lens[i++]=0;}
+      else lens[i++]=c-2;
+    }
+    return mk(lens,NC);
+  }
+  let block=0,ct=null,pt=null;
+  let pos=0;
+  while(pos<osize){
+    if(block===0){
+      block=get(16);
+      const tt=readPt(NT,TBIT,3);
+      ct=readC(tt);
+      pt=readPt(NP,PBIT,-1);
+      if(block===0)block=0x10000;
+    }
+    block--;
+    const c=dec(ct);
+    if(c<256){out[pos++]=c;continue;}
+    let len=c-253;
+    let p=dec(pt);
+    if(p>1)p=(1<<(p-1))+get(p-1);
+    let from=pos-p-1;
+    while(len-->0&&pos<osize){out[pos++]=from>=0?out[from]:0x20;from++;}
+    if(ip>end+4)throw new Error('LZHのデータが壊れています');
+  }
+  return out;
+}
+
+function readLzhBuffer(buf,sj){
+  const dv=new DataView(buf.buffer,buf.byteOffset,buf.byteLength);
+  const out=[];
+  // find first header (skip SFX stub / junk)
+  let p=0;
+  const isHdr=q=>q+21<buf.length&&buf[q+2]===0x2d&&buf[q+3]===0x6c&&(buf[q+4]===0x68||buf[q+4]===0x7a)&&buf[q+6]===0x2d&&buf[q+20]<=3;
+  while(p<buf.length&&!isHdr(p))p++;
+  const name=b=>{b=b.map(x=>x===0xff?0x2f:x);try{return sj.decode(b);}catch(e){return String.fromCharCode(...b);}};
+  const fixPath=s=>s.replace(/\\/g,'/').replace(/\/+/g,'/');
+  while(p+21<buf.length&&buf[p]!==0){
+    const method=String.fromCharCode(...buf.subarray(p+2,p+7));
+    const level=buf[p+20];
+    let csize=dv.getUint32(p+7,true);const osize=dv.getUint32(p+11,true);
+    let fname='',dname='',dataStart;
+    if(level===0||level===1){
+      const hsize=buf[p];
+      const nlen=buf[p+21];
+      fname=name(buf.subarray(p+22,p+22+nlen));
+      let q=p+hsize+2;
+      if(level===1){
+        let sz=dv.getUint16(q-2,true);
+        while(sz>0&&q+sz<=buf.length){
+          const type=buf[q],body=buf.subarray(q+1,q+sz-2);
+          if(type===1)fname=name(body);
+          else if(type===2)dname=name(body.map(x=>x===0xff?0x2f:x));
+          csize-=sz;
+          const nsz=dv.getUint16(q+sz-2,true);q+=sz;sz=nsz;
+        }
+      }
+      dataStart=q;
+    }else if(level===2||level===3){
+      const w=level===2?2:4;
+      const total=level===2?dv.getUint16(p,true):dv.getUint32(p+24,true);
+      let q=p+(level===2?26:28);
+      let sz=level===2?dv.getUint16(p+24,true):dv.getUint32(p+28,true);
+      if(level===3)q=p+32;
+      while(sz>0&&q+sz<=buf.length){
+        const type=buf[q],body=buf.subarray(q+1,q+sz-w);
+        if(type===1)fname=name(body);
+        else if(type===2)dname=name(body.map(x=>x===0xff?0x2f:x));
+        const nsz=w===2?dv.getUint16(q+sz-w,true):dv.getUint32(q+sz-w,true);q+=sz;sz=nsz;
+      }
+      dataStart=p+total;
+    }else throw new Error('未対応のLZHヘッダ');
+    const path=fixPath(dname?(dname.endsWith('/')?dname:dname+'/')+fname:fname);
+    if(method!=='-lhd-'&&fname){
+      const st=dataStart,cs=csize,os=osize,m=method;
+      out.push({path,get:async()=>lhaDecode(buf,st,cs,os,m).buffer,method});
+    }
+    p=dataStart+csize;
+    if(csize<0||p<=0)break;
+  }
+  return out;
+}
+
+const LIB=p=>new URL('../'+p,location.href).href;
+async function readLzhFile(file){let sj;try{sj=new TextDecoder('shift_jis')}catch(e){sj=new TextDecoder()}
+  const es=readLzhBuffer(new Uint8Array(await file.arrayBuffer()),sj);if(!es.length)throw new Error(file.name+' をLZHとして開けませんでした');
+  if(es.some(e=>!/^-(lh[0-7]|lz[s45])-$/.test(e.method)))throw new Error(file.name+'：古い圧縮方式（-lh1-等）のLZHには対応していません');
+  return es.map(e=>({name:e.path,get:e.get}))}
+let LA=null;
+async function read7zFile(file){
+  if(!LA){try{const m=await import(LIB('la/libarchive.js'));m.Archive.init({workerUrl:LIB('la/worker-bundle.js')});LA=m.Archive}
+    catch(e){throw new Error('7zの展開部品を読み込めませんでした（BeSmartのサイトに置いたBSSで使えます）')}}
+  let ar;try{ar=await LA.open(file)}catch(e){throw new Error(file.name+' を7zとして開けませんでした')}
+  if(await ar.hasEncryptedData())throw new Error('パスワード付き7zには対応していません');
+  await ar.extractFiles();const arr=await ar.getFilesArray();
+  return arr.filter(x=>x.file&&typeof x.file.arrayBuffer==='function').map(({file:f,path})=>({name:(path||'')+f.name,get:()=>f.arrayBuffer()}))}
+let unrarWasm=null;
+async function readRarFile(file){
+  try{if(!window.UnrarLib)await new Promise((res,rej)=>{const sc=document.createElement('script');sc.src=LIB('unrar.js');sc.onload=res;sc.onerror=rej;document.head.appendChild(sc)});
+    if(!unrarWasm){const r=await fetch(LIB('unrar.wasm'));if(!r.ok)throw 0;unrarWasm=await r.arrayBuffer()}}
+  catch(e){throw new Error('RARの展開部品を読み込めませんでした（BeSmartのサイトに置いたBSSで使えます）')}
+  const data=await file.arrayBuffer(),create=()=>window.UnrarLib.createExtractorFromData({wasmBinary:unrarWasm.slice(0),data});
+  let ex;try{ex=await create()}catch(e){throw new Error(file.name+' をRARとして開けませんでした')}
+  const heads=[...ex.getFileList().fileHeaders].filter(h=>!(h.flags&&h.flags.directory));
+  if(heads.some(h=>h.flags&&h.flags.encrypted))throw new Error('パスワード付きRARには対応していません');
+  const got=new Map(),skip=new Set(),names=heads.map(h=>h.name);
+  try{for(let a=0;a<=names.length;a++){if(a)ex=await create();
+      try{const {files}=ex.extract({files:h=>!(h.flags&&h.flags.directory)&&!got.has(h.name)&&!skip.has(h.name)});for(const f of files)if(f.extraction)got.set(f.fileHeader.name,f.extraction.slice().buffer);break}
+      catch(e){if(e&&e.reason)throw e;const bad=names.find(n=>!got.has(n)&&!skip.has(n));if(!bad)break;skip.add(bad)}}}
+  catch(e){const r=e&&e.reason||'';if(/volume/i.test(r))throw new Error('分割RAR（part1, part2…）には対応していません');throw new Error(file.name+' の展開に失敗しました（パスワード付きか、壊れているかもしれません）')}
+  return [...got].map(([name,buf])=>({name:name.replace(/\\/g,'/'),get:async()=>buf}))}
+async function archKind(f){const n=f.name.toLowerCase();if(/\.zip$/.test(n))return'zip';if(/\.(lzh|lha)$/.test(n))return'lzh';if(/\.7z$/.test(n))return'7z';if(/\.rar$/.test(n))return'rar';
+  if(!/\.(bms|bme|bml|pms|wav|ogg|mp3|flac|png|jpe?g|bmp|gif|mp4|webm|txt)$/.test(n)){const u=new Uint8Array(await f.slice(0,8).arrayBuffer());
+    if(u[0]===0x50&&u[1]===0x4B)return'zip';if(u[0]===0x52&&u[1]===0x61&&u[2]===0x72&&u[3]===0x21)return'rar';if(u[0]===0x37&&u[1]===0x7A&&u[2]===0xBC&&u[3]===0xAF)return'7z';if(u[2]===0x2D&&u[3]===0x6C&&(u[4]===0x68||u[4]===0x7A)&&u[6]===0x2D)return'lzh'}
+  return''}
 async function openBms(files){let entries=[];
-  for(const f of files){if(/\.zip$/i.test(f.name)){try{entries.push(...await readZip(f))}catch(e){return toast(e.message)}}else entries.push({name:f.name,get:()=>f.arrayBuffer()})}
+  for(const f of files){const k=await archKind(f);if(!k){entries.push({name:f.name,get:()=>f.arrayBuffer()});continue}
+    try{if(k!=='zip')toast('展開中…');entries.push(...(k==='zip'?await readZip(f):k==='lzh'?await readLzhFile(f):k==='7z'?await read7zFile(f):await readRarFile(f)))}catch(e){return toast(e.message)}}
   const list=entries.filter(e=>BMSX.test(e.name));if(!list.length)return toast('BMSファイル（.bms / .bme / .bml）が見つかりません');
   let target=list[0];if(list.length>1){const i=await ask('どの譜面を開きますか？','',{list:list.map(e=>e.name)});if(i<0)return;target=list[i]}
   if((P.notes.length||P.sounds.length)&&!await ask('今作っている曲のデータは消えて、読み込んだBMSに置きかわります。開きますか？','開く'))return;
@@ -899,7 +1063,7 @@ async function openBms(files){let entries=[];
     cache.clear();undo=[];redo=[];selA=selB=null;lnStart=null;sel=(sounds.find(s=>s.data)||sounds[0]||{id:0}).id;selBmp=(bmps[0]||{id:0}).id;first=true;$('#enc').value=P.enc;fillInfo();changed();
     document.querySelector('nav button[data-v=chart]').click();layout();
     const keys=r.notes.filter(n=>n.c!=='01'&&!isV(n.c)),msg=[`「${r.title||target.name}」を開きました。`,`ノーツ ${keys.length}個（ロング ${keys.filter(n=>n.l).length}個）・音 ${sounds.length}個`+(r.bpmc.length?`・BPM変更 ${r.bpmc.length}か所`:'')+(r.stops.length?`・一時停止 ${r.stops.length}か所`:'')];
-    if(miss)msg.push('',`見つからない音ファイルが${miss}個あります。音ファイルも一緒に選ぶか、ZIPで開き直してください。`);
+    if(miss)msg.push('',`見つからない音ファイルが${miss}個あります。音ファイルも一緒に選ぶか、曲フォルダの書庫で開き直してください。`);
     if(bmps.length)msg.push(`画像・動画（BGA）${bmps.length}個`+(missB?`（見つからないファイル ${missB}個）`:''));
     if(r.warn.size)msg.push('',...[...r.warn].map(w=>'・'+WARN[w]));
     await ask(msg.join('\n'),'OK',{noCancel:true})}

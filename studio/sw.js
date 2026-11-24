@@ -1,8 +1,10 @@
 // BeSmart Studio のオフライン対応（一度開いたページと素材を端末に保存しておく）
-const V = 'bss-v1';
+const V = 'bss-v2';
 const CORE = ['./', './index.html', './about.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable.png', './apple-touch-icon.png'];
+// LZH以外の書庫（7z・RAR）を開く部品はBeSmart本体と共用。オフラインでも開けるよう一緒に保存する
+const LIBS = ['../la/libarchive.js', '../la/worker-bundle.js', '../la/libarchive.wasm', '../unrar.js', '../unrar.wasm'];
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(V).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(V).then(c => c.addAll(CORE).then(() => c.addAll(LIBS).catch(() => {}))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
