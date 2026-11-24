@@ -4,7 +4,7 @@ BMS／bmson 形式の譜面を、スマートフォンのブラウザでその�
 
 - **遊ぶ**：https://u1908inter.github.io/besmart/
 - **機能と仕様の詳しい説明**：https://u1908inter.github.io/besmart/about.html（紹介動画つき）
-- **作る（BeSmart Studio／BSS）**：https://u1908inter.github.io/besmart/studio/ ― スマホで作れるBMS制作ツール（[紹介ページ](https://u1908inter.github.io/besmart/studio/about.html)）
+- **作る（BeSmart Studio／BSS）**：https://u1908inter.github.io/besmart-studio/ ― スマホで作れるBMS制作ツール（[紹介ページ](https://u1908inter.github.io/besmart-studio/about.html)）
 
 ## 曲の入れ方
 
